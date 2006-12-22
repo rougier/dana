@@ -1,0 +1,295 @@
+//
+// Copyright (C) 2006 Nicolas Rougier
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 2 of the
+// License, or (at your option) any later version.
+
+#include <python2.4/numarray/arrayobject.h>
+#include <algorithm>
+#include "map.h"
+#include "layer.h"
+#include "unit.h"
+
+using namespace dana::core;
+using namespace boost::python::numeric;
+
+
+// =============================================================================
+//  constructor
+// =============================================================================
+Layer::Layer (void) : Object()
+{
+    clear();
+    map = 0;
+}
+
+// =============================================================================
+//  destructor
+// =============================================================================
+Layer::~Layer (void)
+{}
+
+
+// =============================================================================
+//  append new unit if some place left
+// =============================================================================
+void
+Layer::append (UnitPtr unit)
+{
+    std::vector<UnitPtr>::iterator result;
+    result = find (units.begin(), units.end(), unit);
+    if (result != units.end())
+        return;
+
+    if ((map) && (map->width)) {
+        if ((size() < map->width*map->height)) {
+            unit->set_x (units.size() % map->width);
+            unit->set_y (units.size() / map->width);
+            units.push_back (UnitPtr(unit));
+            unit->set_layer (this);
+        } else {
+            PyErr_SetString(PyExc_MemoryError, "no space left within layer");
+            throw_error_already_set();
+        }
+    } else {
+        units.push_back (UnitPtr(unit));
+        unit->set_layer (this);
+    }
+}
+
+// =============================================================================
+//  get unit at index
+// =============================================================================
+UnitPtr
+Layer::get (const int index) const
+{
+    int i = index;
+    if (i < 0)
+        i += units.size();
+
+    try {
+        return units.at(i);
+    } catch (...) {
+        PyErr_SetString(PyExc_IndexError, "index out of range");
+        throw_error_already_set();
+    }
+}
+
+// =============================================================================
+//  get unit at x,y
+// =============================================================================
+UnitPtr
+Layer::get (const int x, const int y) const
+{
+    int i = x;
+    int j = y;
+    if ( (!map) && (map->width == 0)) {
+        PyErr_SetString(PyExc_RuntimeError, "layer has no shape");
+        throw_error_already_set();
+    }
+    if (i < 0)
+        i += map->width;
+    if (j < 0)
+        j += map->height;
+    int index = j*map->width + i;
+    return get (index);
+}
+
+// =============================================================================
+//  get units size
+// =============================================================================
+int
+Layer::size (void) const
+{
+    return units.size();
+}
+
+// =============================================================================
+//  fill layer with objects of given type
+// =============================================================================
+int
+Layer::fill (object type)
+{
+    extract <UnitPtr> unit (type());
+    if (!unit.check()) {
+        PyErr_SetString(PyExc_TypeError, "type is not derived from unit class");
+        throw_error_already_set();
+        return 0;
+    }
+    if ((map) && (map->width)) {
+        units.clear();
+        for (int i=0; i< map->width*map->height; i++) {
+            UnitPtr unit = extract <UnitPtr> (type());
+            append (UnitPtr(unit));
+        }
+     } else {
+        PyErr_SetString(PyExc_RuntimeError, "layer has no shape");
+        throw_error_already_set();
+     }
+    return units.size();
+}
+
+// =============================================================================
+//  Remove all units
+// =============================================================================
+void
+Layer::clear (void)
+{
+    units.clear();
+}
+
+// =============================================================================
+//   evaluates all units potential and returns difference
+// =============================================================================
+float
+Layer::evaluate (void)
+{
+    // Speed problem with random_shuffle and threads
+    //random_shuffle (permuted.begin(), permuted.end());
+    
+    float d = 0.0;
+    int index = 0;
+    for (unsigned int i = 0; i< units.size(); i++) {
+        index = map->shuffles[map->shuffle_index][i];
+        d += units[index]->evaluate();
+    }
+    return d;
+}
+
+
+// =============================================================================
+//  get owning layer
+// =============================================================================
+MapPtr
+Layer::get_map (void) const
+{
+    return MapPtr(map);
+}
+
+// =============================================================================
+//  set owning layer
+// =============================================================================
+void
+Layer::set_map (Map *m)
+{
+    map = m;
+}
+
+// =============================================================================
+//  get layer specification
+// =============================================================================
+object
+Layer::get_spec (void) const
+{
+    if ( (!spec.ptr()) && (map) )
+        return map->get_spec();
+    return spec;
+}
+
+// =============================================================================
+//  Set layer specification.
+//  If given specification is none, specification from owning map is used.
+// =============================================================================
+void
+Layer::set_spec (const object s)
+{
+    if ( (!s.ptr()) && (map) ) {
+        spec = map->get_spec();
+    } else {
+        spec = s;
+    }
+}
+
+// =============================================================================
+//  Get all potentials as a numpy::array
+// =============================================================================
+object
+Layer::get_potentials (void) const
+{
+    if ((map == 0) || (map->width == 0)) {
+        PyErr_SetString(PyExc_AssertionError, "layer has no shape");
+        throw_error_already_set();
+        return object();
+    }
+
+    import_libnumeric();
+    unsigned int width = map->width;
+    unsigned int height = map->height;
+
+    std::vector<int> dims;
+    dims.push_back (height);
+    dims.push_back (width);
+    object obj(handle<>(
+        PyArray_FromDims(dims.size(), &dims[0], PyArray_FLOAT)));
+    float *data = (float *) ((PyArrayObject*) obj.ptr())->data;
+    memset (data, width*height*sizeof(float), 0);
+
+    for (unsigned int i=0; i<units.size(); i++)
+        data[i] = units[i]->potential;
+
+    return extract<numeric::array>(obj);  
+}
+
+// ============================================================================
+//    Boost wrapping code
+// ============================================================================
+void
+Layer::boost (void)
+{
+    register_ptr_to_python< boost::shared_ptr<Layer> >();
+ 
+    // member function pointers for overloading
+    UnitPtr    (Layer::*get_index)(int) const = &Layer::get;
+    UnitPtr    (Layer::*get_xy)(int, int) const = &Layer::get;
+ 
+    class_<Layer>("Layer",
+    "======================================================================\n"
+    "\n"
+    "A layer is a shaped set of homogeneous units that are evaluated\n"
+    "synchronously but in random order. The shape of the layer is directly\n"
+    "inherited from the map it belongs to. As long as a layer is not\n"
+    "part of a map, it does not possess any shape (and therefore, cannot.\n"
+    "be filled.\n"
+    "\n"
+    "Attributes:\n"
+    "-----------\n"
+    "   spec: specification for the layer\n"
+    "\n"
+    "======================================================================\n",
+        init<>(
+        "__init__() -- initializes layer\n")
+        )
+   
+        .def ("__len__", &Layer::size,
+        "__len__() -> integer -- return number of units\n")
+        
+//        .def ("append", &Layer::append,
+//        "append(unit) -- append unit to end\n")
+        
+        .def ("__getitem__", get_index,
+        "x.__getitem__ (y)  <==> x[y]\n\n"
+        "Use of negative indices is supported.\n")
+        
+        .def ("unit", get_index,
+        "unit(index) -> unit -- get unit at index\n\n"
+        "Use of negative indices is supported.\n")
+
+        .def ("unit", get_xy,
+        "unit(x,y) -> unit -- get unit at (x,y) coordinates\n\n"
+        "Use of negative indices is supported.\n")
+
+        .def ("fill", &Layer::fill,
+        "fill(type) -> integer -- fill layer with type object")
+        
+        .def ("clear", &Layer::clear,
+        "clear() -- remove all units\n")
+        
+        .def_readwrite ("spec", &Layer::spec)
+        
+        .def ("potentials", &Layer::get_potentials,
+        "potentials() -> numpy::array -- get units potential as an array")
+        ;
+}
+
