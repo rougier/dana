@@ -1,0 +1,11 @@
+MANIFEST.in
+README.txt
+setup.py
+dana/cnft/__init__.py
+dana/cnft/cnft.cc
+dana/cnft/spec.cc
+dana/cnft/spec.h
+dana/cnft/unit.cc
+dana/cnft/unit.h
+examples/cnft-local.py
+examples/cnft.py
