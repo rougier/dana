@@ -10,12 +10,13 @@ if os.path.exists('MANIFEST'): os.remove('MANIFEST')
 import glob
 from distutils.core import setup, Extension
 import distutils.sysconfig
-
+import numpy
 
 # Get core shared object filename
 from dana.core._core import __file__ as core
 include_dir = core[:core.find('python')]
-include_dir = os.path.normpath (os.path.join (include_dir, '../include/dana/'))
+include_dirs = [os.path.normpath (os.path.join (include_dir, '../include/dana/'))]
+include_dirs.append (numpy.get_include())
 
 print '-----------------------------------------------------'
 print 'Guessed include directory (based on package core) :'
@@ -30,7 +31,7 @@ cnft_ext = Extension (
     'dana.cnft._cnft',
     sources = cnft_srcs,
     libraries = ['boost_python'],
-    include_dirs =  [include_dir],
+    include_dirs =  include_dirs,
     extra_objects=[core]
 )
 
