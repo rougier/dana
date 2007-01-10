@@ -17,6 +17,7 @@ core_srcs = glob.glob ("dana/core/*.cc")
 core_ext = Extension (
     'dana.core._core',
     sources = core_srcs,
+    include_dirs=[numpy.get_include()],
     libraries = ['boost_python', 'boost_thread']
 )
 
@@ -24,6 +25,7 @@ random_srcs = glob.glob ("dana/random/*.cc")
 random_ext = Extension (
     'dana.random._random',
     sources = random_srcs,
+    include_dirs=[numpy.get_include()],
     libraries = ['boost_python'],
 )
 
