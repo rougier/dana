@@ -6,7 +6,8 @@
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
 
-#include <numarray/arrayobject.h>
+#include <boost/python.hpp>
+#include <numpy/arrayobject.h>
 #include "environment.h"
 #include "network.h"
 #include "map.h"
@@ -18,9 +19,9 @@
 
 BOOST_PYTHON_MODULE(_core) {
     using namespace dana::core;
-
     import_array();
-    
+    numeric::array::set_module_and_type("numpy", "ndarray");
+  
     Model::boost();
     Spec::boost();
     Environment::boost();

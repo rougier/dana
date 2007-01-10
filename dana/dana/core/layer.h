@@ -10,6 +10,7 @@
 #define __DANA_CORE_LAYER_H__
 
 #include <boost/python.hpp>
+#include <numpy/arrayobject.h>
 #include <vector>
 #include "object.h"
 

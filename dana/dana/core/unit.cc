@@ -6,7 +6,8 @@
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
 
-#include <python2.4/numarray/arrayobject.h>
+#include <boost/python.hpp>
+#include <numpy/arrayobject.h>
 #include <cmath>
 #include "unit.h"
 #include "link.h"
@@ -196,18 +197,15 @@ Unit::get_weights (const LayerPtr layer)
         return object();
     }
 
-    import_libnumeric();
     unsigned int width = layer->map->width;
     unsigned int height = layer->map->height;
 
-    std::vector<int> dims;
-    dims.push_back (height);
-    dims.push_back (width);
-    object obj(handle<>(
-        PyArray_FromDims(dims.size(), &dims[0], PyArray_FLOAT)));
-    float *data = (float *) ((PyArrayObject*) obj.ptr())->data;
-    memset (data, width*height*sizeof(float), 0);
+    npy_intp dims[2] = {width, height};
+    object obj(handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
+    PyArrayObject *array = (PyArrayObject *) obj.ptr();
+    PyArray_FILLWBYTE(array, 0);
     
+    float *data = (float *) array->data;    
     const std::vector<LinkPtr> *wts;
     if (layer.get() == this->layer) {
         wts = &laterals;
@@ -233,6 +231,9 @@ Unit::boost (void) {
 
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Unit> >();
+
+    import_array();
+    numeric::array::set_module_and_type("numpy", "ndarray");  
     
     class_<Unit>("Unit",
     "======================================================================\n"

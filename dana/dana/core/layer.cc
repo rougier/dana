@@ -6,14 +6,12 @@
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
 
-#include <python2.4/numarray/arrayobject.h>
 #include <algorithm>
 #include "map.h"
 #include "layer.h"
 #include "unit.h"
 
 using namespace dana::core;
-using namespace boost::python::numeric;
 
 
 // =============================================================================
@@ -214,18 +212,12 @@ Layer::get_potentials (void) const
         return object();
     }
 
-    import_libnumeric();
-    unsigned int width = map->width;
-    unsigned int height = map->height;
-
-    std::vector<int> dims;
-    dims.push_back (height);
-    dims.push_back (width);
-    object obj(handle<>(
-        PyArray_FromDims(dims.size(), &dims[0], PyArray_FLOAT)));
-    float *data = (float *) ((PyArrayObject*) obj.ptr())->data;
-    memset (data, width*height*sizeof(float), 0);
-
+    npy_intp dims[2] = {map->width, map->height};    
+    object obj(handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
+    PyArrayObject *array = (PyArrayObject *) obj.ptr();
+    PyArray_FILLWBYTE(array, 0);
+    
+    float *data = (float *) array->data;
     for (unsigned int i=0; i<units.size(); i++)
         data[i] = units[i]->potential;
 
@@ -239,7 +231,9 @@ void
 Layer::boost (void)
 {
     register_ptr_to_python< boost::shared_ptr<Layer> >();
- 
+    import_array();
+    numeric::array::set_module_and_type("numpy", "ndarray");  
+
     // member function pointers for overloading
     UnitPtr    (Layer::*get_index)(int) const = &Layer::get;
     UnitPtr    (Layer::*get_xy)(int, int) const = &Layer::get;
