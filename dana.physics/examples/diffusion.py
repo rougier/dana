@@ -25,11 +25,10 @@ net = core.Network ()
 size  = 32
 
 # Create the map
-Map = core.Map ( (size,size), (0,0) )
+Map = core.Map ( (2*size,size), (0,0) )
 Map.append(core.Layer())
 Map[0].fill(physics.Unit)
 net.append(Map)
-
 
 # Create input to focus connections
 p = proj.projection()
