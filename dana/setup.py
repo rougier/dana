@@ -10,7 +10,6 @@ if os.path.exists('MANIFEST'): os.remove('MANIFEST')
 import glob
 from distutils.core import setup, Extension
 import distutils.sysconfig
-
 import numpy
 
 core_srcs = glob.glob ("dana/core/*.cc")

@@ -189,7 +189,7 @@ Network::compute_geometry (void)
         
         object frame = make_tuple (column_start[x] * 1.0/w,
                                    line_start[y] * 1.0/h,
-                                   maps[i]->width * 1.0/w,
+                                   maps[i]->width * 1.0/w,                                   
                                    maps[i]->height * 1.0/h);
         maps[i]->set_frame (frame);
     }

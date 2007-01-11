@@ -116,6 +116,7 @@ Layer::fill (object type)
         throw_error_already_set();
         return 0;
     }
+    
     if ((map) && (map->width)) {
         units.clear();
         for (int i=0; i< map->width*map->height; i++) {
@@ -212,7 +213,7 @@ Layer::get_potentials (void) const
         return object();
     }
 
-    npy_intp dims[2] = {map->width, map->height};    
+    npy_intp dims[2] = {map->height, map->width};    
     object obj(handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
     PyArrayObject *array = (PyArrayObject *) obj.ptr();
     PyArray_FILLWBYTE(array, 0);

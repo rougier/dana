@@ -200,7 +200,7 @@ Unit::get_weights (const LayerPtr layer)
     unsigned int width = layer->map->width;
     unsigned int height = layer->map->height;
 
-    npy_intp dims[2] = {width, height};
+    npy_intp dims[2] = {height, width};
     object obj(handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
     PyArrayObject *array = (PyArrayObject *) obj.ptr();
     PyArray_FILLWBYTE(array, 0);
