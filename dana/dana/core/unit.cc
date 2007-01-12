@@ -40,15 +40,6 @@ Unit::~Unit(void)
 {}
 
 // =============================================================================
-//  evaluates new potential and returns difference
-// =============================================================================
-float
-Unit::evaluate (void)
-{
-    return 0.0f;
-}
-
-// =============================================================================
 //  computes potential and returns dp
 // =============================================================================
 float
@@ -292,14 +283,11 @@ Unit::boost (void) {
 
         .def_readonly ("position", &Unit::get_position)
         
-        .def ("evaluate", &Unit::evaluate,
-        "evaluate() -> float -- evaluate new potential and return difference\n")
-
         .def ("compute_dp", &Unit::compute_dp,
-        "compute_dp() -> float -- computes new potential and return dp\n")
+        "compute_dp() -> float -- computes potential and return dp\n")
 
         .def ("compute_dw", &Unit::compute_dw,
-        "compute_dw() -> float -- computes new weights and returns dw\n")
+        "compute_dw() -> float -- computes weights and returns dw\n")
         
         .def ("connect", connect_src)
         .def ("connect", connect_link,

@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 #------------------------------------------------------------------------------
-# Copyright (c) 2006, Nicolas Rougier.
+# Copyright (c) 2006-2007 Nicolas Rougier.
 # All rights reserved.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
 # 
-# This software is provided without warranty under the terms of the BSD
-# license included in LICENSE.txt and may be redistributed only under the
-# conditions described in the aforementioned license. The license is also
-# available online at http://www.loria.fr/~rougier/pub/Licenses/BSD.txt
-# 
-# Author: Nicolas Rougier
-# Description: DANA library component
+# $Id$
 #------------------------------------------------------------------------------
 """ Distributed Asyncronous Numerical Adaptive Computing Library
 

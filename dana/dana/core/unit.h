@@ -20,7 +20,6 @@ using namespace boost::python;
 
 
 namespace dana { namespace core {
-
     class Unit : public Object {
         public:
             //  attributes
@@ -46,7 +45,6 @@ namespace dana { namespace core {
 
             //  object management
             // =================================================================
-            virtual float       evaluate (void);
             virtual float       compute_dp (void);
             virtual float       compute_dw (void);
 

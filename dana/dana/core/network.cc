@@ -95,14 +95,17 @@ Network::evaluate (const unsigned long epochs, const bool use_thread)
         for (unsigned int i = 0; i < maps.size(); i++) {
             Map::map = maps[i].get();
             Map::epochs = epochs;
-            threads.create_thread (&Map::static_evaluate);
+            threads.create_thread (&Map::evaluate);
         }
         threads.join_all();
         delete barrier;
      } else {
-        for (unsigned long j=0; j<epochs; j++)
+        for (unsigned long j=0; j<epochs; j++) {
            for (unsigned int i = 0; i < maps.size(); i++)
-                maps[i]->evaluate ();
+                maps[i]->compute_dp ();
+           for (unsigned int i = 0; i < maps.size(); i++)
+                maps[i]->compute_dw ();
+        }
      }
 }
 

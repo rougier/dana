@@ -52,7 +52,7 @@ Environment::boost (void)
         ("Environment",
          "===================================================================\n"
          "\n"
-         "An environment is an object that is able to modify map activation\n"
+         "An environment is an object that is able to modify layer activation\n"
          "at each evaluation. An environment is said to be autonomous since\n"
          "its evaluation does not depend on anything else than itself.\n"
          "\n"

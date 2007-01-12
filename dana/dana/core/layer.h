@@ -47,7 +47,8 @@ namespace dana { namespace core {
 
             // activity management
             // =================================================================
-            virtual float        evaluate (void);
+            virtual float        compute_dp (void);
+            virtual float        compute_dw (void);
 
             //  attribute manipulation
             // =================================================================

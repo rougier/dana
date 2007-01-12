@@ -55,7 +55,7 @@ Map::append (LayerPtr layer)
     result = find (layers.begin(), layers.end(), layer);
     if (result != layers.end())
         return;
-        
+    
     layers.push_back (LayerPtr (layer));
     layer->set_map (this);
     for (int i=0; i < layer->size(); i++) {
@@ -143,26 +143,40 @@ Map::get_potentials (void) const
 void
 Map::evaluate (void)
 {
-    shuffle_index = (shuffle_index + 1) % (shuffles.size());
-
-    for (int i=0; i< size(); i++)
-        layers[i]->evaluate ();
-}
-
-// =============================================================================
-//   Static layers evaluation
-// =============================================================================
-void
-Map::static_evaluate (void)
-{
     if (map && map->network) {
         Map *m = map;
         Network *net = m->network;
         for (unsigned long i=0; i<epochs; i++) {
-            map->evaluate ();
+            map->compute_dp ();
+            net->barrier->wait();
+            map->compute_dw ();
             net->barrier->wait();
         }
     }
+}
+
+// =============================================================================
+//  compute potentials
+// =============================================================================
+void
+Map::compute_dp (void)
+{
+    shuffle_index = (shuffle_index + 1) % (shuffles.size());
+
+    for (int i=0; i< size(); i++)
+        layers[i]->compute_dp ();
+}
+
+// =============================================================================
+//  compute weights
+// =============================================================================
+void
+Map::compute_dw (void)
+{
+    shuffle_index = (shuffle_index + 1) % (shuffles.size());
+
+    for (int i=0; i< size(); i++)
+        layers[i]->compute_dw ();
 }
 
 // =============================================================================
@@ -328,6 +342,12 @@ Map::boost (void) {
         "__init__(shape, position) -- initializes map\n")
         )
  
+        .def ("compute_dp", &Map::compute_dp,
+        "compute_dp() -> float -- computes potentials and return dp\n")
+
+        .def ("compute_dw", &Map::compute_dw,
+        "compute_dw() -> float -- computes weights and returns dw\n")
+
         .def ("__getitem__", &Map::get,
         "x.__getitem__ (y)  <==> x[y]\n\n"
         "Use of negative indices is supported.\n")
@@ -335,13 +355,13 @@ Map::boost (void) {
         .def ("layer", &Map::get,
         "x.__getitem__ (y)  <==> x[y]\n\n"
         "Use of negative indices is supported.\n")
-                
+
         .def ("__len__", &Map::size,
         "__len__() -> integer -- return number of layers\n")
-        
+
         .def ("append", &Map::append,
         "append(layer) -- append layer to end\n")
-        
+
         .def ("unit", unit_index,
         "unit(index) -> unit -- get unit of layer 0 at index\n\n"
         "Use of negative indices is supported.\n")

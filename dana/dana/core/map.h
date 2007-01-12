@@ -44,36 +44,38 @@ namespace dana { namespace core {
 
             // content management
             // =================================================================
-            virtual void         append (LayerPtr layer);
-            virtual LayerPtr     get (const int index) const;
-            virtual int          size (void) const;
-            virtual void         clear (void);
+            virtual void       append (LayerPtr layer);
+            virtual LayerPtr   get (const int index) const;
+            virtual int        size (void) const;
+            virtual void       clear (void);
             
             // proxied management (default to layer 0)
             // =================================================================
-            virtual UnitPtr      unit (const int index) const;                     
-            virtual UnitPtr      unit (const int x, const int y) const;
-            virtual int          fill (object type);
-            virtual object       get_potentials (void) const;
+            virtual UnitPtr    unit (const int index) const;                     
+            virtual UnitPtr    unit (const int x, const int y) const;
+            virtual int        fill (object type);
+            virtual object     get_potentials (void) const;
 
 
             // activity management
             // =================================================================
-            virtual void        evaluate  (void);
-            static void         static_evaluate (void);
+            static void        evaluate  (void);
+            virtual void       compute_dp  (void);
+            virtual void       compute_dw  (void);
+            
 
             //  attribute manipulation
             // =================================================================
-            virtual object      get_spec (void) const;
-            virtual void        set_spec (const object s);  
-            virtual object      get_shape (void) const;
-            virtual void        set_shape (const object shape);
-            virtual void        set_shape (const int w, const int h);
-            virtual object      get_position (void) const;
-            virtual void        set_position (const object position);
-            virtual void        set_position (const int x, const int y);
-            virtual object      get_frame (void) const;
-            virtual void        set_frame (const object frame);
+            virtual object     get_spec (void) const;
+            virtual void       set_spec (const object s);  
+            virtual object     get_shape (void) const;
+            virtual void       set_shape (const object shape);
+            virtual void       set_shape (const int w, const int h);
+            virtual object     get_position (void) const;
+            virtual void       set_position (const object position);
+            virtual void       set_position (const int x, const int y);
+            virtual object     get_frame (void) const;
+            virtual void       set_frame (const object frame);
 
         public:
             // python export

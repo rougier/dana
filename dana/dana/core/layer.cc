@@ -145,7 +145,7 @@ Layer::clear (void)
 //   evaluates all units potential and returns difference
 // =============================================================================
 float
-Layer::evaluate (void)
+Layer::compute_dp (void)
 {
     // Speed problem with random_shuffle and threads
     //random_shuffle (permuted.begin(), permuted.end());
@@ -154,7 +154,25 @@ Layer::evaluate (void)
     int index = 0;
     for (unsigned int i = 0; i< units.size(); i++) {
         index = map->shuffles[map->shuffle_index][i];
-        d += units[index]->evaluate();
+        d += units[index]->compute_dp();
+    }
+    return d;
+}
+
+// =============================================================================
+//  computes all units weights and returns difference
+// =============================================================================
+float
+Layer::compute_dw (void)
+{
+    // Speed problem with random_shuffle and threads
+    //random_shuffle (permuted.begin(), permuted.end());
+    
+    float d = 0.0;
+    int index = 0;
+    for (unsigned int i = 0; i< units.size(); i++) {
+        index = map->shuffles[map->shuffle_index][i];
+        d += units[index]->compute_dw();
     }
     return d;
 }
@@ -258,7 +276,13 @@ Layer::boost (void)
         init<>(
         "__init__() -- initializes layer\n")
         )
-   
+
+        .def ("compute_dp", &Layer::compute_dp,
+        "compute_dp() -> float -- computes potentials and return dp\n")
+
+        .def ("compute_dw", &Layer::compute_dw,
+        "compute_dw() -> float -- computes weights and returns dw\n")
+
         .def ("__len__", &Layer::size,
         "__len__() -> integer -- return number of units\n")
         
