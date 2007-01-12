@@ -12,6 +12,7 @@
 #define __DANA_CORE_MODEL_H__
 
 #include <boost/python.hpp>
+#include <boost/thread/barrier.hpp>
 #include <vector>
 #include "object.h"
 
@@ -24,9 +25,10 @@ namespace dana { namespace core {
         public:
             //  attributes
             // ================================================================
-            std::vector<NetworkPtr>     networks;
+            std::vector<NetworkPtr>  networks;
             std::vector<EnvironmentPtr> environments;
-
+            boost::barrier *barrier;
+           
         public:
             // life management
             // =================================================================
@@ -41,7 +43,7 @@ namespace dana { namespace core {
 
             // activity management
             // =================================================================
-            virtual void        evaluate (unsigned long n);
+            virtual void        evaluate (unsigned long epochs, bool use_thread);
 
             // attribute manipulation
             // =================================================================

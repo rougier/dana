@@ -9,6 +9,7 @@
 // $Id$
 
 #include <algorithm>
+#include <boost/thread/thread.hpp>
 #include "model.h"
 #include "network.h"
 #include "environment.h"
@@ -71,8 +72,43 @@ Model::clear (void)
 //   evaluates all units potential and returns difference
 // =============================================================================
 void
-Model::evaluate (unsigned long n)
+Model::evaluate (unsigned long epochs, bool use_thread)
 {
+    if (use_thread) {
+        boost::thread_group threads;
+        
+        int n = 0;
+        for (unsigned int i=0; i<networks.size(); i++)
+            n += networks[i]->maps.size();
+        n+= environments.size();
+        
+        barrier = new boost::barrier (n);
+        Map::epochs = epochs;
+        Environment::epochs = epochs;
+                        
+        for (unsigned int j=0; j<networks.size(); j++) {
+            for (unsigned int i = 0; i<networks[j]->maps.size(); i++) {
+                networks[j]->maps[i]->barrier = barrier;
+                Map::map = networks[j]->maps[i].get();
+                threads.create_thread (&Map::evaluate);
+            }
+        }
+        for (unsigned int i=0; i<environments.size(); i++) {
+            environments[i]->barrier = barrier;
+            Environment::env = environments[i].get();
+            threads.create_thread (&Environment::static_evaluate);
+        }
+        threads.join_all();
+        delete barrier;
+     } else {
+        for (unsigned long j=0; j<epochs; j++) {
+           for (unsigned int i = 0; i < environments.size(); i++)
+                environments[i]->evaluate ();
+           for (unsigned int i = 0; i < networks.size(); i++)
+                networks[i]->evaluate (1, false);
+        }
+     }
+
     
 }
 

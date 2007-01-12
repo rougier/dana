@@ -21,24 +21,33 @@ using namespace boost::python;
 
 namespace dana { namespace core {
 
-    class Environment : public Object
-    {
+    class Environment : public Object {
         public:
-            class Network *         network;
-            std::vector<MapPtr>     maps;
+            //  attributes
+            // =================================================================
+            class Network *      network;
+            std::vector<MapPtr>  maps;
+            boost::barrier *     barrier;
+            static unsigned long epochs;  // proxy epochs for thread evaluation
+            static Environment * env;     // proxy map for thread evaluation
             
         public:
             // life management
+            // =================================================================
             Environment (void);
             virtual ~Environment (void);
             
             // content management
+            // =================================================================
             void attach (MapPtr map);
             
             // activity management
+            // =================================================================
             virtual void evaluate  (void);
+            static void static_evaluate (void);
 
             // python export
+            // =================================================================
             static void boost (void);
     };
 

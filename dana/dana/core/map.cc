@@ -143,9 +143,8 @@ Map::get_potentials (void) const
 void
 Map::evaluate (void)
 {
-    if (map && map->network) {
+    if (map) {
         Map *m = map;
-        Network *net = m->network;
         for (unsigned long i=0; i<epochs; i++) {
             m->compute_dp ();
             m->barrier->wait();
