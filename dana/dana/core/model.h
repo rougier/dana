@@ -24,8 +24,8 @@ namespace dana { namespace core {
         public:
             //  attributes
             // ================================================================
-            std::vector<NetworkPtr>     networks;       // networks
-            std::vector<EnvironmentPtr> environments;  // environments
+            std::vector<NetworkPtr>     networks;
+            std::vector<EnvironmentPtr> environments;
 
         public:
             // life management
@@ -35,15 +35,15 @@ namespace dana { namespace core {
 
             // content management
             // =================================================================
-            virtual void         append (NetworkPtr net);
-            virtual void         append (EnvironmentPtr env);
-            virtual void         clear (void);
+            virtual void        append (NetworkPtr net);
+            virtual void        append (EnvironmentPtr env);
+            virtual void        clear (void);
 
             // activity management
             // =================================================================
             virtual void        evaluate (unsigned long n);
 
-            //  attribute manipulation
+            // attribute manipulation
             // =================================================================
 
             // convenient methods
@@ -51,7 +51,7 @@ namespace dana { namespace core {
 
             // python export
             // =================================================================
-            static void          boost (void);
+            static void         boost (void);
     };
 
 }} // namespace dana::core

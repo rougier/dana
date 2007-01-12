@@ -87,12 +87,13 @@ Network::clear (void)
 //  evaluate maps activity
 // =============================================================================
 void
-Network::evaluate (const unsigned long epochs, const bool use_thread)
+Network::evaluate (unsigned long epochs, bool use_thread)
 {
     if (use_thread) {
         boost::thread_group threads;
         barrier = new boost::barrier (maps.size());
         for (unsigned int i = 0; i < maps.size(); i++) {
+            maps[i]->barrier = barrier;
             Map::map = maps[i].get();
             Map::epochs = epochs;
             threads.create_thread (&Map::evaluate);
@@ -203,6 +204,9 @@ Network::compute_geometry (void)
 // ===================================================================
 //  Boost wrapping code
 // ===================================================================
+
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(evaluate_overloads, evaluate, 0, 2)
+
 void
 Network::boost (void)
 {
@@ -237,8 +241,11 @@ Network::boost (void)
         .def ("clear",       &Network::clear,
         "clear() -- remove all maps\n")
         
-        .def ("evaluate",      &Network::evaluate,
-        "evaluate(n, use_thread) -- evaluate all maps for n epochs")
+
+        .def ("evaluate",    &Network::evaluate,
+        evaluate_overloads (args("n", "use_thread"), 
+        "evaluate(n=1, use_thread=false) -- evaluate all maps for n epochs")
+        )
          
          .def_readwrite ("spec", &Network::spec)
                

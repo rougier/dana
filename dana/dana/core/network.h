@@ -49,8 +49,8 @@ namespace dana { namespace core {
 
             //  activity management
             // =================================================================
-            virtual void         evaluate (const unsigned long epochs,
-                                           const bool use_thread=true);
+            virtual void         evaluate (unsigned long n=1,
+                                           bool use_thread=false);
         
             //  attribute manipulation
             // =================================================================

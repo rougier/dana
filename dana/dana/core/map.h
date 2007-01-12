@@ -12,6 +12,7 @@
 #define __DANA_CORE_MAP_H__
 
 #include <boost/python.hpp>
+#include <boost/thread/barrier.hpp>
 #include <vector>
 #include "object.h"
 
@@ -35,6 +36,7 @@ namespace dana { namespace core {
             static unsigned long  epochs;  // proxy epochs for thread evaluation
             static Map *          map;     // proxy map for thread evaluation
             object                spec;    // specification for this map
+            boost::barrier *     barrier;  // thread synchronization barrier
             
         public:
             // life management 

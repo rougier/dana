@@ -147,10 +147,10 @@ Map::evaluate (void)
         Map *m = map;
         Network *net = m->network;
         for (unsigned long i=0; i<epochs; i++) {
-            map->compute_dp ();
-            net->barrier->wait();
-            map->compute_dw ();
-            net->barrier->wait();
+            m->compute_dp ();
+            m->barrier->wait();
+            m->compute_dw ();
+            m->barrier->wait();
         }
     }
 }

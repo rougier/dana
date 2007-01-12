@@ -1,4 +1,15 @@
 #!/usr/bin/env python
+#------------------------------------------------------------------------------
+# Copyright (c) 2006-2007 Nicolas Rougier.
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+# 
+# $Id$
+#------------------------------------------------------------------------------
 
 # Import 
 import dana.core as core
@@ -10,10 +21,10 @@ import dana.projection.profile as profile
 
 
 def make_map (P, size):
-    Map = core.Map ( (size, size), (0,0) )
-    Layer = core.Layer()
-    Map.append (Layer)
-    Layer.fill (core.Unit)
+    m = core.Map ( (size, size), (0,0) )
+    l = core.Layer()
+    m.append (l)
+    l.fill (core.Unit)
 
     proj          = projection.projection()
     proj.self     = True
@@ -21,16 +32,16 @@ def make_map (P, size):
     proj.density  = density.full (1)
     proj.shape    = shape.box (.25, .25)
     proj.profile  = profile.gaussian (1, .25)
-    proj.src = Layer
-    proj.dst = Layer
+    proj.src = l
+    proj.dst = l
     P.append(proj)
     
-    return map
+    return m
 
 if __name__ == '__main__':
     import time
 
-    size = 100
+    size = 60
     P = projection.projector()    
     net = core.Network()
     

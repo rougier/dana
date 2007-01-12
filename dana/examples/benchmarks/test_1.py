@@ -43,7 +43,7 @@ if __name__ == '__main__':
     net.append(m1)
     net.append(m2)
     
-    epochs = 250000
+    epochs = 50000
     print 'Running %d iterations' % epochs
     
     start = time.time()
