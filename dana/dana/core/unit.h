@@ -41,12 +41,14 @@ namespace dana { namespace core {
             //  content management
             // =================================================================
             virtual void        connect (UnitPtr source, float weight);
-//            virtual void        connect (LinkPtr link);
+            virtual void        connect (LinkPtr link);
             virtual void        clear (void);
 
             //  object management
             // =================================================================
             virtual float       evaluate (void);
+            virtual float       compute_dp (void);
+            virtual float       compute_dw (void);
 
             //  attribute manipulation
             // =================================================================

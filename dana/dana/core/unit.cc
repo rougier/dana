@@ -49,6 +49,24 @@ Unit::evaluate (void)
 }
 
 // =============================================================================
+//  computes potential and returns dp
+// =============================================================================
+float
+Unit::compute_dp (void)
+{
+    return 0.0f;
+}
+
+// =============================================================================
+//  computes weights and returns dw
+// =============================================================================
+float
+Unit::compute_dw (void)
+{
+    return 0.0f;
+}
+
+// =============================================================================
 //  connect to src using weight w
 // =============================================================================
 void
@@ -57,6 +75,18 @@ Unit::connect (UnitPtr src, float w)
     LinkPtr link = LinkPtr (new Link (src, w));
 
     if (src->layer == layer)
+        laterals.push_back (link);
+    else
+        afferents.push_back (link);
+}
+
+// =============================================================================
+//  connect using link
+// =============================================================================
+void
+Unit::connect (LinkPtr link)
+{
+    if (link->source->layer == layer)
         laterals.push_back (link);
     else
         afferents.push_back (link);
@@ -235,6 +265,10 @@ Unit::boost (void) {
 
     import_array();
     numeric::array::set_module_and_type("numpy", "ndarray");  
+
+    // member function pointers for overloading
+    void (Unit::*connect_src)(UnitPtr,float) = &Unit::connect;
+    void (Unit::*connect_link)(LinkPtr) = &Unit::connect;
     
     class_<Unit>("Unit",
     "======================================================================\n"
@@ -260,9 +294,17 @@ Unit::boost (void) {
         
         .def ("evaluate", &Unit::evaluate,
         "evaluate() -> float -- evaluate new potential and return difference\n")
+
+        .def ("compute_dp", &Unit::compute_dp,
+        "compute_dp() -> float -- computes new potential and return dp\n")
+
+        .def ("compute_dw", &Unit::compute_dw,
+        "compute_dw() -> float -- computes new weights and returns dw\n")
         
-        .def ("connect", &Unit::connect,
-        "connect (src, w) -- connect to src using weight w\n")
+        .def ("connect", connect_src)
+        .def ("connect", connect_link,
+        "connect (src, w) -- connect to src using weight w\n"
+        "connect (l) -- connect using link l\n")
 
         .def ("clear", &Unit::clear,
         "clear () -- remove all links\n")
