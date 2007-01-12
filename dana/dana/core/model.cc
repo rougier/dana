@@ -108,14 +108,14 @@ Model::evaluate (unsigned long epochs, bool use_thread)
                 networks[i]->evaluate (1, false);
         }
      }
-
-    
 }
 
 
 // ============================================================================
 //    Boost wrapping code
 // ============================================================================
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(evaluate_overloads, evaluate, 0, 2)
+
 void
 Model::boost (void)
 {
@@ -128,7 +128,8 @@ Model::boost (void)
     class_<Model>("Model",
     "======================================================================\n"
     "\n"
-    "A model gathers one to several networks and environments\n"
+    "A model gathers one to several networks and environments. Evaluation is\n"
+    "done first on environments then on networks."
     "\n"
     "Attributes:\n"
     "-----------\n"
@@ -138,15 +139,18 @@ Model::boost (void)
         "__init__() -- initializes Model\n")
         )
    
-        .def ("append", append_net,
-        "append(net) -- append net to end\n")
-        
+        .def ("append", append_net)
         .def ("append", append_env,
+        "append(net) -- append net to end\n",        
         "append(env) -- append env to end\n")
 
         .def ("clear", &Model::clear,
         "clear() -- remove all networks and environments\n")
-                
+        
+        .def ("evaluate",    &Model::evaluate,
+        evaluate_overloads (args("n", "use_thread"), 
+        "evaluate(n=1, use_thread=false) -- evaluate model for n epochs")
+        )     
         ;
 }
 
