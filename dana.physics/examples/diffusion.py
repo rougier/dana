@@ -22,10 +22,10 @@ print ""
 
 # Create a new network
 net = core.Network ()
-size  = 32
+size  = 64
 
 # Create the map
-Map = core.Map ( (2*size,size), (0,0) )
+Map = core.Map ( (size,size), (0,0) )
 Map.append(core.Layer())
 Map[0].fill(physics.Unit)
 net.append(Map)
