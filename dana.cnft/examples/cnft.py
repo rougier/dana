@@ -1,4 +1,15 @@
 #!/usr/bin/env python
+#------------------------------------------------------------------------------
+# Copyright (c) 2006-2007 Nicolas Rougier.
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+# 
+# $Id$
+#------------------------------------------------------------------------------
 
 import matplotlib.pylab as pylab
 import matplotlib.colors as colors
@@ -71,6 +82,8 @@ p.src = Focus[0]
 p.dst = Focus[0]
 p.connect()
 
+
+
 for u in Input[0]:
     u.potential = random.uniform(0.0, 1.0)
 
@@ -84,6 +97,8 @@ for i in xrange(Input.shape[0]):
         
 # Show network
 netview = view.view (net)
+
+
 
 manager = pylab.get_current_fig_manager()
 cnt = 0

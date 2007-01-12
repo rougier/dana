@@ -27,7 +27,7 @@ namespace dana { namespace cnft {
             virtual ~Unit(void);
             
             // Evaluate new potential and return difference
-            virtual float evaluate (void);
+            virtual float compute_dp (void);
             
         public:
             // Boost python extension

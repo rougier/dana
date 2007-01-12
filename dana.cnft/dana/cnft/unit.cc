@@ -29,7 +29,7 @@ Unit::~Unit(void)
 // Evaluate new potential and returns difference
 // -----------------------------------------------------------------------------
 float
-Unit::evaluate (void)
+Unit::compute_dp (void)
 {
     object spec = layer->map->get_spec();
     
