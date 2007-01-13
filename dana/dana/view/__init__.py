@@ -10,10 +10,10 @@
 # 
 # $Id$
 #------------------------------------------------------------------------------
-""" View tools
+""" visualization tools
 
 """
 
 from netview import *
 
-__all__ = ['view']
+__all__ = ['View']

@@ -66,6 +66,6 @@ if __name__ == '__main__':
     proj.shape    = shape.box(0,1)
     proj.connect()
     
-    netview = view.view(net, 'Click on unit to see weights', 12)
+    netview = view.View(net, 'Click on unit to see weights', 12)
     netview.show()
 

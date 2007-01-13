@@ -75,6 +75,6 @@ if __name__ == '__main__':
     proj.dst      = m3[0]
     proj.connect()
     
-    netview = view.view(net, 'Click on unit to see weights', 8)
+    netview = view.View(net, 'Click on unit to see weights', 8)
     netview.show()
 

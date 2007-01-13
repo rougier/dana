@@ -12,18 +12,14 @@
 #------------------------------------------------------------------------------
 """ core library
 
-The core library implements the distributed asynchronous numerical and
-adaptive paradigm. The base object is the unit object which is essentially
-a potential that vary along time under the influence of other units
-throughout link objects. Those units are gathered in a layer and several
-layers (that share a common shape) compose what is called a map. A network
-is a set of one to several maps.
+From a conceptual point of view, the computational paradigm supporting the
+library is grounded on the notion of a unit that is essentially a potential
+that can vary along time under the influence of other units and learning.
+Those units are organized into layers, maps and network: a network is made
+of one to several map, a map is made of one to several layer and a layer is
+made of a set of several units. Each unit can be linked to any other unit
+(included itself) using a weighted link.
 
-The environment class describes some autonomous process that is able to
-directly modify map activities.
-
-Finally, a network and one to several environment(s) are gathered within a
-simulation that can be ran and evaluated.
 """
 
 from _core import *

@@ -22,7 +22,7 @@ import matplotlib.colors as colors
 import dana.core as core
 
 
-class view(object):
+class View(object):
     """ Interactive dana.core.network view """
 
     def __init__(self, network, title='', size = 8):

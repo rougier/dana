@@ -30,14 +30,6 @@ core_ext = Extension (
     libraries = ['boost_python', 'boost_thread']
 )
 
-random_srcs = glob.glob ("dana/random/*.cc")
-random_ext = Extension (
-    'dana.random._random',
-    sources = random_srcs,
-    include_dirs=[numpy.get_include()],
-    libraries = ['boost_python'],
-)
-
 profile_srcs = glob.glob ("dana/projection/profile/*.cc")
 profile_ext = Extension (
     'dana.projection.profile._profile',
@@ -87,7 +79,6 @@ setup (name='dana',
             "Distributed Asynchronous Numerical Adaptive computing library",
        packages = ['dana',
                    'dana.core',
-                   'dana.random',
                    'dana.view',
                    'dana.projection',
                    'dana.projection.density',
@@ -96,7 +87,6 @@ setup (name='dana',
                    'dana.projection.shape'],
        ext_modules = [
             core_ext,
-            random_ext,
             projection_ext, profile_ext, density_ext, distance_ext, shape_ext
        ],
       
