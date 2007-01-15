@@ -238,7 +238,7 @@ Unit::get_weights (const LayerPtr layer)
         UnitPtr unit = wts->at(i)->source;
         if (unit->layer == layer.get())
             if ((unit->y > -1) && (unit->x > -1))
-                data[unit->y*width+unit->x] = wts->at(i)->weight;
+                data[unit->y*width+unit->x] += wts->at(i)->weight;
     }
     return extract<numeric::array>(obj);  
 }
