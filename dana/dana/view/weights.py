@@ -78,7 +78,7 @@ class Weights (object):
             'blue':  ((0., 1., 1.), (.5, 1., 1.), (.75, 0., 0.), (1., 0., 0.))}
         cm = colors.LinearSegmentedColormap('cm',  data)
 
-        # Creation of axes, one per unit
+        # Creation of axes (one per unit)
         self.units = []
         for unit in layer:
             frame = ((unit.position[0] * (source.map.shape[0]+1)+1)/float(w),
