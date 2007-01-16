@@ -30,13 +30,13 @@ namespace dana { namespace core {
             class Network *       network; // network owning this map
             std::vector<LayerPtr> layers;  // layers composing the map
             std::vector<std::vector<int> > shuffles;
-            int                     shuffle_index;
+            int                            shuffle_index;
             int          x,y,width,height; // position & shape
             object                frame;   // normalized position & shape
             static unsigned long  epochs;  // proxy epochs for thread evaluation
             static Map *          map;     // proxy map for thread evaluation
             object                spec;    // specification for this map
-            boost::barrier *     barrier;  // thread synchronization barrier
+            boost::barrier *      barrier; // thread synchronization barrier
             
         public:
             // life management 
