@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2006 Jeremy Fix
+// Copyright (C) 2006 Nicolas Rougier
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -15,6 +15,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
+// $Id$
 
 #ifndef __DANA_SIGMAPI_LINK_H__
 #define __DANA_SIGMAPI_LINK_H__

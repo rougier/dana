@@ -8,7 +8,7 @@
 # conditions described in the aforementioned license. The license is also
 # available online at http://www.loria.fr/~rougier/pub/Licenses/BSD.txt
 # 
-# Author: Nicolas Rougier
+#  $Id$
 #------------------------------------------------------------------------------
 """ projection tools
 
