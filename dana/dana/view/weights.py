@@ -8,48 +8,132 @@
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 # 
-# $Id: netview.py 47 2007-01-13 11:51:16Z rougier $
+# $Id$
 #------------------------------------------------------------------------------
-""" Network view using matplotlib
+""" map weights visualization
 
-This display a dana.core.network using matplotlib.
-    mouse button 1 shows weight for the selected unit
-    mouse button 3 shows network activity
 """
 
+from matplotlib.backend_bases import NavigationToolbar2 as toolbar
 import matplotlib.pylab as pylab
 import matplotlib.colors as colors
 import dana.core as core
 
 
-class Weights (object):
-    """ Weights view """
+def mouse_move(self, event):
+    """
+    Call back on the mouse move event within a figure.
+    
+    This function replaces the original mouse_move function of the
+    generic NavigationToolbar2 in order to write some useful information
+    within the navigation toolbar when the mouse is moving.
 
-    def __init__(self, src, dst, size = 5):
-        
+    """
+
+    if (event.inaxes and event.inaxes.get_navigate() and
+        self._active not in ('ZOOM', 'PAN')):
+        try:
+            unit = event.inaxes.unit
+            x,y = int(event.xdata), int(event.ydata)
+            s = "Weight from unit[%d,%d] to unit[%d,%d] : %.3f "  % \
+               (x,y,unit.position[0], unit.position[1], event.inaxes.data[y,x])
+        except ValueError:
+            pass
+        except OverflowError:
+            pass
+        else:
+            self.set_message(s)
+    else:
+        self._mouse_move (event)
+toolbar._mouse_move = toolbar.mouse_move
+toolbar.mouse_move = mouse_move
+
+
+
+class WeightsView (object):
+    """ Visualization of weights from one layer to another
+    
+    """    
+    
+    def __init__(self, src, dst, size = 8):
+        """ Creation of the figure """
+
         object.__init__(self)
-        w,h = src.shape
-        fig = pylab.figure (figsize= (size, h/float(w)*size))
+    
+        if isinstance (src, core.Map):
+            src = src[0]
+        if isinstance (dst, core.Map):
+            dst = dst[0]
 
+        # Overall size  
+        print "titi"
+        w = dst.map.shape[0] * (src.map.shape[0]+1)+1
+        print "toto"
+        h = dst.map.shape[1] * (src.map.shape[1]+1)+1
+        
+        # Create new figure
+        if h<w:
+            fig = pylab.figure (figsize= (size, h/float(w)*size))
+        else:
+            fig = pylab.figure (figsize= (w/float(h)*size, size))
+
+        # Fetish colormap
         data = {
             'red':   ((0., 0., 0.), (.5, 1., 1.), (.75, 1., 1.), (1., 1., 1.)),
             'green': ((0., 0., 0.), (.5, 1., 1.), (.75, 1., 1.), (1., 0., 0.)),
             'blue':  ((0., 1., 1.), (.5, 1., 1.), (.75, 0., 0.), (1., 0., 0.))}
-        cm = colors.LinearSegmentedColormap('cm', data)
+        cm = colors.LinearSegmentedColormap('cm',  data)
 
-        w = src.shape[0] * (dst.shape[0]+1)+1
-        h = src.shape[1] * (dst.shape[1]+1)+1
-
-        for u in src[0]:
-            frame = ((u.position[0] * (src.shape[0]+1)+1)/float(w),
-                     (u.position[1] * (src.shape[1]+1)+1)/float(h),
-                     (src.shape[0])/float(w),
-                     (src.shape[1])/float(h))
-            axes = pylab.axes (frame)
-            axes.imshow (u.weights(src[0]), cmap=cm, vmin=-1.0, vmax=1.0,
-                         origin='lower', interpolation='nearest')
+        # Creation of axes, one per unit
+        for unit in dst:
+            frame = ((unit.position[0] * (src.map.shape[0]+1)+1)/float(w),
+                     (unit.position[1] * (src.map.shape[1]+1)+1)/float(h),
+                     (src.map.shape[0])/float(w),
+                     (src.map.shape[1])/float(h))
+            axes = pylab.axes(frame)
+            axes.unit = unit
+            axes.data = unit.weights(src)
+            axes.imshow(axes.data, cmap=cm, vmin=-1.0, vmax=1.0,
+                        origin='lower', interpolation='nearest')
             pylab.setp(axes, xticks=[], yticks=[])
         return
 
     def show(self):
+        """ Show figure """
+        
         pylab.show()
+
+
+if __name__ == '__main__':
+    import dana.core as core
+    import dana.projection as projection
+    import dana.projection.distance as distance
+    import dana.projection.density as density
+    import dana.projection.shape as shape
+    import dana.projection.profile as profile
+    
+    net = core.Network()
+
+    m0 = core.Map( (10,10), (0,0) )
+    m0.append( core.Layer() )
+    m0[0].fill(core.Unit)
+    net.append(m0)
+    
+    m1 = core.Map( (5, 5), (0,0) )
+    m1.append( core.Layer() )
+    m1[0].fill(core.Unit)
+    net.append(m1)
+    
+    proj = projection.projection()
+    proj.self = False
+    proj.distance = distance.euclidean(False)
+    proj.density = density.full(1)
+    proj.shape = shape.box(1,1)
+    proj.profile = profile.uniform(0.0, 1.0)
+    proj.src = m1[0]
+    proj.dst = m0[0]
+    proj.connect()
+    
+    figure = WeightsView (m1[0], m0[0])
+    figure.show()
+
