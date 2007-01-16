@@ -66,9 +66,7 @@ class WeightsView (object):
             dst = dst[0]
 
         # Overall size  
-        print "titi"
         w = dst.map.shape[0] * (src.map.shape[0]+1)+1
-        print "toto"
         h = dst.map.shape[1] * (src.map.shape[1]+1)+1
         
         # Create new figure

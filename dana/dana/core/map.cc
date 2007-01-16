@@ -75,6 +75,7 @@ Map::get (const int index) const
         PyErr_SetString(PyExc_IndexError, "index out of range");
         throw_error_already_set();
     }
+    return LayerPtr();
 }
 
 // =============================================================================
@@ -373,12 +374,9 @@ Map::boost (void) {
         "get units potential from layer 0 as an array")
         
         
-         .def_readwrite ("spec", &Map::spec)
-               
+        .def_readwrite ("spec", &Map::spec)
         .add_property ("shape",  &Map::get_shape, set_shape_object)
-        
         .add_property ("position",  &Map::get_position, set_position_object)
-        
         .def_readonly ("frame", &Map::get_frame)
         
         ;

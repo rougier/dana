@@ -52,7 +52,8 @@ namespace dana { namespace core {
 
             //  attribute manipulation
             // =================================================================
-            virtual MapPtr       get_map (void) const;
+//            virtual MapPtr       get_map (void) const;
+            virtual Map *        get_map (void) {return map;}
             virtual void         set_map (class Map *m);
             virtual object       get_spec (void) const;
             virtual void         set_spec (const object s);

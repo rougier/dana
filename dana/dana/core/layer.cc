@@ -182,11 +182,13 @@ Layer::compute_dw (void)
 // =============================================================================
 //  get owning layer
 // =============================================================================
+/*
 MapPtr
 Layer::get_map (void) const
 {
     return MapPtr(map);
 }
+*/
 
 // =============================================================================
 //  set owning layer
@@ -280,7 +282,11 @@ Layer::boost (void)
         )
 
         .def_readwrite ("spec", &Layer::spec)
-        .def_readonly ("map", &Layer::map)
+
+        .add_property("map", 
+          make_function (&Layer::get_map, return_value_policy<reference_existing_object>()))
+
+//        .def ("map", &Layer::get_map, return_value_policy < reference_existing_object > () )
 
         .def ("compute_dp", &Layer::compute_dp,
         "compute_dp() -> float -- computes potentials and return dp\n")
