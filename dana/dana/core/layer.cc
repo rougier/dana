@@ -75,6 +75,7 @@ Layer::get (const int index) const
         PyErr_SetString(PyExc_IndexError, "index out of range");
         throw_error_already_set();
     }
+    return UnitPtr();
 }
 
 // =============================================================================
@@ -271,11 +272,15 @@ Layer::boost (void)
     "Attributes:\n"
     "-----------\n"
     "   spec: specification for the layer\n"
+    "   map:  owning map (if any)\n"
     "\n"
     "======================================================================\n",
         init<>(
         "__init__() -- initializes layer\n")
         )
+
+        .def_readwrite ("spec", &Layer::spec)
+        .def_readonly ("map", &Layer::map)
 
         .def ("compute_dp", &Layer::compute_dp,
         "compute_dp() -> float -- computes potentials and return dp\n")
