@@ -32,7 +32,7 @@ Unit::~Unit(void)
 // Evaluate new potential and returns difference
 // -----------------------------------------------------------------------------
 float
-Unit::evaluate (void)
+Unit::compute_dp (void)
 {
     object spec = layer->map->get_spec();
 
@@ -52,14 +52,15 @@ Unit::evaluate (void)
 	}
 
 	float lateral = 0;
-   	size = laterals.size();
+	size = laterals.size();
 
 	for (unsigned int i=0; i<size; i++)
 	{
 		core::Link * lat = (laterals[i]).get();
         	lateral += ((sigmapi::Link*)lat)->compute();
 	}
-    	float du = (-potential + baseline + (1.0f/alpha)*(lateral + input)) / tau;
+	
+	float du = (-potential + baseline + (1.0f/alpha)*(lateral + input)) / tau;
 	float value = potential;
 	potential += du;
 

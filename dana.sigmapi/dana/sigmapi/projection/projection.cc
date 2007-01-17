@@ -31,6 +31,7 @@ void Projection::connect (void)
 	for(int i = 0 ; i < dst->size() ; i++)
 	{
 		vlinkptr = combination->combine(dst->get(i),src1,src2);
+		//std::cout<<"je connect, size : "<<vlinkptr.size()<<std::endl;
 		for(int j = 0 ; j < vlinkptr.size(); j++)
 			((dana::sigmapi::Unit*)(((core::UnitPtr)(dst->get(i))).get()))->connect(vlinkptr[j]);
 	}	

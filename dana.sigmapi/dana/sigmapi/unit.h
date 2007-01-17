@@ -36,7 +36,7 @@ namespace dana { namespace sigmapi {
 	    //virtual void connect (core::UnitPtr source, float weight);
             void connect (core::LinkPtr link);
             // Evaluate new potential and return difference
-            virtual float evaluate (void);
+            virtual float compute_dp (void);
 
         public:
             // Boost python extension

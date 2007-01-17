@@ -63,15 +63,15 @@ Output.spec.alpha = 7.0
 
 ## Define the connections
 
-p          = projection.projection()
-p.self     = True
-p.distance = distance.euclidean(False)
-p.density  = density.full(1)
-p.shape    = shape.box(1,1)
-p.profile  = profile.constant(1)
-p.src      = Input[0]
-p.dst      = Output[0]
-p.connect()
+#p          = projection.projection()
+#p.self     = True
+#p.distance = distance.euclidean(False)
+#p.density  = density.full(1)
+#p.shape    = shape.box(1,1)
+#p.profile  = profile.constant(1)
+#p.src      = Input[0]
+#p.dst      = Output[0]
+#p.connect()
 
 
 p1 = proj.projection()
@@ -82,7 +82,7 @@ p1.dst = Output[0]
 p1.connect();
 
 # Show network
-netview = view.view (net)
+netview = view.View (net)
 
 manager = pylab.get_current_fig_manager()
 

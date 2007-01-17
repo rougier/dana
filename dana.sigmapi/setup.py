@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python 
 #------------------------------------------------------------------------------
 # Copyright (c) 2006-2007 Nicolas Rougier.
 # All rights reserved.
@@ -54,7 +54,7 @@ projection_srcs = glob.glob ("dana/sigmapi/projection/*.cc")
 projection_ext = Extension (
     'dana.sigmapi.projection._projection',
     sources = projection_srcs,
-    libraries = ['boost_python','dana.sigmapi._sigmapi'],
+    libraries = ['boost_python'],
     include_dirs =  [numpy.get_include(),include_dir],
     extra_objects=[sigmapi]
 )
@@ -65,7 +65,7 @@ combination_ext = Extension (
     sources = combination_srcs,
     libraries = ['boost_python'],
     include_dirs =  [numpy.get_include(),include_dir],
-    extra_objects=[core]
+    extra_objects=[sigmapi]
 )
 
 setup (name='dana.sigmapi',
