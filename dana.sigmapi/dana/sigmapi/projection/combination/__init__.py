@@ -18,7 +18,7 @@ It can be precisely defined using four different notions:
   - a distance : it defines how to measure distances between a source and a
                  target and can be either the euclidean, the manhattan or the
                  max distance. Each distance can be made toric.
-                 
+
   - a shape    : it defines the most general set of sources that can
                  potentially be connected to a target. It can be a point, 
                  a box of a given size or a disc of a given radius.
@@ -32,4 +32,4 @@ It can be precisely defined using four different notions:
 #from dana.sigmapi.projection._projection import *
 from _combination import *
 
-__all__ = ['combination','linear']
+__all__ = ['Combination','Linear']

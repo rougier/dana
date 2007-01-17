@@ -14,8 +14,8 @@
 #include <boost/python.hpp>
 #include "core/layer.h"
 #include "core/object.h"
-#include "sigmapi/unit.h"
-#include "sigmapi/link.h"
+#include "../unit.h"
+#include "../link.h"
 #include "combination/combination.h"
 
 using namespace boost::python;

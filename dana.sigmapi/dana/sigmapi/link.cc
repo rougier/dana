@@ -8,8 +8,8 @@
 // $Id$
 
 
-#include "sigmapi/link.h"
-#include "sigmapi/unit.h"
+#include "link.h"
+#include "unit.h"
 
 using namespace dana::sigmapi;
 using namespace dana;
@@ -101,6 +101,12 @@ Link::boost (void)
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Link> >();
 
+    enum_<LinkType>("LinkType")
+		.value("SIGMAPI_MAX", SIGMAPI_MAX)
+		.value("SIGMAPI_PROD", SIGMAPI_PROD)
+// 		.export_values()
+		;
+
     class_<Link, bases<core::Link> > ("Link",
     "======================================================================\n"
     "\n"
@@ -113,7 +119,7 @@ Link::boost (void)
     "   weight: weight of the link\n"
     "\n"
     "======================================================================\n",
-        
+
          init<LinkType> ()
          )
         .add_property ("weight", &Link::get_weight, &Link::set_weight)

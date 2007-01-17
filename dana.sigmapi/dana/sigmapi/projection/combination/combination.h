@@ -16,7 +16,7 @@
 #include "core/link.h"
 #include "core/layer.h"
 #include "core/map.h"
-#include "sigmapi/link.h"
+#include "../../link.h"
 //#include "core/object.h"
 
 using namespace boost::python;
@@ -28,7 +28,7 @@ namespace dana { namespace sigmapi { namespace projection { namespace combinatio
     // =========================================================================
 	typedef boost::shared_ptr<class Combination>  CombinationPtr;
 	typedef boost::shared_ptr<class Linear> LinearPtr;
-    
+
     // =========================================================================
 	class Combination {
 		public:

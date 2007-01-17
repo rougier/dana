@@ -12,6 +12,7 @@
 #include "core/map.h"
 
 using namespace dana::sigmapi::projection;
+//using namespace dana::sigmapi;
 
 Projection *Projection::current = 0;
 
@@ -39,7 +40,7 @@ void Projection::connect_all_to_one(float weight)
 {
 	core::LinkPtr linkptr;
 	sigmapi::Link * link;
-	linkptr = core::LinkPtr (new sigmapi::Link (sigmapi::LinkType(SIGMAPI_MAX)));
+	linkptr = core::LinkPtr (new sigmapi::Link (LinkType(SIGMAPI_MAX)));
 	link = (dana::sigmapi::Link*) (linkptr.get());
 	for(int i = 0 ; i < src1->size();i++)
 	{
@@ -60,10 +61,9 @@ void Projection::connect_point_mod_one(float weight)
 	{
 		core::LinkPtr linkptr;
 		sigmapi::Link * link;
-		//linkptr = core::LinkPtr (new sigmapi::Link (sigmapi::LinkType(SIGMAPI_MAX)));
 		for(int i = 0 ; i < src1->size();i++)
 		{
-			linkptr = core::LinkPtr (new sigmapi::Link (sigmapi::LinkType(SIGMAPI_PROD)));	
+			linkptr = core::LinkPtr (new sigmapi::Link (LinkType(SIGMAPI_PROD)));	
 			link = (dana::sigmapi::Link*) (linkptr.get());	
 			link->add_source(src1->get(i));
 			link->add_source(src2->get(0));
@@ -80,10 +80,9 @@ void Projection::connect_point_mod_one(float weight)
 		}
 		core::LinkPtr linkptr;
 		sigmapi::Link * link;
-		//linkptr = core::LinkPtr (new sigmapi::Link (sigmapi::LinkType(SIGMAPI_MAX)));
 		for(int i = 0 ; i < src1->size();i++)
 		{
-			linkptr = core::LinkPtr (new sigmapi::Link (sigmapi::LinkType(SIGMAPI_PROD)));	
+			linkptr = core::LinkPtr (new sigmapi::Link (LinkType(SIGMAPI_PROD)));	
 			link = (dana::sigmapi::Link*) (linkptr.get());	
 			link->add_source(src1->get(i));
 			link->add_source(src2->get(i));
@@ -102,10 +101,9 @@ void Projection::connect_dog_mod_one(float A,float a,float B,float b)
 		printf("Cannot call connect_dog_mod_one with size(src1)!=size(dst) && size(src2)!=1");
 		return;
 	}
-	//linkptr = core::LinkPtr (new sigmapi::Link (sigmapi::LinkType(SIGMAPI_MAX)));
 	for(int i = 0 ; i < dst->size();i++)
 	{
-		linkptr = core::LinkPtr (new sigmapi::Link (sigmapi::LinkType(SIGMAPI_PROD)));	
+		linkptr = core::LinkPtr (new sigmapi::Link (LinkType(SIGMAPI_PROD)));	
 		link = (dana::sigmapi::Link*) (linkptr.get());
 		for(int j = 0 ; j < src1->size() ; j++)
 		{

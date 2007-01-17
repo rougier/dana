@@ -52,7 +52,7 @@ namespace dana { namespace sigmapi {
         virtual ~Link (void);
 
         core::UnitPtr get_source (const int i) const;
-        void	add_source (const core::UnitPtr src);
+	void add_source (const core::UnitPtr src);
         float	get_weight (void) const;
         void	set_weight (const float w);
 
