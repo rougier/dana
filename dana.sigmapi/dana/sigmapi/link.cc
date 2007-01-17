@@ -18,7 +18,7 @@ using namespace dana;
 // ----------------------------------------------------------------------------
 Link::Link (LinkType t) : core::Link()
 {
-	type = t;
+    type = t;
 }
 
 //
@@ -31,13 +31,13 @@ Link::~Link (void)
 core::UnitPtr
 Link::get_source (const int i) const
 {
-	return source[i];
+    return source[i];
 }
 
 //
 // ----------------------------------------------------------------------------
 void
-Link::add_source (core::UnitPtr src) 
+Link::add_source (core::UnitPtr src)
 {
     source.push_back(src);
 }
@@ -47,7 +47,7 @@ Link::add_source (core::UnitPtr src)
 float
 Link::get_weight (void) const
 {
-	return weight;
+    return weight;
 }
 
 //
@@ -64,30 +64,30 @@ Link::set_weight (float w)
 float
 Link::compute(void)
 {
-	float value = 0.0;
+    float value = 0.0;
     switch(type)
+    {
+    case SIGMAPI_MAX:
         {
-        case SIGMAPI_MAX:
+            for(int i = 0 ; i < source.size() ; i ++)
             {
-                for(int i = 0 ; i < source.size() ; i ++)
-                    {
-                        value = MAX(value, source[i]->potential);
-                    }
-                break;
+                value = MAX(value, source[i]->potential);
             }
-        case SIGMAPI_PROD:
-            {
-                value = 1.0;
-                for(int i = 0 ; i < source.size(); i++)
-                    {
-                        value *= source[i]->potential;
-                    }
-                value*= weight;
-                break;
-            }
-        default:
             break;
         }
+    case SIGMAPI_PROD:
+        {
+            value = 1.0;
+            for(int i = 0 ; i < source.size(); i++)
+            {
+                value *= source[i]->potential;
+            }
+            value*= weight;
+            break;
+        }
+    default:
+        break;
+    }
     return value;
 }
 
@@ -101,11 +101,11 @@ Link::boost (void)
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Link> >();
 
-//     enum_<LinkType>("LinkType")
-// 		.value("SIGMAPI_MAX", SIGMAPI_MAX)
-// 		.value("SIGMAPI_PROD", SIGMAPI_PROD)
-// 		;
-    
+    //     enum_<LinkType>("LinkType")
+    // 		.value("SIGMAPI_MAX", SIGMAPI_MAX)
+    // 		.value("SIGMAPI_PROD", SIGMAPI_PROD)
+    // 		;
+
     class_<Link, bases<core::Link> > ("Link",
                                       "======================================================================\n"
                                       "\n"
@@ -118,9 +118,9 @@ Link::boost (void)
                                       "   weight: weight of the link\n"
                                       "\n"
                                       "======================================================================\n",
-                                      
+
                                       init<LinkType> ()
-                                      )
-        .add_property ("weight", &Link::get_weight, &Link::set_weight)
-        ;
+                                     )
+    .add_property ("weight", &Link::get_weight, &Link::set_weight)
+    ;
 }

@@ -26,42 +26,57 @@
 #include "unit.h"
 #include <vector>
 
-inline float MIN(float x,float y) { if(x < y) return x; return y;}
-inline float MAX(float x,float y) { if(x < y) return y; return x;}
+inline float MIN(float x,float y)
+{
+    if(x < y)
+        return x;
+    return y;
+}
+inline float MAX(float x,float y)
+{
+    if(x < y)
+        return y;
+    return x;
+}
 
 using namespace boost::python;
 
-namespace dana { namespace sigmapi {
+namespace dana
+{
+namespace sigmapi
+{
 
-    typedef enum 
-        {
-            SIGMAPI_MAX,
-            SIGMAPI_PROD
-        }
-    LinkType;
+typedef enum
+{
+    SIGMAPI_MAX,
+    SIGMAPI_PROD
+}
+LinkType;
 
 
-    class Link : public core::Link {
-    public:
-        std::vector<core::UnitPtr> source;
-        float	weight;
-        LinkType type;
+class Link : public core::Link
+{
+public:
+    std::vector<core::UnitPtr> source;
+    float	weight;
+    LinkType type;
 
-    public:
-        Link (LinkType t);
-        virtual ~Link (void);
+public:
+    Link (LinkType t);
+    virtual ~Link (void);
 
-        core::UnitPtr get_source (const int i) const;
-	void add_source (const core::UnitPtr src);
-        float	get_weight (void) const;
-        void	set_weight (const float w);
+    core::UnitPtr get_source (const int i) const;
+    void add_source (const core::UnitPtr src);
+    float	get_weight (void) const;
+    void	set_weight (const float w);
 
-        float compute(void);
-    public:
-        static void	boost (void);
-    };
+    float compute(void);
+public:
+    static void	boost (void);
+};
 
-}} // namespace dana::core
+}
+} // namespace dana::core
 
 #endif
 

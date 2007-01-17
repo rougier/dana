@@ -16,33 +16,38 @@
 
 using namespace boost::python;
 
-namespace dana { namespace sigmapi {
+namespace dana
+{
+namespace sigmapi
+{
 
-	// Unit class
-	class Unit : public core::Unit {
+// Unit class
+class Unit : public core::Unit
+{
 
-	public:
-		std::vector<core::LinkPtr> afferents;
-		std::vector<core::LinkPtr> laterals;
+public:
+    std::vector<core::LinkPtr> afferents;
+    std::vector<core::LinkPtr> laterals;
 
-	public:
-        // Constructor
-        Unit(void);
-	
-	// Connect
-	void connect (core::LinkPtr link);
-	
-        // Desctructor
-        virtual ~Unit(void);
-        
-        // Evaluate new potential and return difference
-        virtual float compute_dp (void);
-        
-    public:
-        // Boost python extension
-        static void boost (void);
-    };
-    
-}} // namespace dana::cnft
+public:
+    // Constructor
+    Unit(void);
+
+    // Connect
+    void connect (core::LinkPtr link);
+
+    // Desctructor
+    virtual ~Unit(void);
+
+    // Evaluate new potential and return difference
+    virtual float compute_dp (void);
+
+public:
+    // Boost python extension
+    static void boost (void);
+};
+
+}
+} // namespace dana::cnft
 
 #endif

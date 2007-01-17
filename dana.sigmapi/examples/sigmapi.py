@@ -4,6 +4,7 @@ import matplotlib.pylab as pylab
 import matplotlib.colors as colors
 
 import dana.core as core
+import dana.cnft as cnft
 import dana.sigmapi as sigmapi
 import dana.sigmapi.projection as proj
 import dana.sigmapi.projection.combination as combine
@@ -55,8 +56,7 @@ Output = core.Map((width,height), (1,1))
 Output.append(core.Layer())
 Output[0].fill(sigmapi.Unit)
 Output.name='Output'
-
-Output.spec = sigmapi.Spec();
+Output.spec = cnft.Spec();
 net.append(Output)
 
 Output.spec.alpha = 7.0

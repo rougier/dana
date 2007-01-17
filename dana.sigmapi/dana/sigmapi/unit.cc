@@ -9,9 +9,9 @@
 
 #include "core/map.h"
 #include "core/layer.h"
+#include "core/spec.h"
 #include "link.h"
 #include "unit.h"
-#include "spec.h"
 #include <iostream>
 
 using namespace boost::python::numeric;
@@ -32,7 +32,7 @@ Unit::~Unit(void)
 void
 Unit::connect(core::LinkPtr link)
 {
-	afferents.push_back(link);
+    afferents.push_back(link);
 }
 
 
@@ -42,54 +42,55 @@ Unit::connect(core::LinkPtr link)
 float
 Unit::compute_dp (void)
 {
-	object spec = layer->map->get_spec();
-	
-	float tau      = extract<float> (spec.attr("tau"));
-	float alpha    = extract<float> (spec.attr("alpha"));
-	float baseline = extract<float> (spec.attr("baseline"));
-	float min_act  = extract<float> (spec.attr("min_act"));
-	float max_act  = extract<float> (spec.attr("max_act"));
-	
-	float input = 0;
-	unsigned int size = afferents.size();
+    object spec = layer->map->get_spec();
 
-	for (unsigned int i=0; i<size; i++)
-        {
-            core::Link * aff = (afferents[i]).get();
-            input += ((sigmapi::Link *)aff)->compute();
-        }
+    float tau      = extract<float> (spec.attr("tau"));
+    float alpha    = extract<float> (spec.attr("alpha"));
+    float baseline = extract<float> (spec.attr("baseline"));
+    float min_act  = extract<float> (spec.attr("min_act"));
+    float max_act  = extract<float> (spec.attr("max_act"));
 
-	float lateral = 0;
-	size = laterals.size();
+    float input = 0;
+    unsigned int size = afferents.size();
 
-	for (unsigned int i=0; i<size; i++)
-        {
-            core::Link * lat = (laterals[i]).get();
-        	lateral += ((sigmapi::Link*)lat)->compute();
-        }
-	
-	float du = (-potential + baseline + (1.0f/alpha)*(lateral + input)) / tau;
-	float value = potential;
-	potential += du;
-    
-	if (potential < min_act)
+    for (unsigned int i=0; i<size; i++)
+    {
+        core::Link * aff = (afferents[i]).get();
+        input += ((sigmapi::Link *)aff)->compute();
+    }
+
+    float lateral = 0;
+    size = laterals.size();
+
+    for (unsigned int i=0; i<size; i++)
+    {
+        core::Link * lat = (laterals[i]).get();
+        lateral += ((sigmapi::Link*)lat)->compute();
+    }
+
+    float du = (-potential + baseline + (1.0f/alpha)*(lateral + input)) / tau;
+    float value = potential;
+    potential += du;
+
+    if (potential < min_act)
         potential = min_act;
 
-	if (potential > max_act)
+    if (potential > max_act)
         potential = max_act;
 
-	return value-potential;
+    return value-potential;
 }
 
 // ============================================================================
 //    Boost wrapping code
 // ============================================================================
 void
-Unit::boost (void) {
-	using namespace boost::python;
-	register_ptr_to_python< boost::shared_ptr<Unit> >();
-	
-	class_<Unit, bases<core::Unit> >("Unit",
+Unit::boost (void)
+{
+    using namespace boost::python;
+    register_ptr_to_python< boost::shared_ptr<Unit> >();
+
+    class_<Unit, bases<core::Unit> >("Unit",
                                      "======================================================================\n"
                                      "\n"
                                      "A unit is a potential that is computed on the basis of some external\n"
@@ -103,6 +104,6 @@ Unit::boost (void) {
                                      "\n"
                                      "======================================================================\n",
                                      init<>(
-                                            "__init__ () -- initialize unit\n")
-                                     );
+                                         "__init__ () -- initialize unit\n")
+                                    );
 }

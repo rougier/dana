@@ -21,35 +21,43 @@
 using namespace boost::python;
 
 
-namespace dana { namespace sigmapi { namespace projection {
-	
-	class Projection : public core::Object {
-	public:
-		static Projection *current;
-		combination::CombinationPtr combination;
+namespace dana
+{
+namespace sigmapi
+{
+namespace projection
+{
 
-    public:
-        Projection (void);
-        virtual ~Projection (void); 
-        void connect (void);
-	void connect_all_to_one(float weight);
-	void connect_point_mod_one(float weight);
-	void connect_dog_mod_one(float A,float a,float B,float b);
-	float dog(core::UnitPtr src,core::UnitPtr dst,float A,float a,float B,float b);	
-	
-        static void static_connect (void);
+class Projection : public core::Object
+{
+public:
+    static Projection *current;
+    combination::CombinationPtr combination;
 
-    public:
-        core::LayerPtr          src1;
-        core::LayerPtr          src2;
-	core::LayerPtr		dst;
-        bool                    self;
+public:
+    Projection (void);
+    virtual ~Projection (void);
+    void connect (void);
+    void connect_all_to_one(float weight);
+    void connect_point_mod_one(float weight);
+    void connect_dog_mod_one(float A,float a,float B,float b);
+    float dog(core::UnitPtr src,core::UnitPtr dst,float A,float a,float B,float b);
 
-    public:
-        static void boost (void);
-    };
+    static void static_connect (void);
 
-}}} // namespace dana::sigmapi::projection
+public:
+    core::LayerPtr          src1;
+    core::LayerPtr          src2;
+    core::LayerPtr		dst;
+    bool                    self;
+
+public:
+    static void boost (void);
+};
+
+}
+}
+} // namespace dana::sigmapi::projection
 
 #endif
 

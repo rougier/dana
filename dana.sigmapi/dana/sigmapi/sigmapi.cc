@@ -9,11 +9,10 @@
 
 #include "link.h"
 #include "unit.h"
-#include "spec.h"
 
-BOOST_PYTHON_MODULE(_sigmapi) {
+BOOST_PYTHON_MODULE(_sigmapi)
+{
     using namespace dana::sigmapi;
     Link::boost();
     Unit::boost();
-    Spec::boost();
 }

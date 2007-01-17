@@ -19,4 +19,4 @@ The SigmaPi library implements Sigma-Pi type Neurons
 from dana.core import *
 from _sigmapi import *
 
-__all__ = ['Link','Unit', 'Spec']
+__all__ = ['Link','Unit']
