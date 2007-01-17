@@ -18,7 +18,7 @@ using namespace boost::python;
 namespace dana { namespace sigmapi {
 
     class Spec : public core::Spec
-    {
+        {
     	public:
     	    float tau;
             float alpha;
@@ -38,7 +38,7 @@ namespace dana { namespace sigmapi {
         public:
             // Boost python extension
             static void boost (void);
-    };
+        };
 
 }} // namespace dana::core
 

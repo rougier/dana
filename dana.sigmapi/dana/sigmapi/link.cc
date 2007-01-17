@@ -69,20 +69,20 @@ Link::compute(void)
         {
         case SIGMAPI_MAX:
             {
-		for(int i = 0 ; i < source.size() ; i ++)
-		{
-			value = MAX(value, source[i]->potential);
-		}
+                for(int i = 0 ; i < source.size() ; i ++)
+                    {
+                        value = MAX(value, source[i]->potential);
+                    }
                 break;
             }
         case SIGMAPI_PROD:
             {
-		value = 1.0;
+                value = 1.0;
                 for(int i = 0 ; i < source.size(); i++)
-		{
-			value *= source[i]->potential;
-		}
-		value*= weight;
+                    {
+                        value *= source[i]->potential;
+                    }
+                value*= weight;
                 break;
             }
         default:
@@ -101,28 +101,26 @@ Link::boost (void)
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Link> >();
 
-    enum_<LinkType>("LinkType")
-		.value("SIGMAPI_MAX", SIGMAPI_MAX)
-		.value("SIGMAPI_PROD", SIGMAPI_PROD)
-// 		.export_values()
-		;
-
+//     enum_<LinkType>("LinkType")
+// 		.value("SIGMAPI_MAX", SIGMAPI_MAX)
+// 		.value("SIGMAPI_PROD", SIGMAPI_PROD)
+// 		;
+    
     class_<Link, bases<core::Link> > ("Link",
-    "======================================================================\n"
-    "\n"
-    "A link describes the influence of a source over a target and is owned\n"
-    "by the target.\n"
-    "\n"
-    "Attributes:\n"
-    "-----------\n"
-    "   source: source units\n"
-    "   weight: weight of the link\n"
-    "\n"
-    "======================================================================\n",
-
-         init<LinkType> ()
-         )
+                                      "======================================================================\n"
+                                      "\n"
+                                      "A link describes the influence of a source over a target and is owned\n"
+                                      "by the target.\n"
+                                      "\n"
+                                      "Attributes:\n"
+                                      "-----------\n"
+                                      "   source: source units\n"
+                                      "   weight: weight of the link\n"
+                                      "\n"
+                                      "======================================================================\n",
+                                      
+                                      init<LinkType> ()
+                                      )
         .add_property ("weight", &Link::get_weight, &Link::set_weight)
-        //.add_property ("source", &Link::get_source, &Link::set_source)
         ;
 }

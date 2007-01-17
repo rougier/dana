@@ -17,32 +17,32 @@
 using namespace boost::python;
 
 namespace dana { namespace sigmapi {
-    //typedef boost::shared_ptr<class Link> LinkPtr;
-   //typedef boost::shared_ptr<class Unit> UnitPtr;
-    // Unit class
-    class Unit : public core::Unit {
 
+	// Unit class
+	class Unit : public core::Unit {
+
+	public:
+		std::vector<core::LinkPtr> afferents;
+		std::vector<core::LinkPtr> laterals;
+
+	public:
+        // Constructor
+        Unit(void);
+	
+	// Connect
+	void connect (core::LinkPtr link);
+	
+        // Desctructor
+        virtual ~Unit(void);
+        
+        // Evaluate new potential and return difference
+        virtual float compute_dp (void);
+        
     public:
-        std::vector<core::LinkPtr> afferents;
-        std::vector<core::LinkPtr> laterals;
-
-        public:
-            // Constructor
-            Unit(void);
-
-            // Desctructor
-            virtual ~Unit(void);
-
-	    //virtual void connect (core::UnitPtr source, float weight);
-            //void connect (core::LinkPtr link);
-            // Evaluate new potential and return difference
-            virtual float compute_dp (void);
-
-        public:
-            // Boost python extension
-            static void boost (void);
+        // Boost python extension
+        static void boost (void);
     };
-
+    
 }} // namespace dana::cnft
 
 #endif

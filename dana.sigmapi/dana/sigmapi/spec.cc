@@ -42,26 +42,26 @@ Spec::boost (void)
     register_ptr_to_python< boost::shared_ptr<Spec> >();
 
     class_<Spec, bases<core::Spec> > ("Spec",
-         "===================================================================\n"
-         "\n"
-         "A spec is an object describing a set of parameters. The base spec\n"
-         "does not hold any parameter and must be derived for an object to\n"
-         "hold any useful parameters.\n"
-         "\n"
-         "Attributes:\n"
-         "-----------\n"
-         "   tau:      Time constant\n"
-         "   alpha:    Scaling factor\n"
-         "   min_du:   Minimum difference of activity to stop evaluation\n"
-         "   baseline: Base unit activation\n"
-         "   lrate:    Learning rate\n"
-         "   min_act:  Minimum unit activation\n"
-         "   max_act:  Maximum unit activation\n"
-        "\n"
-        "===================================================================\n",
-            init< > (
-            "__init__() -- initializes spec\n")
-        )
+                                      "===================================================================\n"
+                                      "\n"
+                                      "A spec is an object describing a set of parameters. The base spec\n"
+                                      "does not hold any parameter and must be derived for an object to\n"
+                                      "hold any useful parameters.\n"
+                                      "\n"
+                                      "Attributes:\n"
+                                      "-----------\n"
+                                      "   tau:      Time constant\n"
+                                      "   alpha:    Scaling factor\n"
+                                      "   min_du:   Minimum difference of activity to stop evaluation\n"
+                                      "   baseline: Base unit activation\n"
+                                      "   lrate:    Learning rate\n"
+                                      "   min_act:  Minimum unit activation\n"
+                                      "   max_act:  Maximum unit activation\n"
+                                      "\n"
+                                      "===================================================================\n",
+                                      init< > (
+                                               "__init__() -- initializes spec\n")
+                                      )
         
         .def_readwrite ("tau",     &Spec::tau)
         .def_readwrite ("alpha",   &Spec::alpha)
