@@ -27,6 +27,7 @@ namespace dana { namespace core {
         float	weight;
 
     public:
+        Link (void);
         Link (UnitPtr const src, float const w);
         virtual ~Link (void);
     
