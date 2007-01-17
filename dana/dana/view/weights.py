@@ -16,9 +16,9 @@
 
 from matplotlib.backend_bases import NavigationToolbar2 as toolbar
 import matplotlib.pylab as pylab
+import matplotlib.colorbar as colorbar
 import matplotlib.colors as colors
 import dana.core as core
-
 
 def mouse_move(self, event):
     """
@@ -67,9 +67,9 @@ class WeightsView (object):
         
         # Create new figure
         if h<w:
-            fig = pylab.figure (figsize= (size, h/float(w)*size))
+            fig = pylab.figure (figsize= (size*1.2, h/float(w)*size))
         else:
-            fig = pylab.figure (figsize= (w/float(h)*size, size))
+            fig = pylab.figure (figsize= (w/float(h)*size*1.2, size))
 
         # Fetish colormap
         data = {
@@ -81,10 +81,10 @@ class WeightsView (object):
         # Creation of axes (one per unit)
         self.units = []
         for unit in layer:
-            frame = ((unit.position[0] * (source.map.shape[0]+1)+1)/float(w),
-                     (unit.position[1] * (source.map.shape[1]+1)+1)/float(h),
-                     (source.map.shape[0])/float(w),
-                     (source.map.shape[1])/float(h))
+            frame = ( ((unit.position[0] * (source.map.shape[0]+1)+1)/float(w))/1.2,
+                      (unit.position[1] * (source.map.shape[1]+1)+1)/float(h),
+                      ((source.map.shape[0])/float(w))/1.2,
+                      (source.map.shape[1])/float(h))
             axes = pylab.axes(frame)
             axes.unit = unit
             axes.data = unit.weights(source)
@@ -92,6 +92,14 @@ class WeightsView (object):
                              origin='lower', interpolation='nearest')
             pylab.setp(axes, xticks=[], yticks=[])
             self.units.append ( (unit, axes, im) )
+
+        axes = pylab.axes ( (0.85, 0.1, .1, .8) )
+        axes.axis("off")
+        cax, kw = colorbar.make_axes(axes, fraction=0.75, pad=0.25)
+        c = colorbar.ColorbarBase(ax=cax, cmap=cm, norm=colors.normalize (-1,1))
+                               
+
+        
         return
 
     def show(self):
@@ -124,7 +132,7 @@ if __name__ == '__main__':
     m0[0].fill(core.Unit)
     net.append(m0)
     
-    m1 = core.Map( (5, 5), (0,0) )
+    m1 = core.Map( (10, 5), (0,0) )
     m1.append( core.Layer() )
     m1[0].fill(core.Unit)
     net.append(m1)
