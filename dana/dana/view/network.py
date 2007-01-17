@@ -18,6 +18,7 @@
 
 from matplotlib.backend_bases import NavigationToolbar2 as toolbar
 import matplotlib.pylab as pylab
+import matplotlib.colorbar as colorbar
 import matplotlib.colors as colors
 import dana.core as core
 
@@ -59,6 +60,7 @@ class NetworkView(object):
         
         w,h = network.shape
         fig = pylab.figure (figsize= (size, h/float(w)*size))
+                
         pylab.connect ('button_press_event', self.on_click)
         data = {
             'red':   ((0., 0., 0.), (.5, 1., 1.), (.75, 1., 1.), (1., 1., 1.)),
@@ -71,7 +73,8 @@ class NetworkView(object):
         self.unit = None
         
         for m in network:
-            axes = pylab.axes (m.frame)
+            x,y,w,h = m.frame
+            axes = pylab.axes ((x,y,w,h))            
             axes.map = m
             if len(m) > 0:
                 axes.data = m[0].potentials()
