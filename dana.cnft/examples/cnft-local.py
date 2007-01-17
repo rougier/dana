@@ -91,7 +91,7 @@ for i in xrange(Input.shape[0]):
         Input[0].unit(i,j).potential =  + math.exp (-(x0*x0+y0*y0)/0.025) + math.exp (-(x1*x1+y1*y1)/0.025) + .05*random.uniform(-1.0, 1.0)
         
 # Show network
-netview = view.view (net)
+netview = view.View (net)
 
 manager = pylab.get_current_fig_manager()
 cnt = 0
