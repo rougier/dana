@@ -34,7 +34,7 @@ namespace dana { namespace sigmapi {
             virtual ~Unit(void);
 
 	    //virtual void connect (core::UnitPtr source, float weight);
-            void connect (core::LinkPtr link);
+            //void connect (core::LinkPtr link);
             // Evaluate new potential and return difference
             virtual float compute_dp (void);
 

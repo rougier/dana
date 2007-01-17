@@ -73,11 +73,11 @@ Unit::compute_dp (void)
 	return value-potential;
 }
 
-void
-Unit::connect(core::LinkPtr link)
-{
-	afferents.push_back(link);
-}
+// void
+// Unit::connect(core::LinkPtr link)
+// {
+// 	afferents.push_back(link);
+// }
 
 // ============================================================================
 //    Boost wrapping code
