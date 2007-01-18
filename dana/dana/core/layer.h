@@ -43,17 +43,16 @@ namespace dana { namespace core {
             virtual UnitPtr      get (const int x, const int y) const;
             virtual int          size (void) const;
             virtual int          fill (object type);
-            virtual void         clear (void);
 
             // activity management
             // =================================================================
+            virtual void         clear (void);
             virtual float        compute_dp (void);
             virtual float        compute_dw (void);
 
             //  attribute manipulation
             // =================================================================
-//            virtual MapPtr       get_map (void) const;
-            virtual Map *        get_map (void) {return map;}
+            virtual Map *        get_map (void);
             virtual void         set_map (class Map *m);
             virtual object       get_spec (void) const;
             virtual void         set_spec (const object s);

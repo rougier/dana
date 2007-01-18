@@ -45,12 +45,12 @@ namespace dana { namespace core {
             virtual void         append (MapPtr layer);
             virtual MapPtr       get (const int index);
             virtual int          size (void) const;
-            virtual void         clear (void);
 
             //  activity management
             // =================================================================
             virtual void         evaluate (unsigned long n=1,
                                            bool use_thread=false);
+            virtual void         clear (void);
         
             //  attribute manipulation
             // =================================================================

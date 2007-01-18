@@ -75,15 +75,6 @@ Network::size (void) const
 }
 
 // =============================================================================
-//  remove all maps
-// =============================================================================
-void
-Network::clear (void)
-{
-    maps.clear();
-}
-
-// =============================================================================
 //  evaluate maps activity
 // =============================================================================
 void
@@ -109,6 +100,17 @@ Network::evaluate (unsigned long epochs, bool use_thread)
         }
      }
 }
+
+// =============================================================================
+//  Clear all maps
+// =============================================================================
+void
+Network::clear (void)
+{
+    for (unsigned int i = 0; i < maps.size(); i++)
+        maps[i]->clear();
+}
+
 
 // =============================================================================
 //  get shape
@@ -239,7 +241,7 @@ Network::boost (void)
         "append(map) -- append map to end\n")
         
         .def ("clear",       &Network::clear,
-        "clear() -- remove all maps\n")
+        "clear() -- clear map activity\n")
         
 
         .def ("evaluate",    &Network::evaluate,

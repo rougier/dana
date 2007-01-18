@@ -49,7 +49,6 @@ namespace dana { namespace core {
             virtual void       append (LayerPtr layer);
             virtual LayerPtr   get (const int index) const;
             virtual int        size (void) const;
-            virtual void       clear (void);
             
             // proxied management (default to layer 0)
             // =================================================================
@@ -62,6 +61,7 @@ namespace dana { namespace core {
             // activity management
             // =================================================================
             static void        evaluate  (void);
+            virtual void       clear (void);
             virtual void       compute_dp  (void);
             virtual void       compute_dw  (void);
             

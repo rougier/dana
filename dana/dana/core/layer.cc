@@ -139,7 +139,8 @@ Layer::fill (object type)
 void
 Layer::clear (void)
 {
-    units.clear();
+    for (unsigned int i = 0; i< units.size(); i++)
+        units[i].potential = 0.0f;
 }
 
 // =============================================================================
@@ -178,17 +179,14 @@ Layer::compute_dw (void)
     return d;
 }
 
-
 // =============================================================================
 //  get owning layer
 // =============================================================================
-/*
-MapPtr
+Map *
 Layer::get_map (void) const
 {
-    return MapPtr(map);
+    return map;
 }
-*/
 
 // =============================================================================
 //  set owning layer
@@ -285,8 +283,6 @@ Layer::boost (void)
 
         .add_property("map", 
           make_function (&Layer::get_map, return_value_policy<reference_existing_object>()))
-
-//        .def ("map", &Layer::get_map, return_value_policy < reference_existing_object > () )
 
         .def ("compute_dp", &Layer::compute_dp,
         "compute_dp() -> float -- computes potentials and return dp\n")
