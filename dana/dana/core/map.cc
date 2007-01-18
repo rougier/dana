@@ -129,7 +129,7 @@ Map::get_potentials (void) const
 void
 Map::clear (void)
 {
-    for (int i=0; i < layer->size(); i++)
+    for (unsigned int i=0; i < layers.size(); i++)
         layers[i]->clear();
 }
 

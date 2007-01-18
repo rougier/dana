@@ -52,7 +52,7 @@ namespace dana { namespace core {
 
             //  attribute manipulation
             // =================================================================
-            virtual Map *        get_map (void);
+            virtual Map *        get_map (void) const;
             virtual void         set_map (class Map *m);
             virtual object       get_spec (void) const;
             virtual void         set_spec (const object s);

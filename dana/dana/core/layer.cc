@@ -21,7 +21,7 @@ using namespace dana::core;
 // =============================================================================
 Layer::Layer (void) : Object()
 {
-    clear();
+    units.clear();
     map = 0;
 }
 
@@ -140,7 +140,7 @@ void
 Layer::clear (void)
 {
     for (unsigned int i = 0; i< units.size(); i++)
-        units[i].potential = 0.0f;
+        units[i]->potential = 0.0f;
 }
 
 // =============================================================================
