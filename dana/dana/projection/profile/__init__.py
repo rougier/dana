@@ -10,13 +10,10 @@
 # 
 # $Id$
 #------------------------------------------------------------------------------
-""" Distributed Asyncronous Numerical Adaptive Computing Library
+""" Profile functions
 
-Distributed Asyncronous Numerical Adaptive Computing Library
-============================================================
-
-For a complete definition of what is DANA computing, please have a look at
-the article "DANA Computing - Foundations".
+A profile function describes the weight of a link between a source and a target
+as a function of their distance.
 
 """
 

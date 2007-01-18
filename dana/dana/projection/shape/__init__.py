@@ -10,13 +10,9 @@
 # 
 # $Id$
 #------------------------------------------------------------------------------
-""" Distributed Asyncronous Numerical Adaptive Computing Library
+""" Shape functions
 
-Distributed Asyncronous Numerical Adaptive Computing Library
-============================================================
-
-For a complete definition of what is DANA computing, please have a look at
-the article "DANA Computing - Foundations".
+Shape functions describes the overall shape of a link pattern.
 
 """
 

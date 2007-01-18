@@ -10,13 +10,10 @@
 # 
 # $Id$
 #------------------------------------------------------------------------------
-""" Distributed Asyncronous Numerical Adaptive Computing Library
+""" Distance functions
 
-Distributed Asyncronous Numerical Adaptive Computing Library
-============================================================
-
-For a complete definition of what is DANA computing, please have a look at
-the article "DANA Computing - Foundations".
+Distance functions implements various distances that can be used for measuring
+the distance between a source and a target.
 
 """
 

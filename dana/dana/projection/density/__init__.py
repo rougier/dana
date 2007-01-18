@@ -10,13 +10,10 @@
 # 
 # $Id$
 #------------------------------------------------------------------------------
-""" Distributed Asyncronous Numerical Adaptive Computing Library
+""" Density functions
 
-Distributed Asyncronous Numerical Adaptive Computing Library
-============================================================
-
-For a complete definition of what is DANA computing, please have a look at
-the article "DANA Computing - Foundations".
+A density is a function of the distanc between a source and a target describing
+the probability of the link betwwen source and target to be made.
 
 """
 
