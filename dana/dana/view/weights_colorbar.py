@@ -94,10 +94,10 @@ class WeightsView (object):
             pylab.setp(axes, xticks=[], yticks=[])
             self.units.append ( (unit, axes, im) )
 
-        axes = pylab.axes ( (0.85, 0.1, .1, .8) )
+        axes = pylab.axes ( (0.80, 0.1, .25, .8) )
         axes.axis("off")
-        pylab.title("              Activity levels")
-        cax, kw = colorbar.make_axes(axes, fraction=1/1.25, aspect = 20)
+        pylab.title("Activity levels")
+        cax, kw = colorbar.make_axes(axes, fraction=1/1.25, pad=-0.5, aspect = 20)
         c = colorbar.ColorbarBase(ax=cax, cmap=cm, norm=colors.normalize (-1,1))
                                
 
