@@ -29,7 +29,7 @@ include_dir = os.path.normpath (os.path.join (include_dir, '../include/dana/'))
 
 
 # Get sigmapi shared object filename
-from dana.sigmapi._sigmapi import __file__ as sigmapi
+#from dana.sigmapi._sigmapi import __file__ as sigmapi
 
 
 
@@ -56,7 +56,7 @@ projection_ext = Extension (
     sources = projection_srcs,
     libraries = ['boost_python'],
     include_dirs =  [numpy.get_include(),include_dir],
-    extra_objects=[sigmapi]
+    extra_objects=[core]
 )
 
 combination_srcs = glob.glob ("dana/sigmapi/projection/combination/*.cc")
@@ -65,7 +65,7 @@ combination_ext = Extension (
     sources = combination_srcs,
     libraries = ['boost_python'],
     include_dirs =  [numpy.get_include(),include_dir],
-    extra_objects=[sigmapi]
+    extra_objects=[core]
 )
 
 setup (name='dana.sigmapi',
