@@ -16,24 +16,27 @@ using namespace boost::python;
 
 namespace dana { namespace cnft {
 
-    // Unit class
     class Unit : public core::Unit {
+        public:
+            //  attributes
+            // =================================================================
 
         public:
-            // Constructor
+            //  life management
+            // =================================================================
             Unit(void);
-            
-            // Desctructor
             virtual ~Unit(void);
-            
-            // Evaluate new potential and return difference
+
+            //  object management
+            // =================================================================
             virtual float compute_dp (void);
-            
+            virtual float compute_dw (void);
+                        
         public:
-            // Boost python extension
+            // python export
+            // =================================================================
             static void boost (void);
     };
-
 }} // namespace dana::cnft
 
 #endif

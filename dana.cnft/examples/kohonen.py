@@ -73,7 +73,7 @@ p.connect()
 # Create focus laterals connections
 p.self = False
 p.density = proj.density.sparser(.5)
-p.profile = proj.profile.dog (3.15, 2.0/width, 0.9, 4.0/width)
+p.profile = proj.profile.dog (3.15, 2.0/width, 0.75, 4.0/width)
 p.shape = proj.shape.disc (10.0/width)
 p.src = Focus[0]
 p.dst = Focus[0]
@@ -82,12 +82,23 @@ p.connect()
 for u in Input[0]:
     u.potential = random.uniform(0.0, 1.0)
 
-for i in xrange(Input.shape[0]):
-    for j in xrange(Input.shape[1]):
-        x0 = i/float(Input.shape[0])-.25
-        y0 = j/float(Input.shape[1])-.25
-        Input[0].unit(i,j).potential =  + math.exp (-(x0*x0+y0*y0)/0.025) + .05*random.uniform(-1.0, 1.0)
-        
+
+def bubble():
+    x = random.uniform (-.5,.5)
+    y = random.uniform (-.5,.5)
+    
+    for i in xrange(Input.shape[0]):
+        for j in xrange(Input.shape[1]):
+            x0 = i/float(Input.shape[0])-.5+x
+            y0 = j/float(Input.shape[1])-.5+y
+            Input[0].unit(i,j).potential =  + math.exp (-(x0*x0+y0*y0)/0.025) + .05*random.uniform(-1.0, 1.0)
+
+
+def run():
+    net.clear()
+    bubble()
+    net.evaluate(10)
+
 # Show network
 netview = view.View (net)
 
