@@ -35,7 +35,7 @@ print "------------------------------------------------------------------------"
 
 # Create a new network
 net = core.Network ()
-width  = 40
+width  = 20
 height = width
 
 # Create the input map
@@ -48,15 +48,16 @@ net.append(Input)
 # Create the focus map 
 Focus = core.Map ( (width,height), (1,0) )
 Focus.append (core.Layer())
-Focus[0].fill(cnft.Unit)
+Focus[0].fill(cnft.KUnit)
 Focus.name = 'Focus'
 
 Focus.spec = cnft.Spec()
-Focus.spec.tau      = 0.75
+Focus.spec.tau      = 1.5
 Focus.spec.baseline = 0.1
 Focus.spec.alpha    = 12.5
 Focus.spec.min_act  = -1.0
 Focus.spec.max_act  =  1.0
+Focus.spec.lrate    = 0.01
 
 net.append(Focus)
 
@@ -64,7 +65,7 @@ net.append(Focus)
 p = proj.projection()
 p.distance = proj.distance.euclidean (True)
 p.density  = proj.density.full(1)
-p.profile  = proj.profile.uniform (0,.05)
+p.profile  = proj.profile.uniform (0,.2)
 p.shape    = proj.shape.disc(1)
 p.src = Input[0]
 p.dst = Focus[0]
@@ -73,14 +74,14 @@ p.connect()
 # Create focus laterals connections
 p.self = False
 p.density = proj.density.sparser(.5)
-p.profile = proj.profile.dog (3.15, 2.0/width, 0.75, 4.0/width)
+p.profile = proj.profile.dog (1.5, 2.0/width, 1, 4.0/width)
 p.shape = proj.shape.disc (10.0/width)
 p.src = Focus[0]
 p.dst = Focus[0]
 p.connect()
 
 for u in Input[0]:
-    u.potential = random.uniform(0.0, 1.0)
+    u.potential = random.uniform(0.0, 0.2)
 
 
 def bubble():
@@ -94,10 +95,10 @@ def bubble():
             Input[0].unit(i,j).potential =  + math.exp (-(x0*x0+y0*y0)/0.025) + .05*random.uniform(-1.0, 1.0)
 
 
-def run():
+def run(n=10):
     net.clear()
     bubble()
-    net.evaluate(10)
+    net.evaluate(n)
 
 # Show network
 netview = view.View (net)
