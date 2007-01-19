@@ -10,7 +10,7 @@
 # 
 # $Id$
 #------------------------------------------------------------------------------
-""" Interactive network view
+""" Intrractive network view with a colorbar 
 
     - mouse button 1 shows weight for the selected unit
     - mouse button 3 shows network activity
@@ -34,7 +34,8 @@ def mouse_move(self, event):
     """
 
     if (event.inaxes and event.inaxes.get_navigate() and
-        self._active not in ('ZOOM', 'PAN')):
+        self._active not in ('ZOOM', 'PAN') and
+        hasattr(event.inaxes, 'data')):
         try:
             x,y = int(event.xdata), int(event.ydata)
             s = "[%d,%d] : %.3f " % (x,y,event.inaxes.data[y,x])
@@ -59,8 +60,9 @@ class NetworkView(object):
         
         object.__init__(self)
         
+        dx = 1.25
         w,h = network.shape
-        fig = pylab.figure (figsize= (size, h/float(w)*size))
+        fig = pylab.figure (figsize= (size*dx, h/float(w)*size))
                 
         pylab.connect ('button_press_event', self.on_click)
         data = {
@@ -75,7 +77,7 @@ class NetworkView(object):
         
         for m in network:
             x,y,w,h = m.frame
-            axes = pylab.axes ((x,y,w,h))            
+            axes = pylab.axes ((x/dx,y,w/dx,h))            
             axes.map = m
             if len(m) > 0:
                 axes.data = m[0].potentials()
@@ -86,6 +88,12 @@ class NetworkView(object):
             pylab.title (title)
             pylab.setp(axes, xticks=[], yticks=[])
             self.maps.append( (m, axes, im) )
+        
+        axes = pylab.axes ( (0.80, 0.1, .25, .8) )
+        axes.axis("off")
+        pylab.title("Activity levels")
+        cax, kw = colorbar.make_axes(axes, fraction=1/1.25, pad=-0.5, aspect = 20)
+        c = colorbar.ColorbarBase(ax=cax, cmap=cm, norm=colors.normalize (-1,1))
 
         return
 
@@ -138,7 +146,7 @@ if __name__ == '__main__':
     import dana.projection.profile as profile
     
     net = core.Network()
-    size = 5
+    size = 20
 
     m0 = core.Map( (size, size), (0,0) )
     m0.append( core.Layer() )
@@ -146,7 +154,7 @@ if __name__ == '__main__':
     m0.name = "m0"
     net.append(m0)
 
-    m1 = core.Map( (size, size), (1,0) )
+    m1 = core.Map( (size, size), (1,1) )
     m1.append( core.Layer() )
     m1[0].fill(core.Unit)
     m1.name = "m1"

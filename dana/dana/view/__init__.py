@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #------------------------------------------------------------------------------
-# Copyright (c) 2006-2007 Nicolas Rougier.
+# Copyright (c) 2007,2006 Nicolas Rougier.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -13,7 +13,3 @@
 """ visualization tools
 
 """
-
-from netview import *
-
-__all__ = ['View']

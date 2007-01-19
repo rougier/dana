@@ -10,7 +10,7 @@
 # 
 # $Id$
 #------------------------------------------------------------------------------
-""" weights visualization
+""" Weights view
 
 """
 
@@ -51,9 +51,7 @@ toolbar.mouse_move = mouse_move
 
 
 class WeightsView (object):
-    """ Visualization of all layer weights from another one
-    
-    """    
+    """ Weights view """    
     
     def __init__(self, layer, source, size = 8):
         """ Create the figure for layer using weights coming from source """
