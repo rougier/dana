@@ -12,8 +12,8 @@
 #------------------------------------------------------------------------------
 """ Density functions
 
-A density is a function of the distanc between a source and a target describing
-the probability of the link betwwen source and target to be made.
+A density is a function of the distance between a source and a target describing
+the probability of the link between source and target to be made.
 
 """
 

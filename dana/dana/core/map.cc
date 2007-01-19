@@ -156,10 +156,10 @@ Map::evaluate (void)
 void
 Map::compute_dp (void)
 {
-    shuffle_index = (shuffle_index + 1) % (shuffles.size());
-
-    for (int i=0; i< size(); i++)
+    for (int i=0; i< size(); i++) {
+        shuffle_index = int ( (rand()/float(RAND_MAX)) * shuffles.size() );
         layers[i]->compute_dp ();
+    }
 }
 
 // =============================================================================
@@ -168,10 +168,10 @@ Map::compute_dp (void)
 void
 Map::compute_dw (void)
 {
-    shuffle_index = (shuffle_index + 1) % (shuffles.size());
-
-    for (int i=0; i< size(); i++)
+    for (int i=0; i< size(); i++) {
+        shuffle_index = int ( (rand()/float(RAND_MAX)) * shuffles.size() );
         layers[i]->compute_dw ();
+    }
 }
 
 // =============================================================================
@@ -240,11 +240,11 @@ Map::set_shape (const int w, const int h)
     std::vector<int> s;
     for (int i=0; i<w*h; i++)
         s.push_back (i);
-    for (int i=0; i < 20; i++) {
+    for (int i=0; i < 100; i++) {
         random_shuffle (s.begin(), s.end());
         shuffles.push_back(s);
     }
-
+    
     if (network)
         network->compute_geometry();
 }
