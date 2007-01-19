@@ -29,6 +29,7 @@ include_dir = os.path.normpath (os.path.join (include_dir, '../include/dana/'))
 
 
 # Get sigmapi shared object filename
+
 #from dana.sigmapi._sigmapi import __file__ as sigmapi
 
 
@@ -50,13 +51,33 @@ sigmapi_ext = Extension (
     extra_objects=[core]
 )
 
+print "Compiling dana.sigmapi ....."
+
+setup (name='dana.sigmapi',
+       version = '1.0',
+       author = 'Jeremy Fix',
+       author_email = 'Jeremy.Fix@loria.fr',
+       url = 'http://www.loria.fr/~fix',
+       description = "DANA: Sigma Pi Neurons",
+       packages = ['dana.sigmapi'],
+       ext_modules = [sigmapi_ext],
+       data_files= [("include/dana/sigmapi",glob.glob("dana/sigmapi/*.h"))]
+      )
+exec
+print "Compiling dana.sigmapi ....."
+from dana.sigmapi._sigmapi import __file__ as sigmapi
+
+# Get core shared object filename
+include_dir = core[:core.find('python')]
+include_dir = os.path.normpath (os.path.join (include_dir, '../include/dana/'))
+
 projection_srcs = glob.glob ("dana/sigmapi/projection/*.cc")
 projection_ext = Extension (
     'dana.sigmapi.projection._projection',
     sources = projection_srcs,
     libraries = ['boost_python'],
     include_dirs =  [numpy.get_include(),include_dir],
-    extra_objects=[core]
+    extra_objects=[core,sigmapi]
 )
 
 combination_srcs = glob.glob ("dana/sigmapi/projection/combination/*.cc")
@@ -65,7 +86,7 @@ combination_ext = Extension (
     sources = combination_srcs,
     libraries = ['boost_python'],
     include_dirs =  [numpy.get_include(),include_dir],
-    extra_objects=[core]
+    extra_objects=[core,sigmapi]
 )
 
 setup (name='dana.sigmapi',

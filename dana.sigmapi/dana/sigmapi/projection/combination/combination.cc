@@ -90,10 +90,8 @@ std::vector<core::LinkPtr> Linear::combine (core::UnitPtr dst,core::LayerPtr src
                 {
                     linkptr = core::LinkPtr (new sigmapi::Link (sigmapi::LinkType(SIGMAPI_PROD)));
                     link = (dana::sigmapi::Link*) (linkptr.get());
-                    link->add_source(src1->get
-                                     (i));
-                    link->add_source(src2->get
-                                     (src2_x+src2_y*src2_width));
+                    link->add_source(src1->get(i));
+                    link->add_source(src2->get(src2_x+src2_y*src2_width));
                     link->set_weight(weight);
                     links.push_back(linkptr);
                 }
@@ -102,7 +100,37 @@ std::vector<core::LinkPtr> Linear::combine (core::UnitPtr dst,core::LayerPtr src
     }
     else
     {
-        printf("[Error] : Cannot use Combination::Linear with a zero factor");
+        // En pratique, utilisée quand fac2x = fac2y = 0
+        // Hypothèse supplémentaire : size(src2) = 1
+        // Cette méthode est utilisée pour réaliser un facteur d'échelle entre 2 cartes
+        // Par exemple : projeter une carte nxn sur une sous partie d'une autre carte nxn;
+	if(src2->size() != 1)
+	{
+		printf("[Erreur] Cannot use Combine.linear with fac2 = 0 and size(src2) != 1");
+	}
+	else
+	{
+		core::LinkPtr linkptr;
+		sigmapi::Link * link;
+		int dst_x = dst->get_x();
+		int dst_y = dst->get_y();
+		int src1_width  = src1->map->width;
+		for(int i = 0 ; i < src1->size();i++)
+		{
+			int src1_x = (i % src1_width);
+			int src1_y = (i / src1_width);	
+			if(int(fac1_x*dst_x + offset_x - fac3_x*src1_x) == 0
+					&& int(fac1_y*dst_y + offset_y - fac3_y*src1_y) == 0)
+			{
+				linkptr = core::LinkPtr (new sigmapi::Link (sigmapi::LinkType(SIGMAPI_PROD)));
+				link = (dana::sigmapi::Link*) (linkptr.get());
+				link->add_source(src1->get(i));
+				link->add_source(src2->get(0));
+				link->set_weight(weight);
+				links.push_back(linkptr);			
+			}
+		}
+	}
     }
     return links;
 }

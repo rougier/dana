@@ -10,6 +10,7 @@
 #include <iostream>
 #include "projection.h"
 #include "core/map.h"
+#include <math.h>
 
 using namespace dana::sigmapi::projection;
 //using namespace dana::sigmapi;
@@ -31,7 +32,6 @@ void Projection::connect (void)
     {
         vlinkptr = combination->combine(dst->get
                                         (i),src1,src2);
-        //std::cout<<"je connect, size : "<<vlinkptr.size()<<std::endl;
         for(int j = 0 ; j < vlinkptr.size(); j++)
             ((dana::sigmapi::Unit*)(((core::UnitPtr)(dst->get
                                      (i))).get()))->connect(vlinkptr[j]);
@@ -124,7 +124,7 @@ void Projection::connect_dog_mod_one(float A,float a,float B,float b)
             float weight = dog(src1->get
                                (j),dst->get
                                (i),A,a,B,b);
-            if(!(abs(weight) <= 0.01))
+            if(!(float(abs(weight)) <= 0.01))
             {
                 link->set_weight(weight);
                 ((dana::sigmapi::Unit*)(((core::UnitPtr)(dst->get
