@@ -13,3 +13,8 @@
 """ visualization tools
 
 """
+
+import network
+import network_colorbar
+import weights
+import weights_colorbar

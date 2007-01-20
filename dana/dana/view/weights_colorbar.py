@@ -47,7 +47,6 @@ def mouse_move(self, event):
     else:
         self._mouse_move (event)
 toolbar._mouse_move = toolbar.mouse_move
-toolbar.mouse_move = mouse_move
 
 
 
@@ -98,8 +97,10 @@ class WeightsView (object):
         cax, kw = colorbar.make_axes(axes, fraction=1/1.25, pad=-0.5, aspect = 20)
         c = colorbar.ColorbarBase(ax=cax, cmap=cm, norm=colors.normalize (-1,1))
                                
+        manager = pylab.get_current_fig_manager()
+        tb = manager.toolbar
+        tb.mouse_move = mouse_move
 
-        
         return
 
     def show(self):

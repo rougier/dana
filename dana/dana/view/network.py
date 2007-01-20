@@ -47,8 +47,6 @@ def mouse_move(self, event):
     else:
         self._mouse_move (event)
 toolbar._mouse_move = toolbar.mouse_move
-toolbar.mouse_move = mouse_move
-
 
 
 class NetworkView(object):
@@ -87,6 +85,10 @@ class NetworkView(object):
             pylab.setp(axes, xticks=[], yticks=[])
             self.maps.append( (m, axes, im) )
 
+        manager = pylab.get_current_fig_manager()
+        tb = manager.toolbar
+        tb.mouse_move = mouse_move
+        
         return
 
     def show(self):

@@ -46,7 +46,7 @@ def mouse_move(self, event):
     else:
         self._mouse_move (event)
 toolbar._mouse_move = toolbar.mouse_move
-toolbar.mouse_move = mouse_move
+#toolbar.mouse_move = mouse_move
 
 
 
@@ -91,6 +91,9 @@ class WeightsView (object):
             pylab.setp(axes, xticks=[], yticks=[])
             self.units.append ( (unit, axes, im) )
         
+        manager = pylab.get_current_fig_manager()
+        tb = manager.toolbar
+        tb.mouse_move = mouse_move
         return
 
     def show(self):
