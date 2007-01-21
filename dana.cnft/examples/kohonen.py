@@ -18,28 +18,17 @@ import dana.core as core
 import dana.projection as proj
 import dana.cnft as cnft
 import dana.view as view
-
 import time, random, math
 import gobject, gtk
 
 
-print "------------------------------------------------------------------------"
-print "CNFT using local connectivity"
-print ""
-print "Author:    Nicolas Rougier"
-print "Date:      20/04/2005"
-print "Reference: Rougier N.P. "
-print '           "Dynamic Neural Field With Local Inhibition"'
-print "           Biological Cybernetics, 94, 3, pp 169-179, March 2006."
-print "------------------------------------------------------------------------"
-
 # Create a new network
 net = core.Network ()
-width  = 40
+width  = 30
 height = width
 
 # Create the input map
-Input = core.Map ( (1,1), (0,0) )
+Input = core.Map ( (20,20), (0,0) )
 Input.append(core.Layer())
 Input[0].fill(core.Unit)
 Input.name = 'Input'
@@ -57,9 +46,9 @@ Focus.spec.baseline = 0.1
 Focus.spec.alpha    = 12.5
 Focus.spec.min_act  = -1.0
 Focus.spec.max_act  =  1.0
-Focus.spec.lrate = .1
-Focus.spec.wp = 1
-Focus.spec.wm = 1
+Focus.spec.lrate = .01
+Focus.spec.wp = .5
+Focus.spec.wm = .5
 
 net.append(Focus)
 
@@ -67,7 +56,7 @@ net.append(Focus)
 p = proj.projection()
 p.distance = proj.distance.euclidean (True)
 p.density  = proj.density.sparse (.75)
-p.profile  = proj.profile.constant(1.5)
+p.profile  = proj.profile.uniform(0,.1)
 p.shape    = proj.shape.disc(1)
 p.src = Input[0]
 p.dst = Focus[0]
@@ -76,7 +65,7 @@ p.connect()
 # Create focus laterals connections
 p.self = False
 p.density = proj.density.sparser(.5)
-p.profile = proj.profile.dog (1.15, .1, 0.25, .75)
+p.profile = proj.profile.dog (3.15, .1, 0.9, .75)
 p.shape = proj.shape.disc (1)
 p.src = Focus[0]
 p.dst = Focus[0]
@@ -85,11 +74,17 @@ p.connect()
 
 
 def bubble():
-    for u in Input[0]:
-        u.potential = 1
+    x0 = random.randint(-1,1) * .25
+    y0 = random.randint(-1,1) * .25    
+    for i in xrange(Input.shape[0]):
+        for j in xrange(Input.shape[1]):
+            x = i/float(Input.shape[0])-.5 +x0
+            y = j/float(Input.shape[1])-.5 +y0
+            Input[0].unit(i,j).potential = math.exp (-(x*x+y*y)/0.025)
+
         
 # Show network
-netview = view.View (net)
+netview = view.network.NetworkView (net)
 
 
 def run(e,n):
