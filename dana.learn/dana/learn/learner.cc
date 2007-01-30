@@ -31,7 +31,7 @@ Learner::~Learner(void)
 // =============================================================================
 void Learner::add(core::LayerPtr src,core::LayerPtr dst,boost::python::numeric::array params)
 {
-	
+	printf("salut");
 	if(!PyArray_Check(params.ptr())){
 		PyErr_SetString(PyExc_ValueError, "expected a PyArrayObject");
 		throw_error_already_set();
