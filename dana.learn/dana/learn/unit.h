@@ -23,7 +23,7 @@ namespace dana { namespace learn {
         public:
             //  attributes
             // =================================================================
-	    std::vector<float> learnFunc;
+	    std::vector<float> * learnFunc;
 
         public:
             //  life management
@@ -33,7 +33,7 @@ namespace dana { namespace learn {
 
             //  object management
             // =================================================================
-	    void set_learning_rule(std::vector<float> learnFunc);
+	    void set_learning_rule(std::vector<float> * learnFunc);
 	    void learn(core::LayerPtr dst,float scale);
 
         public:

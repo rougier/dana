@@ -49,6 +49,7 @@ void Learner::add(core::LayerPtr src,core::LayerPtr dst,boost::python::numeric::
 	learnStr learn;
 	learn.source = src;
 	learn.destination = dst;
+	//printf("Dest size : %i\n",dst->size());
 	learn.params = learn_params;
 	learns.push_back(learn);
 }
@@ -61,17 +62,18 @@ void Learner::learn(float scale)
 {
 	learnStr learn;
 	core::LayerPtr src,dst;
-	learn::Unit * src_unit;
+	learn::Unit * dst_unit;
 	for(int i = 0 ; i < learns.size() ; i++)
 	{
 		learn = learns[i];
 		src = learn.source;
 		dst = learn.destination;
-		for(int j = 0 ; j < src->size() ; j++)
+		for(int j = 0 ; j < dst->size() ; j++)
 		{
-			src_unit = (learn::Unit*)((src->get(j)).get());
-			src_unit->set_learning_rule(learn.params);
-			src_unit->learn(dst,scale);
+			dst_unit = (learn::Unit*)((dst->get(j)).get());
+			dst_unit->set_learning_rule(&(learn.params));
+			//printf("Learning of UNIT %i\n",j);
+			dst_unit->learn(src,scale);
 		}
 	}
 }
