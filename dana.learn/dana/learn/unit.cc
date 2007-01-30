@@ -33,7 +33,7 @@ Unit::~Unit(void)
 //  Define the learning rule
 // =============================================================================
  
-void Unit::set_learning_rule(std::vector<float> * learnFunc)
+void Unit::set_learning_rule(std::vector<std::vector<float> > * learnFunc)
 {
 	this->learnFunc = learnFunc;
 }
@@ -50,39 +50,25 @@ void Unit::learn(core::LayerPtr dst,float scale)
 		float dw = 0.0;
 		float value = 0.0;
 		float vi,vj,w;
-		int nb_termes,ordre,j,puissi,puissj = 0; // Utile pour le calcul de dw
-		std::vector<float> learnF = *learnFunc;
+		int puissi,puissj = 0; // Utile pour le calcul de dw
+		std::vector<std::vector<float> > learnF = *learnFunc;
 		for(int i = 0 ; i < laterals.size() ; i++)
 		{
 			dw = 0.0;
 			vi = potential;
 			vj = laterals[i]->get_source()->potential;
 			w = laterals[i]->get_weight();
-			ordre = 0; // Indique l'ordre courant des termes considérés dans learnF
-				   // A l'ordre 0 , il n'y a que le terme constant
-				   // A l'ordre 1, il y a 2 termes : vi et vj
-			           // A l'ordre 2, il y a 3 termes : vi²,vi.vj,vj²
-			j = 0;     // Position courante dans le vecteur des poids
-			while(j < learnF.size())
+			for(int j = 0 ; j < learnF.size() ; j++)
 			{
-				value = learnF[j];
-				// On calcule les puissances de vi et de vj.
-				// On commence par calculer le nombre de termes utilisés pour les ordres précédents
-				nb_termes = ordre*(ordre+1)/2;
-				// On se trouve en j et nb_termes ont été utilisés pour les ordres précédents
-				puissi = ordre - (j-nb_termes);
-				puissj = (j-nb_termes);
-				if(ordre != 0)
+				value = 0.0;
+				puissi = int(learnF[j][0]);
+				puissj = int(learnF[j][1]);
+				for( int k = 2 ; k < learnF[j].size() ; k++)
 				{
-					dw += value*(vi == 0.0 ? 0.0 : pow(vi,puissi))*(vj == 0.0 ? 0.0 : pow(vj,puissj));
+					value += learnF[j][k]*pow(w,k-2);
 				}
-				else
-				{
-					dw += value;
-				}				
-				j++;
-				if(j >= nb_termes + (ordre + 1))
-					ordre++;
+				value *= pow(vi,puissi)*pow(vj,puissj);
+				dw += value;
 			}
 			dw *= scale;	
 			laterals[i]->set_weight(w+dw);	
@@ -94,44 +80,31 @@ void Unit::learn(core::LayerPtr dst,float scale)
 		float dw = 0.0;
 		float value = 0.0;
 		float vi,vj,w;
-		int nb_termes,ordre,j,puissi,puissj = 0; // Utile pour le calcul de dw
-		std::vector<float> learnF = *learnFunc;
+		int puissi,puissj = 0; // Utile pour le calcul de dw
+		std::vector<std::vector<float> > learnF = *learnFunc;
 		for(int i = 0 ; i < afferents.size() ; i++)
 		{
 			dw = 0.0;
 			vi = potential;
 			vj = afferents[i]->get_source()->potential;
 			w = afferents[i]->get_weight();
-			ordre = 0; // Indique l'ordre courant des termes considérés dans learnF
-				   // A l'ordre 0 , il n'y a que le terme constant
-				   // A l'ordre 1, il y a 2 termes : vi et vj
-			           // A l'ordre 2, il y a 3 termes : vi²,vi.vj,vj²
-			j = 0;     // Position courante dans le vecteur des poids
-			while(j < learnF.size())
+			for(int j = 0 ; j < learnF.size() ; j++)
 			{
-				value = learnF[j];
-				// On calcule les puissances de vi et de vj.
-				// On commence par calculer le nombre de termes utilisés pour les ordres précédents
-				nb_termes = ordre*(ordre+1)/2;
-				// On se trouve en j et nb_termes ont été utilisés pour les ordres précédents
-				puissi = ordre - (j-nb_termes);
-				puissj = (j-nb_termes);
-				if(ordre != 0)
+				value = 0.0;
+				puissi = int(learnF[j][0]);
+				puissj = int(learnF[j][1]);
+				for( int k = 2 ; k < learnF[j].size() ; k++)
 				{
-					dw += value*(vi == 0.0 ? 0.0 : pow(vi,puissi))*(vj == 0.0 ? 0.0 : pow(vj,puissj));
+					value += learnF[j][k]*pow(w,k-2);
 				}
-				else
-				{
-					dw += value;
-				}
-				j++;
-				if(j >= nb_termes + (ordre + 1))
-					ordre++;
+				value *= pow(vi,puissi)*pow(vj,puissj);
+				dw += value;
 			}
-			dw *= scale;
-			afferents[i]->set_weight(w+dw);
+			dw *= scale;	
+// // 			printf("%2.2f\n",dw);
+			afferents[i]->set_weight(w+dw);	
 		}
-	}
+	}	
 }
 
 // ============================================================================

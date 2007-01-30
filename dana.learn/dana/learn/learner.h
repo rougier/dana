@@ -22,12 +22,15 @@ namespace dana { namespace learn {
 	typedef struct {
 		core::LayerPtr source;
 		core::LayerPtr destination;
-		std::vector<float> params;		
+		std::vector< std::vector<float> > params;
 	} learnStr;
 	
     class Learner {
 	    private:
 		    std::vector<learnStr> learns;
+		    std::vector<std::vector<float> > learn_params;
+		    core::LayerPtr src;
+		    core::LayerPtr dst;
 
         public:
         Learner(void);
@@ -36,6 +39,12 @@ namespace dana { namespace learn {
             //  object management
             // =================================================================
 	void add(core::LayerPtr src,core::LayerPtr dst,boost::python::numeric::array params);
+	
+	void set_source(core::LayerPtr src);
+	void set_destination(core::LayerPtr dst);
+	void add_one(boost::python::list params);
+	void connect(void);
+	
 	void learn(float scale = 1.0);
             // python export
             // =================================================================

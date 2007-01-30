@@ -27,6 +27,7 @@ import dana.projection.profile as profile
 import time, random, math
 import gobject, gtk
 import numpy
+import random
 
 execfile('weights.py')
 
@@ -47,6 +48,14 @@ m1 = core.Map ( (width,height), (1,0) )
 m1.append (core.Layer())
 m1[0].fill(learn.Unit)
 m1.name = 'm1'
+
+m1.spec = cnft.Spec()
+m1.spec.tau      = 0.75
+m1.spec.baseline = 0.0
+m1.spec.alpha    = 13.0
+m1.spec.min_act  = 0.0
+m1.spec.max_act  = 1.0
+
 net.append(m1)
 
 proj          = projection.projection()
@@ -54,7 +63,7 @@ proj.self     = True
 proj.distance = distance.euclidean(False)
 proj.density  = density.full(1)
 proj.shape    = shape.box(1,1)
-proj.profile  = profile.constant(1)
+proj.profile  = profile.uniform(-0.5,0.5)
 proj.src      = m0[0]
 proj.dst      = m1[0]
 proj.connect()
@@ -66,34 +75,41 @@ proj.connect()
 learner = learn.Learner()
 
 # Hebb's rule
-rule = numpy.array([[0,2],0,0,0,1,0])
+
+#learner.set_source(m0[0])
+#learner.set_destination(m1[0])
+#learner.add_one([1,1,[1.0]])
+#learner.connect()
 
 # Oja's rule
-#rule = numpy.array([0,0,0,0-1w²,1,0])
+learner.set_source(m0[0])
+learner.set_destination(m1[0])
+learner.add_one([1,1,[1]])
+learner.add_one([2,0,[0,-1]])
+learner.connect()
 
-learner.add(m0[0],m1[0],rule)
-learner.learn(0.1); # The parameter is the learning rate
+#learner.learn(0.1); # The parameter is the learning rate
 
-# Show network
-print "netview"
+## Show network
 netview = view.network.NetworkView (net)
-print "weightview"
 weightsview = WeightsView(m1[0], m0[0])
-#print "netview show"
-#netview.show()
-#print "weightsview show"
-#weightsview.show()
 
-manager = pylab.get_current_fig_manager()
+#manager = pylab.get_current_fig_manager()
 
 def learn():
+	net.evaluate(1,False)
 	learner.learn(1.0)
+
+def init():
+	for i in range(width*height):
+		m0[0].unit(i).potential = random.random()
+		#m1[0].unit(i).potential = random.random()
 
 def updatefig(*args):
     netview.update()
     weightsview.update()
     return True
-print "ok!"
+
 gobject.idle_add (updatefig)
 pylab.show()
-print "ok!!"
+
