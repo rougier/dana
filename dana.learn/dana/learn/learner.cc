@@ -42,13 +42,13 @@ void Learner::add(core::LayerPtr src,core::LayerPtr dst,boost::python::numeric::
 	
 	for(int i = 0 ; i < size ; i++)
 	{
+		printf(" %2.2f \n",*(dataPtr + i ));
 		learn_params.push_back(*(dataPtr + i ));
  		
 	}
 	learnStr learn;
 	learn.source = src;
 	learn.destination = dst;
-	//printf("Dest size : %i\n",dst->size());
 	learn.params = learn_params;
 	learns.push_back(learn);
 }

@@ -66,7 +66,7 @@ proj.connect()
 learner = learn.Learner()
 
 # Hebb's rule
-rule = numpy.array([0,0,0,0,1,0])
+rule = numpy.array([[0,2],0,0,0,1,0])
 
 # Oja's rule
 #rule = numpy.array([0,0,0,0-1w²,1,0])
