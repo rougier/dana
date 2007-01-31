@@ -109,8 +109,6 @@ Learner::connect(void)
  	learn.params = learn_params;
 	learns.push_back(learn);
 	learn_params.clear();
-	//this->src = NULL;
-	//this->dst = (core::LayerPtr)0;
 }
 
 
@@ -133,7 +131,6 @@ void Learner::learn(float scale)
 		{
 			dst_unit = (learn::Unit*)((dst->get(j)).get());
 			dst_unit->set_learning_rule(&(learn.params));
-// 			printf("Learning of UNIT %i\n",j);
 			dst_unit->learn(src,scale);
 		}
 	}
