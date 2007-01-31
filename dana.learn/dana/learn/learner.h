@@ -36,19 +36,17 @@ namespace dana { namespace learn {
         Learner(void);
         virtual ~Learner(void);
 
-            //  object management
-            // =================================================================
-	void add(core::LayerPtr src,core::LayerPtr dst,boost::python::numeric::array params);
-	
+	//  object management
+	// =================================================================
 	void set_source(core::LayerPtr src);
 	void set_destination(core::LayerPtr dst);
 	void add_one(boost::python::list params);
 	void connect(void);
 	
 	void learn(float scale = 1.0);
-            // python export
-            // =================================================================
-            static void boost (void);
+	// python export
+	// =================================================================
+	static void boost (void);
     };
 }} // namespace dana::learn
 

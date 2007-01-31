@@ -46,32 +46,6 @@ Learner::set_destination(core::LayerPtr dst)
 }
 
 // =============================================================================
-//  Define the learning rule
-// =============================================================================
-void Learner::add(core::LayerPtr src,core::LayerPtr dst,boost::python::numeric::array params)
-{
-	if(!PyArray_Check(params.ptr())){
-		PyErr_SetString(PyExc_ValueError, "expected a PyArrayObject");
-		throw_error_already_set();
-	}
-	double * dataPtr = (double*)PyArray_DATA(params.ptr());
-	int size = PyArray_Size(params.ptr());
-	
-// 	std::vector<float> learn_params;
-// 	
-// 	for(int i = 0 ; i < size ; i++)
-// 	{
-// 		printf(" %2.2f \n",*(dataPtr + i ));
-// 		learn_params.push_back(*(dataPtr + i ));
-//  		
-// 	}
-// 	this->src = src;
-// 	this->dst = dst;
-// 	this->learn_params = learn_params;
-	connect();
-}
-
-// =============================================================================
 //  Add one coefficient for a tuple vi^powi * vj^powj
 // =============================================================================
 
@@ -152,6 +126,15 @@ Learner::boost (void) {
     " The learning rules are defined by using the add(src,dst,parameters)  \n"
     " function \n"
     " Based on the equation  dwij/dt = F(wij,src[j],dst[i])\n"
+    " wij is the weight between presynaptic neuron j and postsynaptic neuron j\n"
+    " To define a learning rule :\n"
+    "             1) Set the source layer with set_source\n"
+    "             2) Set the destination layer with set_destination\n"
+    "             3) Add the elementary blocks of the learning with add_one([powi,powj,[polynomial function of w]])\n"
+    " An elementary block of the learning rule is defined with powi, powj and an array representing a polynomial\n"
+    " function of the weight : P(w).(vi**powi).(vj**powj)\n"
+    " The array defining P(w) is constructed as following : [polynomial function of w] = [a0,a1,a2,...]\n"
+    " with : P(w) = sum_i (ai.w**i)\n"
     "\n"
     "======================================================================\n",
         init<>(
@@ -161,8 +144,6 @@ Learner::boost (void) {
 	      "set_source(layer src) -- defines the source layer of the weights to learn\n")
 	.def ("set_destination",&Learner::set_destination,
 	      "set_destination(layer dst) -- defines the destination layer of the weights to learn\n")
-	.def ("add", &Learner::add,
-	      "add(src,dst,parameters) -- defines the learning rule between maps src and dst\n")
 	.def ("add_one",&Learner::add_one,
 	      "add_one([powi,powj,[params]]) -- add one element of the learning rule\n")
 	.def ("connect",&Learner::connect,

@@ -34,7 +34,7 @@ namespace dana { namespace learn {
             //  object management
             // =================================================================
 	    void set_learning_rule(std::vector< std::vector<float> > * learnFunc);
-	    void learn(core::LayerPtr dst,float scale);
+	    void learn(core::LayerPtr src,float scale);
 
         public:
             // python export
