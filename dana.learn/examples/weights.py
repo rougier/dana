@@ -70,7 +70,6 @@ class WeightsView (object):
         
     def update(self):
         """ Update weights """
-        
         for unit, axes, im in self.units:
             axes.data = unit.weights(self.source)
             im.set_data (axes.data)

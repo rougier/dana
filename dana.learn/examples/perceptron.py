@@ -28,7 +28,7 @@ import time, random, math
 import gobject, gtk
 import numpy
 import random
-
+from math import *
 
 #   The purpose of this model is to classify even and odd numbers, using the 
 #   perceptron algorithm 
@@ -54,6 +54,15 @@ import random
 #        7 is represented by (1110000)
 #        8 is represented by (1111111)
 #        9 is represented by (1111011)
+#
+#  To use it, simply call the function learn(nb_steps,lrate)
+#  where nb_steps is the number of presentations of the whole set of digits
+#        lrate    is the learning rate
+#
+#  You can optionnaly refresh the figures after each example by calling
+#   learn(nb_steps,lrate,1), but it slows down drastically the simulation
+#
+
 
 numbers = []
 # 0 is even
@@ -126,26 +135,49 @@ proj.connect()
 
 learner = learn.Learner()
 
-# Hebb's rule
+################### Learning Rule ##########################
+# Hebb's rule : dw/dt = lrate * vi * vj
 learner.set_source(number[0])
 learner.set_destination(evenodd[0])
 learner.add_one([1,1,[1.0]])
 learner.connect()
 
-# Oja's rule
+# Oja's rule : dw/dt = lrate*(vi*vj - wij * (vi**2))
+#                    = lrate*vi*vj - lrate*wij*(vi**2)
 #learner.set_source(number[0])
 #learner.set_destination(evenodd[0])
 #learner.add_one([1,1,[1]])
 #learner.add_one([2,0,[0,-1]])
 #learner.connect()
 
+# Custom rule : dw/dt = lrate * (vi - wij) * (vj - wij)
+#                     = lrate * (wij**2) - lrate*vi*wij - lrate*vj*wij + lrate*vi*vj
+#learner.set_source(number[0])
+#learner.set_destination(evenodd[0])
+#learner.add_one([0,0,[0,0,1.0]])
+#learner.add_one([1,0,[0,-1.0]])
+#learner.add_one([0,1,[0,-1.0]])
+#learner.add_one([1,1,[1.0]])
+#learner.connect()
+############################################################
+
 ## Show network
+current_step = 0
+steps = []
+error = []
+
+
 netview = view.network.NetworkView (net)
 weightsview = WeightsView(evenodd[0], number[0])
-#manager = pylab.get_current_fig_manager()
+pylab.figure(3)
+pylab.plot(steps, error,'b')
+pylab.xlabel('Step number')
+pylab.ylabel('Error')
+pylab.title('Mean square error')
+pylab.show()
 
-
-def learn(nb_steps,lrate):
+def learn(nb_steps,lrate,update=0):
+	global current_step,steps,error
 	for n in range(nb_steps):
 		i=0
 		for i in range((len(numbers))/2):
@@ -157,6 +189,12 @@ def learn(nb_steps,lrate):
 			clamp_res(i)
 			# Learn
 			learner.learn(lrate)
+			if(update):
+				updatefig()
+		# Make a test phase, and record the error
+		steps.append(current_step)
+		error.append(compute_error())
+		current_step += 1
 
 def clamp_ex(i):
 	num = numbers[2*i]
@@ -177,11 +215,29 @@ def test(i):
 	else:
 		print "Number ",i,"is odd"
 
+def compute_error():
+	err = 0.0
+	for i in range(len(numbers)/2):
+		clamp_ex(i)
+		res = numbers[2*i + 1]
+		net.evaluate(4,False)
+		err += sqrt(pow(res[0] - evenodd.unit(0).potential,2.0) + pow((1-res[0]) - evenodd.unit(1).potential,2.0))
+	return err
+
+def update_error_fig():
+	pylab.plot(steps, error,'b')
+	pylab.xlabel('Step number')
+	pylab.ylabel('Error')
+	pylab.title('Mean square error')
+	pylab.draw()
+
 def updatefig(*args):
     pylab.figure(1)
     netview.update()
     pylab.figure(2)
     weightsview.update()
+    pylab.figure(3)
+    update_error_fig()
     return True
 
 gobject.idle_add (updatefig)

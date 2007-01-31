@@ -69,9 +69,6 @@ proj.dst      = m1[0]
 proj.connect()
 
 
-
-
-
 learner = learn.Learner()
 
 # Hebb's rule
