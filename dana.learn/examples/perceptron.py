@@ -30,7 +30,7 @@ import numpy
 import random
 
 
-#   The purpose of this model is to classify odd and even numbers, using the 
+#   The purpose of this model is to classify even and odd numbers, using the 
 #   perceptron algorithm 
 #
 #   The numbers are represented with 7 segments
@@ -43,7 +43,7 @@ import random
 #              |       |
 #              ---------
 #                  4
-#                  
+#
 #  Then, 0 is represented by (1111110)
 #        1 is represented by (0110000)
 #        2 is represented by (1101101)
@@ -54,6 +54,7 @@ import random
 #        7 is represented by (1110000)
 #        8 is represented by (1111111)
 #        9 is represented by (1111011)
+
 numbers = []
 # 0 is even
 numbers.append([1,1,1,1,1,1,0])
@@ -91,14 +92,14 @@ execfile('weights.py')
 # Create a new network
 net = core.Network ()
 
-# Create the input map
+# Create the map representing the 7 segments of a number
 number = core.Map ( (1,7), (0,0) )
 number.append(core.Layer())
 number[0].fill(core.Unit)
 number.name = 'number'
 net.append(number)
 
-# Create the focus map 
+# Create the map representing the result : even for unit(0), odd for unit(1)
 evenodd = core.Map ( (1,2), (1,0) )
 evenodd.append (core.Layer())
 evenodd[0].fill(learn.Unit)
@@ -123,14 +124,9 @@ proj.src      = number[0]
 proj.dst      = evenodd[0]
 proj.connect()
 
-
-
-
-
 learner = learn.Learner()
 
 # Hebb's rule
-
 learner.set_source(number[0])
 learner.set_destination(evenodd[0])
 learner.add_one([1,1,[1.0]])
@@ -143,12 +139,9 @@ learner.connect()
 #learner.add_one([2,0,[0,-1]])
 #learner.connect()
 
-#learner.learn(0.1); # The parameter is the learning rate
-
 ## Show network
 netview = view.network.NetworkView (net)
 weightsview = WeightsView(evenodd[0], number[0])
-
 #manager = pylab.get_current_fig_manager()
 
 
@@ -179,18 +172,15 @@ def test(i):
 	# Clamp the representation of number i, make some steps, and get the result "odd or even"
 	clamp_ex(i)
 	net.evaluate(4,False)
-	if (evenodd.unit(0).potential > 0.5):
+	if (evenodd.unit(0).potential > evenodd.unit(1).potential):
 		print "Number ",i,"is even"
 	else:
 		print "Number ",i,"is odd"
 
-def init():
-	for i in range(width*height):
-		number[0].unit(i).potential = random.random()
-		#evenodd[0].unit(i).potential = random.random()
-
 def updatefig(*args):
+    pylab.figure(1)
     netview.update()
+    pylab.figure(2)
     weightsview.update()
     return True
 
