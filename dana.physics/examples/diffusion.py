@@ -58,7 +58,7 @@ netview = netview.view (net)
 manager = pylab.get_current_fig_manager()
 
 def updatefig(*args):
-    net.evaluate(1,False)
+    net.evaluate(1)
     netview.update()
     return True
 

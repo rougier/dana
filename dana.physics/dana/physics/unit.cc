@@ -30,7 +30,7 @@ Unit::~Unit(void)
 // Evaluate new potential and returns difference
 // -----------------------------------------------------------------------------
 float
-Unit::evaluate (void)
+Unit::compute_dp (void)
 {
     if (!source) {
         potential = 0;
