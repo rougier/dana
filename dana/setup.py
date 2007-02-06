@@ -93,5 +93,6 @@ setup (name='dana',
        data_files= [
         ("bin", ("bin/gpython",)),
         ("include/dana/core", glob.glob("dana/core/*.h")),
+        ("bin", ("bin/gpython",))
        ]
       )

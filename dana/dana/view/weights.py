@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #------------------------------------------------------------------------------
-# Copyright (c) 2006-2007 Nicolas Rougier.
+# Copyright (c) 2007, 2006 Nicolas Rougier.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -46,8 +46,6 @@ def mouse_move(self, event):
     else:
         self._mouse_move (event)
 toolbar._mouse_move = toolbar.mouse_move
-#toolbar.mouse_move = mouse_move
-
 
 
 class WeightsView (object):
@@ -79,10 +77,10 @@ class WeightsView (object):
         # Creation of axes (one per unit)
         self.units = []
         for unit in layer:
-            frame = ( ((unit.position[0] * (source.map.shape[0]+1)+1)/float(w)),
-                      (unit.position[1] * (source.map.shape[1]+1)+1)/float(h),
-                      ((source.map.shape[0])/float(w)),
-                      (source.map.shape[1])/float(h))
+            frame = ( ((unit.position[0] * (source.map.shape[0]+1)+1)/float(w),
+                       (unit.position[1] * (source.map.shape[1]+1)+1)/float(h),
+                       source.map.shape[0]/float(w),
+                       source.map.shape[1]/float(h)) )
             axes = pylab.axes(frame)
             axes.unit = unit
             axes.data = unit.weights(source)
