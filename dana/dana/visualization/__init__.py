@@ -44,7 +44,7 @@ def mouse_move(self, event):
             else:
                 self.set_message(s)
 
-        elif hasattr(event.inaxes, 'network'):
+        elif hasattr(event.inaxes, 'map'):
             try:
                 x,y = int(event.xdata), int(event.ydata)
                 s = "[%d,%d] : %.3f " % (x,y,event.inaxes.data[y,x])
