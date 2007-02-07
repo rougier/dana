@@ -18,7 +18,8 @@ import dana.core as core
 import dana.projection as proj
 import dana.cnft as cnft
 import dana.learn as learn
-import dana.view as view
+from dana.visualization import View2D
+#import dana.view as view
 import dana.projection as projection
 import dana.projection.distance as distance
 import dana.projection.density as density
@@ -166,8 +167,9 @@ current_step = 0
 steps = []
 error = []
 
-
-netview = view.network.NetworkView (net)
+view = View2D (net, title='Click on unit to see weights', size=12)
+#view.show()
+#netview = view.network.NetworkView (net)
 weightsview = WeightsView(evenodd[0], number[0])
 pylab.figure(3)
 pylab.plot(steps, error,'b')
@@ -233,7 +235,7 @@ def update_error_fig():
 
 def updatefig(*args):
     pylab.figure(1)
-    netview.update()
+    view.update()
     pylab.figure(2)
     weightsview.update()
     pylab.figure(3)
