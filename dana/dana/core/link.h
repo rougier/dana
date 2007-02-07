@@ -35,7 +35,8 @@ namespace dana { namespace core {
         void	set_source (const UnitPtr src);
         float	get_weight (void) const;
         void	set_weight (const float w);
-
+        float   compute ();
+        
     public:
         static void	boost (void);
     };
