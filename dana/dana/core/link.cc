@@ -60,6 +60,14 @@ Link::set_weight (float w)
     weight = w;    
 }
 
+//
+// ----------------------------------------------------------------------------
+float
+Link::compute()
+{
+    return source->potential * weight;
+}
+
 
 // ===================================================================
 //  Boost wrapping code
