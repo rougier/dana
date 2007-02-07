@@ -47,14 +47,18 @@ KUnit::compute_dp (void)
 	float input = 0;
     unsigned int size = afferents.size();
 
-	for (unsigned int i=0; i<size; i++)
-		input += afferents[i]->weight * afferents[i]->source->potential;
+//	for (unsigned int i=0; i<size; i++)
+//		input += afferents[i]->weight * afferents[i]->source->potential;
 
-/*
-	for (unsigned int i=0; i<size; i++)
+    float di = 0;
+	for (unsigned int i=0; i<size; i++) {
 		input += fabs(afferents[i]->weight - afferents[i]->source->potential);
-    input = 3.5 * (1.0f - input/float(size));
-*/
+		di += afferents[i]->source->potential;
+    }
+    input = 1.5 * (1.0f - input/di);
+
+    wp = input;
+    wm = input;
 
     float lateral = 0;
 	float lateral_p = 0;
@@ -93,20 +97,16 @@ KUnit::compute_dp (void)
 float
 KUnit::compute_dw (void)
 {
-    return 0.0f;
-
     if (potential < 0)
         return 0.0f;
 
     object spec = layer->map->get_spec();    
     float lrate = extract<float> (spec.attr("lrate"));
     
-    lrate *= (1-potential);
-
     for (unsigned int i=0; i<afferents.size(); i++) {
         afferents[i]->weight = 
-            (1-lrate)*afferents[i]->weight - 
-            lrate*(afferents[i]->weight - afferents[i]->source->potential);
+            (1-lrate)*afferents[i]->weight +
+            lrate*afferents[i]->source->potential;
     }
 
     return 0.0f;

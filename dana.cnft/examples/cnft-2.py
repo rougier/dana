@@ -17,7 +17,7 @@ import matplotlib.colors as colors
 import dana.core as core
 import dana.projection as proj
 import dana.cnft as cnft
-import dana.view as view
+from dana.visualization import View2D
 
 import time, random, math
 import gobject, gtk
@@ -100,7 +100,7 @@ for i in xrange(Input.shape[0]):
         Input[0].unit(i,j).potential =  + math.exp (-(x0*x0+y0*y0)/0.0125) + math.exp (-(x1*x1+y1*y1)/0.0125) + .15*random.uniform(0.0, 1.0)
         
 # Show network
-netview = view.network.NetworkView (net)
+netview = View2D (net)
 
 
 
