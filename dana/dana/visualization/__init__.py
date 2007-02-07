@@ -68,15 +68,14 @@ def View2D (object=None, source=None,
             title='', use_colorbar=False, size=8, fontsize=20):
     """ 2D view of a network or weights between layers
     
-    
     """
     
-    if network:
+    if object and not source:
         return dana.visualization.network.View2D (
             network=object,
             title=title, size=size, fontsize=fontsize,
             use_colorbar=use_colorbar)
-    elif layer and source:
+    elif object and source:
         return dana.visualization.weights.View2D (
             layer=object, source=source,
             title=title, size=size, fontsize=fontsize,
