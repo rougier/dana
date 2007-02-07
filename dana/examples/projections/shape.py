@@ -12,7 +12,7 @@
 #------------------------------------------------------------------------------
 
 import dana.core as core
-import dana.view as view
+from dana.visualization import View2D
 import dana.projection as projection
 import dana.projection.distance as distance
 import dana.projection.density as density
@@ -63,6 +63,6 @@ if __name__ == '__main__':
     proj.dst      = m2[0]
     proj.connect()
 
-    netview = view.View(net, 'Click on unit to see weights', 12)
-    netview.show()
+    view = View2D (net, title='Click on unit to see weights', size=12)
+    view.show()
 
