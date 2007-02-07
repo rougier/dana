@@ -8,7 +8,7 @@
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 # 
-# $Id: __init__.py 92 2007-01-20 11:14:09Z rougier $
+# $Id$
 #------------------------------------------------------------------------------
 """ visualization tools
 
