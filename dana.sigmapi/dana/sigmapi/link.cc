@@ -45,23 +45,6 @@ Link::add_source (core::UnitPtr src)
 //
 // ----------------------------------------------------------------------------
 float
-Link::get_weight (void) const
-{
-    return weight;
-}
-
-//
-// ----------------------------------------------------------------------------
-void
-Link::set_weight (float w)
-{
-    weight = w;
-}
-
-
-//
-// ----------------------------------------------------------------------------
-float
 Link::compute(void)
 {
     float value = 0.0;
@@ -100,11 +83,6 @@ Link::boost (void)
 {
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Link> >();
-
-    //     enum_<LinkType>("LinkType")
-    // 		.value("SIGMAPI_MAX", SIGMAPI_MAX)
-    // 		.value("SIGMAPI_PROD", SIGMAPI_PROD)
-    // 		;
 
     class_<Link, bases<core::Link> > ("Link",
                                       "======================================================================\n"

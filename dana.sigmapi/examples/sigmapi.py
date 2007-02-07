@@ -14,8 +14,8 @@ import dana.projection.distance as distance
 import dana.projection.density as density
 import dana.projection.shape as shape
 import dana.projection.profile as profile
-
-import dana.view as view
+from dana.visualization import View2D
+#import dana.view as view
 
 import time, random, math
 import gobject, gtk
@@ -32,7 +32,7 @@ print ""
 
 # Create a new network
 net = core.Network ()
-width  = 40
+width  = 20
 height = width
 
 # Create an Input map
@@ -67,7 +67,7 @@ p          = projection.projection()
 p.self     = True
 p.distance = distance.euclidean(False)
 p.density  = density.full(1)
-p.shape    = shape.box(1,1)
+p.shape    = shape.point()
 p.profile  = profile.constant(1)
 p.src      = Input[0]
 p.dst      = Output[0]
@@ -82,12 +82,14 @@ p1.dst = Output[0]
 p1.connect();
 
 # Show network
-netview = view.View (net)
+view = View2D (net, title='Click on unit to see weights', size=12)
+view.show()
+#netview = view.View (net)
 
 manager = pylab.get_current_fig_manager()
 
 def updatefig(*args):
-    netview.update()
+    view.update()
     return True
 
 def clamp(map,x0,y0,r):

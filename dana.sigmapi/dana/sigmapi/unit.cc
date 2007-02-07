@@ -13,6 +13,7 @@
 #include "link.h"
 #include "unit.h"
 #include <iostream>
+#include <numpy/arrayobject.h>
 
 using namespace boost::python::numeric;
 using namespace dana::sigmapi;
@@ -55,8 +56,7 @@ Unit::compute_dp (void)
 
     for (unsigned int i=0; i<size; i++)
     {
-        core::Link * aff = (afferents[i]).get();
-        input += ((sigmapi::Link *)aff)->compute();
+        input += afferents[i]->compute();
     }
 
     float lateral = 0;
@@ -64,8 +64,7 @@ Unit::compute_dp (void)
 
     for (unsigned int i=0; i<size; i++)
     {
-        core::Link * lat = (laterals[i]).get();
-        lateral += ((sigmapi::Link*)lat)->compute();
+        lateral += laterals[i]->compute();
     }
 
     float du = (-potential + baseline + (1.0f/alpha)*(lateral + input)) / tau;
@@ -81,6 +80,48 @@ Unit::compute_dp (void)
     return value-potential;
 }
 
+object
+Unit::get_weights (const core::LayerPtr layer)
+{
+	if ((layer->map == 0) || (layer->map->width == 0)) {
+		PyErr_SetString(PyExc_AssertionError, "layer has no shape");
+		throw_error_already_set();
+		return object();
+	}
+
+	unsigned int width = layer->map->width;
+	unsigned int height = layer->map->height;
+	
+	npy_intp dims[2] = {height, width};
+	object obj(handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
+
+	PyArrayObject *array = (PyArrayObject *) obj.ptr();
+
+	PyArray_FILLWBYTE(array, 0);
+
+	float *data = (float *) array->data;
+	const std::vector<core::LinkPtr> *wts;
+	if (layer.get() == this->layer) {
+		wts = &laterals;
+	} else {
+		wts = &afferents;
+	}
+
+	for (unsigned int i=0; i< wts->size(); i++) {
+		core::UnitPtr unit = wts->at(i)->source;
+		if(unit == 0)
+		{
+			// It means that wts->at(i) is a sigmapi::Link
+			// in which the source neurons are managed in a different way
+			unit = ((sigmapi::Link*)(wts->at(i).get()))->get_source(0);
+		}
+		if (unit->layer == layer.get())
+			if ((unit->y > -1) && (unit->x > -1))
+				data[unit->y*width+unit->x] += wts->at(i)->weight;
+	}
+	return extract<numeric::array>(obj);	
+}
+
 // ============================================================================
 //    Boost wrapping code
 // ============================================================================
@@ -89,7 +130,7 @@ Unit::boost (void)
 {
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Unit> >();
-
+    import_array();
     class_<Unit, bases<core::Unit> >("Unit",
                                      "======================================================================\n"
                                      "\n"

@@ -58,7 +58,6 @@ class Link : public core::Link
 {
 public:
     std::vector<core::UnitPtr> source;
-    float	weight;
     LinkType type;
 
 public:
@@ -67,16 +66,14 @@ public:
 
     core::UnitPtr get_source (const int i) const;
     void add_source (const core::UnitPtr src);
-    float	get_weight (void) const;
-    void	set_weight (const float w);
 
-    float compute(void);
+    virtual float compute(void);
 public:
     static void	boost (void);
 };
 
 }
-} // namespace dana::core
+} // namespace dana::sigmapi
 
 #endif
 

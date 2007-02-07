@@ -26,8 +26,8 @@ class Unit : public core::Unit
 {
 
 public:
-    std::vector<core::LinkPtr> afferents;
-    std::vector<core::LinkPtr> laterals;
+    //std::vector<core::LinkPtr> afferents;
+    //std::vector<core::LinkPtr> laterals;
 
 public:
     // Constructor
@@ -42,12 +42,16 @@ public:
     // Evaluate new potential and return difference
     virtual float compute_dp (void);
 
+    // convenient methods
+    // =================================================================
+    virtual object      get_weights  (const core::LayerPtr layer); 
+    
 public:
     // Boost python extension
     static void boost (void);
 };
 
 }
-} // namespace dana::cnft
+} // namespace dana::sigmapi
 
 #endif
