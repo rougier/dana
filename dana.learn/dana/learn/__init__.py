@@ -24,4 +24,4 @@ This package implements learning rules derived from the rule dwij/dt = F(wij,vi,
 from dana.core import *
 from _learn import *
 
-__all__ = ['Unit','Spec']
+__all__ = ['Unit','MUnit']
