@@ -14,7 +14,7 @@
 
 """ Interactive GTK console
 
-This console is heavily based on the GTK Interactive Console bundled with
+This console is heavily based on the GTK Interacttive Console bundled with
 The Gimp and implements an interactive python session in a GTK window. 
 
 Shortcuts:
@@ -678,6 +678,7 @@ class Console (gtk.ScrolledWindow):
                         break
                 self.write ('\n')
             self.write ('\n')
+            self.allow_prompt = True
             self.prompt()
             iter = self.buffer.get_end_iter().get_offset()
             self.write (tabs + prefix)

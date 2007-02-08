@@ -23,7 +23,7 @@ namespace dana { namespace core {
     class Unit : public Object {
         public:
             //  attributes
-            // =================================================================
+            // ================================================================
             class Layer *        layer;     // layer owning this unit
             float                potential; // potential
             std::vector<LinkPtr> laterals;  // lateral links
@@ -33,23 +33,23 @@ namespace dana { namespace core {
 
         public:
             //  life management
-            // =================================================================
+            // ================================================================
             Unit(void);
             virtual ~Unit(void);
             
             //  content management
-            // =================================================================
+            // ================================================================
             virtual void        connect (UnitPtr source, float weight);
             virtual void        connect (LinkPtr link);
             virtual void        clear (void);
 
             //  object management
-            // =================================================================
+            // ================================================================
             virtual float       compute_dp (void);
             virtual float       compute_dw (void);
 
             //  attribute manipulation
-            // =================================================================
+            // ================================================================
             virtual LayerPtr    get_layer (void) const;
             virtual void        set_layer (class Layer *l);
             virtual int         get_x (void) const;
@@ -63,11 +63,11 @@ namespace dana { namespace core {
             virtual void        set_position (const int x, const int y);
             
             // convenient methods
-            // =================================================================
+            // ================================================================
             virtual object      get_weights  (const LayerPtr layer);
 
             // python export
-            // =================================================================
+            // ================================================================
             static void boost (void);
     };
 
