@@ -10,11 +10,11 @@
 # 
 # $Id$
 #------------------------------------------------------------------------------
-""" Physics simulation tools
+""" Physics simulation
 
 """
 
 from dana.core import *
 from _physics import *
 
-__all__ = ['Unit']
+__all__ = ['Particle']
