@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 
-import matplotlib.pylab as pylab
-import matplotlib.colors as colors
-
 import dana.core as core
 import dana.projection as proj
 import dana.physics as physics
-import netview
-
+from dana.visualization import View2D
 import time, random, math
 import gobject, gtk
 
@@ -15,19 +11,17 @@ import gobject, gtk
 print "--------------------------------------------------------------------"
 print "Diffusion demo"
 print "Author:    Nicolas Rougier"
-print "Date:      05/01/2007"
+print "Date:      08/02/2007"
 print "--------------------------------------------------------------------"
-print ""
-
 
 # Create a new network
 net = core.Network ()
-size  = 64
+size  = 50
 
 # Create the map
-Map = core.Map ( (size,size), (0,0) )
+Map = core.Map ( (2*size,size), (0,0) )
 Map.append(core.Layer())
-Map[0].fill(physics.Unit)
+Map[0].fill(physics.Particle)
 net.append(Map)
 
 # Create input to focus connections
@@ -36,33 +30,29 @@ p.self = False
 p.distance = proj.distance.euclidean (False)
 p.density = proj.density.full(1)
 p.profile = proj.profile.constant(1.0)
-p.shape = proj.shape.box(1.0/size, 1.0/size)
+p.shape = proj.shape.box(1.0/(2*size), 1.0/size)
 p.src = Map[0]
 p.dst = Map[0]
 p.connect()
 
 
+# Split map potentials in 2 parts
 for u in Map[0]:
-    u.potential = random.uniform (-0.1, 0.1)
+    if u.position[0] < Map.shape[0]/2:
+        u.potential = 1
+    else:
+        u.potential = 0
 
-for i in range(10):
-    index     = random.randint (0, size*size)
-    Map[0].unit(index).source = True
-    potential = 1* (2*random.randint (0,1)-1)
-    Map[0].unit(index).potential = potential
-    
         
 # Show network
-netview = netview.view (net)
-
-manager = pylab.get_current_fig_manager()
+view = View2D (net)
 
 def updatefig(*args):
     net.evaluate(1)
-    netview.update()
+    view.update()
     return True
 
 gobject.idle_add(updatefig)
-pylab.show()
+view.show()
 
 
