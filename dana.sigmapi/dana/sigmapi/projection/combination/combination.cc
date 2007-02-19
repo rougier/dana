@@ -60,7 +60,8 @@ Linear::Linear(float fac1_x,float fac2_x,float fac3_x,
 
 std::vector<core::LinkPtr> Linear::combine (core::UnitPtr dst,core::LayerPtr src1,core::LayerPtr src2)
 {
-    // fac1 for destination, fac2 for input1 and fac3 for input2
+	// TODO : Inverser fac2 et fac3 (cf ligne suivante) , c'est illogique.
+    // fac1 for destination, fac2 for input2 and fac3 for input1
     // fac1_x*i + offset_x = fac2_x*m + fac3_x*k
     // fac1_y*j + offset_y = fac2_y*n + fac3_y*l
 

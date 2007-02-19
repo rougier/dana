@@ -39,6 +39,7 @@ public:
     virtual ~Projection (void);
     void connect (void);
     void connect_all_to_one(float weight);
+    void connect_max_one_to_one(boost::python::list layers, float weight);
     void connect_point_mod_one(float weight);
     void connect_dog_mod_one(float A,float a,float B,float b);
     float dog(core::UnitPtr src,core::UnitPtr dst,float A,float a,float B,float b);

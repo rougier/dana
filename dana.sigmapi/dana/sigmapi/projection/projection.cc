@@ -11,6 +11,7 @@
 #include "projection.h"
 #include "core/map.h"
 #include <math.h>
+#include <boost/python/detail/api_placeholder.hpp>
 
 using namespace dana::sigmapi::projection;
 //using namespace dana::sigmapi;
@@ -52,6 +53,33 @@ void Projection::connect_all_to_one(float weight)
     link->set_weight(weight);
     ((dana::sigmapi::Unit*)(((core::UnitPtr)(dst->get
                              (0))).get()))->connect(linkptr);
+}
+
+void Projection::connect_max_one_to_one(boost::python::list layers, float weight)
+{
+	// The pattern of connections is one to one
+	// The dst neuron compute a max over its inputs
+	if(!PyList_Check(layers.ptr())){
+		PyErr_SetString(PyExc_ValueError, "expected a PyArrayObject");
+		throw_error_already_set();
+	}
+
+	int size = boost::python::len(layers);
+	core::LinkPtr linkptr;
+	sigmapi::Link * link;
+
+	for(int i = 0 ; i < dst->size();i++)
+	{
+		linkptr = core::LinkPtr (new sigmapi::Link (LinkType(SIGMAPI_MAX)));
+		link = (dana::sigmapi::Link*) (linkptr.get());
+		for(int j = 0 ; j < size ; j++)
+		{
+			link->add_source(((core::LayerPtr)(extract<core::LayerPtr>(layers[j])))->get(i));
+		}
+		link->set_weight(weight);
+		((dana::sigmapi::Unit*)(((core::UnitPtr)(dst->get
+				(i))).get()))->connect(linkptr);		
+	}
 }
 
 void Projection::connect_point_mod_one(float weight)
@@ -159,7 +187,7 @@ void Projection::static_connect (void)
 // =============================================================================
 void Projection::boost (void)
 {
-
+    import_array(); // Important ! Sinon c'est seg fault
     class_<Projection>("projection",
                        "======================================================================\n"
                        "\n"
@@ -186,6 +214,7 @@ void Projection::boost (void)
     .def ("connect", &Projection::connect,
           "connect() -- instantiates the connection\n")
     .def("connect_all_to_one", &Projection::connect_all_to_one)
+    .def("connect_max_one_to_one",&Projection::connect_max_one_to_one)
     .def("connect_point_mod_one", &Projection::connect_point_mod_one)
     .def("connect_dog_mod_one",&Projection::connect_dog_mod_one)
     ;
