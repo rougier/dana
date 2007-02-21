@@ -143,10 +143,12 @@ Network::compute_geometry (void)
         if (maps[i]->y > ymax) ymax = maps[i]->y;
     }
     
+    // Array initialization (needed below)
     int column_size [xmax-xmin+1];
     int column_start [xmax-xmin+1];
     int line_size [ymax-ymin+1];
     int line_start [ymax-ymin+1];
+    
     for (int i=0; i<(xmax-xmin+1); i++) {
         column_size[i] = 0;
         column_start[i] = 0;
@@ -157,15 +159,20 @@ Network::compute_geometry (void)
     }
 
     // Compute lines and columns size in terms of units
+    //  (first run, without offset consideration)
     for (int i=0; i<size(); i++) {
         int x = maps[i]->x - xmin;
         int y = maps[i]->y - ymin;
         
-        if (maps[i]->width > column_size[x])
-            column_size[x] = maps[i]->width;
-        if (maps[i]->height > line_size[y])
-            line_size[y] = maps[i]->height;
+        int w = maps[i]->dx + maps[i]->width * maps[i]->zoom;
+        int h = maps[i]->dy + maps[i]->height * maps[i]->zoom;
+        
+        if (w > column_size[x])
+            column_size[x] = w;
+        if (h > line_size[y])
+            line_size[y] = h;
     }
+    
     
     // Compute line and column starts
     column_start[0] = 1;
@@ -195,10 +202,11 @@ Network::compute_geometry (void)
         int x = maps[i]->x - xmin;
         int y = maps[i]->y - ymin;
         
-        object frame = make_tuple (column_start[x] * 1.0/w,
-                                   line_start[y] * 1.0/h,
-                                   maps[i]->width * 1.0/w,                                   
-                                   maps[i]->height * 1.0/h);
+        object frame = make_tuple (
+            (column_start[x] + maps[i]->dx) * 1.0f/w,
+            (line_start[y]   + maps[i]->dy) * 1.0f/h,
+            (maps[i]->width  * maps[i]->zoom )* 1.0f/w,                                   
+            (maps[i]->height * maps[i]->zoom ) * 1.0f/h);
         maps[i]->set_frame (frame);
     }
 }
