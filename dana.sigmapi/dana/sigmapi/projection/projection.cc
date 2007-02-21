@@ -152,7 +152,7 @@ void Projection::connect_dog_mod_one(float A,float a,float B,float b)
             float weight = dog(src1->get
                                (j),dst->get
                                (i),A,a,B,b);
-            if(!(fabs(weight) <= 0.01))
+            if(!(fabs(weight) <= 0.01f))
             {
                 link->set_weight(weight);
                 ((dana::sigmapi::Unit*)(((core::UnitPtr)(dst->get

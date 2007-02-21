@@ -32,7 +32,7 @@ print ""
 
 # Create a new network
 net = core.Network ()
-width  = 20
+width  = 30
 height = width
 
 # Create an Input map
@@ -82,9 +82,7 @@ p1.dst = Output[0]
 p1.connect();
 
 # Show network
-view = View2D (net, title='Click on unit to see weights', size=12)
-view.show()
-#netview = view.View (net)
+view = View2D (net, title='Click on unit to see weights', size=4)
 
 manager = pylab.get_current_fig_manager()
 
