@@ -26,32 +26,36 @@ namespace dana { namespace core {
     {
         public:
             //  attributes
-            // =================================================================
+            // ================================================================
             class Network *       network; // network owning this map
             std::vector<LayerPtr> layers;  // layers composing the map
             std::vector<std::vector<int> > shuffles;
             int                            shuffle_index;
-            int          x,y,width,height; // position & shape
+            int              width,height; // shape
+            int                   x,y;     // position
+            int                   dx, dy;  // offset
+            int                   zoom;    // zoom
             object                frame;   // normalized position & shape
-            static unsigned long  epochs;  // proxy epochs for thread evaluation
+            static unsigned long  epochs; // proxy epochs for thread evaluation
             static Map *          map;     // proxy map for thread evaluation
             object                spec;    // specification for this map
             boost::barrier *      barrier; // thread synchronization barrier
             
         public:
             // life management 
-            // =================================================================
-            Map (object shape=make_tuple(0,0), object position=make_tuple(0,0));
+            // ================================================================
+            Map (object shape=make_tuple(0,0),
+                 object position=make_tuple(0,0,0,0,1));
             virtual ~Map (void);
 
             // content management
-            // =================================================================
+            // ================================================================
             virtual void       append (LayerPtr layer);
             virtual LayerPtr   get (const int index) const;
             virtual int        size (void) const;
             
             // proxied management (default to layer 0)
-            // =================================================================
+            // ================================================================
             virtual UnitPtr    unit (const int index) const;                     
             virtual UnitPtr    unit (const int x, const int y) const;
             virtual int        fill (object type);
@@ -59,7 +63,7 @@ namespace dana { namespace core {
 
 
             // activity management
-            // =================================================================
+            // ================================================================
             static void        evaluate  (void);
             virtual void       clear (void);
             virtual void       compute_dp  (void);
@@ -67,7 +71,7 @@ namespace dana { namespace core {
             
 
             //  attribute manipulation
-            // =================================================================
+            // ================================================================
             virtual object     get_spec (void) const;
             virtual void       set_spec (const object s);  
             virtual object     get_shape (void) const;
@@ -81,7 +85,7 @@ namespace dana { namespace core {
 
         public:
             // python export
-            // =================================================================
+            // ================================================================
             static void         boost (void);
     };
 

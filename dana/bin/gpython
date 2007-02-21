@@ -356,6 +356,7 @@ class Console (gtk.ScrolledWindow):
         line = self.current_line()
         self.buffer.delete (self.buffer.get_start_iter(),
                                     self.buffer.get_end_iter())
+        self.allow_prompt = True
         self.prompt()
         self.write (line)
 
@@ -735,6 +736,7 @@ class Console (gtk.ScrolledWindow):
                 w = int(width*1.25)
                 h = int(height*1.25)
                 window.resize (w,h)
+                return True
                 
             # Ctrl--
             elif event.keyval in (gtk.keysyms.minus, gtk.keysyms.KP_Subtract):
@@ -751,7 +753,6 @@ class Console (gtk.ScrolledWindow):
                 w = int(width*0.8)
                 h = int(height*0.8)
                 window.resize (w,h)
-                
                 return True
 
             # Ctrl-L
