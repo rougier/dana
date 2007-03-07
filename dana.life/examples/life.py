@@ -18,7 +18,7 @@ import matplotlib.colors as colors
 import dana.core as core
 import dana.projection as proj
 import dana.life as life
-import dana.view as view
+from dana.visualization import View2D
 
 import time, random, math
 import gobject, gtk
@@ -62,13 +62,13 @@ for u in Map[0]:
 
         
 # Show network
-netview = view.view (net)
+view = View2D (net)
 
 manager = pylab.get_current_fig_manager()
 
 def updatefig(*args):
     net.evaluate(1,False)
-    netview.update()
+    view.update()
     return True
 
 gobject.idle_add(updatefig)
