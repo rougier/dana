@@ -55,4 +55,6 @@ setup (name='dana.cnft',
        description = "DANA: Continuum Neural Field Theory",
        packages = ['dana.cnft'],
        ext_modules = [cnft_ext],
+       data_files = [
+            ("include/dana/cnft", glob.glob("dana/cnft/*.h")) ]
       )

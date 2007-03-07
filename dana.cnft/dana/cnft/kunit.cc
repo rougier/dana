@@ -16,21 +16,21 @@ using namespace boost::python::numeric;
 using namespace dana;
 using namespace dana::cnft;
 
-// =============================================================================
+// ============================================================================
 //  constructor
-// =============================================================================
+// ============================================================================
 KUnit::KUnit(void) : core::Unit()
 {}
 
-// =============================================================================
+// ============================================================================
 //  destructor
-// =============================================================================
+// ============================================================================
 KUnit::~KUnit(void)
 {}
 
-// =============================================================================
+// ============================================================================
 //  computes potential and returns dp
-// =============================================================================
+// ============================================================================
 float
 KUnit::compute_dp (void)
 {
@@ -46,27 +46,15 @@ KUnit::compute_dp (void)
     
 	float input = 0;
     unsigned int size = afferents.size();
+	for (unsigned int i=0; i<size; i++)
+		input += afferents[i]->weight * afferents[i]->source->potential;
 
-//	for (unsigned int i=0; i<size; i++)
-//		input += afferents[i]->weight * afferents[i]->source->potential;
-
-    float di = 0;
-	for (unsigned int i=0; i<size; i++) {
-		input += fabs(afferents[i]->weight - afferents[i]->source->potential);
-		di += afferents[i]->source->potential;
-    }
-    input = 1.5 * (1.0f - input/di);
-
-    wp = input;
-    wm = input;
-
-    float lateral = 0;
 	float lateral_p = 0;
 	float lateral_m = 0;
     size = laterals.size();
 
 	for (unsigned int i=0; i<size; i++) {
-        if ((laterals[i]->source->potential > 0) || (laterals[i]->weight > 0)) {
+        if ((laterals[i]->source->potential > 0) || (laterals[i]->weight > 0)){
             float u = laterals[i]->weight * laterals[i]->source->potential;
             if (u >= 0)
                 lateral_p += u;
@@ -76,7 +64,7 @@ KUnit::compute_dp (void)
         }
     }
 
-    lateral = wp*lateral_p + wm*lateral_m;
+    float lateral = wp*lateral_p + wm*lateral_m;
     
     float du = (-potential + baseline + (1.0f/alpha)*(lateral + input)) / tau;
 	float value = potential;
@@ -91,24 +79,12 @@ KUnit::compute_dp (void)
 	return value-potential;
 }
 
-// =============================================================================
+// ============================================================================
 //  computes weights and returns dw
-// =============================================================================
+// ============================================================================
 float
 KUnit::compute_dw (void)
 {
-    if (potential < 0)
-        return 0.0f;
-
-    object spec = layer->map->get_spec();    
-    float lrate = extract<float> (spec.attr("lrate"));
-    
-    for (unsigned int i=0; i<afferents.size(); i++) {
-        afferents[i]->weight = 
-            (1-lrate)*afferents[i]->weight +
-            lrate*afferents[i]->source->potential;
-    }
-
     return 0.0f;
 }
 

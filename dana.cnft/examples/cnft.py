@@ -37,7 +37,7 @@ print ""
 
 # Create a new network
 net = core.Network ()
-width  = 40
+width  = 30
 height = width
 
 # Create the input map
@@ -56,7 +56,7 @@ Focus.name = 'Focus'
 Focus.spec = cnft.Spec()
 Focus.spec.tau      = 0.75
 Focus.spec.baseline = 0.0
-Focus.spec.alpha    = 13.0
+Focus.spec.alpha    = 13.5
 Focus.spec.min_act  = 0.0
 Focus.spec.max_act  = 1.0
 

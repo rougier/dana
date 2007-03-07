@@ -50,7 +50,7 @@ net.append(Input)
 # Create the focus map 
 Focus = core.Map ( (width,height), (1,0) )
 Focus.append(core.Layer())
-Focus[0].fill(cnft.Unit)
+Focus[0].fill(cnft.KUnit)
 Focus.name = 'Focus'
 
 Focus.spec = cnft.Spec()
@@ -59,6 +59,8 @@ Focus.spec.baseline = 0.0
 Focus.spec.alpha    = 13.0
 Focus.spec.min_act  = 0.0
 Focus.spec.max_act  = 1.0
+Focus.spec.wp = 1
+Focus.spec.wm = 1
 
 net.append(Focus)
 
