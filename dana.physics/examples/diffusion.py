@@ -28,9 +28,9 @@ net.append(Map)
 p = proj.projection()
 p.self = False
 p.distance = proj.distance.euclidean (False)
-p.density = proj.density.full(1)
+p.density = proj.density.sparser(.1)
 p.profile = proj.profile.constant(1.0)
-p.shape = proj.shape.box(1.0/(2*size), 1.0/size)
+p.shape = proj.shape.box(3.0/(2*size), 3.0/size)
 p.src = Map[0]
 p.dst = Map[0]
 p.connect()
