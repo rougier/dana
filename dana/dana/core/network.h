@@ -27,43 +27,43 @@ namespace dana { namespace core {
     class Network : public Object {
 	    public:
 	        //  attributes
-            // =================================================================
+            // ================================================================
 	        std::vector<MapPtr>  maps;         // maps composing the network
             unsigned int         width, height;// global shape
             unsigned long        age;          // age
-            boost::barrier *     barrier;      // thread synchronization barrier
+            boost::barrier *     barrier;     // thread synchronization barrier
             object               spec;         // Specification of the network
             
 	public:
             // life management 
-            // =================================================================
+            // ================================================================
             Network (void);       
             virtual ~Network (void);
             
             // content management
-            // =================================================================
+            // ================================================================
             virtual void         append (MapPtr layer);
             virtual MapPtr       get (const int index);
             virtual int          size (void) const;
 
             //  activity management
-            // =================================================================
+            // ================================================================
             virtual void         evaluate (unsigned long n=1,
                                            bool use_thread=false);
             virtual void         clear (void);
         
             //  attribute manipulation
-            // =================================================================
+            // ================================================================
             virtual object      get_shape (void);
 
 
             //  convenience functions
-            // =================================================================
+            // ================================================================
             virtual void        compute_geometry (void);
 
         public:
             // python export
-            // =================================================================
+            // ================================================================
             static void	        boost (void);
     };
     

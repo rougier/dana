@@ -195,6 +195,9 @@ void
 Layer::set_map (Map *m)
 {
     map = m;
+    
+    npy_intp dims[2] = {map->height, map->width};    
+    potentials = object(handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
 }
 
 // ============================================================================
@@ -226,7 +229,7 @@ Layer::set_spec (const object s)
 //  Get all potentials as a numpy::array
 // ============================================================================
 object
-Layer::get_potentials (void) const
+Layer::get_potentials (void)
 {
     if ((map == 0) || (map->width == 0)) {
         PyErr_SetString(PyExc_AssertionError, "layer has no shape");
@@ -234,16 +237,18 @@ Layer::get_potentials (void) const
         return object();
     }
 
-    npy_intp dims[2] = {map->height, map->width};    
-    object obj(handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
-    PyArrayObject *array = (PyArrayObject *) obj.ptr();
+    PyArrayObject *array = (PyArrayObject *) potentials.ptr();
+    if ((map->height != PyArray_DIM(array, 0)) ||
+        (map->width  != PyArray_DIM(array, 1))) {
+        npy_intp dims[2] = {map->height, map->width};    
+        potentials = object(handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
+    }
     PyArray_FILLWBYTE(array, 0);
-    
     float *data = (float *) array->data;
     for (unsigned int i=0; i<units.size(); i++)
         data[i] = units[i]->potential;
 
-    return extract<numeric::array>(obj);  
+    return extract<numeric::array>(potentials);
 }
 
 // ============================================================================

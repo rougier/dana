@@ -358,6 +358,9 @@ Map::boost (void) {
         .def ("compute_dw", &Map::compute_dw,
         "compute_dw() -> float -- computes weights and returns dw\n")
 
+        .def ("clear", &Map::clear,
+        " clear() -- clear layers activity\n")
+
         .def ("__getitem__", &Map::get,
         "x.__getitem__ (y)  <==> x[y]\n\n"
         "Use of negative indices is supported.\n")

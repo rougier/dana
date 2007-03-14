@@ -2,7 +2,7 @@
 
 #------------------------------------------------------------------------------
 #
-#   Copyright (c) 2006,2007 Nicolas P. Rougier
+#   Copyright (c) 2006,2007 Nicolas Rougier
 # 
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -24,8 +24,6 @@ Shortcuts:
     Ctrl-K : clear line from cursor to end
     Ctrl-L : clear console
     Ctrl-S : save session
-    Ctrl-+ : increase font size
-    Ctrl-- : decrease font size
     Tab:     completion
 """
 
@@ -55,8 +53,6 @@ def shortcuts():
     print "Ctrl-K : clear line from cursor to end"
     print "Ctrl-L : clear console"
     print "Ctrl-S : save session"
-    print "Ctrl-+ : increase font size"
-    print "Ctrl-- : decrease font size"
     print "Tab    : completion"
     print
 
@@ -495,7 +491,7 @@ class Console (gtk.ScrolledWindow):
         sys.stdout = self.stdout
         sys.stderr = self.stderr
         sys.stdin  = self.stdin
-        #sys.settrace (self.idle)
+        sys.settrace (self.idle)
         try:
             try:
                 r = eval (cmd, self.namespace, self.namespace)
@@ -515,7 +511,7 @@ class Console (gtk.ScrolledWindow):
                 except:
                     sys.stderr, self.stderr = self.stderr, sys.stderr
                     traceback.print_exc()
-        #sys.settrace (None)
+        sys.settrace (None)
         if sys.stdout is not self.stdout:
             sys.stdout = self.sys_stdout
             sys.stderr = self.sys_stderr
@@ -719,40 +715,6 @@ class Console (gtk.ScrolledWindow):
                 start,end = self.current_line_bounds()
                 start = self.buffer.get_iter_at_mark(self.buffer.get_insert())
                 self.text.get_buffer().delete (start,end)
-                return True
-
-            # Ctrl-+
-            elif event.keyval in (gtk.keysyms.plus, gtk.keysyms.KP_Add):
-                context = self.text.get_pango_context()
-                font = context.get_font_description()
-                if font.get_size() > 24000:
-                    return True
-                font.set_size (int(font.get_size()*1.25))
-                self.text.modify_font (font)
-                window = self.text
-                while window.get_parent():
-                    window = window.get_parent()
-                width,height = window.get_size()
-                w = int(width*1.25)
-                h = int(height*1.25)
-                window.resize (w,h)
-                return True
-                
-            # Ctrl--
-            elif event.keyval in (gtk.keysyms.minus, gtk.keysyms.KP_Subtract):
-                context = self.text.get_pango_context()
-                font = context.get_font_description()
-                if font.get_size() < 6000:
-                    return True
-                font.set_size (int(font.get_size()*0.8))
-                self.text.modify_font (font)
-                window = self.text
-                while window.get_parent():
-                    window = window.get_parent()
-                width,height = window.get_size()
-                w = int(width*0.8)
-                h = int(height*0.8)
-                window.resize (w,h)
                 return True
 
             # Ctrl-L

@@ -29,15 +29,17 @@ namespace dana { namespace core {
             std::vector<UnitPtr> units;     // units composing the layer
             std::vector<UnitPtr> permuted;  // permuted units
             object               spec;      // specification of the layer
+            object               potentials;//
+            
 
         public:
             // life management
-            // =================================================================
+            // ================================================================
             Layer (void);
             virtual ~Layer (void);
 
             // content management
-            // =================================================================
+            // ================================================================
             virtual void         append (UnitPtr unit);
             virtual UnitPtr      get (const int index) const;
             virtual UnitPtr      get (const int x, const int y) const;
@@ -45,24 +47,24 @@ namespace dana { namespace core {
             virtual int          fill (object type);
 
             // activity management
-            // =================================================================
+            // ================================================================
             virtual void         clear (void);
             virtual float        compute_dp (void);
             virtual float        compute_dw (void);
 
             //  attribute manipulation
-            // =================================================================
+            // ================================================================
             virtual Map *        get_map (void) const;
             virtual void         set_map (class Map *m);
             virtual object       get_spec (void) const;
             virtual void         set_spec (const object s);
 
             // convenient methods
-            // =================================================================
-            virtual object       get_potentials (void) const;
+            // ================================================================
+            virtual object       get_potentials (void);
 
             // python export
-            // =================================================================
+            // ================================================================
             static void          boost (void);
     };
 
