@@ -107,7 +107,6 @@ class View2D (object):
         if self.unit:
             for (m,axes,im) in self.maps:
                 axes.data = self.unit.weights(m[0])
-                print axes.data
                 im.set_data (axes.data)
         else:
             for (m,axes,im) in self.maps:
