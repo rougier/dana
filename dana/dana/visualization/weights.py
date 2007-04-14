@@ -64,7 +64,7 @@ class View2D (object):
             axes.unit = unit
             axes.data = unit.weights(source)
             im = axes.imshow(axes.data, cmap=cm, vmin=-1.0, vmax=1.0,
-                             origin='lower', interpolation='nearest')
+                             origin='upper', interpolation='nearest')
             pylab.setp(axes, xticks=[], yticks=[])
             self.units.append ( (unit, axes, im) )
 

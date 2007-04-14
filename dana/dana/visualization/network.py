@@ -58,7 +58,7 @@ class View2D (object):
             if len(m) > 0:
                 axes.data = m[0].potentials()
                 im = pylab.imshow (axes.data, cmap=cm, vmin=-1.0, vmax=1.0,
-                                   origin='lower', interpolation='nearest')
+                                   origin='upper', interpolation='nearest')
             if hasattr(m, 'name'):
                 axes.text (0.5, 0.5, m.name, size=fontsize)
             pylab.title (title)
@@ -92,7 +92,9 @@ class View2D (object):
         if event.inaxes:
             m = event.inaxes.map
             if event.button == 1:
-                self.unit = m[0].unit (int(event.xdata), int(event.ydata))
+                x = int(event.xdata)
+                y = event.inaxes.data.shape[0]-1-int(event.ydata)
+                self.unit = m[0].unit (x,y)
                 self.update()           
             elif event.button == 3:
                 self.unit = None
@@ -105,6 +107,7 @@ class View2D (object):
         if self.unit:
             for (m,axes,im) in self.maps:
                 axes.data = self.unit.weights(m[0])
+                print axes.data
                 im.set_data (axes.data)
         else:
             for (m,axes,im) in self.maps:

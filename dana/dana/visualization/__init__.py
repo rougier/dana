@@ -33,7 +33,8 @@ def mouse_move(self, event):
         if hasattr(event.inaxes, 'unit'):
             try:
                 unit = event.inaxes.unit
-                x,y = int(event.xdata), int(event.ydata)
+                x = int(event.xdata)
+                y = event.inaxes.data.shape[0]-1-int(event.ydata)
                 s = "Weight from unit[%d,%d] to unit[%d,%d] : %.3f "  % \
                    (x,y,unit.position[0], unit.position[1],
                                         event.inaxes.data[y,x])
@@ -46,7 +47,8 @@ def mouse_move(self, event):
 
         elif hasattr(event.inaxes, 'map'):
             try:
-                x,y = int(event.xdata), int(event.ydata)
+                x = int(event.xdata)
+                y = event.inaxes.data.shape[0]-1-int(event.ydata)
                 s = "[%d,%d] : %.3f " % (x,y,event.inaxes.data[y,x])
             except ValueError:
                 pass
