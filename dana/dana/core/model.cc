@@ -17,11 +17,15 @@
 using namespace dana::core;
 
 
+Model *Model::current_model = 0;
+
 // ============================================================================
 //  constructor
 // ============================================================================
 Model::Model (void) : Object()
-{}
+{
+    running = false;
+}
 
 // ============================================================================
 //  destructor
@@ -69,10 +73,39 @@ Model::clear (void)
 }
 
 
+void
+Model::evaluate (unsigned long n)
+{
+    if (running)
+        return;
+
+	if (n > 0) {
+		start = time;
+		stop  = time + n;
+	} else {
+		start = 0;
+		stop  = 0;
+	}
+
+	current_model = this;
+	
+	boost::thread T(&Model::entry_point);
+}
+
+void
+Model::entry_point (void)
+{
+    model->running = true;
+    bool go = true;
+
+}
+
+
 
 // ============================================================================
 //   evaluates all units potential and returns difference
 // ============================================================================
+/*
 void
 Model::evaluate (unsigned long epochs, bool use_thread)
 {
@@ -111,6 +144,7 @@ Model::evaluate (unsigned long epochs, bool use_thread)
         }
      }
 }
+*/
 
 
 // ============================================================================
@@ -148,11 +182,12 @@ Model::boost (void)
 
         .def ("clear", &Model::clear,
         "clear() -- remove all networks and environments\n")
-        
-        .def ("evaluate",    &Model::evaluate,
-        evaluate_overloads (args("n", "use_thread"), 
-        "evaluate(n=1, use_thread=false) -- evaluate model for n epochs")
-        )     
+
+        .def ("evaluate",    &Model::evaluate)
+//        .def ("evaluate",    &Model::evaluate,
+//        evaluate_overloads (args("n", "use_thread"), 
+//        "evaluate(n=1, use_thread=false) -- evaluate model for n epochs")
+//        )     
         ;
 }
 

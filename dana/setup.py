@@ -70,14 +70,6 @@ projection_ext = Extension (
     libraries = ['boost_python', 'boost_thread']
 )
 
-gl_srcs = glob.glob ("dana/visualization/gl/*.cc")
-gl_ext = Extension (
-    'dana.visualization.gl._gl',
-    sources = gl_srcs,
-    include_dirs=[numpy.get_include()],
-    libraries = ['boost_python', 'GL']
-)
-
 setup (name='dana',
        version = '1.0',
        author = 'Nicolas Rougier',
@@ -92,8 +84,7 @@ setup (name='dana',
                    'dana.projection.density',
                    'dana.projection.profile',
                    'dana.projection.distance',
-                   'dana.projection.shape',
-                   'dana.visualization.gl'
+                   'dana.projection.shape'
                   ],
        ext_modules = [
             core_ext,

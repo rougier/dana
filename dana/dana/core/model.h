@@ -27,7 +27,11 @@ namespace dana { namespace core {
             // ================================================================
             std::vector<NetworkPtr>  networks;
             std::vector<EnvironmentPtr> environments;
+            bool running;
             boost::barrier *barrier;
+            
+            unsigned long time, start, stop;
+            Model *current_model;
            
         public:
             // life management
@@ -43,8 +47,10 @@ namespace dana { namespace core {
 
             // activity management
             // =================================================================
-            virtual void        evaluate (unsigned long n=1,
-                                          bool use_thread=false);
+            virtual void        evaluate (unsigned long n);
+//          virtual void        evaluate (unsigned long n=1,
+//                                        bool use_thread=false);
+            static void         entry_point (void);
 
             // attribute manipulation
             // =================================================================
