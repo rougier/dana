@@ -86,14 +86,22 @@ Layer::get (const int x, const int y) const
 {
     int i = x;
     int j = y;
-    if ( (!map) && (map->width == 0)) {
-        PyErr_SetString(PyExc_RuntimeError, "layer has no shape");
+    if ( (!map) || (map->width == 0)) {
+        PyErr_SetString(PyExc_IndexError, "index out of range");
         throw_error_already_set();
+        return UnitPtr(new Unit());
     }
+    
     if (i < 0)
         i += map->width;
     if (j < 0)
         j += map->height;
+        
+    if ((i >= map->width) || (j >= map->height)) {
+        PyErr_SetString(PyExc_IndexError, "index out of range");
+        throw_error_already_set();
+        return UnitPtr(new Unit());
+    }
     int index = j*map->width + i;
     return get (index);
 }
@@ -127,8 +135,9 @@ Layer::fill (object type)
             append (UnitPtr(unit));
         }
      } else {
-        PyErr_SetString(PyExc_RuntimeError, "layer has no shape");
+        PyErr_SetString(PyExc_AssertionError, "layer has no shape");
         throw_error_already_set();
+        return 0;
      }
     return units.size();
 }
@@ -319,8 +328,6 @@ Layer::boost (void)
         
         .def ("clear", &Layer::clear,
         "clear() -- remove all units\n")
-        
-        .def_readwrite ("spec", &Layer::spec)
         
         .def ("potentials", &Layer::get_potentials,
         "potentials() -> numpy::array -- get units potential as an array")

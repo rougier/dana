@@ -213,6 +213,12 @@ Unit::set_position (const int xx, const int yy)
 object
 Unit::get_weights (const LayerPtr layer)
 {
+    if (layer == object()) {
+        PyErr_SetString(PyExc_AssertionError, "layer is None");
+        throw_error_already_set();
+        return object();
+    }
+
     if ((layer->map == 0) || (layer->map->width == 0)) {
         PyErr_SetString(PyExc_AssertionError, "layer has no shape");
         throw_error_already_set();

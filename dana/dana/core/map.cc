@@ -32,6 +32,7 @@ Map::Map (object shape, object position) : Object()
     network = 0;
     set_position (position);
     set_shape (shape);
+    frame = make_tuple (0,0,1,1);
     shuffle_index = 0;
 }
 
