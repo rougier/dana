@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+
+#------------------------------------------------------------------------------
+#
+#   Copyright (c) 2007 Nicolas Rougier
+# 
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#------------------------------------------------------------------------------
+
+""" Python OpenGL
+
+Python Opengl is an OpenGL terminal. Several backends may be used since the
+terminal itself only depends on OpenGL primitives and extensions (like the
+framebuffer object extension).
+"""
+
+
+if __name__ == '__main__':
+    import sys
+    from glpython.window import window
+    from optparse import OptionParser
+
+    parser = OptionParser()
+    parser.add_option ('-b', '--backend', action='store', dest='backend',
+                       default='wx', help='Backend to use')
+    parser.add_option ('-s', '--shell', action='store', dest='shell',
+                       default='ipython', help='python or ipython shell')
+    parser.add_option ('-f', '--fps', action='store', dest='fps',
+                       default=30.0, help='Frame per second')
+    parser.add_option ('-g', '--geometry', action='store', dest='size',
+                       default="650x400", help="Window geomertry (w x h)")
+    parser.add_option ('-l', '--logo', action='store_true', dest='logo',
+                       default=True, help="Display logo")
+                       
+    (options, args) = parser.parse_args()
+    s = options.size.split('x')
+    w = int(s[0])
+    h = int(s[1])
+    fps = int (options.fps)
+
+    win = window (namespace={}, title="GLPython", w=w, h=h, fps=fps,
+                  backend=options.backend, shell=options.shell,
+                  logo=options.logo, layout='1')
+    win.external_event_loop = True
+    if (len(args)):
+        win.terminal.open (args[0])
+    win.external_event_loop = False
+    win.show()
+
