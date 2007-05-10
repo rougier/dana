@@ -88,8 +88,7 @@ setup (name='dana',
                   ],
        ext_modules = [
             core_ext,
-            projection_ext, profile_ext, density_ext, distance_ext, shape_ext,
-            gl_ext
+            projection_ext, profile_ext, density_ext, distance_ext, shape_ext
        ],
       
        data_files= [

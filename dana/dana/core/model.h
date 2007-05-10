@@ -30,8 +30,8 @@ namespace dana { namespace core {
             bool running;
             boost::barrier *barrier;
             
-            unsigned long time, start, stop;
-            Model *current_model;
+            unsigned long time, start_time, stop_time;
+            static Model *current_model;
            
         public:
             // life management
@@ -46,8 +46,9 @@ namespace dana { namespace core {
             virtual void        clear (void);
 
             // activity management
-            // =================================================================
-            virtual void        evaluate (unsigned long n);
+            // ================================================================
+            virtual void        stop(void);
+            virtual bool        evaluate (unsigned long n);
 //          virtual void        evaluate (unsigned long n=1,
 //                                        bool use_thread=false);
             static void         entry_point (void);

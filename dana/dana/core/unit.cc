@@ -272,7 +272,7 @@ Unit::boost (void) {
     "-----------\n"
     "   potential : unit potential (float)\n"
     "   position  : unit position within layer (tuple, read only)\n"
-    "   spec      : specification of the unit\n"
+    "   spec      : specification of parameters related to unit behavior\n"
     "\n"
     "======================================================================\n",
         init<>(
@@ -280,9 +280,9 @@ Unit::boost (void) {
         )
                 
         .def_readwrite ("potential", &Unit::potential)
-
-        .def_readonly ("position", &Unit::get_position)
-        
+        .def_readonly  ("position", &Unit::get_position)
+        .add_property  ("spec", &Unit::get_spec, &Unit::set_spec)
+                
         .def ("compute_dp", &Unit::compute_dp,
         "compute_dp() -> float -- computes potential and return dp\n")
 

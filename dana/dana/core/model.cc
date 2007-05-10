@@ -73,33 +73,52 @@ Model::clear (void)
 }
 
 
-void
+bool
 Model::evaluate (unsigned long n)
 {
     if (running)
-        return;
+        return false;
 
 	if (n > 0) {
-		start = time;
-		stop  = time + n;
+		start_time = time;
+		stop_time  = time + n;
 	} else {
-		start = 0;
-		stop  = 0;
+		start_time = 0;
+		stop_time  = 0;
 	}
 
 	current_model = this;
-	
 	boost::thread T(&Model::entry_point);
+	return true;
 }
 
 void
 Model::entry_point (void)
 {
+    Model *model = Model::current_model;
+
     model->running = true;
     bool go = true;
-
+    
+    while (go) {
+        for (unsigned int i = 0; i < model->environments.size(); i++)
+            model->environments[i]->evaluate ();
+        for (unsigned int i = 0; i < model->networks.size(); i++)
+            model->networks[i]->evaluate (1, false);
+        model->time += 1;
+        
+        if (((model->stop_time > 0) && (model->time >= model->stop_time)) ||
+            (!model->running))
+            go = false;
+    }
+    model->running = false;
 }
 
+void
+Model::stop (void)
+{
+    current_model->running = false;
+}
 
 
 // ============================================================================
@@ -184,6 +203,7 @@ Model::boost (void)
         "clear() -- remove all networks and environments\n")
 
         .def ("evaluate",    &Model::evaluate)
+        .def ("stop",    &Model::stop)        
 //        .def ("evaluate",    &Model::evaluate,
 //        evaluate_overloads (args("n", "use_thread"), 
 //        "evaluate(n=1, use_thread=false) -- evaluate model for n epochs")

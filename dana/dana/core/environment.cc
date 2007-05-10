@@ -92,6 +92,6 @@ Environment::boost (void)
         "attach(map) -- Attach a map to the environment\n")
 
         .def ("evaluate", &Environment::evaluate,
-        "evaluate(map) -- Evaluate environment state\n")
+        "evaluate() -- Evaluate environment state\n")
         ;
 }
