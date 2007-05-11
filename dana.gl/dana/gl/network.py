@@ -90,3 +90,4 @@ class View(Object):
         else:
             for m,array in self.maps:
                 array.set_data (m[0].potentials())
+

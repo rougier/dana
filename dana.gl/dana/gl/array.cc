@@ -134,12 +134,12 @@ Array::render (void)
         int jj = 0;
         for (int j=0; j<d1; j++) {
             int ii = 0;
-            jj += array->strides[0];
             for (int i=0; i<d0; i++) {
-                ii += array->strides[1];
                 float v = *(float *)(array->data + jj + ii);
                 memcpy ((float *) &data[(d1-j-1)*d0*4+4*i], cmap.colorfv (v), s);
+                ii += array->strides[1];
             }
+            jj += array->strides[0];
         }
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable (GL_BLEND);
