@@ -24,4 +24,4 @@ def test(verbosity=2):
     suite.addTest (map.suite)
     runner = unittest.TextTestRunner(stream=sys.stdout, verbosity=verbosity)
     result = runner.run(suite)
-    return result
+
