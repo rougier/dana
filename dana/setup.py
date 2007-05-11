@@ -70,7 +70,7 @@ projection_ext = Extension (
     libraries = ['boost_python', 'boost_thread']
 )
 
-setup (name='dana',
+setup (name='dana.core',
        version = '1.0',
        author = 'Nicolas Rougier',
        author_email = 'Nicolas.Rougier@loria.fr',
