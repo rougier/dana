@@ -22,7 +22,7 @@ Available packages
 """
 
 import os.path, pydoc
-from test import test
+from tests import test
 
 def _packages_info():
     packagedir = os.path.abspath (os.path.dirname(os.path.realpath(__file__)))
