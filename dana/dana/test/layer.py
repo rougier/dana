@@ -14,45 +14,35 @@ import unittest
 import dana.core as core
 
 
-class LayerDefaultValue (unittest.TestCase):
+class LayerTests (unittest.TestCase):
     def setUp (self):
         self.layer = core.Layer()
         
     def testSpec (self):
-        """ Check default spec is None """
+        """ Check layer default spec is None """
         self.assertEqual (self.layer.spec, None)
 
     def testSize (self):
         """ Check layer is actually empty """
         self.assertEqual (len(self.layer), 0)
 
-
-class LayerAccess (unittest.TestCase):
-    def setUp (self):
-        self.layer = core.Layer()
-
-    def testAccessWhenEmpty_1 (self):
-        """ Check we got IndexError when accessing an empty layer """
+    def testAccessWhenEmpty (self):
+        """ Check IndexError raise when accessing an empty layer """
         self.assertRaises (IndexError, self.layer.__getitem__, 0)
         self.assertRaises (IndexError, self.layer.unit, 0)
         self.assertRaises (IndexError, self.layer.unit, 0, 0)
 
     def testAccess (self):
-        """ Check we got IndexError when accessing beyond layer """
+        """ Check IndexError raise when accessing beyond layer """
         m = core.Map ((1,2), (0,0))
         m.append (self.layer)
         self.layer.fill(core.Unit)
         self.assertRaises (IndexError, self.layer.__getitem__, 3)
         self.assertRaises (IndexError, self.layer.unit, 3)        
         self.assertRaises (IndexError, self.layer.unit, 1,0)
-    
-
-class LayerManagement (unittest.TestCase):
-    def setUp (self):
-        self.layer = core.Layer()
 
     def testFillNoShape (self):
-        """ Check we cannot fill layer without a shape """
+        """ Check layer cannot be filled  without a shape """
         self.assertRaises (AssertionError, self.layer.fill, core.Unit)
 
     def testFill (self):
@@ -63,7 +53,7 @@ class LayerManagement (unittest.TestCase):
         self.assertEqual (len(self.layer), 4)
 
     def testFillWithGarbage (self):
-        """ Check layer fill function """
+        """ Check layer fill function do not accept wrong unit type """
         m = core.Map ((2,2), (0,0))
         m.append (self.layer)
         self.assertRaises (TypeError, self.layer.fill, 1)
@@ -78,13 +68,8 @@ class LayerManagement (unittest.TestCase):
             i = i+1
         self.assertEqual (i, 100)
 
-
-class LayerAttributes (unittest.TestCase):
-    def setUp (self):
-        self.layer = core.Layer()
-
     def testPotentialsShape (self):
-        """ Check potentials shape """
+        """ Check layer potentials shape """
         m = core.Map ((2,4), (0,0))
         m.append (self.layer)
         self.layer.fill(core.Unit)
@@ -92,7 +77,7 @@ class LayerAttributes (unittest.TestCase):
         self.assertEqual (potentials.shape, (4,2))
 
     def testPotentials (self):
-        """ Check potentials value """
+        """ Check layer potentials value """
         m = core.Map ((1,3), (0,0))
         m.append (self.layer)
         self.layer.fill(core.Unit)
@@ -101,19 +86,16 @@ class LayerAttributes (unittest.TestCase):
         self.layer.unit(0,2).potential = 3.0
         potentials = self.layer.potentials()
 
-
-class LayerFunctions (unittest.TestCase):
-    def setUp (self):
-        self.layer = core.Layer()
-        
     def testComputeDP (self):
-        """ Check potential computation """
+        """ Check layer potential computation """
         self.assertEqual (self.layer.compute_dp(), 0.0)
 
     def testComputeDW (self):
-        """ Check weight computation """
+        """ Check layer weight computation """
         self.assertEqual (self.layer.compute_dw(), 0.0)
 
+# Test suite
+suite = unittest.TestLoader().loadTestsFromTestCase(LayerTests)
 
 if __name__ == "__main__":
     unittest.main()

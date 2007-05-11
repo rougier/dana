@@ -9,12 +9,19 @@
 # License, or (at your option) any later version.
 # 
 # $Id$
+""" Regression tests """
 
+import sys
 import unittest
 import unit,layer,map
 
-def test():
+def test(verbosity=2):
     """ Perform dana regression tests """
     
-    unittest.main()
-
+    suite = unittest.TestSuite()
+    suite.addTest (unit.suite)
+    suite.addTest (layer.suite)
+    suite.addTest (map.suite)
+    runner = unittest.TextTestRunner(stream=sys.stdout, verbosity=verbosity)
+    result = runner.run(suite)
+    return result

@@ -14,27 +14,28 @@ import unittest
 import dana.core as core
 
 
-class MapDefaultValue (unittest.TestCase):
+class MapTests (unittest.TestCase):
     def setUp (self):
         self.map = core.Map()
         
     def testSpec (self):
-        """ Check default spec is None """
+        """ Check map default spec is None """
         self.assertEqual (self.map.spec, None)
 
     def testShape (self):
-        """ Check default shape is (0,0) """
+        """ Check map default shape is (0,0) """
         self.assertEqual (self.map.shape, (0,0) )
 
     def testPosition (self):
-        """ Check default position is (0,0)"""
+        """ Check map default position is (0,0)"""
         self.assertEqual (self.map.shape, (0,0) )
 
     def testFrame (self):
-        """ Check default frame is (0,0,1,1) """
+        """ Check map default frame is (0,0,1,1) """
         self.assertEqual (self.map.frame, (0,0,1,1) )
 
-
+# Test suite
+suite = unittest.TestLoader().loadTestsFromTestCase(MapTests)
 
 if __name__ == "__main__":
     unittest.main()
