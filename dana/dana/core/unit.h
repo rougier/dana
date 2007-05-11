@@ -39,9 +39,10 @@ namespace dana { namespace core {
             
             //  content management
             // ================================================================
-            virtual void        connect (UnitPtr source, float weight);
-            virtual void        connect (LinkPtr link);
-            virtual void        clear (void);
+            virtual void connect (UnitPtr source, float weight, object data);            
+            virtual void connect (UnitPtr source, float weight);
+            virtual void connect (LinkPtr link);
+            virtual void clear (void);
 
             //  object management
             // ================================================================

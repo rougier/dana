@@ -58,6 +58,20 @@ Unit::compute_dw (void)
 }
 
 // ============================================================================
+//  connect to src using weight w provided with user data
+// ============================================================================
+void
+Unit::connect (UnitPtr src, float w, object data)
+{
+    LinkPtr link = LinkPtr (new Link (src, w));
+
+    if (src->layer == layer)
+        laterals.push_back (link);
+    else
+        afferents.push_back (link);
+}
+
+// ============================================================================
 //  connect to src using weight w
 // ============================================================================
 void
@@ -264,6 +278,7 @@ Unit::boost (void) {
     numeric::array::set_module_and_type("numpy", "ndarray");  
 
     // member function pointers for overloading
+    void (Unit::*connect_src_data)(UnitPtr,float,object) = &Unit::connect;    
     void (Unit::*connect_src)(UnitPtr,float) = &Unit::connect;
     void (Unit::*connect_link)(LinkPtr) = &Unit::connect;
     
@@ -295,8 +310,10 @@ Unit::boost (void) {
         .def ("compute_dw", &Unit::compute_dw,
         "compute_dw() -> float -- computes weights and returns dw\n")
         
+        .def ("connect", connect_src_data)        
         .def ("connect", connect_src)
         .def ("connect", connect_link,
+        "connect (src, w, data) -- connect to src using weight w\n"
         "connect (src, w) -- connect to src using weight w\n"
         "connect (l) -- connect using link l\n")
 

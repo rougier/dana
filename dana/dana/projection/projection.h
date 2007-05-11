@@ -33,7 +33,7 @@ namespace dana { namespace projection {
     public:
         Projection (void);
         virtual ~Projection (void);                
-        void connect (void);
+        void connect (object data=object());
         static void static_connect (void);
 
     public:

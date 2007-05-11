@@ -26,7 +26,7 @@ Projection::~Projection (void)
 {}
 
 void
-Projection::connect (void)
+Projection::connect (object data)
 {
     int src_width  = src->map->width;
     int src_height = src->map->height;
@@ -59,7 +59,7 @@ Projection::connect (void)
                 float de = density->call (d);
                 if ((de) && (self || (dst->get(i) != src->get (y*src_width +x)))) {
                     float w = profile->call(d);
-                    dst->get(i)->connect (src->get (y*src_width+x), w);
+                    dst->get(i)->connect (src->get (y*src_width+x), w, data);
                 }
             }
         }
@@ -76,9 +76,13 @@ Projection::static_connect (void)
         current->connect();
 }
 
-// =============================================================================
-//    Boost wrapping code
-// =============================================================================
+
+
+// ============================================================================
+//    Python export
+// ============================================================================
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(connect_overloads, connect, 0, 1)
+
 void
 Projection::boost (void) {
 
@@ -125,7 +129,9 @@ Projection::boost (void) {
         .def_readwrite ("profile", &Projection::profile)
     
      .def ("connect", &Projection::connect,
-     "connect() -- instantiates the connection\n")
+           connect_overloads (args("data"), 
+           "connect(data=None) -- instantiates the connection\n")
+          )
     ;
 }
 
