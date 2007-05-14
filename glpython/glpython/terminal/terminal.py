@@ -206,6 +206,7 @@ class Terminal (Console):
         sys.stdout = self.stdout
         sys.stderr = self.stderr
         sys.stdin  = self.stdin
+        
         try:
             try:
                 r = eval (cmd, self.namespace, self.namespace)

@@ -22,16 +22,16 @@ cursor.
 
 from OpenGL.GL import *
 from OpenGL.GL.EXT.framebuffer_object import *
-from textbuffer import *
+from sterminal import Terminal
 
 
-class Console (TextBuffer):
+class Console:
     """ """
 
     def __init__(self):
         """ Initializes the console """
         
-        TextBuffer.__init__(self)
+        self.terminal = Terminal ()
         self.position = (0,0)
         self.size = (1.0,1.0)
         self.bg_color = (1,1,1,1)
@@ -282,6 +282,8 @@ class Console (TextBuffer):
         # Compute console size in characters
         self.lines   = (self.height-2*self.border)/self.font.size[1]
         self.columns = (self.width-2*self.border)/self.font.size[0]
+        self.terminal.lines = self.lines
+        self.terminal.columns = self.columns
 
         # If framebuffer is already bound, we keep the old texture
         # if glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT):

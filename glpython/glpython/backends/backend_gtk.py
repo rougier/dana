@@ -104,22 +104,22 @@ class Window (base.Window):
     def button_press_event (self, widget, event):
         """ Button press event """
 
-        self.button_press (event.button, event.x, event.y)
+        self.button_press (event.button, event.x, self.height-event.y)
         self.paint()
 
     def button_release_event (self, widget, event):
         """ Button release event """
 
-        self.button_release (event.x, event.y)
+        self.button_release (event.x, self.height-event.y)
         self.paint()
 
     def scroll_event (self, widget, event):
         """ Scroll event """
 
         if event.direction == gtk.gdk.SCROLL_UP:
-            self.button_press (4, event.x, event.y)
+            self.button_press (4, event.x, self.height-event.y)
         elif event.direction == gtk.gdk.SCROLL_DOWN:
-            self.button_press  (5, event.x, event.y)
+            self.button_press  (5, event.x, self.height-event.y)
         self.paint()
 
     def mouse_motion_event (self, widget, event):
