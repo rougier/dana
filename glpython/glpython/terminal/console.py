@@ -22,16 +22,16 @@ cursor.
 
 from OpenGL.GL import *
 from OpenGL.GL.EXT.framebuffer_object import *
-from sterminal import Terminal
+from textbuffer import *
 
 
-class Console:
+class Console (TextBuffer):
     """ """
 
     def __init__(self):
         """ Initializes the console """
         
-        self.terminal = Terminal ()
+        TextBuffer.__init__(self)
         self.position = (0,0)
         self.size = (1.0,1.0)
         self.bg_color = (1,1,1,1)
@@ -149,14 +149,14 @@ class Console:
     def scroll_down (self):
         """ Scroll console down """
         
-        self.scroll = max (self.scroll-1, 0)
+        self.scroll = max (self.scroll-5, 0)
         self.dirty = True
 
 
     def scroll_up (self):
         """ Scroll console up """
         
-        self.scroll += 1
+        self.scroll += 5
         self.dirty = True
 
 
@@ -282,8 +282,6 @@ class Console:
         # Compute console size in characters
         self.lines   = (self.height-2*self.border)/self.font.size[1]
         self.columns = (self.width-2*self.border)/self.font.size[0]
-        self.terminal.lines = self.lines
-        self.terminal.columns = self.columns
 
         # If framebuffer is already bound, we keep the old texture
         # if glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT):

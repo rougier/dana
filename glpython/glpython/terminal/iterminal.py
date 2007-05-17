@@ -35,6 +35,7 @@ import rlcompleter
 from console import *
 from history import *
 from io import *
+from font import *
 from font import _FontMarker, _ColorMarker
 
 ansi_colors =  {'0;30': Black,
