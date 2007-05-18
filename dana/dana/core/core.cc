@@ -18,6 +18,7 @@
 #include "link.h"
 #include "spec.h"
 #include "model.h"
+#include "random.h"
 
 BOOST_PYTHON_MODULE(_core) {
     using namespace dana::core;
@@ -32,4 +33,5 @@ BOOST_PYTHON_MODULE(_core) {
     Layer::boost();
     Unit::boost();
     Link::boost();
+    Random::boost();
 }

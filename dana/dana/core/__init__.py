@@ -23,5 +23,24 @@ made of a set of several units. Each unit can be linked to any other unit
 """
 
 from _core import *
+import random
 
-__all__ = ['Model', 'Environment', 'Network', 'Map', 'Layer', 'Unit', 'Link']
+_random = Random()
+
+def seed (s = None):
+    """ Seed for internal random generator """
+
+    if not s:
+        random.seed (_random.seed)
+        return _random.seed
+    random.seed (s)
+    _random.seed = s
+    return _random.seed
+
+seed (12345)
+
+__all__ = ['Model', 'Environment', 'Network',
+           'Map', 'Layer', 'Unit', 'Link', 'Random',
+           'seed']
+
+

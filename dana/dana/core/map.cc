@@ -238,9 +238,9 @@ Map::set_shape (const int w, const int h)
         layers[i]->clear();
 
     // Generates shuffles for random evaluation
-    std::vector<int> s;
+    std::vector<int> s(w*h, 0);
     for (int i=0; i<w*h; i++)
-        s.push_back (i);
+        s[i] = i;
     for (int i=0; i < 100; i++) {
         random_shuffle (s.begin(), s.end());
         shuffles.push_back(s);
@@ -248,6 +248,7 @@ Map::set_shape (const int w, const int h)
     
     if (network)
         network->compute_geometry();
+
 }
 
 // ============================================================================
