@@ -1,0 +1,5 @@
+include *.txt
+include MANIFEST.in
+include setup.py
+recursive-include dana *.cc *.h *.glade
+
