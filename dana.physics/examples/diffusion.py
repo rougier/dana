@@ -3,10 +3,10 @@
 import dana.core as core
 import dana.projection as proj
 import dana.physics as physics
-from dana.visualization import View2D
-import time, random, math
-import gobject, gtk
 
+from glpython.window import window
+from dana.gl.network import View
+from dana.gui.gtk import ControlPanel
 
 print "--------------------------------------------------------------------"
 print "Diffusion demo"
@@ -14,9 +14,14 @@ print "Author:    Nicolas Rougier"
 print "Date:      08/02/2007"
 print "--------------------------------------------------------------------"
 
+
+# Create a new model
+model = core.Model()
+
 # Create a new network
 net = core.Network ()
-size  = 50
+model.append(net)
+size  = 100
 
 # Create the map
 Map = core.Map ( (2*size,size), (0,0) )
@@ -43,16 +48,10 @@ for u in Map[0]:
     else:
         u.potential = 0
 
-        
-# Show network
-view = View2D (net)
+# Control
+control = ControlPanel (model)
 
-def updatefig(*args):
-    net.evaluate(1)
-    view.update()
-    return True
-
-gobject.idle_add(updatefig)
-view.show()
-
-
+# Visu
+win = window(locals(), backend='gtk')
+win.view.append (View (net, fontsize=48))
+win.show()
