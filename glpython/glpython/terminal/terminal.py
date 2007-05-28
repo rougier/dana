@@ -66,6 +66,7 @@ class Terminal (StringTerminal):
         self.depth = 99
         self.focus = False
         self.logo = False
+        self.use_border = True
 
         # Internal
         self.scroll = 0
@@ -450,16 +451,17 @@ class Terminal (StringTerminal):
         GL.glTranslatef (0.0, 0.0, 0.5)
 
         # Console black border
-        GL.glPolygonMode (GL.GL_FRONT_AND_BACK, GL.GL_LINE)
-        GL.glDisable (GL.GL_TEXTURE_2D)
-        GL.glDisable (GL.GL_BLEND)
-        GL.glColor4f (0,0,0,1)
-        GL.glBegin (GL.GL_QUADS)
-        GL.glVertex2f (x, y)
-        GL.glVertex2f (x+w, y)
-        GL.glVertex2f (x+w, y+h)
-        GL.glVertex2f (x, y+h)
-        GL.glEnd()        
+        if self.use_border:
+            GL.glPolygonMode (GL.GL_FRONT_AND_BACK, GL.GL_LINE)
+            GL.glDisable (GL.GL_TEXTURE_2D)
+            GL.glDisable (GL.GL_BLEND)
+            GL.glColor4f (0,0,0,1)
+            GL.glBegin (GL.GL_QUADS)
+            GL.glVertex2f (x, y)
+            GL.glVertex2f (x+w, y)
+            GL.glVertex2f (x+w, y+h)
+            GL.glVertex2f (x, y+h)
+            GL.glEnd()        
 
         GL.glPopAttrib()        
         GL.glMatrixMode (GL.GL_PROJECTION)

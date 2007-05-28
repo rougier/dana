@@ -170,10 +170,12 @@ def window (namespace={}, w=650, h=400, title='GLPython', fps=30,
                 if self.terminal:
                     self.terminal.set_size (1.0,1.0)
                     self.terminal.set_position (0,0)
+                    self.terminal.use_border = False
             elif layout == '2':
                 if self.terminal:
                     self.terminal.set_size (1.0,0.249)
                     self.terminal.set_position (0,0)
+                    self.terminal.use_border = True
                 self.view.set_size (1.0,.75)
                 self.view.set_position (0,-1)
             self.reset()
