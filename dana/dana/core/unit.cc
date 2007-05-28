@@ -164,30 +164,25 @@ Unit::set_y (const int value)
 // ============================================================================
 //  get unit specification
 // ============================================================================
-object
+SpecPtr
 Unit::get_spec (void) const
 {
-    if ( (!spec.ptr()) && (layer) )
+    if ((spec == SpecPtr()) && (layer))
         return layer->get_spec();
-    return spec;
+    return SpecPtr(spec);
 }
 
 // ============================================================================
-//  Set unit specification.
-//  If given specification is none, specification from owning layer is used.
+//  set unit specification.
 // ============================================================================
 void
-Unit::set_spec (const object s)
+Unit::set_spec (const SpecPtr s)
 {
-    if ( (!s.ptr()) && (layer) ) {
-        spec = layer->get_spec();
-    } else {
-        spec = s;
-    }
+    spec = SpecPtr(s);
 }
 
 // ============================================================================
-//  Get position as a tuple of int
+//  get position as a tuple of int
 // ============================================================================
 object
 Unit::get_position (void) const

@@ -28,7 +28,7 @@ namespace dana { namespace core {
             class Map *          map;       // map owning this layer
             std::vector<UnitPtr> units;     // units composing the layer
             std::vector<UnitPtr> permuted;  // permuted units
-            object               spec;      // specification of the layer
+            SpecPtr              spec;      // specification of the layer
             object               potentials;//
             
 
@@ -56,8 +56,8 @@ namespace dana { namespace core {
             // ================================================================
             virtual Map *        get_map (void) const;
             virtual void         set_map (class Map *m);
-            virtual object       get_spec (void) const;
-            virtual void         set_spec (const object s);
+            virtual SpecPtr      get_spec (void) const;
+            virtual void         set_spec (const SpecPtr s);
 
             // convenient methods
             // ================================================================

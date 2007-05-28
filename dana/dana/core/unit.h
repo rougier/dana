@@ -28,7 +28,7 @@ namespace dana { namespace core {
             float                potential; // potential
             std::vector<LinkPtr> laterals;  // lateral links
             std::vector<LinkPtr> afferents; // afferent links
-            object               spec;      // specification of the unit
+            SpecPtr              spec;      // specification of the unit
             int                  x, y;      // position within layer
 
         public:
@@ -57,8 +57,8 @@ namespace dana { namespace core {
             virtual void        set_x (const int value);
             virtual int         get_y (void) const;
             virtual void        set_y (const int value);
-            virtual object      get_spec (void) const;
-            virtual void        set_spec (const object s);            
+            virtual SpecPtr     get_spec (void) const;
+            virtual void        set_spec (const SpecPtr s);            
             virtual object      get_position (void) const;
             virtual void        set_position (const object p);
             virtual void        set_position (const int x, const int y);

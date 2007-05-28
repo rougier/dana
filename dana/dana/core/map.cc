@@ -178,24 +178,19 @@ Map::compute_dw (void)
 // ============================================================================
 //  get map specification
 // ============================================================================
-object
+SpecPtr
 Map::get_spec (void) const
 {
-    return spec;
+    return SpecPtr(spec);
 }
 
 // ============================================================================
 //  Set map specification.
-//  If given specification is none, specification from owning network is used.
 // ============================================================================
 void
-Map::set_spec (const object s)
+Map::set_spec (const SpecPtr s)
 {
-    if ( (!s.ptr()) && (network) ) {
-//        spec = network->get_spec();
-    } else {
-        spec = s;
-    }
+    spec = SpecPtr(s);
 }
 
 // ============================================================================

@@ -212,12 +212,12 @@ Layer::set_map (Map *m)
 // ============================================================================
 //  get layer specification
 // ============================================================================
-object
+SpecPtr
 Layer::get_spec (void) const
 {
-    if ( (!spec.ptr()) && (map) )
+    if ((spec == SpecPtr()) && (map))
         return map->get_spec();
-    return spec;
+    return SpecPtr(spec);
 }
 
 // ============================================================================
@@ -225,13 +225,9 @@ Layer::get_spec (void) const
 //  If given specification is none, specification from owning map is used.
 // ============================================================================
 void
-Layer::set_spec (const object s)
+Layer::set_spec (const SpecPtr s)
 {
-    if ( (!s.ptr()) && (map) ) {
-        spec = map->get_spec();
-    } else {
-        spec = s;
-    }
+    spec = SpecPtr(s);
 }
 
 // ============================================================================

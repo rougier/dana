@@ -9,7 +9,11 @@
 # License, or (at your option) any later version.
 # 
 # $Id$
-""" Regression tests """
+""" regression tests
+
+    Regression tests can be validated through the test function of the
+    dana.core package.
+"""
 
 import sys
 import unittest

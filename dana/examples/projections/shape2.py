@@ -12,12 +12,13 @@
 #------------------------------------------------------------------------------
 
 import dana.core as core
-from dana.visualization import View2D
 import dana.projection as projection
 import dana.projection.distance as distance
 import dana.projection.density as density
 import dana.projection.shape as shape
 import dana.projection.profile as profile
+
+from dana.visualization.pylab import View
 
 if __name__ == '__main__':
 
@@ -66,6 +67,6 @@ if __name__ == '__main__':
     proj.shape    = shape.box(0,1)
     proj.connect()
     
-    view = View2D (net, title='Click on unit to see weights', size=12)
+    view = View (net, title='Click on unit to see weights', size=12)
     view.show()
 

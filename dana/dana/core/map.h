@@ -31,14 +31,14 @@ namespace dana { namespace core {
             std::vector<LayerPtr> layers;  // layers composing the map
             std::vector<std::vector<int> > shuffles;
             int                            shuffle_index;
-            int              width,height; // shape
+            int                   width,height; // shape
             int                   x,y;     // position
             int                   dx, dy;  // offset
             int                   zoom;    // zoom
             object                frame;   // normalized position & shape
             static unsigned long  epochs; // proxy epochs for thread evaluation
             static Map *          map;     // proxy map for thread evaluation
-            object                spec;    // specification for this map
+            SpecPtr               spec;    // specification for this map
             boost::barrier *      barrier; // thread synchronization barrier
             
         public:
@@ -71,9 +71,9 @@ namespace dana { namespace core {
             
 
             //  attribute manipulation
-            // ================================================================
-            virtual object     get_spec (void) const;
-            virtual void       set_spec (const object s);  
+            // ===========r====================================================
+            virtual SpecPtr    get_spec (void) const;
+            virtual void       set_spec (const SpecPtr s);  
             virtual object     get_shape (void) const;
             virtual void       set_shape (const object shape);
             virtual void       set_shape (const int w, const int h);
