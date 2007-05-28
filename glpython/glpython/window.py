@@ -163,7 +163,7 @@ def window (namespace={}, w=650, h=400, title='GLPython', fps=30,
     
         def set_layout (self, layout):
             """ Set layout """
-            
+
             if layout == '1':
                 self.view.set_size (1.0,1.0)
                 self.view.set_position (0,0)
