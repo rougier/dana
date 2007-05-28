@@ -28,16 +28,13 @@ print "--------------------------------------------------------------------"
 print "Game Of Life demo"
 print "Author:    Nicolas Rougier"
 print "Date:      05/01/2007"
-print ""
-print "Comment: This package demonstrates how to cheat D.A.N.A. to peform"
-print "         synchronous computation using compute_dw function."
 print "--------------------------------------------------------------------"
 print ""
 
 
 # Create a new network
 net = core.Network ()
-size  = 200
+size  = 400
 
 # Create the map
 Map = core.Map ( (size,size), (0,0) )
