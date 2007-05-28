@@ -29,7 +29,7 @@ namespace dana { namespace core {
             std::vector<EnvironmentPtr> environments;
             bool running;
             boost::barrier *barrier;
-            
+            unsigned long age;
             unsigned long time, start_time, stop_time;
             static Model *current_model;
            
@@ -47,17 +47,15 @@ namespace dana { namespace core {
 
             // activity management
             // ================================================================
-            virtual void        stop(void);
-            virtual bool        evaluate (unsigned long n);
-//          virtual void        evaluate (unsigned long n=1,
-//                                        bool use_thread=false);
+            virtual bool        start (unsigned long n=0);
+            virtual void        stop (void);
             static void         entry_point (void);
 
             // attribute manipulation
-            // =================================================================
+            // ================================================================
 
             // convenient methods
-            // =================================================================
+            // ================================================================
 
             // python export
             // =================================================================

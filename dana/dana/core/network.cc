@@ -252,15 +252,13 @@ Network::boost (void)
         
         .def ("clear",       &Network::clear,
         "clear() -- clear map activity\n")
-        
 
         .def ("evaluate",    &Network::evaluate,
         evaluate_overloads (args("n", "use_thread"), 
         "evaluate(n=1, use_thread=false) -- evaluate all maps for n epochs")
         )
          
-         .def_readwrite ("spec", &Network::spec)
-               
+        .def_readwrite ("spec", &Network::spec)
         .def_readonly ("shape", &Network::get_shape)
         ;
 }

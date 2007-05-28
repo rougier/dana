@@ -25,6 +25,7 @@ Model *Model::current_model = 0;
 Model::Model (void) : Object()
 {
     running = false;
+    age = 0;
 }
 
 // ============================================================================
@@ -72,9 +73,11 @@ Model::clear (void)
     environments.clear();
 }
 
-
+// ============================================================================
+//  Start model evaluation for the given number of epochs
+// ============================================================================
 bool
-Model::evaluate (unsigned long n)
+Model::start (unsigned long n)
 {
     if (running)
         return false;
@@ -92,6 +95,9 @@ Model::evaluate (unsigned long n)
 	return true;
 }
 
+// ============================================================================
+//  Entry point for threaded evaluation
+// ============================================================================
 void
 Model::entry_point (void)
 {
@@ -106,7 +112,8 @@ Model::entry_point (void)
         for (unsigned int i = 0; i < model->networks.size(); i++)
             model->networks[i]->evaluate (1, false);
         model->time += 1;
-        
+        model->age++;
+
         if (((model->stop_time > 0) && (model->time >= model->stop_time)) ||
             (!model->running))
             go = false;
@@ -114,6 +121,9 @@ Model::entry_point (void)
     model->running = false;
 }
 
+// ============================================================================
+//  Stop simulation
+// ============================================================================
 void
 Model::stop (void)
 {
@@ -122,54 +132,9 @@ Model::stop (void)
 
 
 // ============================================================================
-//   evaluates all units potential and returns difference
-// ============================================================================
-/*
-void
-Model::evaluate (unsigned long epochs, bool use_thread)
-{
-    if (use_thread) {
-        boost::thread_group threads;
-        
-        int n = 0;
-        for (unsigned int i=0; i<networks.size(); i++)
-            n += networks[i]->maps.size();
-        n+= environments.size();
-        
-        barrier = new boost::barrier (n);
-        Map::epochs = epochs;
-        Environment::epochs = epochs;
-                        
-        for (unsigned int j=0; j<networks.size(); j++) {
-            for (unsigned int i = 0; i<networks[j]->maps.size(); i++) {
-                networks[j]->maps[i]->barrier = barrier;
-                Map::map = networks[j]->maps[i].get();
-                threads.create_thread (&Map::evaluate);
-            }
-        }
-        for (unsigned int i=0; i<environments.size(); i++) {
-            environments[i]->barrier = barrier;
-            Environment::env = environments[i].get();
-            threads.create_thread (&Environment::static_evaluate);
-        }
-        threads.join_all();
-        delete barrier;
-     } else {
-        for (unsigned long j=0; j<epochs; j++) {
-           for (unsigned int i = 0; i < environments.size(); i++)
-                environments[i]->evaluate ();
-           for (unsigned int i = 0; i < networks.size(); i++)
-                networks[i]->evaluate (1, false);
-        }
-     }
-}
-*/
-
-
-// ============================================================================
 //    Boost wrapping code
 // ============================================================================
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(evaluate_overloads, evaluate, 0, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(start_overloads, start, 0, 1)
 
 void
 Model::boost (void)
@@ -202,12 +167,13 @@ Model::boost (void)
         .def ("clear", &Model::clear,
         "clear() -- remove all networks and environments\n")
 
-        .def ("evaluate",    &Model::evaluate)
-        .def ("stop",    &Model::stop)        
-//        .def ("evaluate",    &Model::evaluate,
-//        evaluate_overloads (args("n", "use_thread"), 
-//        "evaluate(n=1, use_thread=false) -- evaluate model for n epochs")
-//        )     
+        
+        .def ("start", &Model::start, start_overloads (
+                args("epochs"), "start(epochs = 0) -- start simulation\n"))
+        .def ("stop",     &Model::stop,
+              "stop() -- stop simulation\n")
+        .def_readonly ("running", &Model::running)
+        .def_readonly ("age", &Model::age)
         ;
 }
 
