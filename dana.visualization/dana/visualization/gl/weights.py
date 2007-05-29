@@ -67,8 +67,21 @@ class View (Object):
 
         glDisable(GL_TEXTURE_RECTANGLE_ARB)
         glDisable(GL_LIGHTING)
+
+        glPolygonOffset (1,1)
+        glEnable (GL_POLYGON_OFFSET_FILL)
+        glPolygonMode (GL_FRONT_AND_BACK, GL_FILL)
+        glColor3f (1,1,1)
+        glBegin (GL_QUADS)
+        glVertex2f (-0.5, -0.5);
+        glVertex2f ( 0.5, -0.5);
+        glVertex2f ( 0.5,  0.5);
+        glVertex2f (-0.5,  0.5);
+        glEnd ();
+
+        glDisable (GL_POLYGON_OFFSET_FILL)
         glPolygonMode (GL_FRONT_AND_BACK, GL_LINE)
-        glColor3f (0,0,0,0)
+        glColor3f (0,0,0)
         glBegin (GL_QUADS)
         glVertex2f (-0.5, -0.5);
         glVertex2f ( 0.5, -0.5);
