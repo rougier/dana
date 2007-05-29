@@ -287,6 +287,7 @@ def Edit (view):
     dialog.vbox.pack_start (viewer, True, True)
     #    dialog.connect ('delete_event', lambda w,x: gtk.main_quit())
     dialog.show_all()
+    return viewer
 
 
 if __name__ == '__main__':
