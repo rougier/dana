@@ -55,7 +55,6 @@ float
 Unit::compute_dw (void)
 {
     potential = _potential;
-
 	return 0;
 }
 

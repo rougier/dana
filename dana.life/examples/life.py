@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #------------------------------------------------------------------------------
-# Copyright (c) 2006-2007 Nicolas Rougier.
+# Copyright (c) 2007 Nicolas Rougier.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -14,12 +14,11 @@
 
 import matplotlib.pylab as pylab
 import matplotlib.colors as colors
-
 import dana.core as core
 import dana.projection as proj
 import dana.life as life
-from dana.visualization import View2D
-
+from dana.visualization.pylab.network import View
+from dana.gui.gtk import ControlPanel
 import time, random, math
 import gobject, gtk
 
@@ -33,8 +32,10 @@ print ""
 
 
 # Create a new network
+model = core.Model()
 net = core.Network ()
-size  = 400
+model.append(net)
+size  = 100
 
 # Create the map
 Map = core.Map ( (size,size), (0,0) )
@@ -57,18 +58,16 @@ p.connect()
 for u in Map[0]:
     u.potential = random.randint (0, 1)
 
-        
-# Show network
-view = View2D (net)
 
-manager = pylab.get_current_fig_manager()
+# Network visualization and control (gtk)
+view = View (net)
 
 def updatefig(*args):
-    net.evaluate(1,False)
     view.update()
     return True
 
+manager = pylab.get_current_fig_manager()
 gobject.idle_add(updatefig)
+panel = ControlPanel (model)
 pylab.show()
-
 
