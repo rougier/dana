@@ -325,6 +325,7 @@ class Viewport(list):
 
         self.observer.resize (w,h)
         self.observer.look()
+        glLight (GL_LIGHT0, GL_POSITION, [4, 1.0, 4.0, 0.0])
         for o in self:
             o.render()
 
