@@ -20,7 +20,9 @@ using namespace dana::cnft;
 //  constructor
 // ============================================================================
 KUnit::KUnit(void) : core::Unit()
-{}
+{
+    spec = core::SpecPtr();
+}
 
 // ============================================================================
 //  destructor
@@ -35,12 +37,11 @@ float
 KUnit::compute_dp (void)
 {
     core::SpecPtr sp = layer->get_spec();
+    if (sp.get() == NULL)
+        return 0.0f;
     Spec *s = dynamic_cast<Spec *>(sp.get());
-
-    if (!s) {
-        PyErr_SetString(PyExc_TypeError, "Bad specification");
-        throw_error_already_set();
-    }
+    if (s == 0)
+        return 0.0f;
     
     float tau      = s->tau;
     float alpha    = s->alpha;
