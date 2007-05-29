@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #------------------------------------------------------------------------------
-# Copyright (c) 2006-2007 Nicolas Rougier.
+# Copyright (c) 2007 Nicolas Rougier.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -11,19 +11,20 @@
 # $Id$
 #------------------------------------------------------------------------------
 
-import matplotlib.pylab as pylab
-import matplotlib.colors as colors
-
+import math, random
 import dana.core as core
 import dana.projection as proj
 import dana.cnft as cnft
-import dana.view as view
-import time, random, math
-import gobject, gtk
+from glpython.window import window
+from dana.gui.gtk import ControlPanel
+from dana.visualization.gl.network import View
 
 
-# Create a new network
+# Creating model & network
+model = core.Model()
 net = core.Network ()
+model.append (net)
+
 width  = 30
 height = width
 
@@ -72,8 +73,8 @@ p.dst = Focus[0]
 p.connect()
 
 
-
 def bubble():
+    net.clear()
     x0 = random.randint(-1,1) * .25
     y0 = random.randint(-1,1) * .25    
     for i in xrange(Input.shape[0]):
@@ -82,37 +83,10 @@ def bubble():
             y = j/float(Input.shape[1])-.5 +y0
             Input[0].unit(i,j).potential = math.exp (-(x*x+y*y)/0.025)
 
-        
-# Show network
-netview = view.network.NetworkView (net)
-
-
-def run(e,n):
-    for j in range(e):
-        net.clear()
-        bubble()
-        for i in range(n):
-            net.evaluate(1)
-#            netview.update()
-
-
-
-manager = pylab.get_current_fig_manager()
-cnt = 0
-tstart = time.time()
-
-def updatefig(*args):
-#    global cnt, start,net
-#    net.evaluate(1,False)
-    netview.update()
-#    cnt += 1
-#    if cnt==500:
-#        print 'FPS', cnt/(time.time() - tstart)
-#        return False
-    return True
-cnt = 0
-
-gobject.idle_add (updatefig)
-pylab.show()
+bubble()
+win = window(locals(), backend='gtk')
+win.view.append (View (net, fontsize=48))
+control = ControlPanel (model)
+win.show()
 
 

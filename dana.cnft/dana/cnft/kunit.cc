@@ -34,15 +34,21 @@ KUnit::~KUnit(void)
 float
 KUnit::compute_dp (void)
 {
-    object spec = layer->map->get_spec();
+    core::SpecPtr sp = layer->get_spec();
+    Spec *s = dynamic_cast<Spec *>(sp.get());
+
+    if (!s) {
+        PyErr_SetString(PyExc_TypeError, "Bad specification");
+        throw_error_already_set();
+    }
     
-    float tau      = extract<float> (spec.attr("tau"));
-    float alpha    = extract<float> (spec.attr("alpha"));
-    float baseline = extract<float> (spec.attr("baseline"));
-    float min_act  = extract<float> (spec.attr("min_act"));
-    float max_act  = extract<float> (spec.attr("max_act"));
-    float wm = extract<float> (spec.attr("wm"));
-    float wp = extract<float> (spec.attr("wp"));
+    float tau      = s->tau;
+    float alpha    = s->alpha;
+    float baseline = s->baseline;
+    float min_act  = s->min_act;
+    float max_act  = s->max_act;
+    float wm = 1;
+    float wp = 1;
     
 	float input = 0;
     unsigned int size = afferents.size();

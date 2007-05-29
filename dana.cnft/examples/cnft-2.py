@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #------------------------------------------------------------------------------
-# Copyright (c) 2006-2007 Nicolas Rougier.
+# Copyright (c) 2007 Nicolas Rougier.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -11,16 +11,13 @@
 # $Id$
 #------------------------------------------------------------------------------
 
-import matplotlib.pylab as pylab
-import matplotlib.colors as colors
-
+import random, math
 import dana.core as core
 import dana.projection as proj
 import dana.cnft as cnft
-from dana.visualization import View2D
-
-import time, random, math
-import gobject, gtk
+from glpython.window import window
+from dana.visualization.gl.network import View
+from dana.gui.gtk import ControlPanel
 
 
 print "--------------------------------------------------------------------"
@@ -35,8 +32,10 @@ print "--------------------------------------------------------------------"
 print ""
 
 
-# Create a new network
+# Create a new model
+model = core.Model()
 net = core.Network ()
+model.append(net)
 width  = 50
 height = width
 
@@ -101,27 +100,10 @@ for i in xrange(Input.shape[0]):
         y1 = j/float(Input.shape[1])-.75
         Input[0].unit(i,j).potential =  + math.exp (-(x0*x0+y0*y0)/0.0125) + math.exp (-(x1*x1+y1*y1)/0.0125) + .15*random.uniform(0.0, 1.0)
         
+
 # Show network
-netview = View2D (net)
-
-
-
-manager = pylab.get_current_fig_manager()
-cnt = 0
-tstart = time.time()
-
-def updatefig(*args):
-#    global cnt, start,net
-#    net.evaluate(1,False)
-    netview.update()
-#    cnt += 1
-#    if cnt==500:
-#        print 'FPS', cnt/(time.time() - tstart)
-#        return False
-    return True
-cnt = 0
-
-gobject.idle_add(updatefig)
-pylab.show()
-
+win = window(locals(), backend='gtk')
+win.view.append (View (net, fontsize=48))
+control = ControlPanel (model)
+win.show()
 
