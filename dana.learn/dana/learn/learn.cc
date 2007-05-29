@@ -7,10 +7,14 @@
 // License, or (at your option) any later version.
 
 #include "unit.h"
+#include "munit.h"
+#include "sunit.h"
 #include "learner.h"
 
 BOOST_PYTHON_MODULE(_learn) {
     using namespace dana::learn;
     Unit::boost();
+    MUnit::boost();
+    SUnit::boost();
     Learner::boost();
 }

@@ -19,14 +19,14 @@ using namespace boost::python;
 namespace dana { namespace learn {
 
     class MUnit : public Unit {
-
+	std::vector<core::Layer *> max_layers;
         public:
             //  life management
             // =================================================================
         MUnit(void);
         virtual ~MUnit(void);
+	void add_maxLayer(core::Layer * map);
         float compute_dp(void);
-        
 
         public:
             // python export

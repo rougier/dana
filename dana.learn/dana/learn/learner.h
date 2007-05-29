@@ -11,6 +11,7 @@
 
 #include <boost/python.hpp>
 #include "unit.h"
+#include "sunit.h"
 #include "core/layer.h"
 #include "core/object.h"
 #include <numpy/arrayobject.h>

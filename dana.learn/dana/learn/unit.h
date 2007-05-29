@@ -33,9 +33,10 @@ namespace dana { namespace learn {
 
             //  object management
             // =================================================================
-	    void set_learning_rule(std::vector< std::vector<float> > * learnFunc);
-	    void learn(core::LayerPtr src,float scale);
-
+	    virtual void set_learning_rule(std::vector< std::vector<float> > * learnFunc);
+	    virtual void learn(core::LayerPtr src,float scale);
+        virtual float find_weight_with(int mpos_x,int mpos_y,int x,int y);
+        
         public:
             // python export
             // =================================================================

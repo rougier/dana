@@ -9,7 +9,7 @@
 #include "core/map.h"
 #include "core/layer.h"
 #include "core/link.h"
-#include "munit.h"
+#include "sunit.h"
 #include "cnft/spec.h"
 #include <math.h>
 
@@ -20,65 +20,39 @@ using namespace dana::learn;
 // =============================================================================
 //  constructor
 // =============================================================================
-MUnit::MUnit(void) : learn::Unit()
-{
-	max_layers.clear();
-}
+SUnit::SUnit(void) : learn::Unit()
+{}
 
 // =============================================================================
 //  destructor
 // =============================================================================
-MUnit::~MUnit(void)
+SUnit::~SUnit(void)
 {}
 
-// =============================================================================
-//  Add a map in the set of maps used to compute the max operator in compute_dp
-// =============================================================================
-void
-MUnit::add_maxLayer(core::Layer * layer)
-{
-	max_layers.push_back(layer);
-}
-
-// =============================================================================
+// ============================================================================
 //  computes potential and returns dp
-// =============================================================================
+// ============================================================================
 float
-MUnit::compute_dp (void)
+SUnit::compute_dp (void)
 {
     object spec = layer->map->get_spec();
-
+    
     float tau      = extract<float> (spec.attr("tau"));
     float alpha    = extract<float> (spec.attr("alpha"));
     float baseline = extract<float> (spec.attr("baseline"));
     float min_act  = extract<float> (spec.attr("min_act"));
     float max_act  = extract<float> (spec.attr("max_act"));
 
-    float input = 0;
+
+
+	float input = 0;
     unsigned int size = afferents.size();
 
-    // We compute a max over the afferent units that are in 
-    // a layer of max_layers
-    float max = 0.0;
-    float temp_aff = 0.0;
 	for (unsigned int i=0; i<size; i++)
-        {
-		if(!(std::find(max_layers.begin(),max_layers.end(),afferents[i]->get_source()->layer) == max_layers.end()))
-		{
-			// The source unit of the link afferents[i] is in max_layers 
-			temp_aff = afferents[i]->compute() ;
-			max  = (temp_aff > max ? temp_aff : max);
-		} 
-		else
-		{
-			input+= afferents[i]->compute();
-		}
-        }
-
-    input += max;
+		input += afferents[i]->weight * afferents[i]->source->potential;
 
 	float lateral = 0;
-	size = laterals.size();
+    size = laterals.size();
 
 	for (unsigned int i=0; i<size; i++)
         if ((laterals[i]->source->potential > 0) || (laterals[i]->weight > 0))
@@ -87,12 +61,14 @@ MUnit::compute_dp (void)
     float du = (-potential + baseline + (1.0f/alpha)*(lateral + input)) / tau;
 	float value = potential;
 	potential += du;
-
+    
 	if (potential < min_act)
         potential = min_act;
 
 	if (potential > max_act)
         potential = max_act;
+
+    potential = 1.0 / (1.0 + exp(-potential));
 
 	return value-potential;
 }
@@ -102,22 +78,32 @@ MUnit::compute_dp (void)
 //    Boost wrapping code
 // ============================================================================
 void
-MUnit::boost (void) {
+SUnit::boost (void) {
 
     using namespace boost::python;
-    register_ptr_to_python< boost::shared_ptr<MUnit> >();
+    register_ptr_to_python< boost::shared_ptr<SUnit> >();
     
-    class_<MUnit, bases<learn::Unit> >("MUnit",
+    class_<SUnit, bases<cnft::Unit> >("SUnit",
     "======================================================================\n"
     "\n"
-    "A MUnit extends learn::Unit that also extends cnft::Unit \n"
-    " This unit computes a max over its afferents connections \n"
-    " The other stuffs are unchangend\n"
+    "A unit is a potential that is computed on the basis of some external\n"
+    "sources that feed the unit. Those sources can be anything as long as\n"
+    "they have some potential."
+    "This unit is a learner::Unit with a sigmoidal activation function \n"
+    "\n"
+    "\n"
+    "Attributes (inherited from cnft.Unit):\n"
+    "-----------\n"
+    "   potential : unit potential (float) \n"
+    "   position  : unit position within layer (tuple, read only)\n"
+    "\n"
+    "Methods\n"
+    "----------\n"
+    "   set_lrule : defines the learning rule to use\n"
+    "   learn     : learn with a given learning rate\n"
     "\n"
     "======================================================================\n",
         init<>(
         "__init__ () -- initialize unit\n")
-	)
-	.def("add_maxLayer",&MUnit::add_maxLayer,"")
-        ;
+	);
 }
