@@ -10,6 +10,7 @@
 
 #include <boost/python.hpp>
 #include "array.h"
+#include "array_bar.h"
 #include "colormap.h"
 
 BOOST_PYTHON_MODULE(_gl) {
@@ -18,5 +19,6 @@ BOOST_PYTHON_MODULE(_gl) {
     numeric::array::set_module_and_type("numpy", "ndarray");
   
     Array::boost();
+    ArrayBar::boost();
     Colormap::boost();
 }

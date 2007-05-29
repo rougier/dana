@@ -17,18 +17,22 @@
 from OpenGL.GL import *
 from glpython.object import Object
 from dana.visualization.gl import Array
-
+from dana.visualization.gl import ArrayBar
 
 class View (Object):
     """ Show weights as several arrays """
     
-    def __init__(self, layer, source, fontsize=24):
+    def __init__(self, layer, source, style = 'flat', fontsize=24):
 
         Object.__init__(self)
         self.source = source
         self.visible = True
         self.active = True
         self.maps = []
+
+        MyArray = Array
+        if style == 'bar':
+            MyArray = ArrayBar
 
         # Overall size  
         w = layer.map.shape[0] * (source.map.shape[0]+1)+1
@@ -47,7 +51,7 @@ class View (Object):
                 ((source.map.shape[1]-1-unit.position[1]) * (source.map.shape[1]+1)+1)/float(h),
                 (source.map.shape[0])/float(w),
                 (source.map.shape[1])/float(h))
-            array = Array (unit.weights(source), frame, '', fontsize)
+            array = MyArray (unit.weights(source), frame, '', fontsize)
             self.maps.append ( (array, unit, source) )
 
 

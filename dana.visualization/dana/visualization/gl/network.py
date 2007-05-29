@@ -17,15 +17,21 @@
 
 from OpenGL.GL import *
 from glpython.object import Object
+from dana.visualization.gl import ArrayBar
 from dana.visualization.gl import Array
 
 class View(Object):
-    def __init__ (self, network, fontsize=24):
+    def __init__ (self, network, style = 'flat', fontsize=24):
 
         Object.__init__(self)
         self.maps = []
         self.unit = None
         self.network = network
+
+
+        MyArray = Array
+        if style == 'bar':
+            MyArray = ArrayBar
 
         w, h = network.shape
         self.sx = 1
@@ -39,7 +45,7 @@ class View(Object):
             name = ''
             if hasattr(m, 'name'):
                 name = m.name
-            array = Array (m[0].potentials(), m.frame, name, fontsize)
+            array = MyArray (m[0].potentials(), m.frame, name, fontsize)
             array.connect ('select_event', self.on_select, m)
             array.connect ('unselect_event', self.on_unselect, m)
             self.maps.append ((m, array))
