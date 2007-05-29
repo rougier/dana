@@ -5,7 +5,7 @@ import dana.projection as proj
 import dana.physics as physics
 
 from glpython.window import window
-from dana.gl.network import View
+from dana.visualization.gl.network import View
 from dana.gui.gtk import ControlPanel
 
 print "--------------------------------------------------------------------"
