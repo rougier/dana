@@ -32,7 +32,7 @@ _window = None
 
 
 def window (namespace={}, w=650, h=400, title='GLPython', fps=30,
-            backend='wx', shell = 'ipython', layout = '2', logo=True):
+            backend='wx', shell = 'ipython', layout = '2', logo=False):
     """ Return a window with OpenGL capabilities displaying a basic scene """
 
     global _window
