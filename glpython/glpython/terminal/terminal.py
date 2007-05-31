@@ -40,20 +40,21 @@ class Terminal (StringTerminal):
         """ Initialization """
         
         StringTerminal.__init__(self)
-        if shell == 'python':
-            self.shell = Shell (self, namespace)
-        else:
-            self.shell = IShell (self, namespace)        
         
         self.paint_func = paint_func
         self.idle_func = idle_func
         self.stdout = Outfile (self, sys.stdout.fileno(), self.write_stdout)
         self.stderr = Outfile (self, sys.stderr.fileno(), self.write_stderr)
-        self.stdin = Infile (self, sys.stdin.fileno())
+        self.stdin = Infile (self, sys.stdin.fileno(), self.write_stdout)
         self.sys_stdout = sys.stdout
         self.sys_stderr = sys.stderr
         self.sys_stdin  = sys.stdin
         self.input_mode = False
+
+        if shell == 'python':
+            self.shell = Shell (self, namespace)
+        else:
+            self.shell = IShell (self, namespace)        
                 
         self.position = (0,0)
         self.size = (1.0,1.0)
@@ -83,12 +84,12 @@ class Terminal (StringTerminal):
     #______________________________________________________________write_stdout
     def write_stdout (self, line):
         """ write on stdout in blue """
-        self.write ('\033[34m' + line + '\033[0m')
+        self.write ('\033[34m' + line + '\033[00m', self.output_buffer)
 
     #______________________________________________________________write_stderr
     def write_stderr (self, line):
         """ write on stderr in red """
-        self.write ('\033[31m' + line + '\033[0m')
+        self.write ('\033[31m' + line + '\033[00m', self.output_buffer)
 
     #_________________________________________________________________key_press
     def key_press (self, key):

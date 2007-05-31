@@ -214,10 +214,12 @@ class Shell:
 
         # Several possible completions        
         item_per_line = self.terminal.columns  / (max_completion_len+1)
+        
+        self.terminal.copy_input()
         text = "\n"
         if len(completions) > 256:
-            text += "More than 256 possibilities (%d)\n\n" % len(completions)
-            self.write (text)
+            text += "More than 256 possibilities (%d)\n" % len(completions)
+            self.terminal.write (text, self.terminal.output_buffer)
             return
 
         i = 0
@@ -228,7 +230,5 @@ class Shell:
                 if i >= len(completions):
                     break
             text += '\n'
-        text += '\n'
-        self.write (text)
-
+        self.terminal.write (text, self.terminal.output_buffer)
 

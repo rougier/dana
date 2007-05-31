@@ -208,6 +208,8 @@ class StringTerminal:
         markup.sort()
         
         # Insert new text with markup
+        if text[0] == '\n':
+            p = 0
         long_lines = text.split ('\n')
         lines = []
         for line in long_lines:

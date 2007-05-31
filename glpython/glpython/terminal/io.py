@@ -49,9 +49,10 @@ class Infile:
         asked for a file number, returns one set on instance creation.
     """
     
-    def __init__(self, terminal, fn):
+    def __init__(self, terminal, fn, write_func):
         self.fn = fn
         self.terminal = terminal
+        self.write_func = write_func
     def close(self): pass
     flush = close
     def fileno(self):    return self.fn
@@ -64,7 +65,7 @@ class Infile:
         while self.terminal.read_status:
             self.terminal.idle_func()
             self.terminal.paint_func()
-        self.terminal.write('\n')
+        self.write_func ('\n')
         self.terminal.dirty = True
         self.terminal.input_mode = False
         return self.terminal.rl.line

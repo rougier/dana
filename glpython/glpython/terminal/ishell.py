@@ -35,8 +35,8 @@ class Shell:
         self.namespace = namespace
         self.terminal = terminal
         self.cmd = ''
-        self.cout = StringIO()
-        self.cerr = StringIO()
+        self.cout = self.terminal.stdout #StringIO()
+        self.cerr = self.terminal.stderr #StringIO()
         IPython.Shell.Term.cout = self.cout
         IPython.Shell.Term.cerr = self.cerr
         argv=[]
@@ -175,27 +175,9 @@ class Shell:
     def execute (self, cmd):
         """ Execute a given command """
 
-        try:
-            line = cmd
-        except KeyboardInterrupt:
-            self.IP.resetbuffer ()
-        except:
-            self.IP.showtraceback()
-        else:
-            stdout = sys.stdout
-            sys.stdout = IPython.Shell.Term.cout
-            self.IP.push (line)
-            if (self.IP.SyntaxTB.last_syntax_error and
-                                 self.IP.rc.autoedit_syntax):
-                self.IP.edit_syntax_error()
-        rv = self.cerr.getvalue()
-        self.write_stderr (rv)
-        self.cerr.truncate(0)
-
-        rv = self.cout.getvalue()
-        self.write_stdout (rv)
-        self.cout.truncate(0)
-        sys.stdout = stdout
+        self.IP.push (cmd)
+        if (self.IP.SyntaxTB.last_syntax_error and self.IP.rc.autoedit_syntax):
+            self.IP.edit_syntax_error()
 
     #_________________________________________________________________completer
     def completer (self, rl, line):
@@ -254,10 +236,12 @@ class Shell:
 
         # Several possible completions        
         item_per_line = self.terminal.columns  / (max_completion_len+1)
+        
+        self.terminal.copy_input()
         text = "\n"
         if len(completions) > 256:
-            text += "More than 256 possibilities (%d)\n\n" % len(completions)
-            self.write (text)
+            text += "More than 256 possibilities (%d)\n" % len(completions)
+            self.terminal.write (text, self.terminal.output_buffer)
             return
 
         i = 0
@@ -268,7 +252,6 @@ class Shell:
                 if i >= len(completions):
                     break
             text += '\n'
-        text += '\n'
-        self.write (text)
+        self.terminal.write (text, self.terminal.output_buffer)
 
 
