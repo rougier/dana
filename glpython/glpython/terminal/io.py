@@ -68,7 +68,7 @@ class Infile:
         self.write_func ('\n')
         self.terminal.dirty = True
         self.terminal.input_mode = False
-        return self.terminal.rl.line
+        return self.terminal.rl.line+'\n'
     def readlines(self): return []
     def write(self, s):  return None
     def writelines(self, l): return None
