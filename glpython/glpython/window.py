@@ -181,7 +181,7 @@ def window (namespace={}, w=650, h=400, title='GLPython', fps=30,
             self.reset()
     
 
-    _window = Window (w,h,title + ' (%s backend, %.1f fps)' % (backend,fps) ,fps)
+    _window = Window (w,h,title + ', %s backend,' % backend ,fps)
     namespace['window'] = _window
 
     view = Viewport (name="view1", reset=_window.reset)

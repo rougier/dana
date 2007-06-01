@@ -101,7 +101,7 @@ class Window (base.Window):
         self.resize (w, h)
 
 
-    def title (self, title):
+    def set_title (self, title):
         """ Set window title """
 
         pygame.display.set_caption (title)

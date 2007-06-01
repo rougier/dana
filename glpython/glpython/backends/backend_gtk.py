@@ -179,7 +179,7 @@ class Window (base.Window):
         return True
 
 
-    def title (self, title):    
+    def set_title (self, title):    
         """ Set window title """
 
         self.window.set_title (title)

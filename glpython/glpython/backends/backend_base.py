@@ -18,6 +18,8 @@ thus cannot be used directly, it must be fully specified for a given
 backend by implementing event based functions.
 """
 
+import time
+
 class Window:
     """ Abstraction of a window with a double buffer RGBA OpenGL context"""
     
@@ -30,8 +32,12 @@ class Window:
             fps = 50.0
         self.fps = fps
         self.delay = int(1000.0/float(self.fps))
+        print self.delay
         self.external_event_loop = False
-
+        self.title = title
+        self.frames = 0
+        self.t_start = 0
+        self.actual_fps = self.fps
 
     def key_press (self, key):
         """ Key press accepts only one parameter describing the complete
@@ -112,6 +118,15 @@ class Window:
 
         if not self.context_on ():
             return
+
+        t = time.time()
+        self.frames += 1
+        if t - self.t_start > 5:
+            self.actual_fps = self.frames / (t - self.t_start);
+            self.t_start = t
+            self.frames = 0
+            self.set_title (self.title + ' %.1f fps' % self.actual_fps)
+
         if not self.initialized:
             self.init()
             self.initialized = True

@@ -154,7 +154,7 @@ class Window (base.Window):
         self.timer.Restart (self.delay)
 
 
-    def title (self, title):    
+    def set_title (self, title):    
         """ Set window title """
 
         self.frame.SetTitle (title)
