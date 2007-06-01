@@ -32,7 +32,6 @@ class Window:
             fps = 50.0
         self.fps = fps
         self.delay = int(1000.0/float(self.fps))
-        print self.delay
         self.external_event_loop = False
         self.title = title
         self.frames = 0
