@@ -112,6 +112,15 @@ class StringTerminal:
             self.cursor = (c%self.columns, c/self.columns)
         return result
 
+    #_______________________________________________________________write_input
+    def write_input (self):
+        """ Write current input on output """
+
+        if len(self.output_buffer) and self.output_buffer[-1][-1][1] != '':
+            self.write ('\n', self.output_buffer)
+        self.write (self.prompt + self.rl.line, self.output_buffer)
+
+
     #_____________________________________________________________________write
     def write (self, line, buffer=None):
         """ write line at current position """

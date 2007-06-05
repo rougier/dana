@@ -237,7 +237,7 @@ class Shell:
         # Several possible completions        
         item_per_line = self.terminal.columns  / (max_completion_len+1)
         
-        self.terminal.copy_input()
+        self.terminal.write_input()
         text = "\n"
         if len(completions) > 256:
             text += "More than 256 possibilities (%d)\n" % len(completions)
