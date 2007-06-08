@@ -29,6 +29,8 @@ def pkgconfig(*packages, **kw):
     return kw
 
 
+# If needed, add the line :
+#  library_dirs = "PATH_TO_THE_DIRECTORY_WHERE_MIRAGE_IS_INSTALLED"
 dana_image_srcs = glob.glob ("dana/image/*.cc")
 dana_image_ext = Extension (
         'dana.image._image',
