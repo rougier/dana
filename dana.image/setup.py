@@ -36,6 +36,7 @@ dana_image_ext = Extension (
         'dana.image._image',
         sources = dana_image_srcs,
         include_dirs=[numpy.get_include()] + pkgconfig('mirage')['include_dirs'],
+        library_dirs = ['/users/cortex/fix/local/lib'],
         libraries = ['boost_python', 'boost_thread'] + pkgconfig('mirage')['libraries']
         )
 

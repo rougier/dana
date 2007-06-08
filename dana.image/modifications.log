@@ -1,9 +1,0 @@
-Created ./setup.py 
-####################################
-Suggested modifications for /global/coupelle/dana.image/dana/image/Saliency.cc 
-BOOST_PYTHON_MODULE(_image){
-using namespace boost::python;
-}
-####################################
-Created /global/coupelle/dana.image/dana/image/__init__.py 
-Created ./dana/__init__.py 
