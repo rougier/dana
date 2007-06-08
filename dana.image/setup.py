@@ -20,18 +20,22 @@ import glob
 from distutils.core import setup, Extension
 import distutils.sysconfig
 import numpy
-include_dir = []
-include_dir.append(os.path.normpath ('/users/cortex/fix/local/include/jpeg-c++-1.0'))
-include_dir.append(os.path.normpath ('/users/cortex/fix/local/include/mirage-1.0'))
+import commands
+
+def pkgconfig(*packages, **kw):
+    flag_map = {'-I': 'include_dirs', '-L': 'library_dirs', '-l': 'libraries'}
+    for token in commands.getoutput("pkg-config --libs --cflags %s" % ' '.join(packages)).split():
+        kw.setdefault(flag_map.get(token[:2]), []).append(token[2:])
+    return kw
 
 
 dana_image_srcs = glob.glob ("dana/image/*.cc")
 dana_image_ext = Extension (
         'dana.image._image',
         sources = dana_image_srcs,
-        include_dirs=[numpy.get_include()] + include_dir,
+        include_dirs=[numpy.get_include()] + pkgconfig('mirage')['include_dirs'],
         library_dirs=['/users/cortex/fix/local/lib/'],
-        libraries = ['boost_python', 'boost_thread','m','mirage','jpeg' ]
+        libraries = ['boost_python', 'boost_thread'] + pkgconfig('mirage')['libraries']
         )
 
 setup (name='dana.image',
