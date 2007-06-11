@@ -1,3 +1,6 @@
+#ifndef __DANA_IMAGE_CONVOLUTION_H__
+#define __DANA_IMAGE_CONVOLUTION_H__ 
+
 #include <math.h>
 
 typedef mirage::algo::OptimizedConvolution<ImageDouble,ImageInt,ImageDouble,  
@@ -126,3 +129,5 @@ public:
 	}
 	
 };
+
+#endif

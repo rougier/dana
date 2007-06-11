@@ -28,6 +28,13 @@ def pkgconfig(*packages, **kw):
         kw.setdefault(flag_map.get(token[:2]), []).append(token[2:])
     return kw
 
+# Get core shared object filename
+from dana.core._core import __file__ as core
+
+include_dir = core[:core.find('python')]
+include_dirs = [os.path.normpath (os.path.join (include_dir, '../include/dana/'))]
+include_dirs.append (numpy.get_include())
+include_dirs = include_dirs + pkgconfig('mirage')['include_dirs']
 
 # If needed, add the line :
 #  library_dirs = "PATH_TO_THE_DIRECTORY_WHERE_MIRAGE_IS_INSTALLED"
@@ -35,7 +42,7 @@ dana_image_srcs = glob.glob ("dana/image/*.cc")
 dana_image_ext = Extension (
         'dana.image._image',
         sources = dana_image_srcs,
-        include_dirs=[numpy.get_include()] + pkgconfig('mirage')['include_dirs'],
+        include_dirs= include_dirs ,
         library_dirs = ['/users/cortex/fix/local/lib'],
         libraries = ['boost_python', 'boost_thread'] + pkgconfig('mirage')['libraries']
         )

@@ -1,3 +1,6 @@
+#ifndef __DANA_IMAGE_IMGPROCESSING_H__
+#define __DANA_IMAGE_IMGPROCESSING_H__
+
 #include <vector>
 
 template<class SOURCE, class RESULT >
@@ -79,3 +82,5 @@ public:
         res = src1 * src2;
     }     
 };
+
+#endif

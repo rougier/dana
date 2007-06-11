@@ -1,3 +1,6 @@
+#ifndef __DANA_IMAGE_UTIL_H__
+#define __DANA_IMAGE_UTIL_H__
+
 template<class SOURCE, class RESULT>
 class RGBToIntensity
 {
@@ -159,3 +162,5 @@ public:
         return value;
 	}
 };	
+
+#endif

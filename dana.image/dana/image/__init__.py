@@ -16,3 +16,4 @@
 
 from _image import *
         
+__all__ = ['Saliency']
