@@ -37,9 +37,33 @@ Color::Color (float r, float g, float b, float a, float v)
 }
 
 // ============================================================================
+Color::Color (const Color &other)
+{
+    data[RED]   = other.data[RED];
+    data[GREEN] = other.data[GREEN];
+    data[BLUE]  = other.data[BLUE];
+    data[ALPHA] = other.data[ALPHA];
+    data[VALUE] = other.data[VALUE];
+}
+
+// ============================================================================
 Color::~Color (void)
 {
 }
+
+// ============================================================================
+Color
+Color::operator= (const Color &other)
+{
+    if (this == &other)
+        return *this;
+	return Color (other.data[RED],
+	              other.data[GREEN],
+	              other.data[BLUE],
+                  other.data[ALPHA],
+                  other.data[VALUE]);
+}
+
 
 // ============================================================================
 Color
@@ -102,7 +126,7 @@ Colormap::~Colormap (void)
 
 // ============================================================================
 void
-Colormap::clear (void)
+Colormap::reset (void)
 {
 	samples.clear();
 	colors.clear();
@@ -247,17 +271,17 @@ Colormap::boost (void) {
     "lor defining a value used for color interpolation. Color lookup requ-\n"
     "ests for an argument smaller than the minimum value evaluate to the  \n"
     "first colormap entry. Requests for an argument greater than the max- \n"
-    "imum value evaluate to the last entry.\n"
+    "imum value evaluate to the last entry.                               \n"
     "=====================================================================\n",
         init< >(
-        "__init__ ()\n"
-        "\n"
-        "Initialize colormap with no initial value.\n"))
-        
-        .def ("clear", &Colormap::clear,
-              "clear()\n"
+              "__init__ ()\n"
               "\n"
-              "Clear all values\n")
+              "Initialize colormap with no initial value.\n"))
+        
+        .def ("reset", &Colormap::reset,
+              "reset()\n"
+              "\n"
+              "Reset colormap (no value defined)\n")
             
         .def ("add", &Colormap::add,
               "add (value, color)\n"
@@ -278,6 +302,16 @@ Colormap::boost (void) {
               "__repr__() -> string\n"
               "\n"
               "Return the canonical string representation of the colormap.\n")
+
+        .def ("__getitem__", &Color::get,
+              "x.__getitem__ (y)  <==> x[y]\n"
+              "\n"
+              "Use of negative indices is supported.\n")
+
+        .def ("__len__", &Colormap::size,
+              "__len__() -> integer\n"
+              "\n"
+              "Return number of entries in the colormap.\n")
         ;
 }
 
