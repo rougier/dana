@@ -59,8 +59,9 @@ class StringTerminal:
     #_____________________________________________________________________clear
     def clear (self):
         """ Clear terminal """
-        
-        output_buffer = []
+
+        self.output_buffer = []
+
 
     #______________________________________________________________________read
     def read (self, prompt = '> ', completer=None):
@@ -99,7 +100,12 @@ class StringTerminal:
             self.read_status = False
             raise KeyboardInterrupt
         if result and self.read_status:
-            self.write ('\n' + self.prompt+self.rl.line, self.output_buffer)
+            if not len(self.output_buffer):
+                self.write (self.prompt+self.rl.line, self.output_buffer)            
+            elif self.output_buffer[-1][-1] ==[[], '']:
+                self.write (self.prompt+self.rl.line, self.output_buffer)
+            else:
+                self.write ('\n'+self.prompt+self.rl.line, self.output_buffer)
             c = self.rl.cursor + self.prompt_len                
             self.cursor = (c%self.columns, c/self.columns)
             self.input_line = self.rl.line
@@ -239,7 +245,6 @@ class StringTerminal:
             buffer.append ( [[markup, line], ] )
             if buffer != self.input_buffer:
                 self.last_line = line
-
 
 #__________________________________________________________________________main
 if __name__ == '__main__':

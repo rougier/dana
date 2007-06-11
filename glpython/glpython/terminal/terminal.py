@@ -96,6 +96,12 @@ class Terminal (StringTerminal):
         """ key press event """
         
         self.scroll = 0
+        
+        if key == 'control-l':
+            self.clear()
+            self.dirty = True
+            return
+        
         try:
             result = self.getc (key)
             self.dirty = True
@@ -308,10 +314,10 @@ class Terminal (StringTerminal):
             height = max_h
 
         # Now we adjust size according to font glyph size
-        w = max ((width-2*self.border)/self.font.glyph_size[0],1)
-        width = w*self.font.glyph_size[0] + 2*self.border
-        h = max ((height-2*self.border)/self.font.glyph_size[1],1)
-        height = h*self.font.glyph_size[1] + 2*self.border
+#        w = max ((width-2*self.border)/self.font.glyph_size[0],1)
+#        width = w*self.font.glyph_size[0] + 2*self.border
+#        h = max ((height-2*self.border)/self.font.glyph_size[1],1)
+#        height = h*self.font.glyph_size[1] + 2*self.border
 
         # No change needed
         if self.width == width and self.height == height and not force:
@@ -539,16 +545,27 @@ class Terminal (StringTerminal):
         if len(b) <= self.lines:
             self.scroll = 0
             
-        start = max (-self.lines-self.scroll, -len(b))
+        start = max (-self.lines-1-self.scroll, -len(b))
         end = -self.scroll
         if end >= -1:
             end = None
 
-        y = self.lines-1
+
+        # If we have less than self.lines to display, we use upper left corner
+        # as the origin, while if we have self.lines to display, we use bottom
+        # left corner
+        if len(b[start:end]) >= self.lines:
+            y = self.lines
+            dy = 0
+        else:
+            y = self.lines-1
+            dy = (self.height-2*self.border) % self.font.glyph_size[1]
+            start -= 1
+        
         for segments in b[start:end]:
             GL.glPushMatrix ()
             GL.glTranslate (self.border,
-                            self.border+y*self.font.glyph_size[1],
+                            self.border+dy+y*self.font.glyph_size[1],
                             0)
             for markup,line in segments:
                 GL.glColor (self.fg_color)
@@ -559,9 +576,9 @@ class Terminal (StringTerminal):
         # Rendering of cursor
         GL.glColor (self.fg_color)
         x = self.cursor[0]
-        y = self.lines + start -1 + len(self.input_buffer) - self.cursor[1]
+        y = self.lines + start + len(self.input_buffer) - self.cursor[1]
         x = x*self.font.glyph_size[0]+2
-        y = y*self.font.glyph_size[1]
+        y = y*self.font.glyph_size[1] + dy
         GL.glDisable (GL.GL_TEXTURE_2D)
         GL.glPushMatrix ()
         GL.glBegin(GL.GL_LINES)
