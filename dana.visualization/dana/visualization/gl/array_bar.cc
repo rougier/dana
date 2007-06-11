@@ -39,15 +39,15 @@ ArrayBar::ArrayBar (object array, object frame, std::string name, int fontsize)
     data = 0;
     id = id_counter++;
 
-    surface_cmap.add ( make_tuple (0.0f, 0.0f, 1.0f), -1.0f);
-    surface_cmap.add ( make_tuple (0.5f, 0.5f, 1.0f), -0.5f);        
-    surface_cmap.add ( make_tuple (1.0f, 1.0f, 1.0f),  0.0f);
-    surface_cmap.add ( make_tuple (1.0f, 1.0f, 0.0f),  0.5f);
-    surface_cmap.add ( make_tuple (1.0f, 0.0f, 0.0f),  1.0f);
+    surface_cmap.add ( -1.0f, make_tuple (0.0f, 0.0f, 1.0f));
+    surface_cmap.add ( -0.5f, make_tuple (0.5f, 0.5f, 1.0f));
+    surface_cmap.add (  0.0f, make_tuple (1.0f, 1.0f, 1.0f));
+    surface_cmap.add (  0.5f, make_tuple (1.0f, 1.0f, 0.0f));
+    surface_cmap.add (  1.0f, make_tuple (1.0f, 0.0f, 0.0f));
 
-    line_cmap.add ( make_tuple (0.25f, 0.25f, 0.25f), -1.0f);
-    line_cmap.add ( make_tuple (0.75f, 0.75f, 0.75f),  0.0f);
-    line_cmap.add ( make_tuple (0.25f, 0.25f, 0.25f),  1.0f);
+    line_cmap.add ( -1.0f, make_tuple (0.25f, 0.25f, 0.25f));
+    line_cmap.add (  0.0f, make_tuple (0.75f, 0.75f, 0.75f));
+    line_cmap.add (  1.0f, make_tuple (0.25f, 0.25f, 0.25f));
 
 
     bool load_error = false;
@@ -130,8 +130,8 @@ ArrayBar::render (void)
             int ii = 0;
             for (int i=0; i<d0; i++) {
                 float dz = *(float *)(array->data + jj + ii);
-                glColor4fv (surface_cmap.colorfv (dz));
-                glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, surface_cmap.colorfv (dz));
+                glColor4fv (surface_cmap.color(dz).data);
+                glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, surface_cmap.color(dz).data);
                 if (dz > 0)
                     Cube (-0.5+x+i*dx, -0.5+y+(d1-1-j)*dy, 0, dx,dy,dz*DZ);
                 else
@@ -149,7 +149,7 @@ ArrayBar::render (void)
             int ii = 0;
             for (int i=0; i<d0; i++) {
                 float dz = *(float *)(array->data + jj + ii);
-                glColor4fv (line_cmap.colorfv (dz));
+                glColor4fv (line_cmap.color(dz).data);
                 Cube (-0.5+x+i*dx, -0.5+y+(d1-1-j)*dy,0, dx,dy,dz*DZ);
                 ii += array->strides[1];
             }

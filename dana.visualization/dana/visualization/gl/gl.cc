@@ -21,4 +21,5 @@ BOOST_PYTHON_MODULE(_gl) {
     Array::boost();
     ArrayBar::boost();
     Colormap::boost();
+    Color::boost();    
 }

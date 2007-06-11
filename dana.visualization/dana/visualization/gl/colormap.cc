@@ -8,6 +8,8 @@
 //
 // $Id: colormap.cc 145 2007-05-10 14:18:42Z rougier $
 
+#include <algorithm>
+#include <iostream>
 #include <boost/python.hpp>
 #include "colormap.h"
 
@@ -15,6 +17,7 @@ using namespace boost::python::numeric;
 using namespace dana::gl;
 
 
+// ============================================================================
 Color::Color (float r, float g, float b, float a, float v)
 {
 	if (r > 1.0f) r = 1.0f;
@@ -26,142 +29,200 @@ Color::Color (float r, float g, float b, float a, float v)
 	if (a > 1.0f) a = 1.0f;
 	if (a < 0.0f) a = 0.0f;
 	
-	data[0] = r;
-	data[1] = g;
-	data[2] = b;
-	data[3] = a;
-	data[4] = v;
+	data[RED]   = r;
+	data[GREEN] = g;
+	data[BLUE]  = b;
+	data[ALPHA] = a;
+	data[VALUE] = v;
 }
 
+// ============================================================================
 Color::~Color (void)
-{}
+{
+}
 
+// ============================================================================
 Color
 Color::operator+ (const Color &other)
 {
-	return Color (data[0]+other.data[0], data[1]+other.data[1], data[2]+other.data[2],
-                  (data[3]+other.data[3])/2, (data[4]+other.data[4])/2);                   
+	return Color (data[RED]  +other.data[RED],
+	              data[GREEN]+other.data[GREEN],
+	              data[BLUE] +other.data[BLUE],
+                 (data[ALPHA]+other.data[ALPHA])/2,
+                 (data[VALUE]+other.data[VALUE])/2);
 }
 
+// ============================================================================
 Color
 Color::operator* (const float scale)
 {
-	return Color (data[0]*scale, data[1]*scale, data[2]*scale,
-                  data[3], data[4]);
+	return Color (data[RED]*scale,
+	              data[GREEN]*scale,
+	              data[BLUE]*scale,
+	              data[ALPHA],
+	              data[VALUE]);
 }
 
+// ============================================================================
+std::string
+Color::repr (void)
+{
+    std::ostringstream ost;
+    ost << "(("
+        << data[RED]   << ", "
+        << data[GREEN] << ", "
+        << data[BLUE]  << ", "
+        << data[ALPHA] << "), "
+        << data[VALUE] << ")";      
+    return ost.str();
+}
 
+// ============================================================================
+bool
+Color::cmp (Color c1, Color c2)
+{
+    return c1.data[VALUE] < c2.data[VALUE];
+}
 
+// ============================================================================
 Colormap::Colormap (void)
 {
-	map.clear();
+	samples.clear();
 	colors.clear();
-	samples = 1024;
-	inf = 0;
-	sup = 0;
+	sample_number = 512;
+	inf = sup = 0;
 }
 
+// ============================================================================
 Colormap::~Colormap (void)
-{}
+{
+	samples.clear();
+	colors.clear();
+}
 
-
+// ============================================================================
 void
 Colormap::clear (void)
 {
-	map.clear();
+	samples.clear();
 	colors.clear();
 }
 
-
+// ============================================================================
 void
-Colormap::add (object col, float val)
+Colormap::add (float val, object col)
 {
 	std::vector<Color>::iterator i;
-
-	for (i=map.begin(); i!= map.end(); i++) {
-        if (val == (*i).data[4])
+	for (i=colors.begin(); i!= colors.end(); i++)
+        if (val == (*i).data[VALUE])
             return;
-        if (val > (*i).data[4])
-            break;
-    }
 
     Color c;
     try {
-        c.data[0] = extract< float >(col[0])();
-        c.data[1] = extract< float >(col[1])();
-        c.data[2] = extract< float >(col[2])();
-        c.data[3] = 1.0f;
-        c.data[4] = val;
+        c.data[RED] = extract< float >(col[0])();
+        c.data[GREEN] = extract< float >(col[1])();
+        c.data[BLUE] = extract< float >(col[2])();
     } catch (...) {
         PyErr_Print();
-        colors.clear();
-        for (int i=0; i<=samples; i++) {
-            inf = sup = 0;
-            Color c = Color(1,1,1,1,0);
-            colors.push_back (c);
-        }
-        return;
+        return;        
     }
 
-	map.insert (i, c);
-    if (map.size() == 1) {
-        inf = sup = val;
-    } else {
-        if (val < inf)
-            inf = val;
-        else if (val > sup)
-            sup = val;
+    try {
+        c.data[ALPHA] = extract< float >(col[3])();
+    } catch (...) {
+        c.data[ALPHA] = 1.0f;
     }
-
-    colors.clear();
-    for (int i=0; i<=samples; i++) {
-        Color c = color (inf+(i/float(samples))*(sup-inf));
-        colors.push_back (c);
-    }
+    c.data [VALUE] = val;
+	colors.push_back (c);
+	sort (colors.begin(), colors.end(), Color::cmp);
+    inf = colors[0].data[VALUE];
+    sup = colors[colors.size()-1].data[VALUE];
+    sample();
 }
 
-
-float *
-Colormap::colorfv (float val)
+// ============================================================================
+void
+Colormap::scale (float inf, float sup)
 {
-    if (val < inf)
-        val = inf;
-    else if (val > sup)
-        val = sup;
-    int index = int((val-inf)/(sup-inf)*samples);
-    return colors[index].data;
+	std::vector<Color>::iterator i;
+	for (i=colors.begin(); i!= colors.end(); i++)
+        (*i).data[VALUE] = ((*i).data[VALUE] - inf) * (sup-inf);
+    this->inf = inf;
+    this->sup = sup;
+    sample();
 }
 
+// ============================================================================
+void
+Colormap::sample (int n)
+{
+    if (n > 0)
+        sample_number = n;
 
+    samples.clear();
+    for (int i=0; i<=sample_number; i++) {
+        Color c = exact_color (inf+(i/float(sample_number))*(sup-inf));
+        samples.push_back (c);
+    }
+    // sort (samples.begin(), samples.end(), Color::cmp);
+}
+
+// ============================================================================
 Color
 Colormap::color (float value)
 {
+    if (value < inf)
+        value = inf;
+    else if (value > sup)
+        value = sup;
+    int index = int((value-inf)/(sup-inf)*samples.size());
+    return samples[index];
+}
+
+// ============================================================================
+Color
+Colormap::exact_color (float value)
+{
     Color c(1,1,1,1);
 
-	if (map.empty())
+	if (colors.empty())
         return c;
-	Color sup_color = map[0];
-	Color inf_color = map[map.size()-1];
+	Color sup_color = colors[0];
+	Color inf_color = colors[colors.size()-1];
 
 	if (value < inf)
-		return map[0];
+		return colors[0];
 	else if (value > sup)
-		return map[map.size()-1];
-	else if (map.size () == 1)
-		return map[0];
+		return colors[colors.size()-1];
+	else if (colors.size () == 1)
+		return colors[0];
 	
-    for (unsigned int i=1; i<map.size(); i++) {
-        if (value > map[i].data[4]) {
-            sup_color = map[i-1];
-            inf_color = map[i];
+    for (unsigned int i=1; i<colors.size(); i++) {
+        if (value > colors[i].data[VALUE]) {
+            inf_color = colors[i-1];
+            sup_color = colors[i];
             break;
         }
     }
-	float r = fabs ((value-inf_color.data[4])/(sup_color.data[4]-inf_color.data[4]));
+	float r = fabs ((value-inf_color.data[VALUE])/
+	                (sup_color.data[VALUE]-inf_color.data[VALUE]));
 	c = sup_color*r + inf_color*(1.0f-r);
+	c.data[VALUE] = value;
 	return c;
 }
 
+// ============================================================================
+std::string
+Colormap::repr (void)
+{
+    std::ostringstream ost;
+    ost << "[";
+	std::vector<Color>::iterator i;
+	for (i=colors.begin(); i!= colors.end(); i++)
+        ost << (*i).repr() << ", ";
+    ost << "]";
+    return ost.str();
+}
 
 
 // ============================================================================
@@ -173,13 +234,64 @@ Colormap::boost (void) {
     using namespace boost::python;
 
     class_<Colormap> ("Colormap",
-    "======================================================================\n"
-    "\n"
-    "======================================================================\n",
+    "=====================================================================\n"
+    "A colormap is a sequence of RGBA-tuples, where every tuple specifies \n"
+    "color by a red, green and blue value in the RGB color model. Each va-\n"
+    "lue ranges from 0.0 to 1.0 and is represented by a floating point va-\n"
+    "lue. A fourth value, the so-called alpha value, defines opacity. It  \n"
+    "also ranges from 0.0 to 1.0, where 0.0 means that the color is fully \n"
+    "transparent, and 1.0 that the color is fully opaque. A colormap usua-\n"
+    "lly stores 512 different RGBA-tuples, but other sizes are possible.  \n"
+    "                                                                     \n"
+    "Beside the raw RGBA values the colormap also stores one value per co-\n"
+    "lor defining a value used for color interpolation. Color lookup requ-\n"
+    "ests for an argument smaller than the minimum value evaluate to the  \n"
+    "first colormap entry. Requests for an argument greater than the max- \n"
+    "imum value evaluate to the last entry.\n"
+    "=====================================================================\n",
         init< >(
-        "__init__ () -- initialize colormap\n")
+        "__init__ ()\n"
+        "\n"
+        "Initialize colormap with no initial value.\n"))
+        
+        .def ("clear", &Colormap::clear,
+              "clear()\n"
+              "\n"
+              "Clear all values\n")
+            
+        .def ("add", &Colormap::add,
+              "add (value, color)\n"
+              "\n"
+              "Add a new value using specified RGBA tuple color.\n")
+            
+        .def ("color", &Colormap::color,
+              "color(value) -> RGBA tuple\n"
+              "\n"
+              "Return interpolated color for value.\n")
+            
+        .def ("scale", &Colormap::scale,
+              "scale(min,max)\n"
+              "\n"
+              "Scale colormap to match given mix/max bounds.\n")
+        
+        .def ("__repr__", &Colormap::repr,
+              "__repr__() -> string\n"
+              "\n"
+              "Return the canonical string representation of the colormap.\n")
+        ;
+}
+
+void
+Color::boost (void) {
+
+    using namespace boost::python;
+    class_<Color> ("Color",
+        "==================================================================\n"
+        "\n"
+        "==================================================================\n",
+        init< optional <float,float,float,float,float> >
+            ("__init__ () -- initialize color\n")
         )
-        .def ("clear", &Colormap::clear)
-        .def ("add",   &Colormap::add)
+        .def ("__repr__",   &Color::repr)
         ;
 }

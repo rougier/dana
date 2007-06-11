@@ -39,11 +39,11 @@ Array::Array (object array, object frame, std::string name, int fontsize)
     data = 0;
     id = id_counter++;
 
-    cmap.add ( make_tuple (0.0f, 0.0f, 1.0f), -1.0f);
-    cmap.add ( make_tuple (0.5f, 0.5f, 1.0f), -0.5f);        
-    cmap.add ( make_tuple (1.0f, 1.0f, 1.0f),  0.0f);
-    cmap.add ( make_tuple (1.0f, 1.0f, 0.0f),  0.5f);
-    cmap.add ( make_tuple (1.0f, 0.0f, 0.0f),  1.0f);
+    cmap.add ( -1.0f, make_tuple (0.0f, 0.0f, 1.0f));
+    cmap.add ( -0.5f, make_tuple (0.5f, 0.5f, 1.0f));
+    cmap.add (  0.0f, make_tuple (1.0f, 1.0f, 1.0f));
+    cmap.add (  0.5f, make_tuple (1.0f, 1.0f, 0.0f));
+    cmap.add (  1.0f, make_tuple (1.0f, 0.0f, 0.0f));
 
     bool load_error = false;
     bool size_ok = true;
@@ -136,7 +136,7 @@ Array::render (void)
             int ii = 0;
             for (int i=0; i<d0; i++) {
                 float v = *(float *)(array->data + jj + ii);
-                memcpy ((float *) &data[(d1-j-1)*d0*4+4*i], cmap.colorfv (v), s);
+                memcpy ((float *) &data[(d1-j-1)*d0*4+4*i], cmap.color(v).data, s);
                 ii += array->strides[1];
             }
             jj += array->strides[0];
