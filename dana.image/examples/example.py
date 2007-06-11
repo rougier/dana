@@ -59,7 +59,7 @@ I_vert = new_map('vert', width, height, (1, 1), core.Unit)
 I_PI_4 = new_map('PI_4', width, height, (2, 1), core.Unit)
 I_3PI_4 = new_map('3PI_4', width, height, (3, 1), core.Unit)
 
-sal = Saliency(color=1,orientation=1,save=0,verbose=0)
+sal = Saliency(color=1,orientation=1,save=1,verbose=0)
 
 def init(img):
     global sal

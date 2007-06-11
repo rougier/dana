@@ -411,31 +411,46 @@ void Saliency::clamp(void)
                     tmp.resize(intensity_salMap._dimension);
                     tmp = intensity_salMap;
                     shift = 1;
+                    std::cout << "Clamp for intensity " << std::endl;
                 }
-            if(comp_color)
+            else
                 {
-                    if( (*cur).second == 1)
+                    if(comp_color)
                         {
-                            tmp.resize(rg_salMap._dimension);
-                            tmp = rg_salMap;
+                            shift += 2;
+                            if( (*cur).second == 1)
+                                {
+                                    tmp.resize(rg_salMap._dimension);
+                                    tmp = rg_salMap;
+                                    std::cout << "Clamp for color " << std::endl;
+                                }
+                            else if( (*cur).second == 2)
+                                {
+                                    tmp.resize(by_salMap._dimension);
+                                    tmp = by_salMap;    
+                                    std::cout << "Clamp for color " << std::endl;   
+                                }
+                            else
+                                {
+                                    tmp.resize(sobels_sal[(*cur).second-shift]._dimension);
+                                    tmp = sobels_sal[(*cur).second-shift];
+                                    std::cout << "clamp for the orientations "<< std::endl;          
+                                }
                         }
-                    else if( (*cur).second == 2)
+                    else if(comp_orientation)
                         {
-                            tmp.resize(by_salMap._dimension);
-                            tmp = by_salMap;                            
+                            tmp.resize(sobels_sal[(*cur).second-shift]._dimension);
+                            tmp = sobels_sal[(*cur).second-shift];
+                            std::cout << "clamp for the orientations "<< std::endl;
                         }
-                    shift += 2;
                 }
-            if(comp_orientation)
-                {
-                    tmp.resize(sobels_sal[(*cur).second-shift]._dimension);
-                    tmp = sobels_sal[(*cur).second-shift];
-                }
-            Scale<ImageDouble, ImageDouble>(tmp,tmp,1.0);
+            
             mirage::Vector<2,int> dimension;
             dimension((mirage::Args<2,int>(),width,height));
 
             tmp.rescale(dimension);
+ 
+           Scale<ImageDouble, ImageDouble>(tmp,tmp,1.0);
 
             // And clamp the result in the layer
             ImageDouble::pixel_type sal_pxl,sal_pxl_end;
