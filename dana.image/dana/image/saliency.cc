@@ -400,15 +400,18 @@ void Saliency::clamp(void)
             tmp_layer = (*cur).first;
             int width = (tmp_layer->get_map()->width);
             int height = (tmp_layer->get_map()->height);
+
+            // We get the channel and copy it in tmp
+            // If you add channels, be carefull with the index of orientation !!
+            
+            int shift = 0;
             
             if((*cur).second == 0)
                 {
                     tmp.resize(intensity_salMap._dimension);
                     tmp = intensity_salMap;
+                    shift = 1;
                 }
-
-            // We get the channel and copy it in tmp
-            // If you add channels, be carefull with the index of orientation !!
             if(comp_color)
                 {
                     if( (*cur).second == 1)
@@ -421,16 +424,12 @@ void Saliency::clamp(void)
                             tmp.resize(by_salMap._dimension);
                             tmp = by_salMap;                            
                         }
-                    else
-                        {
-                            tmp.resize(sobels_sal[(*cur).second - 3]._dimension);
-                            tmp = sobels_sal[(*cur).second - 3];
-                        }
+                    shift += 2;
                 }
-            else
+            if(comp_orientation)
                 {
-                    tmp.resize(sobels_sal[(*cur).second-1]._dimension);
-                    tmp = sobels_sal[(*cur).second-1];
+                    tmp.resize(sobels_sal[(*cur).second-shift]._dimension);
+                    tmp = sobels_sal[(*cur).second-shift];
                 }
             Scale<ImageDouble, ImageDouble>(tmp,tmp,1.0);
             mirage::Vector<2,int> dimension;
