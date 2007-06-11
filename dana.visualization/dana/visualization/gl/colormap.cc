@@ -108,25 +108,30 @@ Color::cmp (Color c1, Color c2)
     return c1.data[VALUE] < c2.data[VALUE];
 }
 
+
 // ============================================================================
 Colormap::Colormap (void)
 {
 	samples.clear();
 	colors.clear();
-	sample_number = 512;
-	inf = sup = 0;
+	resolution = DEFAULT_RESOLUTION;
 }
 
 // ============================================================================
 Colormap::~Colormap (void)
 {
-	samples.clear();
-	colors.clear();
+}
+
+// ============================================================================
+unsigned int
+Colormap::len (void)
+{
+    return colors.size();
 }
 
 // ============================================================================
 void
-Colormap::reset (void)
+Colormap::clear (void)
 {
 	samples.clear();
 	colors.clear();
@@ -134,12 +139,15 @@ Colormap::reset (void)
 
 // ============================================================================
 void
-Colormap::add (float val, object col)
+Colormap::append (float val, object col)
 {
 	std::vector<Color>::iterator i;
-	for (i=colors.begin(); i!= colors.end(); i++)
-        if (val == (*i).data[VALUE])
-            return;
+	for (i=colors.begin(); i!= colors.end(); i++) {
+        if (val == (*i).data[VALUE]) {
+            colors.erase(i);
+            break;
+        }
+    }
 
     Color c;
     try {
@@ -159,42 +167,36 @@ Colormap::add (float val, object col)
     c.data [VALUE] = val;
 	colors.push_back (c);
 	sort (colors.begin(), colors.end(), Color::cmp);
-    inf = colors[0].data[VALUE];
-    sup = colors[colors.size()-1].data[VALUE];
     sample();
 }
 
 // ============================================================================
-void
-Colormap::scale (float inf, float sup)
+Color
+Colormap::get (int index)
 {
-	std::vector<Color>::iterator i;
-	for (i=colors.begin(); i!= colors.end(); i++)
-        (*i).data[VALUE] = ((*i).data[VALUE] - inf) * (sup-inf);
-    this->inf = inf;
-    this->sup = sup;
-    sample();
-}
+    int i = index;
 
-// ============================================================================
-void
-Colormap::sample (int n)
-{
-    if (n > 0)
-        sample_number = n;
-
-    samples.clear();
-    for (int i=0; i<=sample_number; i++) {
-        Color c = exact_color (inf+(i/float(sample_number))*(sup-inf));
-        samples.push_back (c);
+    if (i < 0)
+        i += colors.size();
+    try {
+        return colors.at(i);
+    } catch (...) {
+        PyErr_SetString(PyExc_IndexError, "index out of range");
+        throw_error_already_set();
     }
-    // sort (samples.begin(), samples.end(), Color::cmp);
+    return Color(-1,-1,-1,-1);
 }
+
 
 // ============================================================================
 Color
 Colormap::color (float value)
 {
+    if (samples.empty())
+        return Color (-1,-1,-1,-1);
+
+    float inf = colors[0].data[VALUE];
+    float sup = colors[colors.size()-1].data[VALUE];
     if (value < inf)
         value = inf;
     else if (value > sup)
@@ -207,10 +209,11 @@ Colormap::color (float value)
 Color
 Colormap::exact_color (float value)
 {
-    Color c(1,1,1,1);
+    float inf = colors[0].data[VALUE];
+    float sup = colors[colors.size()-1].data[VALUE];
 
 	if (colors.empty())
-        return c;
+        return Color(-1,-1,-1,-1);
 	Color sup_color = colors[0];
 	Color inf_color = colors[colors.size()-1];
 
@@ -230,24 +233,33 @@ Colormap::exact_color (float value)
     }
 	float r = fabs ((value-inf_color.data[VALUE])/
 	                (sup_color.data[VALUE]-inf_color.data[VALUE]));
-	c = sup_color*r + inf_color*(1.0f-r);
+	Color c = sup_color*r + inf_color*(1.0f-r);
 	c.data[VALUE] = value;
 	return c;
 }
 
 // ============================================================================
-std::string
-Colormap::repr (void)
+void
+Colormap::scale (float inf, float sup)
 {
-    std::ostringstream ost;
-    ost << "[";
 	std::vector<Color>::iterator i;
 	for (i=colors.begin(); i!= colors.end(); i++)
-        ost << (*i).repr() << ", ";
-    ost << "]";
-    return ost.str();
+        (*i).data[VALUE] = ((*i).data[VALUE] - inf) * (sup-inf);
+    sample();
 }
 
+// ============================================================================
+void
+Colormap::sample (void)
+{
+    float inf = colors[0].data[VALUE];
+    float sup = colors[colors.size()-1].data[VALUE];
+    samples.clear();
+    for (int i=0; i<=resolution; i++) {
+        Color c = exact_color (inf+(i/float(resolution))*(sup-inf));
+        samples.push_back (c);
+    }
+}
 
 // ============================================================================
 //   boost wrapping code
@@ -278,15 +290,15 @@ Colormap::boost (void) {
               "\n"
               "Initialize colormap with no initial value.\n"))
         
-        .def ("reset", &Colormap::reset,
-              "reset()\n"
+        .def ("clear", &Colormap::clear,
+              "clear()\n"
               "\n"
               "Reset colormap (no value defined)\n")
             
-        .def ("add", &Colormap::add,
-              "add (value, color)\n"
+        .def ("append", &Colormap::append,
+              "append (value, color)\n"
               "\n"
-              "Add a new value using specified RGBA tuple color.\n")
+              "Append a new value using specified RGBA tuple color.\n")
             
         .def ("color", &Colormap::color,
               "color(value) -> RGBA tuple\n"
@@ -298,17 +310,12 @@ Colormap::boost (void) {
               "\n"
               "Scale colormap to match given mix/max bounds.\n")
         
-        .def ("__repr__", &Colormap::repr,
-              "__repr__() -> string\n"
-              "\n"
-              "Return the canonical string representation of the colormap.\n")
-
-        .def ("__getitem__", &Color::get,
+        .def ("__getitem__", &Colormap::get,
               "x.__getitem__ (y)  <==> x[y]\n"
               "\n"
               "Use of negative indices is supported.\n")
 
-        .def ("__len__", &Colormap::size,
+        .def ("__len__", &Colormap::len,
               "__len__() -> integer\n"
               "\n"
               "Return number of entries in the colormap.\n")

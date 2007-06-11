@@ -49,7 +49,7 @@ namespace dana { namespace gl {
     const int BLUE  = 2;
     const int ALPHA = 3;
     const int VALUE = 4;
-    const int DEFAULT_SAMPLE_NUMBER = 512;
+    const int DEFAULT_RESOLUTION = 512;
 
 
     // Color
@@ -79,20 +79,17 @@ namespace dana { namespace gl {
             int                 resolution;
 
         public:
-            Colormap (void);
-            ~Colormap (void);
-
-            unsigned int size(void);
-            void         clear (void);
-            void         add (float value, object color);
-            Color        get (int index);
-            Color        color (float value);
+            Colormap                 (void);
+            ~Colormap                (void);
+            unsigned int len         (void);
+            void         clear       (void);
+            void         append      (float value, object color);
+            Color        get         (int index);
+            Color        color       (float value);
             Color        exact_color (float value);            
-
-            void         scale (float inf, float sup);
-            void         sample (int n = DEFAULT_SAMPLE_NUMBER);
-
-            static void boost (void);
+            void         scale       (float inf, float sup);
+            void         sample      (void);
+            static void  boost       (void);
     };
 
 }} // namespace dana::visualization::gl

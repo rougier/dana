@@ -39,15 +39,15 @@ ArrayBar::ArrayBar (object array, object frame, std::string name, int fontsize)
     data = 0;
     id = id_counter++;
 
-    surface_cmap.add ( -1.0f, make_tuple (0.0f, 0.0f, 1.0f));
-    surface_cmap.add ( -0.5f, make_tuple (0.5f, 0.5f, 1.0f));
-    surface_cmap.add (  0.0f, make_tuple (1.0f, 1.0f, 1.0f));
-    surface_cmap.add (  0.5f, make_tuple (1.0f, 1.0f, 0.0f));
-    surface_cmap.add (  1.0f, make_tuple (1.0f, 0.0f, 0.0f));
+    surface_cmap.append ( -1.0f, make_tuple (0.0f, 0.0f, 1.0f));
+    surface_cmap.append ( -0.5f, make_tuple (0.5f, 0.5f, 1.0f));
+    surface_cmap.append (  0.0f, make_tuple (1.0f, 1.0f, 1.0f));
+    surface_cmap.append (  0.5f, make_tuple (1.0f, 1.0f, 0.0f));
+    surface_cmap.append (  1.0f, make_tuple (1.0f, 0.0f, 0.0f));
 
-    line_cmap.add ( -1.0f, make_tuple (0.25f, 0.25f, 0.25f));
-    line_cmap.add (  0.0f, make_tuple (0.75f, 0.75f, 0.75f));
-    line_cmap.add (  1.0f, make_tuple (0.25f, 0.25f, 0.25f));
+    line_cmap.append ( -1.0f, make_tuple (0.25f, 0.25f, 0.25f));
+    line_cmap.append (  0.0f, make_tuple (0.75f, 0.75f, 0.75f));
+    line_cmap.append (  1.0f, make_tuple (0.25f, 0.25f, 0.25f));
 
 
     bool load_error = false;
