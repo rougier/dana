@@ -399,6 +399,7 @@ class Terminal (StringTerminal):
         image = None
         bits = None
         self.dirty = True
+        self.refresh()
 
     #____________________________________________________________________render
     def render (self):
@@ -559,7 +560,7 @@ class Terminal (StringTerminal):
             y = self.lines-1
             dy = (self.height-2*self.border) % self.font.glyph_size[1]
             start -= 1
-        
+
         for segments in b[start:end]:
             GL.glPushMatrix ()
             GL.glTranslate (self.border,
