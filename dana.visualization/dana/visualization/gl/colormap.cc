@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 #include <boost/python.hpp>
 #include "colormap.h"
 
@@ -92,12 +93,14 @@ std::string
 Color::repr (void)
 {
     std::ostringstream ost;
-    ost << "(("
-        << data[RED]   << ", "
-        << data[GREEN] << ", "
-        << data[BLUE]  << ", "
-        << data[ALPHA] << "), "
-        << data[VALUE] << ")";      
+    
+    ost << "["
+        << std::setw(5) << data[VALUE] << ", ("
+        << std::setw(4) << data[RED]   << ", "
+        << std::setw(4) << data[GREEN] << ", "
+        << std::setw(4) << data[BLUE]  << ", "
+        << std::setw(4) << data[ALPHA] << ")]";
+
     return ost.str();
 }
 
@@ -107,7 +110,6 @@ Color::cmp (Color c1, Color c2)
 {
     return c1.data[VALUE] < c2.data[VALUE];
 }
-
 
 // ============================================================================
 Colormap::Colormap (void)
@@ -262,6 +264,19 @@ Colormap::sample (void)
 }
 
 // ============================================================================
+std::string
+Colormap::repr (void)
+{
+    std::vector<Color>::iterator i;
+    std::ostringstream ost;
+
+    ost << "Colormap\n";
+    for (i=colors.begin(); i!= colors.end(); i++)
+        ost << (*i).repr() << "\n";
+    return ost.str();
+}
+
+// ============================================================================
 //   boost wrapping code
 // ============================================================================
 void
@@ -319,6 +334,9 @@ Colormap::boost (void) {
               "__len__() -> integer\n"
               "\n"
               "Return number of entries in the colormap.\n")
+
+        .def ("__repr__",   &Colormap::repr,
+              "x.__repr__() <==> repr(x)\n")
         ;
 }
 
@@ -327,12 +345,19 @@ Color::boost (void) {
 
     using namespace boost::python;
     class_<Color> ("Color",
-        "==================================================================\n"
-        "\n"
-        "==================================================================\n",
+    "=====================================================================\n"
+    "A color is a RGBAV-tuple specifying a color by a red, green and blue \n"
+    "value in the RGB color model. Each value ranges from 0.0 to 1.0 and  \n"
+    "is represented by a floating point value. A fourth value, the so-cal-\n"
+    "led alpha value, defines opacity. It also ranges from 0.0 to 1.0,    \n"
+    "where 0.0 means that the color is fully transparent, and 1.0 that the\n"
+    "color is fully opaque. Beside the raw RGBA values a color also stores\n"
+    "one value that is used for color interpolation.                      \n"
+    "=====================================================================\n",
         init< optional <float,float,float,float,float> >
-            ("__init__ () -- initialize color\n")
-        )
-        .def ("__repr__",   &Color::repr)
+            ("__init__ ()\n"))
+
+        .def ("__repr__",   &Color::repr,
+              "x.__repr__() <==> repr(x)\n")
         ;
 }

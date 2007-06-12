@@ -62,12 +62,12 @@ namespace dana { namespace gl {
             Color (const Color &other);
             ~Color (void);
 
-            Color operator= (const Color &other);
-            Color operator+ (const Color &other);
-            Color operator* (const float scale);
-            std::string repr (void);
-            static bool cmp (Color c1, Color c2);
-            static void boost (void);
+            Color        operator=  (const Color &other);
+            Color        operator+  (const Color &other);
+            Color        operator*  (const float scale);
+            std::string  repr       (void);
+            static bool  cmp        (Color c1, Color c2);
+            static void  boost      (void);
     };
 
     // Colormap
@@ -77,7 +77,6 @@ namespace dana { namespace gl {
             std::vector<Color>  colors;
             std::vector<Color>  samples;
             int                 resolution;
-
         public:
             Colormap                 (void);
             ~Colormap                (void);
@@ -89,6 +88,7 @@ namespace dana { namespace gl {
             Color        exact_color (float value);            
             void         scale       (float inf, float sup);
             void         sample      (void);
+            std::string  repr        (void);            
             static void  boost       (void);
     };
 
