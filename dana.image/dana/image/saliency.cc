@@ -172,7 +172,7 @@ void Saliency::process_color(void)
         {
             rg_salMap += cs_rg[i];			
         }
-    Normalisation<ImageDouble,ImageDouble>(rg_salMap,rg_salMap);
+    //Normalisation<ImageDouble,ImageDouble>(rg_salMap,rg_salMap);
             
     by_salMap.resize(by_pyr[size_level]._dimension);
     by_salMap = 0;			
@@ -180,12 +180,82 @@ void Saliency::process_color(void)
         {
             by_salMap += cs_by[i];			
         }	
-    Normalisation<ImageDouble,ImageDouble>(by_salMap,by_salMap);		
+    //Normalisation<ImageDouble,ImageDouble>(by_salMap,by_salMap);		
     
 }
 
 void Saliency::process_orientation(void)
 {
+    // Initialisation
+    // sobels vector
+    if(sobels.size() != orientations.size())
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels.push_back(*(new ImageDouble()));
+                    sobels[i] = 0;
+                }
+        }
+    else
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels[i] = 0;
+                }
+            
+        }
+    // sobels_pyr
+    if(sobels_pyr.size() != orientations.size())
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels_pyr.push_back(*(new std::vector<ImageDouble>()));
+                }
+            
+        }
+    else
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels_pyr[i].clear();
+                }           
+        }
+    // sobels_cs
+    if(sobels_cs.size() != orientations.size())
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels_cs.push_back(*(new std::vector<ImageDouble>()));
+                }
+            
+        }
+    else
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels_cs[i].clear();
+                }           
+        }
+    // sobels_sal
+    if(sobels_sal.size() != orientations.size())
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels_sal.push_back(*(new ImageDouble()));
+                    sobels_sal[i] = 0;
+                }
+        }
+    else
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels_sal[i] = 0;
+                }
+            
+        }
+
+    // Calcul
+
     if(verbose) std::cout << "Computing the orientations' channels" << std::endl;
 
     sobel_res_h.resize(intensity._dimension);		
@@ -206,13 +276,13 @@ void Saliency::process_orientation(void)
         {
             AngleFiltOp::angle = orientations[i];
 
-            sobels.push_back(*(new ImageDouble())); /////////
+            //sobels.push_back(*(new ImageDouble())); /////////
             
             sobels[i].resize(intensity._dimension);
             mirage::algo::UnaryOp<ImageDouble,ImageDouble,AngleFiltOp>(sobel_orientations,sobels[i]);
             mirage::algo::BinaryOp<ImageDouble,ImageDouble,ImageDouble,computeMask<ImageDouble, ImageDouble, ImageDouble> > (sobels[i],sobel_norm,sobels[i]);            
 
-            sobels_pyr.push_back(*(new std::vector<ImageDouble>())); /////////
+            //sobels_pyr.push_back(*(new std::vector<ImageDouble>())); /////////
             
             sobels_pyr[i].push_back(sobels[i]);
             pyr_temp = sobels[i];
@@ -223,18 +293,18 @@ void Saliency::process_orientation(void)
                 } 
 
 
-            sobels_cs.push_back(*(new std::vector<ImageDouble>()));/////////
+            //sobels_cs.push_back(*(new std::vector<ImageDouble>()));/////////
 
             CenterSurround<ImageDouble,ImageDouble> (sobels_pyr[i],sobels_cs[i],min_level,max_level,min_delta,max_delta,size_level);
 
-            sobels_sal.push_back(*(new ImageDouble())); ////////            
+            //sobels_sal.push_back(*(new ImageDouble())); ////////            
             sobels_sal[i].resize(sobels_pyr[i][size_level]._dimension);
             sobels_sal[i] = 0;
             for(unsigned int j = 0 ; j < sobels_cs[i].size() ; j ++)
                 {
                     sobels_sal[i] += sobels_cs[i][j];			
                 }	
-            Normalisation<ImageDouble,ImageDouble>(sobels_sal[i],sobels_sal[i]);
+            //Normalisation<ImageDouble,ImageDouble>(sobels_sal[i],sobels_sal[i]);
 
         }
     if(sobels_sal.size() >= 1)
@@ -283,7 +353,7 @@ void Saliency::process(void)
         {
             intensity_salMap += cs_intensity[i];			
         }
-    Normalisation<ImageDouble,ImageDouble>(intensity_salMap,intensity_salMap);
+    //Normalisation<ImageDouble,ImageDouble>(intensity_salMap,intensity_salMap);
 
     //*******************************
     // Compute the opponency channels
@@ -391,75 +461,52 @@ void Saliency::clamp(void)
     // We browse the map channel_maps 
     // resize the saliency map
     // and clamp the result in the layer
-    ImageDouble tmp;
+    ImageDouble tmp_image;
     core::LayerPtr tmp_layer;
-
     std::map< core::LayerPtr, int >::iterator cur;
+
+    // We first build a vector containing all the channels
+    std::vector< ImageDouble* > tmp_channels;
+    tmp_channels.push_back(&intensity_salMap);
+    if(comp_color)
+        {
+            tmp_channels.push_back(&rg_salMap);
+            tmp_channels.push_back(&by_salMap);
+        }
+    for(unsigned int i = 0 ; i < sobels_sal.size() ; i++)
+        {
+            tmp_channels.push_back(&(sobels_sal[i]));
+        }
+    
     for(cur = channel_maps.begin() ; cur != channel_maps.end() ; cur++)
         {
             tmp_layer = (*cur).first;
-            int width = (tmp_layer->get_map()->width);
-            int height = (tmp_layer->get_map()->height);
-
+            int tmp_width = (tmp_layer->get_map()->width);
+            int tmp_height = (tmp_layer->get_map()->height);
+            int tmp_index = (*cur).second;
+            
             // We get the channel and copy it in tmp
             // If you add channels, be carefull with the index of orientation !!
             
-            int shift = 0;
-            
-            if((*cur).second == 0)
-                {
-                    tmp.resize(intensity_salMap._dimension);
-                    tmp = intensity_salMap;
-                    shift = 1;
-                    std::cout << "Clamp for intensity " << std::endl;
-                }
-            else
-                {
-                    if(comp_color)
-                        {
-                            shift += 2;
-                            if( (*cur).second == 1)
-                                {
-                                    tmp.resize(rg_salMap._dimension);
-                                    tmp = rg_salMap;
-                                    std::cout << "Clamp for color " << std::endl;
-                                }
-                            else if( (*cur).second == 2)
-                                {
-                                    tmp.resize(by_salMap._dimension);
-                                    tmp = by_salMap;    
-                                    std::cout << "Clamp for color " << std::endl;   
-                                }
-                            else
-                                {
-                                    tmp.resize(sobels_sal[(*cur).second-shift]._dimension);
-                                    tmp = sobels_sal[(*cur).second-shift];
-                                    std::cout << "clamp for the orientations "<< std::endl;          
-                                }
-                        }
-                    else if(comp_orientation)
-                        {
-                            tmp.resize(sobels_sal[(*cur).second-shift]._dimension);
-                            tmp = sobels_sal[(*cur).second-shift];
-                            std::cout << "clamp for the orientations "<< std::endl;
-                        }
-                }
-            
-            mirage::Vector<2,int> dimension;
-            dimension((mirage::Args<2,int>(),width,height));
 
-            tmp.rescale(dimension);
+            tmp_image.resize((tmp_channels[tmp_index])->_dimension);
+            tmp_image = *(tmp_channels[tmp_index]);
+
+            mirage::Vector<2,int> tmp_dimension;
+            tmp_dimension((mirage::Args<2,int>(),tmp_width,tmp_height));
+
+            tmp_image.rescale(tmp_dimension);
  
-           Scale<ImageDouble, ImageDouble>(tmp,tmp,1.0);
+            Scale<ImageDouble, ImageDouble>(tmp_image,tmp_image,1.0);
 
             // And clamp the result in the layer
             ImageDouble::pixel_type sal_pxl,sal_pxl_end;
-            sal_pxl = tmp.begin();
-            sal_pxl_end =  tmp.end();
+            sal_pxl = tmp_image.begin();
+            sal_pxl_end =  tmp_image.end();
 
-            for(int j = 0 ; j < height ; j++)
+            for(int j = 0 ; j < tmp_height ; j++)
                 {
-                    for(int i = 0 ; i < width ; i++)
+                    for(int i = 0 ; i < tmp_width ; i++)
                         {
                             tmp_layer->get(i,j)->potential = *sal_pxl;
                             sal_pxl++;

@@ -35,8 +35,8 @@ from dana.image import *
 
 # Create a new network
 net = core.Network ()
-width  = 60
-height = 60
+width  = 100
+height = 100
 
 # Function for creating a new map of units (of type unit_class)
 def new_map(name, w, h, p,unit_class):
