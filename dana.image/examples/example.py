@@ -11,6 +11,16 @@
 # $Id$
 #------------------------------------------------------------------------------
 
+
+# When the example is run, try :
+#     init("conjonction.jpg")
+#     clamp()
+
+# If you then want to read an other image, try
+#     sal.read("new_image.jpg")
+#     clamp()
+
+
 # Import
 import matplotlib.pylab as pylab
 import matplotlib.colors as colors
@@ -53,7 +63,9 @@ print "Building maps"
 
 I_intensity = new_map('Intensity', width, height, (0,0), core.Unit)
 I_RG = new_map('RG', width, height, (1, 0), core.Unit)
-I_BY = new_map('BY', width, height, (2, 0), core.Unit)
+I_GR = new_map('GR', width, height, (2, 0), core.Unit)
+I_BY = new_map('BY', width, height, (3, 0), core.Unit)
+I_YB = new_map('YB', width, height, (4, 0), core.Unit)
 I_horiz = new_map('horiz', width, height, (0, 1), core.Unit)
 I_vert = new_map('vert', width, height, (1, 1), core.Unit)
 I_PI_4 = new_map('PI_4', width, height, (2, 1), core.Unit)
@@ -70,11 +82,13 @@ def init(img):
     sal.add_orientation(3.0*math.pi/4.0)
     sal.set_map(0,I_intensity[0])
     sal.set_map(1,I_RG[0])
-    sal.set_map(2,I_BY[0])
-    sal.set_map(3,I_horiz[0])
-    sal.set_map(4,I_vert[0])
-    sal.set_map(5,I_PI_4[0])
-    sal.set_map(6,I_3PI_4[0])
+    sal.set_map(2,I_GR[0])
+    sal.set_map(3,I_BY[0])
+    sal.set_map(4,I_YB[0])
+    sal.set_map(5,I_horiz[0])
+    sal.set_map(6,I_vert[0])
+    sal.set_map(7,I_PI_4[0])
+    sal.set_map(8,I_3PI_4[0])
 
 def clamp():
     global sal

@@ -112,8 +112,14 @@ void Saliency::read(char * img_filename)
     intensity_pyr.clear();
     cs_intensity.clear();
     rg_pyr.clear();
+    gr_pyr.clear();
     by_pyr.clear();
+    yb_pyr.clear();
     cs_rg.clear();
+    cs_gr.clear();
+    cs_by.clear();
+    cs_yb.clear();
+    
     sobels_pyr.clear();
     sobels_cs.clear();
     sobels_sal.clear();
@@ -123,17 +129,25 @@ void Saliency::process_color(void)
 {
     if(verbose) std::cout << "Computing the color opponency channels" << std::endl;
     rg.resize(source._dimension);
+    gr.resize(source._dimension);
     by.resize(source._dimension);
+    yb.resize(source._dimension);
 	
     // It is necesseray to build an image with values of pixel of type double
     // if we don't do so, we loose a lot of information because of the normalisation operator
     if(verbose) std::cout << "Normalizing the opponency channels by the intensity " << std::endl;
     mirage::algo::UnaryOp<ImageRGB24,ImageDouble,RGBToRG<ImageRGB24, ImageDouble> > (source,rg);
     mirage::algo::BinaryOp<ImageDouble,ImageDouble,ImageDouble,Normalize<ImageDouble, ImageDouble> > (rg,intensity,rg);
-	
+
+    mirage::algo::UnaryOp<ImageRGB24,ImageDouble,RGBToGR<ImageRGB24, ImageDouble> > (source,gr);
+    mirage::algo::BinaryOp<ImageDouble,ImageDouble,ImageDouble,Normalize<ImageDouble, ImageDouble> > (gr,intensity,gr);
+		
     mirage::algo::UnaryOp<ImageRGB24,ImageDouble,RGBToBY<ImageRGB24, ImageDouble> > (source,by);		
     mirage::algo::BinaryOp<ImageDouble,ImageDouble,ImageDouble,Normalize<ImageDouble, ImageDouble> > (by,intensity,by);
-			
+
+    mirage::algo::UnaryOp<ImageRGB24,ImageDouble,RGBToYB<ImageRGB24, ImageDouble> > (source,yb);		
+    mirage::algo::BinaryOp<ImageDouble,ImageDouble,ImageDouble,Normalize<ImageDouble, ImageDouble> > (yb,intensity,yb);
+				
     //******************************	
     // Compute the gaussian pyramids
     //******************************
@@ -146,6 +160,15 @@ void Saliency::process_color(void)
             GaussianPyramid<ImageDouble, ImageDouble> (pyr_temp, pyr_temp);
             rg_pyr.push_back(pyr_temp);
         }	
+
+    if(verbose) std::cout << "Computing the gaussian pyramid for green/red opponency " << std::endl;
+    gr_pyr.push_back(gr);	
+    pyr_temp = gr;			
+    for(int i = 0 ; i < pyr_level ; i ++)
+        {
+            GaussianPyramid<ImageDouble, ImageDouble> (pyr_temp, pyr_temp);
+            gr_pyr.push_back(pyr_temp);
+        }
 			
     if(verbose) std::cout << "... for blue/yellow opponency " << std::endl;
     by_pyr.push_back(by);	
@@ -156,6 +179,15 @@ void Saliency::process_color(void)
             by_pyr.push_back(pyr_temp);
         }		
 			
+    if(verbose) std::cout << "... for yellow/blue opponency " << std::endl;
+    yb_pyr.push_back(yb);
+    pyr_temp = yb;
+    for(int i = 0 ; i < pyr_level ; i ++)
+        {
+            GaussianPyramid<ImageDouble, ImageDouble> (pyr_temp, pyr_temp);
+            yb_pyr.push_back(pyr_temp);
+        }
+			
     //****************************
     // Compute the center-surround
     //****************************
@@ -163,25 +195,42 @@ void Saliency::process_color(void)
     // the image at position size_level in the pyramid
     if(verbose) std::cout << "Computing the center/surround for color opponency " << std::endl;
     CenterSurround<ImageDouble,ImageDouble> (rg_pyr,cs_rg,min_level,max_level,min_delta,max_delta,size_level); 
+    CenterSurround<ImageDouble,ImageDouble> (gr_pyr,cs_gr,min_level,max_level,min_delta,max_delta,size_level);
     CenterSurround<ImageDouble,ImageDouble> (by_pyr,cs_by,min_level,max_level,min_delta,max_delta,size_level); 
+    CenterSurround<ImageDouble,ImageDouble> (yb_pyr,cs_yb,min_level,max_level,min_delta,max_delta,size_level); 
             
     if(verbose) std::cout << "Computing the conspicuity maps for color opponency " << std::endl;
     rg_salMap.resize(rg_pyr[size_level]._dimension);
     rg_salMap = 0;		
     for(unsigned int i = 0 ; i < cs_rg.size() ; i ++)
         {
-            rg_salMap += cs_rg[i];			
+            rg_salMap += cs_rg[i];
         }
     //Normalisation<ImageDouble,ImageDouble>(rg_salMap,rg_salMap);
+
+    gr_salMap.resize(gr_pyr[size_level]._dimension);
+    gr_salMap = 0;		
+    for(unsigned int i = 0 ; i < cs_gr.size() ; i ++)
+        {
+            gr_salMap += cs_gr[i];
+        }
+    //Normalisation<ImageDouble,ImageDouble>(gr_salMap,gr_salMap);
             
     by_salMap.resize(by_pyr[size_level]._dimension);
     by_salMap = 0;			
     for(unsigned int i = 0 ; i < cs_by.size() ; i ++)
         {
-            by_salMap += cs_by[i];			
+            by_salMap += cs_by[i];
         }	
     //Normalisation<ImageDouble,ImageDouble>(by_salMap,by_salMap);		
-    
+            
+    yb_salMap.resize(yb_pyr[size_level]._dimension);
+    yb_salMap = 0;			
+    for(unsigned int i = 0 ; i < cs_yb.size() ; i ++)
+        {
+            yb_salMap += cs_yb[i];
+        }	
+    //Normalisation<ImageDouble,ImageDouble>(yb_salMap,yb_salMap);	    
 }
 
 void Saliency::process_orientation(void)
@@ -276,14 +325,10 @@ void Saliency::process_orientation(void)
         {
             AngleFiltOp::angle = orientations[i];
 
-            //sobels.push_back(*(new ImageDouble())); /////////
-            
             sobels[i].resize(intensity._dimension);
             mirage::algo::UnaryOp<ImageDouble,ImageDouble,AngleFiltOp>(sobel_orientations,sobels[i]);
             mirage::algo::BinaryOp<ImageDouble,ImageDouble,ImageDouble,computeMask<ImageDouble, ImageDouble, ImageDouble> > (sobels[i],sobel_norm,sobels[i]);            
 
-            //sobels_pyr.push_back(*(new std::vector<ImageDouble>())); /////////
-            
             sobels_pyr[i].push_back(sobels[i]);
             pyr_temp = sobels[i];
             for(int j = 0 ; j < pyr_level ; j ++)
@@ -292,12 +337,8 @@ void Saliency::process_orientation(void)
                     sobels_pyr[i].push_back(pyr_temp);
                 } 
 
-
-            //sobels_cs.push_back(*(new std::vector<ImageDouble>()));/////////
-
             CenterSurround<ImageDouble,ImageDouble> (sobels_pyr[i],sobels_cs[i],min_level,max_level,min_delta,max_delta,size_level);
 
-            //sobels_sal.push_back(*(new ImageDouble())); ////////            
             sobels_sal[i].resize(sobels_pyr[i][size_level]._dimension);
             sobels_sal[i] = 0;
             for(unsigned int j = 0 ; j < sobels_cs[i].size() ; j ++)
@@ -402,10 +443,17 @@ void Saliency::save(void)
             Scale<ImageDouble, ImageGray8>(rg_salMap,img_temp);
             mirage::img::JPEG::write(img_temp,"saliency_rg.jpg",100);
             
+            img_temp.resize(gr_salMap._dimension);
+            Scale<ImageDouble, ImageGray8>(gr_salMap,img_temp);
+            mirage::img::JPEG::write(img_temp,"saliency_gr.jpg",100);
+            
             img_temp.resize(by_salMap._dimension);
             Scale<ImageDouble, ImageGray8>(by_salMap,img_temp);		
             mirage::img::JPEG::write(img_temp,"saliency_by.jpg",100);
             
+            img_temp.resize(yb_salMap._dimension);
+            Scale<ImageDouble, ImageGray8>(yb_salMap,img_temp);		
+            mirage::img::JPEG::write(img_temp,"saliency_yb.jpg",100);            
         }
         
     //**** For the orientations ****//
@@ -433,9 +481,11 @@ void Saliency::print_channels()
     
     if(comp_color)
         {
-            std::cout << "1 - RG channel" << std::endl;
-            std::cout << "2 - BY channel" << std::endl;
-            index += 2;
+            std::cout << "1 - R+G- channel" << std::endl;
+            std::cout << "2 - G+R- channel" << std::endl;
+            std::cout << "3 - B+Y- channel" << std::endl;
+            std::cout << "4 - Y+B- channel" << std::endl;           
+            index += 4;
         }
     
     if(comp_orientation)
@@ -471,7 +521,9 @@ void Saliency::clamp(void)
     if(comp_color)
         {
             tmp_channels.push_back(&rg_salMap);
+            tmp_channels.push_back(&gr_salMap);
             tmp_channels.push_back(&by_salMap);
+            tmp_channels.push_back(&yb_salMap);
         }
     for(unsigned int i = 0 ; i < sobels_sal.size() ; i++)
         {

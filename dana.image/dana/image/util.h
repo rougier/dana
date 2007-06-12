@@ -20,7 +20,19 @@ public:
 	inline void operator()(typename SOURCE::value_type& rgb,
                            typename RESULT::value_type& rg)
     {
-		rg = (typename RESULT::value_type) (rgb._red - rgb._blue > 0 ? rgb._red - rgb._blue : 0 );
+		rg = (typename RESULT::value_type) (rgb._red - rgb._green > 0 ? rgb._red - rgb._green : 0 );
+        //rg = (typename RESULT::value_type) (rgb._red);
+    }      
+};
+
+template<class SOURCE, class RESULT>
+class RGBToGR
+{
+public:
+	inline void operator()(typename SOURCE::value_type& rgb,
+                           typename RESULT::value_type& gr)
+    {
+		gr = (typename RESULT::value_type) (rgb._green - rgb._red > 0 ? rgb._green - rgb._red : 0 );
     }      
 };
 
@@ -32,6 +44,17 @@ public:
                            typename RESULT::value_type& by)
     {
 		by = (typename RESULT::value_type) ( rgb._blue - ((1-0.5)*rgb._red+ 0.5*rgb._green) > 0 ? rgb._blue -((1-0.5)*rgb._red+ 0.5*rgb._green)  : 0);
+    }     
+};
+
+template<class SOURCE, class RESULT>
+class RGBToYB
+{
+public:
+	inline void operator()(typename SOURCE::value_type& rgb,
+                           typename RESULT::value_type& yb)
+    {
+		yb = (typename RESULT::value_type) (((1-0.5)*rgb._red+ 0.5*rgb._green) - rgb._blue > 0 ? ((1-0.5)*rgb._red+ 0.5*rgb._green) - rgb._blue : 0);
     }     
 };
 

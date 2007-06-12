@@ -32,7 +32,7 @@ namespace dana {
                 // Private fields
                 ImageRGB24 source;
                 ImageDouble intensity;
-                ImageDouble rg, by;
+                ImageDouble rg, by,gr,yb;
                 ImageDouble pyr_temp;
                 ImageGray8 img_temp;
                 ImageGray8 sal;
@@ -42,9 +42,9 @@ namespace dana {
                 ImageDouble intensity_salMap;
 
                 // Gaussian and center-surround pyramids and saliency map for the color opponency channels
-                std::vector<ImageDouble> rg_pyr, by_pyr;			
-                std::vector<ImageDouble> cs_rg,cs_by;		
-                ImageDouble rg_salMap,by_salMap;
+                std::vector<ImageDouble> rg_pyr, gr_pyr, by_pyr, yb_pyr;
+                std::vector<ImageDouble> cs_rg, cs_gr, cs_by, cs_yb;
+                ImageDouble rg_salMap, gr_salMap, by_salMap, yb_salMap;
 		
                 // Gaussian pyramid, center-surround and saliency map for the orientation channels
                 std::vector<double> orientations;
@@ -59,7 +59,7 @@ namespace dana {
     
                 // Rescaled,normalised maps used to compute the saliency map
                 ImageDouble scaled_intensity,scaled_rg,scaled_by,scaled_sobel,salMap;
-                ImageRGB24 saliency;
+                //ImageRGB24 saliency;
 
                 int pyr_level;
                 unsigned int min_level;
