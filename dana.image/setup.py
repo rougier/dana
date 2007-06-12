@@ -36,15 +36,12 @@ include_dirs = [os.path.normpath (os.path.join (include_dir, '../include/dana/')
 include_dirs.append (numpy.get_include())
 include_dirs = include_dirs + pkgconfig('mirage')['include_dirs']
 
-# If needed, add the line :
-#  library_dirs = "PATH_TO_THE_DIRECTORY_WHERE_MIRAGE_IS_INSTALLED"
 dana_image_srcs = glob.glob ("dana/image/*.cc")
 dana_image_ext = Extension (
         'dana.image._image',
         sources = dana_image_srcs,
         include_dirs= include_dirs ,
-        library_dirs = ['/users/cortex/fix/local/lib'],
-        libraries = ['boost_python', 'boost_thread'] + pkgconfig('mirage')['libraries']
+        libraries = ['boost_python', 'boost_thread'] + pkgconfig('mirage')['libraries'],
         )
 
 setup (name='dana.image',
