@@ -34,8 +34,8 @@ class Camera:
         self.far = 100.0
         self.aperture = 30.0
         self.width, self.height = 0,0
-        self.ortho = True #False
-        self.zoom = 1.0 #0.75
+        self.ortho = False
+        self.zoom = 0.75
 
     def resize (self, width=None, height=None):
         """ Resize event """

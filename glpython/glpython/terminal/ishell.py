@@ -83,10 +83,10 @@ class Shell:
 
     #____________________________________________________________________banner
     def banner(self):
-        self.write ('Python %s on %s\n' % (sys.version, sys.platform))
+        self.write ('\033[01mPython %s on %s\n' % (sys.version, sys.platform))
         self.write ('''Type "help", "copyright", "credits" '''
                     '''or "license" for more information.\n''')
-        self.write ('''IPython %s -- An enhanced Interactive Python.\n \n'''
+        self.write ('''IPython %s -- An enhanced Interactive Python.\n\033[00m \n'''
                         % IPython.__version__)
         self.prompt1()
 

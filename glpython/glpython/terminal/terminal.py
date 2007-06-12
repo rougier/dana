@@ -314,10 +314,8 @@ class Terminal (StringTerminal):
             height = max_h
 
         # Now we adjust size according to font glyph size
-#        w = max ((width-2*self.border)/self.font.glyph_size[0],1)
-#        width = w*self.font.glyph_size[0] + 2*self.border
-#        h = max ((height-2*self.border)/self.font.glyph_size[1],1)
-#        height = h*self.font.glyph_size[1] + 2*self.border
+        width  = max(width, 2*self.border+self.font.glyph_size[0])
+        height = max(height,2*self.border+self.font.glyph_size[1])
 
         # No change needed
         if self.width == width and self.height == height and not force:

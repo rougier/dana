@@ -30,8 +30,8 @@ class Observer:
     def __init__ (self):
         """ Intialize observer with default values """
         
-        self.phi = 0 #-45.0
-        self.theta = 0 #65
+        self.phi = -45.0
+        self.theta = 65
         self.ox, self.oy = 0, 0
         self.camera = camera.Camera()
         self.button = 0

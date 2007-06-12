@@ -27,22 +27,27 @@ class Font:
     """ Font class """
     
     #______________________________________________________________________init
-    def __init__ (self, size=12, filename=None):
+    def __init__ (self, size=12):
         """ Load & initialize font """
 
         self.allocated = False
         self.size = size
-        if not filename:
-            filename = os.path.join(datadir(),'sans.ttf')
-        font = ImageFont.truetype (filename, size)
-        self.base = GL.glGenLists (128)
-        self.textures = [None] * 128
+        font_mono   = \
+            ImageFont.truetype (os.path.join(datadir(),'sans.ttf'), size)
+        font_bold   = \
+            ImageFont.truetype (os.path.join(datadir(),'bold.ttf'), size)        
+        font_italic = \
+            ImageFont.truetype (os.path.join(datadir(),'italic.ttf'), size)       
+
+        
+        self.base = GL.glGenLists (3*128)
+        self.textures = [None] * 3 * 128
         
         # Compute size in order to have a fixed size font
         max_width, mean_width = 0, 0
         max_height, mean_height = 0, 0
         for i in xrange (32,128):
-            glyph = font.getmask (chr (i))
+            glyph = font_mono.getmask (chr (i))
             glyph_width, glyph_height = glyph.size
             max_width = max (max_width, glyph_width)
             mean_width += glyph_width
@@ -53,11 +58,15 @@ class Font:
 
         self.glyph_size = (mean_width, mean_height)
         advance = mean_width
-        for i in xrange (128):        
-            self._make_letters (font, i, advance)
+        for i in xrange (128):
+            self._make_letters (font_mono, 0, i, advance)
+        for i in xrange (128):
+            self._make_letters (font_bold, 128, i, advance)
+        for i in xrange (128):
+            self._make_letters (font_italic, 256, i, advance)
 
         self.allocated = True
-        del font
+        del font_mono, font_bold, font_italic
         gc.collect()
         
         self.colors = {'black': (0,0,0), 'red':     (1,0,0),
@@ -69,6 +78,7 @@ class Font:
     def render (self, text, markup = []):
         """ Render text """
 
+        base = 0
         if not text: return
         if markup:
             for m in markup:
@@ -90,7 +100,11 @@ class Font:
                 elif 'foreground' in m:
                     c = m.split()[0]
                     GL.glColor (self.colors[c])
-        GL.glListBase (self.base)
+                if 'bold' in m:
+                    base += 128
+                elif 'faint' in m:
+                    base += 256
+        GL.glListBase (self.base+base)
         GL.glCallLists (text)
 
     #__________________________________________________________________ __del__
@@ -98,7 +112,7 @@ class Font:
         """ delete """
         
         if self.allocated:
-            GL.glDeleteLists (self.base, 128)
+            GL.glDeleteLists (self.base, 3*128)
             for tex_id in self.textures:
                 GL.glDeleteTextures (tex_id)
             self.list_base = None
@@ -106,7 +120,7 @@ class Font:
         return
 
     #____________________________________________________________ _make_letters
-    def _make_letters (self, ft, ch, advance):
+    def _make_letters (self, ft, base, ch, advance):
         """  makes one letter (ch) and stores it in a display list """
 
         def next_p2 (num):
@@ -144,7 +158,7 @@ class Font:
                          expanded_data)
         expanded_data = None
 
-        GL.glNewList (self.base + ch, GL.GL_COMPILE)
+        GL.glNewList (self.base + base + ch, GL.GL_COMPILE)
         if ch == ord (" "):
             glyph_advance = glyph_width
             GL.glTranslatef (advance, 0, 0)

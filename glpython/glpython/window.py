@@ -31,8 +31,8 @@ from glpython.background import Background
 _window = None
 
 
-def window (namespace={}, w=650, h=400, title='GLPython', fps=30,
-            backend='wx', shell = 'ipython', layout = '2', logo=False):
+def window (namespace={}, w=850, h=600, title='GLPython', fps=30,
+            backend='wx', shell = 'ipython', layout = '1', logo=False):
     """ Return a window with OpenGL capabilities displaying a basic scene """
 
     global _window
