@@ -119,7 +119,6 @@ void Saliency::read(char * img_filename)
     cs_gr.clear();
     cs_by.clear();
     cs_yb.clear();
-    
     sobels_pyr.clear();
     sobels_cs.clear();
     sobels_sal.clear();
