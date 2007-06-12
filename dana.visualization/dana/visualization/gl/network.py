@@ -28,7 +28,6 @@ class View(Object):
         self.unit = None
         self.network = network
 
-
         MyArray = Array
         if style == 'bar':
             MyArray = ArrayBar
@@ -40,7 +39,7 @@ class View(Object):
             self.sy = float(h)/float(w)
         elif h < w:
             self.sx = float(w)/float(h)
-    
+
         for m in network:
             name = ''
             if hasattr(m, 'name'):

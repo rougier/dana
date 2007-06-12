@@ -28,6 +28,7 @@ int Array::id_counter = 100;
 // ============================================================================
 Array::Array (object array, object frame, std::string name, int fontsize)
 {
+
     this->array = (PyArrayObject *) array.ptr();
     Py_INCREF(this->array);
     this->frame = frame;
@@ -39,6 +40,8 @@ Array::Array (object array, object frame, std::string name, int fontsize)
     data = 0;
     id = id_counter++;
 
+
+    cmap.clear();
     cmap.append ( -1.0f, make_tuple (0.0f, 0.0f, 1.0f));
     cmap.append ( -0.5f, make_tuple (0.5f, 0.5f, 1.0f));
     cmap.append (  0.0f, make_tuple (1.0f, 1.0f, 1.0f));
@@ -52,6 +55,7 @@ Array::Array (object array, object frame, std::string name, int fontsize)
     load_error = font->Error();
     size_ok = font->FaceSize (100);
     font->CharMap (ft_encoding_unicode);
+
 }
 
 

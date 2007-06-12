@@ -37,7 +37,6 @@ Focus[0].fill(core.Unit)
 Focus.name = 'Focus'
 net.append(Focus)
 
-
 p = proj.projection()
 p.distance = proj.distance.euclidean (True)
 p.density = proj.density.full(1)
@@ -67,6 +66,6 @@ for i in xrange(Input.shape[0]):
         Input[0].unit(i,j).potential =  + math.exp (-(x0*x0+y0*y0)/0.0125) + math.exp (-(x1*x1+y1*y1)/0.0125) + .15*random.uniform(0.0, 1.0)
 
 win = window(locals(), backend='gtk')
-win.view.append (View (net, fontsize=48))
+win.view.append (View (net, style='bar', fontsize=48))
 win.show()
 

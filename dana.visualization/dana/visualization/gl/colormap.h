@@ -62,7 +62,7 @@ namespace dana { namespace gl {
             Color (const Color &other);
             ~Color (void);
 
-            Color        operator=  (const Color &other);
+            Color &      operator=  (const Color &other);
             Color        operator+  (const Color &other);
             Color        operator*  (const float scale);
             std::string  repr       (void);
@@ -85,7 +85,7 @@ namespace dana { namespace gl {
             void         append      (float value, object color);
             Color        get         (int index);
             Color        color       (float value);
-            Color        exact_color (float value);            
+            Color        xcolor      (float value);            
             void         scale       (float inf, float sup);
             void         sample      (void);
             std::string  repr        (void);            

@@ -53,16 +53,18 @@ Color::~Color (void)
 }
 
 // ============================================================================
-Color
+Color &
 Color::operator= (const Color &other)
 {
     if (this == &other)
         return *this;
-	return Color (other.data[RED],
-	              other.data[GREEN],
-	              other.data[BLUE],
-                  other.data[ALPHA],
-                  other.data[VALUE]);
+
+    data[RED]   = other.data[RED];
+    data[GREEN] = other.data[GREEN];
+    data[BLUE]  = other.data[BLUE];
+    data[ALPHA] = other.data[ALPHA];
+    data[VALUE] = other.data[VALUE];
+    return *this;
 }
 
 
@@ -152,6 +154,7 @@ Colormap::append (float val, object col)
     }
 
     Color c;
+
     try {
         c.data[RED] = extract< float >(col[0])();
         c.data[GREEN] = extract< float >(col[1])();
@@ -161,13 +164,22 @@ Colormap::append (float val, object col)
         return;        
     }
 
-    try {
-        c.data[ALPHA] = extract< float >(col[3])();
-    } catch (...) {
+    if  (col.attr("__len__")() == 4) {
+        try {
+            c.data[ALPHA] = extract< float >(col[3])();
+        } catch (...) {
+            PyErr_Print();
+            return;
+        }
+    } else {
         c.data[ALPHA] = 1.0f;
     }
+
+
     c.data [VALUE] = val;
 	colors.push_back (c);
+
+
 	sort (colors.begin(), colors.end(), Color::cmp);
     sample();
 }
@@ -203,13 +215,13 @@ Colormap::color (float value)
         value = inf;
     else if (value > sup)
         value = sup;
-    int index = int((value-inf)/(sup-inf)*samples.size());
+    int index = int((value-inf)/(sup-inf)*(samples.size()-1));
     return samples[index];
 }
 
 // ============================================================================
 Color
-Colormap::exact_color (float value)
+Colormap::xcolor (float value)
 {
     float inf = colors[0].data[VALUE];
     float sup = colors[colors.size()-1].data[VALUE];
@@ -219,20 +231,21 @@ Colormap::exact_color (float value)
 	Color sup_color = colors[0];
 	Color inf_color = colors[colors.size()-1];
 
-	if (value < inf)
+	if (value <= inf)
 		return colors[0];
-	else if (value > sup)
+	else if (value >= sup)
 		return colors[colors.size()-1];
 	else if (colors.size () == 1)
 		return colors[0];
 	
     for (unsigned int i=1; i<colors.size(); i++) {
-        if (value > colors[i].data[VALUE]) {
+        if (value <= colors[i].data[VALUE]) {
             inf_color = colors[i-1];
             sup_color = colors[i];
             break;
         }
     }
+
 	float r = fabs ((value-inf_color.data[VALUE])/
 	                (sup_color.data[VALUE]-inf_color.data[VALUE]));
 	Color c = sup_color*r + inf_color*(1.0f-r);
@@ -244,10 +257,10 @@ Colormap::exact_color (float value)
 void
 Colormap::scale (float inf, float sup)
 {
-	std::vector<Color>::iterator i;
-	for (i=colors.begin(); i!= colors.end(); i++)
-        (*i).data[VALUE] = ((*i).data[VALUE] - inf) * (sup-inf);
-    sample();
+//	std::vector<Color>::iterator i;
+//	for (i=colors.begin(); i!= colors.end(); i++)
+//       (*i).data[VALUE] = ((*i).data[VALUE] - inf) * (sup-inf);
+//    sample();
 }
 
 // ============================================================================
@@ -258,7 +271,7 @@ Colormap::sample (void)
     float sup = colors[colors.size()-1].data[VALUE];
     samples.clear();
     for (int i=0; i<=resolution; i++) {
-        Color c = exact_color (inf+(i/float(resolution))*(sup-inf));
+        Color c = xcolor (inf+(i/float(resolution))*(sup-inf));
         samples.push_back (c);
     }
 }
@@ -270,7 +283,6 @@ Colormap::repr (void)
     std::vector<Color>::iterator i;
     std::ostringstream ost;
 
-    ost << "Colormap\n";
     for (i=colors.begin(); i!= colors.end(); i++)
         ost << (*i).repr() << "\n";
     return ost.str();
@@ -317,6 +329,11 @@ Colormap::boost (void) {
             
         .def ("color", &Colormap::color,
               "color(value) -> RGBA tuple\n"
+              "\n"
+              "Return interpolated color for value (from stored samples).\n")
+
+        .def ("xcolor", &Colormap::xcolor,
+              "xcolor(value) -> RGBA tuple\n"
               "\n"
               "Return interpolated color for value.\n")
             
