@@ -1,8 +1,4 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Jeremy Fix                                      *
- *   Jeremy.Fix@Loria.fr                                                   *
- *   This code is largely inspired from the matlab code of Dirk Walter     *
- *   You can find it at http://www.saliencytoolbox.net                     *
  // //////////////////////////////////////////////////////////////////// //
  // Major portions of the SaliencyToolbox are protected under two        //
  // U.S. patents:                                                        //
@@ -15,28 +11,16 @@
  //     California Institute of Technology, 2004  (patent pending;       //
  //     application number 10/866,311; filed June 10, 2004).             //
  // See http://portal.uspto.gov/external/portal/pair for current status. //
- // //////////////////////////////////////////////////////////////////// //
- * You can access to the first patent at the address :                     *
- *                                                                         *
- *   http://www.freshpatents.com/Computation-of-intrinsic-perceptual-      *
- *   saliency-in-visual-environments-and-                                  *
- *   applications-dt20060928ptan20060215922.php                            *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
+//
+// Copyright (C) 2006 Nicolas Rougier
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 2 of the
+// License, or (at your option) any later version.
+// $Id$
 
 
 #ifdef HAVE_CONFIG_H
