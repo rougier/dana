@@ -18,7 +18,7 @@
     is pressed and then the render function has to be called.
 """
 
-import sys
+import sys, os
 import os.path
 import Image
 import OpenGL.GL as GL
@@ -101,7 +101,15 @@ class Terminal (StringTerminal):
             self.clear()
             self.dirty = True
             return
-        
+        elif key == 'control-v' and os.path.exists('/usr/bin/xsel'):
+            try:
+                s = os.popen('/usr/bin/xsel').read()
+            except:
+                return
+            if s:
+                for c in s:
+                    self.key_press (c)
+
         try:
             result = self.getc (key)
             self.dirty = True
