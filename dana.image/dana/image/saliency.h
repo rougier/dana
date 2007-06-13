@@ -23,11 +23,14 @@
 
 #include <boost/python.hpp>
 #include "mirage.h"
+
 #include "types.h"
 #include "convolution.h"
 #include "util.h"
 #include "imgProcessing.h"
 #include "orientations.h"
+#include "parameters.h"
+
 #include <vector>
 #include <map>
 
@@ -81,12 +84,12 @@ namespace dana {
                 ImageDouble scaled_intensity,scaled_rg,scaled_by,scaled_sobel,salMap;
                 //ImageRGB24 saliency;
 
-                int pyr_level;
-                unsigned int min_level;
-                unsigned int max_level;
-                unsigned int min_delta;
-                unsigned int max_delta;
-                unsigned int size_level; 	
+/*                 int pyr_level; */
+/*                 unsigned int min_level; */
+/*                 unsigned int max_level; */
+/*                 unsigned int min_delta; */
+/*                 unsigned int max_delta; */
+/*                 unsigned int size_level;  */	
     
                 bool comp_orientation,comp_save,comp_color,comp_sal,verbose;
 
@@ -94,7 +97,8 @@ namespace dana {
                 //std::vector< channel_map > channel_maps;
                 std::map< core::LayerPtr, int> channel_maps;
                 
- 
+                void init_images(void);
+                
             public:
 
                 Saliency(void);

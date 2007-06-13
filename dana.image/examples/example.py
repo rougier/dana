@@ -13,11 +13,12 @@
 
 
 # When the example is run, try :
-#     init("conjonction.jpg")
+#     init()
+#     read("orientations.jpg")
 #     clamp()
 
 # If you then want to read an other image, try
-#     sal.read("new_image.jpg")
+#     read("new_image.jpg")
 #     clamp()
 
 
@@ -73,9 +74,8 @@ I_3PI_4 = new_map('3PI_4', width, height, (3, 1), core.Unit)
 
 sal = Saliency(color=1,orientation=1,save=1,verbose=0)
 
-def init(img):
+def init():
     global sal
-    sal.read(img)
     sal.add_orientation(0)
     sal.add_orientation(math.pi/2.0)
     sal.add_orientation(math.pi/4.0)
@@ -89,6 +89,11 @@ def init(img):
     sal.set_map(6,I_vert[0])
     sal.set_map(7,I_PI_4[0])
     sal.set_map(8,I_3PI_4[0])
+
+def read(img):
+    global sal
+    sal.read(img)
+
 
 def clamp():
     global sal

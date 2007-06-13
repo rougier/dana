@@ -36,6 +36,7 @@
 #include <math.h>
 #include "saliency.h"
 
+
 using namespace std;
 using namespace dana::image;
 
@@ -52,12 +53,12 @@ Saliency::Saliency()
 	comp_sal = false;
 	verbose = false;
     comp_save = false;
-    pyr_level = 7;
-    min_level = 2;
-    max_level = 4;
-    min_delta = 3;
-    max_delta = 4;
-    size_level = 4; 
+//     pyr_level = 7;
+//     min_level = 2;
+//     max_level = 4;
+//     min_delta = 3;
+//     max_delta = 4;
+//     size_level = 4; 
     image_loaded = false;
 }
 
@@ -70,12 +71,12 @@ Saliency::Saliency(bool color, bool orientation, bool save=false,bool verb=false
     comp_save = save;
     verbose = verb;
 	comp_sal = true;
-    pyr_level = 7;
-    min_level = 2;
-    max_level = 4;
-    min_delta = 3;
-    max_delta = 4;
-    size_level = 4;  
+//     pyr_level = 7;
+//     min_level = 2;
+//     max_level = 4;
+//     min_delta = 3;
+//     max_delta = 4;
+//     size_level = 4;  
     image_loaded = false;
 }
 
@@ -84,14 +85,8 @@ Saliency::~Saliency(void)
     // destructeur par défaut
 }
 
-void Saliency::read(char * img_filename)
+void Saliency::init_images(void)
 {
-    // Read the image with mirage
-    mirage::img::JPEG::read(source,img_filename);
-    
-    // Say that an image is loaded
-    image_loaded = true;
-
     // Init the vectors of results
     intensity_pyr.clear();
     cs_intensity.clear();
@@ -106,6 +101,84 @@ void Saliency::read(char * img_filename)
     sobels_pyr.clear();
     sobels_cs.clear();
     sobels_sal.clear();
+
+    // sobels vector
+    if(sobels.size() != orientations.size())
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels.push_back(*(new ImageDouble()));
+                    sobels[i] = 0;
+                }
+        }
+    else
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels[i] = 0;
+                }
+            
+        }
+    // sobels_pyr
+    if(sobels_pyr.size() != orientations.size())
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels_pyr.push_back(*(new std::vector<ImageDouble>()));
+                }
+            
+        }
+    else
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels_pyr[i].clear();
+                }           
+        }
+    // sobels_cs
+    if(sobels_cs.size() != orientations.size())
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels_cs.push_back(*(new std::vector<ImageDouble>()));
+                }
+            
+        }
+    else
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels_cs[i].clear();
+                }           
+        }
+    // sobels_sal
+    if(sobels_sal.size() != orientations.size())
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels_sal.push_back(*(new ImageDouble()));
+                    sobels_sal[i] = 0;
+                }
+        }
+    else
+        {
+            for(unsigned int i = 0 ; i < orientations.size() ; i++)
+                {
+                    sobels_sal[i] = 0;
+                }
+            
+        }    
+    
+}
+
+
+void Saliency::read(char * img_filename)
+{
+    // Read the image with mirage
+    mirage::img::JPEG::read(source,img_filename);
+    
+    // Say that an image is loaded
+    image_loaded = true;
 }
 
 void Saliency::process_color(void)
@@ -218,74 +291,6 @@ void Saliency::process_color(void)
 
 void Saliency::process_orientation(void)
 {
-    // Initialisation
-    // sobels vector
-    if(sobels.size() != orientations.size())
-        {
-            for(unsigned int i = 0 ; i < orientations.size() ; i++)
-                {
-                    sobels.push_back(*(new ImageDouble()));
-                    sobels[i] = 0;
-                }
-        }
-    else
-        {
-            for(unsigned int i = 0 ; i < orientations.size() ; i++)
-                {
-                    sobels[i] = 0;
-                }
-            
-        }
-    // sobels_pyr
-    if(sobels_pyr.size() != orientations.size())
-        {
-            for(unsigned int i = 0 ; i < orientations.size() ; i++)
-                {
-                    sobels_pyr.push_back(*(new std::vector<ImageDouble>()));
-                }
-            
-        }
-    else
-        {
-            for(unsigned int i = 0 ; i < orientations.size() ; i++)
-                {
-                    sobels_pyr[i].clear();
-                }           
-        }
-    // sobels_cs
-    if(sobels_cs.size() != orientations.size())
-        {
-            for(unsigned int i = 0 ; i < orientations.size() ; i++)
-                {
-                    sobels_cs.push_back(*(new std::vector<ImageDouble>()));
-                }
-            
-        }
-    else
-        {
-            for(unsigned int i = 0 ; i < orientations.size() ; i++)
-                {
-                    sobels_cs[i].clear();
-                }           
-        }
-    // sobels_sal
-    if(sobels_sal.size() != orientations.size())
-        {
-            for(unsigned int i = 0 ; i < orientations.size() ; i++)
-                {
-                    sobels_sal.push_back(*(new ImageDouble()));
-                    sobels_sal[i] = 0;
-                }
-        }
-    else
-        {
-            for(unsigned int i = 0 ; i < orientations.size() ; i++)
-                {
-                    sobels_sal[i] = 0;
-                }
-            
-        }
-
     // Calcul
 
     if(verbose) std::cout << "Computing the orientations' channels" << std::endl;
@@ -349,7 +354,10 @@ void Saliency::process(void)
             return;
         }
     
+    // Initialisation
     
+    init_images();
+
     //**************************
     // Compute the intensity map
     //**************************
@@ -420,7 +428,7 @@ void Saliency::save(void)
     //**** For color ****/
     if(comp_color)
         {
-            std::cout << "Saving comp_color" <<std::endl;
+            if(verbose) std::cout << "Saving comp_color" <<std::endl;
             
             img_temp.resize(rg_salMap._dimension);
             Scale<ImageDouble, ImageGray8>(rg_salMap,img_temp);
@@ -442,9 +450,9 @@ void Saliency::save(void)
     //**** For the orientations ****//
     if(comp_orientation && orientations.size() != 0)
         {
-            // If orientations.size() == 0, the sobel saliency map is not computed
-            std::cout << "Saving comp_orientation" <<std::endl;
-            for(unsigned int i = 0 ; i < orientations.size() ; i ++)
+            // If sobels_sal.size() == 0, the sobel saliency maps are not computed
+            if(verbose) std::cout << "Saving comp_orientation" <<std::endl;
+            for(unsigned int i = 0 ; i < sobels_sal.size() ; i ++)
                 {
                     img_temp.resize(sobels_sal[i]._dimension);
                     Scale<ImageDouble, ImageGray8>(sobels_sal[i],img_temp);
