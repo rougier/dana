@@ -16,19 +16,26 @@ import matplotlib.colors as colors
 
 import dana.core as core
 import dana.projection as proj
-import dana.cnft as cnft
-import dana.learn as learn
-from dana.visualization import View2D
-#import dana.view as view
 import dana.projection as projection
 import dana.projection.distance as distance
 import dana.projection.density as density
 import dana.projection.shape as shape
 import dana.projection.profile as profile
+
+import dana.cnft as cnft
+import dana.learn as learn
+
+from glpython.window import window
+from dana.visualization.gl.network import View
+from dana.gui.gtk import ControlPanel
+
 import time, random, math
+
 import gobject, gtk
+
 import numpy
 import random
+from threading import * 
 from math import *
 
 #   The purpose of this model is to classify even and odd numbers, using the 
@@ -60,10 +67,12 @@ from math import *
 #  where nb_steps is the number of presentations of the whole set of digits
 #        lrate    is the learning rate
 #
-#  You can optionnaly refresh the figures after each example by calling
-#   learn(nb_steps,lrate,1), but it slows down drastically the simulation
-#
+#  To make some test, use clamp_ex(number) and run some steps
+#  to see if the number is well classified
 
+print "    Simulation of the perceptron, learning    "
+print "to classify numbers in odd and even categories"
+print " --   Open the file to know how to use it  -- "
 
 numbers = []
 # 0 is even
@@ -97,10 +106,10 @@ numbers.append([1])
 numbers.append([1,1,1,1,0,1,1])
 numbers.append([0])
 
-execfile('weights.py')
-
 # Create a new network
+model = core.Model()
 net = core.Network ()
+model.append(net)
 
 # Create the map representing the 7 segments of a number
 number = core.Map ( (1,7), (0,0) )
@@ -138,18 +147,18 @@ learner = learn.Learner()
 
 ################### Learning Rule ##########################
 # Hebb's rule : dw/dt = lrate * vi * vj
-learner.set_source(number[0])
-learner.set_destination(evenodd[0])
-learner.add_one([1,1,[1.0]])
-learner.connect()
+#learner.set_source(number[0])
+#learner.set_destination(evenodd[0])
+#learner.add_one([1,1,[1.0]])
+#learner.connect()
 
 # Oja's rule : dw/dt = lrate*(vi*vj - wij * (vi**2))
 #                    = lrate*vi*vj - lrate*wij*(vi**2)
-#learner.set_source(number[0])
-#learner.set_destination(evenodd[0])
-#learner.add_one([1,1,[1]])
-#learner.add_one([2,0,[0,-1]])
-#learner.connect()
+learner.set_source(number[0])
+learner.set_destination(evenodd[0])
+learner.add_one([1,1,[1]])
+learner.add_one([2,0,[0,-1]])
+learner.connect()
 
 # Custom rule : dw/dt = lrate * (vi - wij) * (vj - wij)
 #                     = lrate * (wij**2) - lrate*vi*wij - lrate*vj*wij + lrate*vi*vj
@@ -167,18 +176,11 @@ current_step = 0
 steps = []
 error = []
 
-view = View2D (net, title='Click on unit to see weights', size=12)
-#view.show()
-#netview = view.network.NetworkView (net)
-weightsview = WeightsView(evenodd[0], number[0])
-pylab.figure(3)
-pylab.plot(steps, error,'b')
-pylab.xlabel('Step number')
-pylab.ylabel('Error')
-pylab.title('Mean square error')
-pylab.show()
-
-def learn(nb_steps,lrate,update=0):
+def main_learn(nb_steps,lrate):
+    t = Thread(target=learn, args=(nb_steps,lrate,1))
+    gobject.idle_add(t.start)
+        
+def learn(nb_steps,lrate):
 	global current_step,steps,error
 	for n in range(nb_steps):
 		i=0
@@ -191,8 +193,6 @@ def learn(nb_steps,lrate,update=0):
 			clamp_res(i)
 			# Learn
 			learner.learn(lrate)
-			if(update):
-				updatefig()
 		# Make a test phase, and record the error
 		steps.append(current_step)
 		error.append(compute_error())
@@ -226,22 +226,9 @@ def compute_error():
 		err += sqrt(pow(res[0] - evenodd.unit(0).potential,2.0) + pow((1-res[0]) - evenodd.unit(1).potential,2.0))
 	return err
 
-def update_error_fig():
-	pylab.plot(steps, error,'b')
-	pylab.xlabel('Step number')
-	pylab.ylabel('Error')
-	pylab.title('Mean square error')
-	pylab.draw()
-
-def updatefig(*args):
-    pylab.figure(1)
-    view.update()
-    pylab.figure(2)
-    weightsview.update()
-    pylab.figure(3)
-    update_error_fig()
-    return True
-
-gobject.idle_add (updatefig)
-pylab.show()
+# Show network
+win = window(locals(), backend='gtk')
+win.view.append (View (net, fontsize=48))
+control = ControlPanel (model)
+win.show()
 

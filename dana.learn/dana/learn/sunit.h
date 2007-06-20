@@ -22,20 +22,15 @@ namespace dana { namespace learn {
     class SUnit : public learn::Unit {
 
         public:
-            //  attributes
-            // =================================================================
-	    std::vector<std::vector<float> > * learnFunc;
-
-        public:
             //  life management
             // =================================================================
         SUnit(void);
         virtual ~SUnit(void);
         virtual float compute_dp (void);
         public:
-            // python export
-            // =================================================================
-            static void boost (void);
+        // python export
+        // =================================================================
+        static void boost (void);
     };
 }} // namespace dana::learn
 

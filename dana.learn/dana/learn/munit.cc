@@ -11,6 +11,7 @@
 #include "core/link.h"
 #include "munit.h"
 #include "cnft/spec.h"
+#include "core/spec.h"
 #include <math.h>
 
 using namespace boost::python::numeric;
@@ -46,13 +47,18 @@ MUnit::add_maxLayer(core::Layer * layer)
 float
 MUnit::compute_dp (void)
 {
-    object spec = layer->map->get_spec();
-
-    float tau      = extract<float> (spec.attr("tau"));
-    float alpha    = extract<float> (spec.attr("alpha"));
-    float baseline = extract<float> (spec.attr("baseline"));
-    float min_act  = extract<float> (spec.attr("min_act"));
-    float max_act  = extract<float> (spec.attr("max_act"));
+    core::SpecPtr sp = layer->get_spec();
+    if (sp.get() == NULL)
+        return 0.0f;
+    cnft::Spec *s = dynamic_cast<cnft::Spec *>(sp.get());
+    if (s == 0)
+        return 0.0f;
+    
+    float tau      = s->tau;
+    float alpha    = s->alpha;
+    float baseline = s->baseline;
+    float min_act  = s->min_act;
+    float max_act  = s->max_act;
 
     float input = 0;
     unsigned int size = afferents.size();
