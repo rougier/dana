@@ -207,16 +207,17 @@ Layer::compute_dp (void)
                         conv_horiz = gsl_vector_alloc(U->size1);
                         h_src = (sources_svd[i])->get_map()->height;
                         h_filt = U->size1;
-                        for(unsigned int r = 0 ; r < (v_tmp_svd[i])->size() ; r++)
+                        for(int r = 0 ; r < int((v_tmp_svd[i])->size()) ; r++)
                             {
                                 dst_1D_tmp = (*(v_tmp_svd[i]))[r];
                                 gsl_matrix_get_col(conv_horiz,U,r);
-                                float eigen_value = gsl_vector_get(S,r); 
-                                int j_min = max(int(uy - h_filt/2.0), 0);
-                                int j_max = min(h_src, int(h_filt/2.0 + uy));
+                                eigen_value = gsl_vector_get(S,r); 
+                                int j_min = max(0, int(uy - h_filt/2.0));
+                                int j_max = min(h_src, int(uy + h_filt/2.0));
                                 for(int j = j_min ; j < j_max ; j++)
                                     {
-                                        int l = j + h_filt/2 - uy;
+                                        //int l = j + h_filt/2 - uy;
+                                        int l = int(uy + h_filt/2.0 - j);
                                         float delta = eigen_value * du * gsl_vector_get(conv_horiz,l);
                                         float old_value = gsl_matrix_get(dst_1D_tmp,j, ux);
                                         gsl_matrix_set(dst_1D_tmp,j,ux,old_value - delta);

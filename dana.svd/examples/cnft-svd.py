@@ -75,7 +75,7 @@ p1 = svd.projection()
 
 ## Tests avec deux fois les memes connexions
 p1.self = True
-p1.separable = 2
+p1.separable = 0
 p1.distance = proj.distance.euclidean (True)
 p1.profile = proj.profile.gaussian(0.5,0.05)
 p1.density = proj.density.full(1)
@@ -84,7 +84,7 @@ p1.src = Input[0]
 p1.dst = Focus[0]
 p1.connect()
 
-p1.separable = 2
+p1.separable = 0
 p1.distance = proj.distance.euclidean (True)
 p1.profile =  proj.profile.dog(0.8,0.1,0.6,1.4)
 p1.density = proj.density.full(1)
