@@ -46,14 +46,15 @@ namespace dana { namespace svd {
         std::vector< gsl_matrix *> kernels_shared;
         std::vector< gsl_matrix *> kernels_svd;
         
-        std::vector< std::vector < gsl_matrix * > * > v_tmp;
+        std::vector< std::vector < gsl_matrix * > * > v_tmp_svd;
         
         public:
             // life management
             // ================================================================
             Layer (void);
             virtual ~Layer (void);
-
+            void clear(void);
+            
             // activity management
             // ================================================================
             // Methods used by a unit to recover the original weights

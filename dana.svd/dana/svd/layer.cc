@@ -40,10 +40,24 @@ Layer::~Layer (void)
     for(i = 0 ; i < vS.size() ; i++)
         gsl_vector_free(vS[i]);
     
-    for(i = 0 ; i < v_tmp.size() ; i++)
-        for(j = 0 ; j < (v_tmp[i])->size() ; j++)
-            gsl_matrix_free((*(v_tmp[i]))[j]);
+    for(i = 0 ; i < v_tmp_svd.size() ; i++)
+        for(j = 0 ; j < (v_tmp_svd[i])->size() ; j++)
+            gsl_matrix_free((*(v_tmp_svd[i]))[j]);
 }
+
+// ============================================================================
+//  Set to zero the potentials of all units
+// ============================================================================
+void
+Layer::clear (void)
+{
+    for(unsigned i = 0 ; i < v_tmp_svd.size() ; i++)
+        for(unsigned j = 0 ; j < (v_tmp_svd[i])->size() ; j++)
+            gsl_matrix_set_zero((*(v_tmp_svd[i]))[j]);    
+
+    core::Layer::clear();
+}
+
 
 /// Methods used by a unit to recover the original weights
 
@@ -73,7 +87,7 @@ Layer::is_source(core::LayerPtr src_layer, int &type)
 int 
 Layer::get_rank(int index_src)
 {
-    return (v_tmp[index_src])->size();
+    return (v_tmp_svd[index_src])->size();
 }
 
 // ============================================================================
@@ -83,7 +97,7 @@ Layer::get_rank(int index_src)
 gsl_matrix *
 Layer::get_matrix_pass_one(int index_src,int index_rank)
 {
-    return (*(v_tmp[index_src]))[index_rank];
+    return (*(v_tmp_svd[index_src]))[index_rank];
 }
 
 void
@@ -155,9 +169,9 @@ Layer::compute_dp (void)
             h_filt = U->size1;
             
             conv_horiz = gsl_vector_alloc(U->size1); 
-            for(int r = 0 ; r < int((v_tmp[i])->size()) ; r++)
+            for(int r = 0 ; r < int((v_tmp_svd[i])->size()) ; r++)
                 {
-                    dst_1D_tmp = (*(v_tmp[i]))[r];
+                    dst_1D_tmp = (*(v_tmp_svd[i]))[r];
                     gsl_matrix_set_zero(dst_1D_tmp);
                     gsl_matrix_get_col(conv_horiz,U,r);
                     eigen_value = gsl_vector_get(S,r);
@@ -189,12 +203,13 @@ Layer::compute_dp (void)
                     {
                         // We then update the matrix of the first pass
                         U = vU[i];
+                        S = vS[i];
                         conv_horiz = gsl_vector_alloc(U->size1);
-                        int h_src = (sources_svd[i])->get_map()->height;
-                        int h_filt = U->size1;
-                        for(unsigned int r = 0 ; r < (v_tmp[i])->size() ; r++)
+                        h_src = (sources_svd[i])->get_map()->height;
+                        h_filt = U->size1;
+                        for(unsigned int r = 0 ; r < (v_tmp_svd[i])->size() ; r++)
                             {
-                                dst_1D_tmp = (*(v_tmp[i]))[r];
+                                dst_1D_tmp = (*(v_tmp_svd[i]))[r];
                                 gsl_matrix_get_col(conv_horiz,U,r);
                                 float eigen_value = gsl_vector_get(S,r); 
                                 int j_min = max(int(uy - h_filt/2.0), 0);
@@ -252,7 +267,7 @@ Layer::connect(int rank, gsl_matrix * U, gsl_vector * S, gsl_matrix * V, core::L
             vec_tmp->push_back(gsl_matrix_alloc(src->get_map()->height,src->get_map()->width));
         }
     
-    v_tmp.push_back(vec_tmp);
+    v_tmp_svd.push_back(vec_tmp);
 
     // Matrix U
     gsl_vector * temp = gsl_vector_alloc(U->size1);
@@ -315,6 +330,7 @@ Layer::boost (void)
                                        init<>(
                                               "__init__() -- initializes layer\n")
                                        )
+        .def("clear",&Layer::clear, "clear() : reset the activity of the units in the layer \n")
         //.def ("compute_dp", &Layer::compute_dp,
         //      "compute_dp() -> float -- computes potentials and return dp\n")
         ;
