@@ -1,6 +1,0 @@
-include *.txt
-include MANIFEST.in
-include setup.py
-recursive-include glpython *.ttf *.png *.svg
-recursive-include examples *.py
-recursive-include tests *.py
