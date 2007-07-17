@@ -1,0 +1,41 @@
+//
+// Copyright (C) 2007 Nicolas Rougier
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 2 of the
+// License, or (at your option) any later version.
+//
+// $Id$
+
+
+#ifndef __GLPYTHON_OBJECTS_ARRAY_BAR_H__
+#define __GLPYTHON_OBJECTS_ARRAY_BAR_H__
+
+#include "array.h"
+
+using namespace boost::python;
+
+
+namespace glpython { namespace objects {
+
+    typedef boost::shared_ptr<class ArrayBar> ArrayBarPtr;
+
+    class ArrayBar : public Array {
+
+        public:
+            ArrayBar (object array,
+                      core::ColormapPtr colormap = core::CM_Default,
+                      float alpha = 1.0f,
+                      object frame = make_tuple (0,0,1,1));
+            virtual ~ArrayBar (void);
+
+            virtual void render (void);
+            void cube (float x, float y, float z, float dx, float dy, float dz);
+
+            static void python_export (void);
+    };
+
+}} // namespace glpython::objects
+
+#endif
