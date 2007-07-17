@@ -45,6 +45,8 @@ Unit::compute_dp (void)
     else if ((n < 2) || (n > 3))
         _potential = 0.0f;
 
+    potential = _potential;
+
 	return 0;
 }
 
