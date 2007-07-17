@@ -90,6 +90,7 @@ class ControlPanel:
     #___________________________________________________________________on_step
     def on_step (self, widget):
         """ """
+        
         self.start(1)  
 
     #__________________________________________________________________on_start
@@ -101,7 +102,7 @@ class ControlPanel:
             epochs = self.spin_epochs.get_value()
         self.start (epochs)
 
-    #___________________________________________________________________on_stop
+    #__________________________________________________________________on_pause
     def on_pause (self, widget):
         """ """
         pass
@@ -117,8 +118,8 @@ class ControlPanel:
         """ """
         
         if self.epochs:
-            fraction = ( (self.model.age - self.start_time) /
-                         float (self.end_time - self.start_time) )
+            fraction = min (1.0, (self.model.age - self.start_time) /
+                         float (self.end_time - self.start_time))
             self.progressbar.set_fraction (fraction)
             self.progressbar.set_text ('%d/%d' %
               (self.model.age-self.start_time,self.end_time - self.start_time))
@@ -159,15 +160,15 @@ class ControlPanel:
         self.progressbar.set_fraction (0)
         self.progressbar.set_text (' ')
         if self.epochs:
-            self.model.start(self.epochs)
+            self.model.start(epochs)
         else:
             self.model.start()
 
     #________________________________________________________________on_timeout
     def stop (self):
         """ """
-
-        self.model.stop()
+        if self.model.running:
+            self.model.stop()
         self.toggle_use_epochs.set_sensitive (True)
         self.button_step.set_sensitive (True)
         self.button_start.set_sensitive (True)
