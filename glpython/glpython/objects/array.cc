@@ -96,6 +96,8 @@ Array::set_data (numeric::array X)
         initialize ();
         update();
     }
+
+    dirty = true;
 }
 
 numeric::array

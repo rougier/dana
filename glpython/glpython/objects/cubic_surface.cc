@@ -106,6 +106,9 @@ CubicSurface::render (void)
     if (!vertices)
         initialize();
     
+    if (dirty)
+        update();
+    
     GLint mode;
     glGetIntegerv (GL_RENDER_MODE, &mode);
 

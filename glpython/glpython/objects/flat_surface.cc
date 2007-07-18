@@ -66,6 +66,9 @@ FlatSurface::render (void)
     if (!tex_id)
         initialize();
 
+    if (dirty)
+        update();
+
     GLint mode;
     glGetIntegerv (GL_RENDER_MODE, &mode);
 
