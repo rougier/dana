@@ -47,7 +47,7 @@ Font::Font (std::string name, std::string type, int size)
                 FcFontSetDestroy (fs);
             }
         }
-        FcFini ();
+        // FcFini ();
     }
 
     if (type == "outline") {
