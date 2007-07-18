@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #------------------------------------------------------------------------------
-# Copyright (c) 2007 Nicolas Rougier.
+# Copyright (c) 2006-2007 Nicolas Rougier.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -12,30 +12,21 @@
 #------------------------------------------------------------------------------
 #!/usr/bin/env python
 
-import matplotlib.pylab as pylab
-import matplotlib.colors as colors
+import random
 import dana.core as core
 import dana.projection as proj
 import dana.life as life
-from dana.visualization.pylab.network import View
-from dana.gui.gtk import ControlPanel
-import time, random, math
-import gobject, gtk
+from glpython import window
+from dana.visualization.glpython import Figure
+import dana.gui.gtk as gui
 
-
-print "--------------------------------------------------------------------"
-print "Game Of Life demo"
-print "Author:    Nicolas Rougier"
-print "Date:      05/01/2007"
-print "--------------------------------------------------------------------"
-print ""
-
+# Create a new model
+model = core.Model()
 
 # Create a new network
-model = core.Model()
 net = core.Network ()
 model.append(net)
-size  = 100
+size = 100
 
 # Create the map
 Map = core.Map ( (size,size), (0,0) )
@@ -49,25 +40,19 @@ p.self = False
 p.distance = proj.distance.euclidean (False)
 p.density = proj.density.full(1)
 p.profile = proj.profile.constant(1.0)
-p.shape = proj.shape.box(1.0/size, 1.0/size)
+p.shape = proj.shape.box(1.0/size, 1.0/(size))
 p.src = Map[0]
 p.dst = Map[0]
 p.connect()
 
-
 for u in Map[0]:
     u.potential = random.randint (0, 1)
 
-
-# Network visualization and control (gtk)
-view = View (net)
-
-def updatefig(*args):
-    view.update()
-    return True
-
-manager = pylab.get_current_fig_manager()
-gobject.idle_add(updatefig)
-panel = ControlPanel (model)
-pylab.show()
+fig = Figure()
+win,fig = window (backend='gtk', figure=fig)
+fig.network (net, style='flat', show_colorbar=False)
+fig.text (size=.1, position = (.5, -.05), text="Asynchronouys Game Of Life demo")
+fig.text (size=.05, position = (.5, -.08), text="Nicolas Rougier, 07/2007")
+panel = gui.ControlPanel (model)
+win.show()
 
