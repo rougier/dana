@@ -436,6 +436,8 @@ class Figure (Viewport):
                 i += 1
                 filename = "snapshot-%.4d.png" % i
 
+        viewport = GL.glGetIntegerv (GL.GL_VIEWPORT)
+
         _x,_y,_w,_h = self.geometry
         size = (int(self.geometry[2]*zoom), int(self.geometry[3]*zoom))
         w,h = size[0], size[1]
@@ -497,9 +499,10 @@ class Figure (Viewport):
         GL_EXT.glBindFramebufferEXT (GL_EXT.GL_FRAMEBUFFER_EXT, 0)
         GL.glDeleteTextures (texture)
         GL_EXT.glDeleteFramebuffersEXT (1, [framebuffer])
-        GL.glViewport (_x, _y, _w, _h)
+        GL.glViewport (viewport[0], viewport[1], viewport[2], viewport[3])
         GL.glClear (GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
-        self.resize_event (_x, _y, _w, _h)
+
+        self.resize_event (viewport[0], viewport[1], viewport[2], viewport[3])
         print "File has been saved in '%s'" % filename
 
 
