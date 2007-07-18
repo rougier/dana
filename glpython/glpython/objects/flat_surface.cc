@@ -136,7 +136,7 @@ FlatSurface::render (void)
         float dy = float(h)/float(d1);
         for (int j=0; j<d1; j++) {
             for (int i=0; i<d0; i++) {
-                glLoadName (id + (d0-1-j)*d0+i);
+                glLoadName (id + (d1-1-j)*d0+i);
                 glBegin (GL_QUADS);
                 glVertex2f (-0.5+x+i*dx,     -0.5+y+(d1-j)*dy);
                 glVertex2f (-0.5+x+(i+1)*dx, -0.5+y+(d1-j)*dy);
