@@ -20,7 +20,8 @@ from glpython import *
 class Network (Object):
 
     def __init__ (self, network, figure, cmap = CM_Default, style = 'flat',
-                 title = None, show_colorbar = True, show_label = True):
+                 title = None, show_colorbar = True, has_border=True,
+                 show_label = True):
         """
         
         """
@@ -30,6 +31,7 @@ class Network (Object):
         self.maps = []
         self.labels = []
         self.unit = None
+        self.has_border = has_border
         self.network = network
 
         w, h = network.shape
@@ -89,7 +91,7 @@ class Network (Object):
         GL.glPolygonMode (GL.GL_FRONT_AND_BACK, GL.GL_LINE)
 
         mode = GL.glGetIntegerv (GL.GL_RENDER_MODE)
-        if (mode == GL.GL_RENDER):
+        if mode == GL.GL_RENDER and self.has_border:
             GL.glColor3f (0,0,0)
             GL.glBegin (GL.GL_QUADS)
             GL.glVertex2f (-0.5, -0.5)
