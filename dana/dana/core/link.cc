@@ -77,9 +77,9 @@ Link::python_export (void)
     "   weight -- weight of the link                                       \n"
     "______________________________________________________________________\n",
 
-    init < UnitPtr, optional < float > > (
-//        (arg("source") = UnitPtr(),
-//         arg("weight") = 0.0f),
+    init < UnitPtr const, optional < float > > (
+        (arg("source") = UnitPtr(),
+         arg("weight") = 0.0f),
         "__init__ (source, weight=0)\n"))
     .add_property ("source", &Link::get_source, &Link::set_source)        
     .add_property ("weight", &Link::get_weight, &Link::set_weight)
