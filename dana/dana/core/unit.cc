@@ -63,6 +63,13 @@ Unit::connect (UnitPtr source, float weight, object data)
 
 //______________________________________________________________________connect
 void
+Unit::connect (UnitPtr source, float weight)
+{
+    connect (source, weight, object());
+}
+
+//______________________________________________________________________connect
+void
 Unit::connect (LinkPtr link)
 {
     if (link->source->layer == layer)
@@ -209,7 +216,8 @@ Unit::python_export (void) {
     numeric::array::set_module_and_type("numpy", "ndarray");  
 
     // member function pointers for overloading
-    void (Unit::*connect_src)(UnitPtr,float,object) = &Unit::connect;    
+    void (Unit::*connect_src_data)(UnitPtr,float,object) = &Unit::connect;        
+    void (Unit::*connect_src)(UnitPtr,float) = &Unit::connect;    
     void (Unit::*connect_link)(LinkPtr) = &Unit::connect;
     
     class_<Unit, bases <Object> >("Unit",
@@ -243,8 +251,9 @@ Unit::python_export (void) {
           "computes weights and returns dw")
     
     .def ("connect", connect_src)
+    .def ("connect", connect_src_data)
     .def ("connect", connect_link,
-          "connect (source, weight, data)\n\n"
+          "connect (source, weight, data=None)\n\n"
           "connect to source using weight\n\n"  
           "connect (link)\n\n"
           "connect using link")

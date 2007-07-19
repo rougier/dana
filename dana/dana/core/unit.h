@@ -41,7 +41,8 @@ namespace dana { namespace core {
             Unit (float potential = 0.0f);
             virtual ~Unit(void);
 
-            virtual void        connect (UnitPtr source, float weight=0.0f, object data = object());
+            virtual void        connect (UnitPtr source, float weight, object data);
+            virtual void        connect (UnitPtr source, float weight);
             virtual void        connect (LinkPtr link);
             virtual void        clear (void);
             virtual float       compute_dp (void);
