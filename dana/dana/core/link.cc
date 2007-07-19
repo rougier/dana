@@ -9,9 +9,7 @@
 // $Id$
 
 #include "link.h"
-#include "unit.h"
 
-using namespace boost;
 using namespace dana::core;
 
 //_________________________________________________________________________Link
@@ -19,7 +17,8 @@ Link::Link ()
 {}
 
 //_________________________________________________________________________Link
-Link::Link (UnitPtr src, float w) : source(src), weight(w)
+Link::Link (UnitPtr source, float weight)
+     : source (source), weight (weight)
 {}
 
 //________________________________________________________________________~Link
@@ -28,7 +27,7 @@ Link::~Link (void)
 
 //_______________________________________________________________get/set source
 UnitPtr
-Link::get_source (void) const
+Link::get_source (void)
 {
 	return source;
 }
@@ -41,7 +40,7 @@ Link::set_source (UnitPtr source)
 
 //_______________________________________________________________get/set weight
 float
-Link::get_weight (void) const
+Link::get_weight (void)
 {
 	return weight;
 }
@@ -77,8 +76,8 @@ Link::python_export (void)
     "   weight -- weight of the link                                       \n"
     "______________________________________________________________________\n",
 
-    init < UnitPtr const, optional < float > > (
-        (arg("source") = UnitPtr(),
+    init < UnitPtr, optional < float > > (
+        (arg("source"),
          arg("weight") = 0.0f),
         "__init__ (source, weight=0)\n"))
     .add_property ("source", &Link::get_source, &Link::set_source)        
