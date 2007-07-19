@@ -31,6 +31,7 @@ namespace glpython { namespace objects {
             float *             data;
             float               alpha;
             bool                has_grid;
+            bool                has_border;
             tuple               frame;
             unsigned int        d0,d1;
             core::ColormapPtr   colormap;
@@ -43,6 +44,7 @@ namespace glpython { namespace objects {
                    core::ColormapPtr colormap = core::Colormaps::Default,
                    float alpha = 1.0f,
                    bool has_grid = true,
+                   bool has_border = true,                   
                    std::string name = "Array");
             virtual ~Array(void);
 

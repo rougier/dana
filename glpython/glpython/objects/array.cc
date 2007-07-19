@@ -16,7 +16,7 @@ using namespace glpython::objects;
 
 //________________________________________________________________________Array
 Array::Array (numeric::array X, tuple frame, core::ColormapPtr colormap,
-              float alpha, bool has_grid, std::string name) : core::Object (name)
+              float alpha, bool has_grid, bool has_border, std::string name) : core::Object (name)
 {
     array = 0;
     data = 0;
@@ -50,6 +50,7 @@ Array::Array (numeric::array X, tuple frame, core::ColormapPtr colormap,
     this->frame = frame;
     this->alpha = alpha;
     this->has_grid = has_grid;
+    this->has_border = has_border;
     sx = sy = -1;
     this->d0 = this->array->dimensions[1];
     this->d1 = this->array->dimensions[0];
@@ -252,12 +253,13 @@ Array::python_export (void)
     "                                                                       \n"
     " ______________________________________________________________________\n",
     init<numeric::array,
-         optional <tuple, core::ColormapPtr, float, bool, std::string> > (
+         optional <tuple, core::ColormapPtr, float, bool, bool, std::string> > (
         (arg("X"),
          arg("frame") = make_tuple (0,0,1,1),
          arg("cmap")  = core::Colormaps::Default,
          arg("alpha") = 1,
          arg("has_grid") = true,
+         arg("has_border") = true,         
          arg("name") = "Array"),
         "__init__ ( X, frame, cmap, alpha, has_grid, name )\n"))
 
@@ -265,6 +267,7 @@ Array::python_export (void)
     .add_property  ("frame",    &Array::get_frame, &Array::set_frame)
     .add_property  ("alpha",    &Array::get_alpha, &Array::set_alpha)
     .def_readwrite ("has_grid", &Array::has_grid)
+    .def_readwrite ("has_border", &Array::has_border)
     .def_readwrite ("colormap", &Array::colormap)
     .def           ("connect",  &Array::connect)
     ;

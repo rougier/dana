@@ -20,7 +20,8 @@ FlatSurface::FlatSurface (numeric::array X,
               core::ColormapPtr colormap,
               float alpha,
               bool has_grid,
-              std::string name) : Array (X,frame,colormap,alpha,has_grid,name)
+              bool has_border,
+              std::string name) : Array (X,frame,colormap,alpha,has_grid,has_border,name)
 
 {
     tex_id = 0;
@@ -126,13 +127,15 @@ FlatSurface::render (void)
         }
 
         // Border
-        glColor3f (0,0,0);
-        glBegin (GL_QUADS);
-        glVertex2f (-0.5+x,   -0.5+y);
-        glVertex2f (-0.5+x+w, -0.5+y);
-        glVertex2f (-0.5+x+w, -0.5+y+h);
-        glVertex2f (-0.5+x,   -0.5+y+h);
-        glEnd ();
+        if (has_border) {
+            glColor3f (0,0,0);
+            glBegin (GL_QUADS);
+            glVertex2f (-0.5+x,   -0.5+y);
+            glVertex2f (-0.5+x+w, -0.5+y);
+            glVertex2f (-0.5+x+w, -0.5+y+h);
+            glVertex2f (-0.5+x,   -0.5+y+h);
+            glEnd ();
+        }
         
     } else if (mode == GL_SELECT) {
         float dx = float(w)/float(d0);
@@ -181,12 +184,13 @@ FlatSurface::python_export (void)
     "                                                                       \n"
     " ______________________________________________________________________\n",
     init<numeric::array,
-         optional <tuple, core::ColormapPtr, float, bool, std::string> > (
+         optional <tuple, core::ColormapPtr, float, bool, bool, std::string> > (
         (arg("X"),
          arg("frame") = make_tuple (0,0,1,1),
          arg("cmap")  = core::Colormaps::Default,
          arg("alpha") = 1,
          arg("has_grid") = true,
+         arg("has_border") = true,
          arg("name") = "FlatSurface"),
         "__init__ ( X, frame, cmap, alpha, name )\n"))
     ;

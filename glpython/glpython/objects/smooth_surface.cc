@@ -21,7 +21,8 @@ SmoothSurface::SmoothSurface (numeric::array X,
                   float zscale,
                   float alpha,
                   bool has_grid,
-                  std::string name) : Array (X,frame,colormap,alpha,has_grid,name)
+                  bool has_border,
+                  std::string name) : Array (X,frame,colormap,alpha,has_grid,has_border,name)
 
 {
     this->zscale = zscale;
@@ -155,13 +156,15 @@ SmoothSurface::render (void)
         }
 
         // Border
-        glColor4f (0,0,0,1);
-        glBegin (GL_QUADS);
-        glVertex2f (-0.5+x,   -0.5+y);
-        glVertex2f (-0.5+x+w, -0.5+y);
-        glVertex2f (-0.5+x+w, -0.5+y+h);
-        glVertex2f (-0.5+x,   -0.5+y+h);
-        glEnd ();
+        if (has_border) {
+            glColor4f (0,0,0,1);
+            glBegin (GL_QUADS);
+            glVertex2f (-0.5+x,   -0.5+y);
+            glVertex2f (-0.5+x+w, -0.5+y);
+            glVertex2f (-0.5+x+w, -0.5+y+h);
+            glVertex2f (-0.5+x,   -0.5+y+h);
+            glEnd ();
+        }
 
     } else if (mode == GL_SELECT) {
         glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
@@ -221,13 +224,14 @@ SmoothSurface::python_export (void)
     "                                                                       \n"
     " ______________________________________________________________________\n",
     init<numeric::array,
-         optional <tuple, core::ColormapPtr, float, float, bool, std::string> > (
+         optional <tuple, core::ColormapPtr, float, float, bool, bool, std::string> > (
         (arg("X"),
          arg("frame") = make_tuple (0,0,1,1),
          arg("cmap")  = core::Colormaps::Default,
          arg("zscale") = 0.25f,
          arg("alpha") = 1,
          arg("has_grid") = true,
+         arg("has_border") = true,
          arg("name") = "SmoothSurface"),
         "__init__ ( X, frame, cmap, zscale, alpha, has_grid, name )\n"))
     ;

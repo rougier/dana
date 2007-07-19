@@ -389,7 +389,8 @@ Colorbar::python_export (void) {
     "   orientation -- either 'horizontal' or 'vertical'                   \n"
     "   alpha -- transparency of the colorbar                              \n"
     "______________________________________________________________________\n",
-    init< optional <core::ColormapPtr, std::string, float, float, tuple, std::string, float, std::string > > (
+    init< optional <core::ColormapPtr, std::string, float, float,
+                    tuple, std::string, float, std::string > > (
         (arg("cmap") = core::Colormaps::Default,
          arg("title") = "",
          arg("size") = .8,
