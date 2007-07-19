@@ -10,6 +10,7 @@
 
 #include <boost/python.hpp>
 #include <numpy/arrayobject.h>
+#include "object.h"
 #include "environment.h"
 #include "network.h"
 #include "map.h"
@@ -20,18 +21,21 @@
 #include "model.h"
 #include "random.h"
 
+
 BOOST_PYTHON_MODULE(_core) {
     using namespace dana::core;
     import_array();
     numeric::array::set_module_and_type("numpy", "ndarray");
   
-    Model::boost();
-    Spec::boost();
+  
+    Object::python_export();
+    Model::python_export();
+    Spec::python_export();
     Environment::boost();
     Network::boost();
     Map::boost();
     Layer::boost();
     Unit::boost();
-    Link::boost();
+    Link::python_export();
     Random::boost();
 }

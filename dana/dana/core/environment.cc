@@ -72,7 +72,7 @@ Environment::boost (void)
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Environment> >();
 
-    class_<Environment>
+    class_<Environment, bases <Object> >
         ("Environment",
          "===================================================================\n"
          "\n"

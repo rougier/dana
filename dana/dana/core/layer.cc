@@ -270,7 +270,7 @@ Layer::boost (void)
     UnitPtr    (Layer::*get_index)(int) const = &Layer::get;
     UnitPtr    (Layer::*get_xy)(int, int) const = &Layer::get;
  
-    class_<Layer>("Layer",
+    class_<Layer, bases <Object> >("Layer",
     "======================================================================\n"
     "\n"
     "A layer is a shaped set of homogeneous units that are evaluated\n"

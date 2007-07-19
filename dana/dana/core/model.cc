@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2006 Nicolas Rougier
+// Copyright (C) 2006,2007 Nicolas Rougier
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -14,30 +14,24 @@
 #include "network.h"
 #include "environment.h"
 
+using namespace boost;
 using namespace dana::core;
 
-
+//________________________________________________________________current_model
 Model *Model::current_model = 0;
 
-// ============================================================================
-//  constructor
-// ============================================================================
+//________________________________________________________________________Model
 Model::Model (void) : Object()
 {
     running = false;
     age = 0;
 }
 
-// ============================================================================
-//  destructor
-// ============================================================================
+//_______________________________________________________________________~Model
 Model::~Model (void)
 {}
 
-
-// ============================================================================
-//  append a new network
-// ============================================================================
+//_______________________________________________________________________append
 void
 Model::append (NetworkPtr net)
 {
@@ -49,9 +43,7 @@ Model::append (NetworkPtr net)
     networks.push_back (NetworkPtr(net));
 }
 
-// ============================================================================
-//  append a new network
-// ============================================================================
+//_______________________________________________________________________append
 void
 Model::append (EnvironmentPtr env)
 {
@@ -63,9 +55,7 @@ Model::append (EnvironmentPtr env)
     environments.push_back (EnvironmentPtr(env));
 }
 
-// ============================================================================
-//  Remove all networks and environments
-// ============================================================================
+//________________________________________________________________________clear
 void
 Model::clear (void)
 {
@@ -73,9 +63,7 @@ Model::clear (void)
     environments.clear();
 }
 
-// ============================================================================
-//  Start model evaluation for the given number of epochs
-// ============================================================================
+//________________________________________________________________________start
 bool
 Model::start (unsigned long n)
 {
@@ -95,9 +83,7 @@ Model::start (unsigned long n)
 	return true;
 }
 
-// ============================================================================
-//  Entry point for threaded evaluation
-// ============================================================================
+//__________________________________________________________________entry_point
 void
 Model::entry_point (void)
 {
@@ -121,9 +107,7 @@ Model::entry_point (void)
     model->running = false;
 }
 
-// ============================================================================
-//  Stop simulation
-// ============================================================================
+//_________________________________________________________________________stop
 void
 Model::stop (void)
 {
@@ -131,13 +115,11 @@ Model::stop (void)
 }
 
 
-// ============================================================================
-//    Boost wrapping code
-// ============================================================================
+//________________________________________________________________python_export
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(start_overloads, start, 0, 1)
 
 void
-Model::boost (void)
+Model::python_export (void)
 {
     register_ptr_to_python< boost::shared_ptr<Model> >();
  
@@ -145,7 +127,7 @@ Model::boost (void)
     void (Model::*append_net)(NetworkPtr)     = &Model::append;
     void (Model::*append_env)(EnvironmentPtr) = &Model::append;
  
-    class_<Model>("Model",
+    class_<Model, bases <Object> >("Model",
     "======================================================================\n"
     "\n"
     "A model gathers one to several networks and environments. Evaluation is\n"
@@ -166,7 +148,6 @@ Model::boost (void)
 
         .def ("clear", &Model::clear,
         "clear() -- remove all networks and environments\n")
-
         
         .def ("start", &Model::start, start_overloads (
                 args("epochs"), "start(epochs = 0) -- start simulation\n"))

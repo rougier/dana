@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2006 Nicolas Rougier
+// Copyright (C) 2006,2007 Nicolas Rougier
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -8,39 +8,36 @@
 //
 // $Id$
 
-/*
- * Object is the base class for all objects of DANA but currently offers
- * no specific method or attribute. It may change in the future.
- */
- 
 
 #ifndef __DANA_CORE_OBJECT_H__
 #define __DANA_CORE_OBJECT_H__
 
+#include <string>
 #include <boost/python.hpp>
-
-using namespace boost::python;
+#include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 
 namespace dana { namespace core {
 
-    // Forward declaration of shared pointers
-    typedef boost::shared_ptr<class Model>          ModelPtr;
-    typedef boost::shared_ptr<class Environment>    EnvironmentPtr;
-    typedef boost::shared_ptr<class Network>        NetworkPtr; 
-    typedef boost::shared_ptr<class Map>            MapPtr;
-    typedef boost::shared_ptr<class Layer>          LayerPtr;
-    typedef boost::shared_ptr<class Unit>           UnitPtr;
-    typedef boost::shared_ptr<class Link>           LinkPtr;
-    typedef boost::shared_ptr<class Spec>           SpecPtr;
+    typedef boost::shared_ptr<class Object> ObjectPtr;
+   
+    struct RuntimeError {
+        RuntimeError(std::string msg) : message(msg) { }
+        const char *what() const throw() { return message.c_str(); }
+        std::string message;
+    };
     
-    
-    class Object /*: public object */ {
+    void runtime_error (RuntimeError const &x);
+
+    class Object : public boost::enable_shared_from_this <Object> 
+    {
         public:
             Object (void);
             virtual ~Object (void);
+            virtual ObjectPtr self (void);
+            static void python_export (void);
     };
-
-}} // namespace dana::core
+}}
 
 #endif

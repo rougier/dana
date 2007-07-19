@@ -15,11 +15,17 @@
 #include <numpy/arrayobject.h>
 #include <vector>
 #include "object.h"
+#include "unit.h"
+#include "link.h"
+#include "spec.h"
 
 using namespace boost::python;
 
 
 namespace dana { namespace core {
+
+    typedef boost::shared_ptr<class Unit> UnitPtr;
+    typedef boost::shared_ptr<class Layer> LayerPtr;
 
     class Layer : public Object {
         public:

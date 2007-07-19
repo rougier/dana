@@ -331,7 +331,7 @@ Map::boost (void) {
     void       (Map::*set_shape_object)(const object) = &Map::set_shape;
     void       (Map::*set_position_object)(const object) = &Map::set_position;
     
-    class_<Map>("Map",
+    class_<Map, bases <Object> >("Map",
     "======================================================================\n"
     "\n"
     "A map is a set of layers that are evaluated synchronously.\n"

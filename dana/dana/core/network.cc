@@ -225,7 +225,7 @@ Network::boost (void)
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Network> >();
 
-    class_<Network> ("Network",
+    class_<Network, bases <Object> > ("Network",
      "======================================================================\n"
     "\n"
     "A network is a set of maps that are evaluated synchronously.\n"

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2006 Nicolas Rougier
+// Copyright (C) 2006,2007 Nicolas Rougier
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -11,17 +11,17 @@
 #ifndef __DANA_CORE_MAP_H__
 #define __DANA_CORE_MAP_H__
 
-#include <boost/python.hpp>
 #include <boost/thread/barrier.hpp>
 #include <vector>
 #include "object.h"
-
-using namespace boost::python;
+#include "layer.h"
+#include "unit.h"
 
 
 namespace dana { namespace core {
     
-    // Map class
+    typedef boost::shared_ptr<class Map> MapPtr;
+
     class Map : public Object
     {
         public:
@@ -44,8 +44,8 @@ namespace dana { namespace core {
         public:
             // life management 
             // ================================================================
-            Map (object shape=make_tuple(0,0),
-                 object position=make_tuple(0,0,0,0,1));
+            Map (object shape    = make_tuple(0,0),
+                 object position = make_tuple(0,0,0,0,1));
             virtual ~Map (void);
 
             // content management

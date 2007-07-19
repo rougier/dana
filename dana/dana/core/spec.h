@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2006 Nicolas Rougier
+// Copyright (C) 2006,2007 Nicolas Rougier
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -11,27 +11,20 @@
 #ifndef __DANA_CORE_SPEC_H__
 #define __DANA_CORE_SPEC_H__
 
-#include <boost/python.hpp>
 #include "object.h"
 
 using namespace boost::python;
 
 namespace dana { namespace core {
 
-    class Spec : public Object
-    {
+    typedef boost::shared_ptr<class Spec> SpecPtr;
+
+    class Spec : public Object {
         public:
-            // Constuctor
             Spec (void);
-
-            // Destructor
             virtual ~Spec (void);
-
-        public:
-            // Boost python extension
-            static void boost (void);
+            static void python_export (void);
     };
-
-}} // namespace dana::core
+}}
 
 #endif

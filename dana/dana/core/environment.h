@@ -21,6 +21,8 @@ using namespace boost::python;
 
 namespace dana { namespace core {
 
+    typedef boost::shared_ptr<class Environment> EnvironmentPtr;
+
     class Environment : public Object {
         public:
             //  attributes

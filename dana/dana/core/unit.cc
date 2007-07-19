@@ -277,7 +277,7 @@ Unit::boost (void) {
     void (Unit::*connect_src)(UnitPtr,float) = &Unit::connect;
     void (Unit::*connect_link)(LinkPtr) = &Unit::connect;
     
-    class_<Unit>("Unit",
+    class_<Unit, bases <Object> >("Unit",
     "======================================================================\n"
     "\n"
     "A unit is a potential that is computed on the basis of some external\n"

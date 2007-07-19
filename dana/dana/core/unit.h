@@ -15,11 +15,19 @@
 #include <boost/python.hpp>
 #include <vector>
 #include "object.h"
+#include "layer.h"
+#include "link.h"
+#include "spec.h"
 
 using namespace boost::python;
 
 
 namespace dana { namespace core {
+
+    typedef boost::shared_ptr<class Layer> LayerPtr;
+    typedef boost::shared_ptr<class Link> LinkPtr;    
+    typedef boost::shared_ptr<class Unit> UnitPtr;
+
     class Unit : public Object {
         public:
             //  attributes
