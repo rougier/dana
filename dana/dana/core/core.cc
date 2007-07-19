@@ -35,7 +35,7 @@ BOOST_PYTHON_MODULE(_core) {
     Network::boost();
     Map::boost();
     Layer::boost();
-    Unit::boost();
+    Unit::python_export();
     Link::python_export();
     Random::boost();
 }
