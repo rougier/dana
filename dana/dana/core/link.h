@@ -11,11 +11,11 @@
 #ifndef __DANA_CORE_LINK_H__
 #define __DANA_CORE_LINK_H__
 
-#include "unit.h"
+#include "object.h"
 
 namespace dana { namespace core {
 
-//    typedef boost::shared_ptr<class Unit>  UnitPtr;
+    typedef boost::shared_ptr<class Unit>  UnitPtr;
     typedef boost::shared_ptr<class Link>  LinkPtr;
     
     class Link {

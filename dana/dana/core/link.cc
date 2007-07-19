@@ -9,6 +9,7 @@
 // $Id$
 
 #include "link.h"
+#include "unit.h"
 
 using namespace dana::core;
 

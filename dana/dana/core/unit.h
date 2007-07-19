@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2006 Nicolas Rougier
+// Copyright (C) 2006,2007 Nicolas Rougier
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -21,65 +21,47 @@
 
 using namespace boost::python;
 
-
 namespace dana { namespace core {
 
     typedef boost::shared_ptr<class Layer> LayerPtr;
     typedef boost::shared_ptr<class Link> LinkPtr;    
     typedef boost::shared_ptr<class Unit> UnitPtr;
 
-    class Unit : public Object {
+    class Unit : public Object
+    {
         public:
-            //  attributes
-            // ================================================================
-            class Layer *        layer;     // layer owning this unit
-            float                potential; // potential
-            std::vector<LinkPtr> laterals;  // lateral links
-            std::vector<LinkPtr> afferents; // afferent links
-            SpecPtr              spec;      // specification of the unit
-            int                  x, y;      // position within layer
+            class Layer *        layer;
+            float                potential;
+            std::vector<LinkPtr> laterals;
+            std::vector<LinkPtr> afferents;
+            SpecPtr              spec;
+            int                  x, y;
 
         public:
-            //  life management
-            // ================================================================
-            Unit(void);
+            Unit (float potential = 0.0f);
             virtual ~Unit(void);
-            
-            //  content management
-            // ================================================================
-            virtual void connect (UnitPtr source, float weight, object data);            
-            virtual void connect (UnitPtr source, float weight);
-            virtual void connect (LinkPtr link);
-            virtual void clear (void);
 
-            //  object management
-            // ================================================================
+            virtual void        connect (UnitPtr source, float weight=0.0f, object data = object());
+            virtual void        connect (LinkPtr link);
+            virtual void        clear (void);
             virtual float       compute_dp (void);
             virtual float       compute_dw (void);
 
-            //  attribute manipulation
-            // ================================================================
-            virtual LayerPtr    get_layer (void) const;
-            virtual void        set_layer (class Layer *l);
-            virtual int         get_x (void) const;
-            virtual void        set_x (const int value);
-            virtual int         get_y (void) const;
-            virtual void        set_y (const int value);
-            virtual SpecPtr     get_spec (void) const;
-            virtual void        set_spec (const SpecPtr s);            
-            virtual object      get_position (void) const;
-            virtual void        set_position (const object p);
-            virtual void        set_position (const int x, const int y);
-            
-            // convenient methods
-            // ================================================================
-            virtual object      get_weights  (const LayerPtr layer);
+            virtual LayerPtr    get_layer (void);
+            virtual void        set_layer (class Layer *layer);
+            virtual int         get_x (void);
+            virtual void        set_x (int x);
+            virtual int         get_y (void);
+            virtual void        set_y (int y);
+            virtual SpecPtr     get_spec (void);
+            virtual void        set_spec (SpecPtr s);
+            virtual tuple       get_position (void);
+            virtual void        set_position (tuple position);
+            virtual void        set_position (int x, const int y);
+            virtual object      get_weights  (LayerPtr layer);
 
-            // python export
-            // ================================================================
-            static void boost (void);
+            static void         python_export (void);
     };
-
-}} // namespace dana::core
+}}
 
 #endif

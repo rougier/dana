@@ -20,12 +20,10 @@
 using namespace boost::python::numeric;
 using namespace dana::core;
 
-// ============================================================================
-//  constructor
-// ============================================================================
-Unit::Unit(void) : Object()
+//_________________________________________________________________________Unit
+Unit::Unit (float potential) : Object()
 {
-    potential = 0.0;
+    this->potential = potential;
     x = -1;
     y = -1;
     layer = 0;
@@ -33,61 +31,37 @@ Unit::Unit(void) : Object()
     afferents.clear();
 }
 
-// ============================================================================
-//  destructor
-// ============================================================================
+//________________________________________________________________________~Unit
 Unit::~Unit(void)
 {}
 
-// ============================================================================
-//  computes potential and returns dp
-// ============================================================================
+//___________________________________________________________________compute_dp
 float
 Unit::compute_dp (void)
 {
     return 0.0f;
 }
 
-// ============================================================================
-//  computes weights and returns dw
-// ============================================================================
+//___________________________________________________________________compute_dw
 float
 Unit::compute_dw (void)
 {
     return 0.0f;
 }
 
-// ============================================================================
-//  connect to src using weight w provided with user data
-// ============================================================================
+//______________________________________________________________________connect
 void
-Unit::connect (UnitPtr src, float w, object data)
+Unit::connect (UnitPtr source, float weight, object data)
 {
-    LinkPtr link = LinkPtr (new Link (src, w));
+    LinkPtr link = LinkPtr (new Link (source, weight));
 
-    if (src->layer == layer)
+    if (source->layer == layer)
         laterals.push_back (link);
     else
         afferents.push_back (link);
 }
 
-// ============================================================================
-//  connect to src using weight w
-// ============================================================================
-void
-Unit::connect (UnitPtr src, float w)
-{
-    LinkPtr link = LinkPtr (new Link (src, w));
-
-    if (src->layer == layer)
-        laterals.push_back (link);
-    else
-        afferents.push_back (link);
-}
-
-// ============================================================================
-//  connect using link
-// ============================================================================
+//______________________________________________________________________connect
 void
 Unit::connect (LinkPtr link)
 {
@@ -97,9 +71,7 @@ Unit::connect (LinkPtr link)
         afferents.push_back (link);
 }
 
-// ============================================================================
-//  remove all links
-// ============================================================================
+//________________________________________________________________________clear
 void
 Unit::clear (void)
 {
@@ -107,95 +79,52 @@ Unit::clear (void)
     afferents.clear();
 }
 
-// ============================================================================
-//  get owning layer
-// ============================================================================
+//________________________________________________________________get/set layer
 LayerPtr
-Unit::get_layer (void) const
+Unit::get_layer (void)
 {
     return LayerPtr(layer);
 }
 
-// ============================================================================
-//  set owning layer
-// ============================================================================
 void
-Unit::set_layer (Layer *l)
+Unit::set_layer (Layer *layer)
 {
-    layer = l;
+    this->layer = layer;
 }
 
-// ============================================================================
-//  get x position (relative to layer)
-// ============================================================================
+//_____________________________________________________________get/set position
 int
-Unit::get_x (void) const
+Unit::get_x (void)
 {
     return x;
 }
 
-// ============================================================================
-//  set x position (relative to layer)
-// ============================================================================
 void
-Unit::set_x (const int value)
+Unit::set_x (int x)
 {
-    x = value;
+    this->x = x;
 }
 
-// ============================================================================
-//  get y position (relative to layer)
-// ============================================================================
 int
-Unit::get_y (void) const
+Unit::get_y (void)
 {
     return y;
 }
 
-// ============================================================================
-//  set y position (relative to layer)
-// ============================================================================
 void
-Unit::set_y (const int value)
+Unit::set_y (int y)
 {
-    y = value;
+    this->y = y;
 }
 
-// ============================================================================
-//  get unit specification
-// ============================================================================
-SpecPtr
-Unit::get_spec (void) const
+tuple
+Unit::get_position (void)
 {
-    if ((spec == SpecPtr()) && (layer))
-        return layer->get_spec();
-    return SpecPtr(spec);
+    return make_tuple (x,y);
 }
 
-// ============================================================================
-//  set unit specification.
-// ============================================================================
 void
-Unit::set_spec (const SpecPtr s)
-{
-    spec = SpecPtr(s);
-}
-
-// ============================================================================
-//  get position as a tuple of int
-// ============================================================================
-object
-Unit::get_position (void) const
-{
-    object position = make_tuple (x,y);
-    return position;
-}
-
-// ============================================================================
-//  Set position from a tuple of int
-// ============================================================================
-void
-Unit::set_position (const object position)
+Unit::set_position (tuple position)
 {
     try	{
         x = extract< int >(position[0])();
@@ -206,21 +135,31 @@ Unit::set_position (const object position)
     }
 }
 
-// ============================================================================
-//  Set position
-// ============================================================================
 void
-Unit::set_position (const int xx, const int yy)
+Unit::set_position (int x, int y)
 {
-    x = xx;
-    y = yy;
+    this->x = x;
+    this->y = y;
 }
 
-// ============================================================================
-//  Get weights from layer as a numpy::array
-// ============================================================================
+//_________________________________________________________________get/set spec
+SpecPtr
+Unit::get_spec (void)
+{
+    if ((spec == SpecPtr()) && (layer))
+        return layer->get_spec();
+    return SpecPtr(spec);
+}
+
+void
+Unit::set_spec (SpecPtr sepc)
+{
+    this->spec = SpecPtr(spec);
+}
+
+//__________________________________________________________________get_weights
 object
-Unit::get_weights (const LayerPtr layer)
+Unit::get_weights (LayerPtr layer)
 {
     if (layer == object()) {
         PyErr_SetString(PyExc_AssertionError, "layer is None");
@@ -259,12 +198,9 @@ Unit::get_weights (const LayerPtr layer)
 }
 
 
-
-// ============================================================================
-//   boost wrapping code
-// ============================================================================
+//________________________________________________________________python_export
 void
-Unit::boost (void) {
+Unit::python_export (void) {
 
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Unit> >();
@@ -273,49 +209,52 @@ Unit::boost (void) {
     numeric::array::set_module_and_type("numpy", "ndarray");  
 
     // member function pointers for overloading
-    void (Unit::*connect_src_data)(UnitPtr,float,object) = &Unit::connect;    
-    void (Unit::*connect_src)(UnitPtr,float) = &Unit::connect;
+    void (Unit::*connect_src)(UnitPtr,float,object) = &Unit::connect;    
     void (Unit::*connect_link)(LinkPtr) = &Unit::connect;
     
     class_<Unit, bases <Object> >("Unit",
-    "======================================================================\n"
-    "\n"
-    "A unit is a potential that is computed on the basis of some external\n"
-    "sources that feed the unit. Those sources can be anything as long as\n"
-    "they have some potential.\n"
-    "\n"
-    "Attributes:\n"
-    "-----------\n"
-    "   potential : unit potential (float)\n"
-    "   position  : unit position within layer (tuple, read only)\n"
-    "   spec      : specification of parameters related to unit behavior\n"
-    "\n"
-    "======================================================================\n",
-        init<>(
-        "__init__ () -- initialize unit\n")
-        )
+    "______________________________________________________________________\n"
+    "                                                                      \n"
+    "A unit is a potential that is computed on the basis of some external  \n"
+    "sources that feed the unit. Those sources can be anything as long as  \n"
+    "they have some potential.                                             \n"
+    "                                                                      \n"
+    "Attributes:                                                           \n"
+    "-----------                                                           \n"
+    "   potential -- unit potential                                        \n"
+    "   position  -- unit position within layer (read only)                \n"
+    "   spec -- specification of parameters related to unit behavior       \n"
+    "______________________________________________________________________\n",
+
+    init < optional <float> > (
+        (arg("potential") = 0.0f),
+        "__init__ (potential=0)" ))
                 
-        .def_readwrite ("potential", &Unit::potential)
-        .def_readonly  ("position", &Unit::get_position)
-        .add_property  ("spec", &Unit::get_spec, &Unit::set_spec)
-                
-        .def ("compute_dp", &Unit::compute_dp,
-        "compute_dp() -> float -- computes potential and return dp\n")
+    .def_readwrite ("potential", &Unit::potential)
+    .def_readonly  ("position", &Unit::get_position)
+    .add_property  ("spec", &Unit::get_spec, &Unit::set_spec)
+            
+    .def ("compute_dp", &Unit::compute_dp,
+          "compute_dp() -> float\n\n"
+          "computes potential and return dp")
 
-        .def ("compute_dw", &Unit::compute_dw,
-        "compute_dw() -> float -- computes weights and returns dw\n")
-        
-        .def ("connect", connect_src_data)        
-        .def ("connect", connect_src)
-        .def ("connect", connect_link,
-        "connect (src, w, data) -- connect to src using weight w\n"
-        "connect (src, w) -- connect to src using weight w\n"
-        "connect (l) -- connect using link l\n")
+    .def ("compute_dw", &Unit::compute_dw,
+          "compute_dw() -> float\n\n"
+          "computes weights and returns dw")
+    
+    .def ("connect", connect_src)
+    .def ("connect", connect_link,
+          "connect (source, weight, data)\n\n"
+          "connect to source using weight\n\n"  
+          "connect (link)\n\n"
+          "connect using link")
 
-        .def ("clear", &Unit::clear,
-        "clear () -- remove all links\n")
+    .def ("clear", &Unit::clear,
+          "clear ()\n\n"
+          "remove all links")
 
-        .def ("weights", &Unit::get_weights,
-        "weights(layer) -- return weights from layer as a numpy::array\n")
+    .def ("weights", &Unit::get_weights,
+          "weights(layer)\n\n"
+          "return weights from layer as a numpy::array")
         ;
 }
