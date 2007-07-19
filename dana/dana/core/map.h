@@ -51,15 +51,15 @@ namespace dana { namespace core {
             // content management
             // ================================================================
             virtual void       append (LayerPtr layer);
-            virtual LayerPtr   get (const int index) const;
-            virtual int        size (void) const;
+            virtual LayerPtr   get (int index);
+            virtual int        size (void);
             
             // proxied management (default to layer 0)
             // ================================================================
-            virtual UnitPtr    unit (const int index) const;                     
-            virtual UnitPtr    unit (const int x, const int y) const;
+            virtual UnitPtr    unit (int index);
+            virtual UnitPtr    unit (int x, int y);
             virtual int        fill (object type);
-            virtual object     get_potentials (void) const;
+            virtual object     get_potentials (void);
 
 
             // activity management
@@ -72,16 +72,16 @@ namespace dana { namespace core {
 
             //  attribute manipulation
             // ===========r====================================================
-            virtual SpecPtr    get_spec (void) const;
-            virtual void       set_spec (const SpecPtr s);  
-            virtual object     get_shape (void) const;
-            virtual void       set_shape (const object shape);
-            virtual void       set_shape (const int w, const int h);
-            virtual object     get_position (void) const;
-            virtual void       set_position (const object position);
-            virtual void       set_position (const int x, const int y);
-            virtual object     get_frame (void) const;
-            virtual void       set_frame (const object frame);
+            virtual SpecPtr    get_spec (void);
+            virtual void       set_spec (SpecPtr s);  
+            virtual object     get_shape (void);
+            virtual void       set_shape (object shape);
+            virtual void       set_shape (int w, int h);
+            virtual object     get_position (void);
+            virtual void       set_position (object position);
+            virtual void       set_position (int x, int y);
+            virtual object     get_frame (void);
+            virtual void       set_frame (object frame);
 
         public:
             // python export

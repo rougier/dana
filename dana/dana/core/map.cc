@@ -64,7 +64,7 @@ Map::append (LayerPtr layer)
 //  get layer at index
 // ============================================================================
 LayerPtr
-Map::get (const int index) const
+Map::get (int index) 
 {
     int i = index;
 
@@ -83,7 +83,7 @@ Map::get (const int index) const
 //  get size
 // ============================================================================
 int
-Map::size (void) const
+Map::size (void) 
 {
     return layers.size();
 }
@@ -92,7 +92,7 @@ Map::size (void) const
 //  get unit at index from layer 0
 // ============================================================================
 UnitPtr
-Map::unit (const int index) const
+Map::unit (int index) 
 {
     return layers[0]->get (index);
 }
@@ -101,7 +101,7 @@ Map::unit (const int index) const
 //  get unit at x,y from layer 0
 // ============================================================================
 UnitPtr
-Map::unit (const int x, const int y) const
+Map::unit (int x,  int y) 
 {
     return layers[0]->get (x,y);
 }
@@ -119,7 +119,7 @@ Map::fill (object type)
 //  get layer 0 potentials as a nupy::array
 // ============================================================================
 object
-Map::get_potentials (void) const
+Map::get_potentials (void) 
 {
     return layers[0]->get_potentials();
 }
@@ -179,7 +179,7 @@ Map::compute_dw (void)
 //  get map specification
 // ============================================================================
 SpecPtr
-Map::get_spec (void) const
+Map::get_spec (void) 
 {
     return SpecPtr(spec);
 }
@@ -188,16 +188,16 @@ Map::get_spec (void) const
 //  Set map specification.
 // ============================================================================
 void
-Map::set_spec (const SpecPtr s)
+Map::set_spec (SpecPtr spec)
 {
-    spec = SpecPtr(s);
+    this->spec = SpecPtr(spec);
 }
 
 // ============================================================================
 //  get shape as a tuple of int
 // ============================================================================
 object
-Map::get_shape (void) const
+Map::get_shape (void) 
 {
     object shape = make_tuple (width, height);
     return shape;
@@ -207,7 +207,7 @@ Map::get_shape (void) const
 //  set shape from a tuple of int
 // ============================================================================
 void
-Map::set_shape (const object shape)
+Map::set_shape (object shape)
 {
     int w, h;
     try	{
@@ -217,7 +217,6 @@ Map::set_shape (const object shape)
         PyErr_Print();
         return;
     }
-
     set_shape (w,h);
 }
 
@@ -225,7 +224,7 @@ Map::set_shape (const object shape)
 //  set shape
 // ============================================================================
 void
-Map::set_shape (const int w, const int h)
+Map::set_shape (int w,  int h)
 {
     width = w;
     height = h;
@@ -243,14 +242,13 @@ Map::set_shape (const int w, const int h)
     
     if (network)
         network->compute_geometry();
-
 }
 
 // ============================================================================
 //  get position as a tuple of int
 // ============================================================================
 object
-Map::get_position (void) const
+Map::get_position (void) 
 {
     object position = make_tuple (x, y);
     return position;
@@ -260,7 +258,7 @@ Map::get_position (void) const
 //  
 // ============================================================================
 void
-Map::set_position (const object position)
+Map::set_position ( object position)
 {
     try	{
         int size = extract< int > (position.attr("__len__")());
@@ -290,17 +288,17 @@ Map::set_position (const object position)
 //  
 // ============================================================================
 void
-Map::set_position (const int xx, const int yy)
+Map::set_position (int x,  int y)
 {
-    x = xx;
-    y = yy;
+    this->x = x;
+    this->y = y;
 }
 
 // ============================================================================
 //  
 // ============================================================================
 object
-Map::get_frame (void) const
+Map::get_frame (void) 
 {
     return frame;
 }
@@ -309,7 +307,7 @@ Map::get_frame (void) const
 //  
 // ============================================================================
 void
-Map::set_frame (const object f)
+Map::set_frame (object f)
 {
     frame = f;
 }
@@ -326,10 +324,10 @@ Map::boost (void) {
     register_ptr_to_python< boost::shared_ptr<Map> >();
     
     // member function pointers for overloading
-    UnitPtr    (Map::*unit_index)(int) const = &Map::unit;
-    UnitPtr    (Map::*unit_xy)(int, int) const = &Map::unit;
-    void       (Map::*set_shape_object)(const object) = &Map::set_shape;
-    void       (Map::*set_position_object)(const object) = &Map::set_position;
+    UnitPtr    (Map::*unit_index)(int)  = &Map::unit;
+    UnitPtr    (Map::*unit_xy)(int, int)  = &Map::unit;
+    void       (Map::*set_shape_object)( object) = &Map::set_shape;
+    void       (Map::*set_position_object)( object) = &Map::set_position;
     
     class_<Map, bases <Object> >("Map",
     "======================================================================\n"
@@ -389,9 +387,9 @@ Map::boost (void) {
         
         
         .def_readwrite ("spec", &Map::spec)
-        .add_property ("shape",  &Map::get_shape, set_shape_object)
-        .add_property ("position",  &Map::get_position, set_position_object)
-        .def_readonly ("frame", &Map::get_frame)
+        .add_property  ("shape",  &Map::get_shape, set_shape_object)
+        .add_property  ("position",  &Map::get_position, set_position_object)
+        .add_property  ("frame", &Map::get_frame, &Map::set_frame)
         
         ;
 }
