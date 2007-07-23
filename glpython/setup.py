@@ -55,7 +55,7 @@ libobjects_lib = Extension (
     sources = libobjects_srcs,
     include_dirs = include_dirs,
     library_dirs = [libtmp_dir,],
-    libraries = ['GL', 'GLU', 'core']
+    libraries = ['GL', 'GLU', 'core', '3ds']
 )
 objects_srcs = glob.glob ("glpython/objects/*.cc")
 objects_ext = Extension (
@@ -63,7 +63,7 @@ objects_ext = Extension (
     sources = objects_srcs,
     include_dirs = include_dirs,
     library_dirs = [libtmp_dir,],
-    libraries = ['boost_python', 'GL', 'GLU', 'core']
+    libraries = ['boost_python', 'GL', 'GLU', 'core', '3ds']
 )
 
 
