@@ -18,6 +18,7 @@
 #include "smooth_surface.h"
 #include "cubic_surface.h"
 #include "label.h"
+#include "model.h"
 
 BOOST_PYTHON_MODULE(_objects) {
     using namespace glpython::objects;
@@ -31,4 +32,5 @@ BOOST_PYTHON_MODULE(_objects) {
     SmoothSurface::python_export();
     CubicSurface::python_export();
     Label::python_export();
+    Model::python_export();
 }

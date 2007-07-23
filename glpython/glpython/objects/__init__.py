@@ -16,7 +16,7 @@
 import glpython.core
 from _objects import *
 
-__all__ = ['Cube', 'Background', 'Colorbar', 'Text', 'Label',
+__all__ = ['Cube', 'Background', 'Colorbar', 'Text', 'Label', 'Model',
            'Array', 'FlatSurface', 'SmoothSurface', 'CubicSurface']
 
 
