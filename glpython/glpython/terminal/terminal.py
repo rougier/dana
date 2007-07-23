@@ -66,7 +66,6 @@ class Terminal (StringTerminal):
         self.active = True
         self.depth = 99
         self.focus = False
-        self.logo = False
         self.has_border = True
 
         # Internal
@@ -246,19 +245,6 @@ class Terminal (StringTerminal):
         self.set_fg_color (self.fg_color)
         self.dirty = True
         
-        im = Image.open (os.path.join(datadir(),'glpython.png'))
-        ix,iy,image = im.size[0], im.size[1], im.tostring("raw", "RGBA", 0, -1)
-        self.logo_texid = GL.glGenTextures(1)
-        GL.glEnable (GL.GL_TEXTURE_2D)
-        GL.glBindTexture (GL.GL_TEXTURE_2D, self.logo_texid)
-        GL.glPixelStorei (GL.GL_UNPACK_ALIGNMENT,1)
-        GL.glTexParameterf (GL.GL_TEXTURE_2D,
-                            GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
-        GL.glTexParameterf (GL.GL_TEXTURE_2D,
-                            GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR)
-        GL.glTexImage2D (GL.GL_TEXTURE_2D, 0, 4, ix, iy, 0,
-                         GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, image)
-
     #_______________________________________________________________check_focus
     def check_focus (self, x, y):
         """ Check if console has focus """
@@ -461,9 +447,9 @@ class Terminal (StringTerminal):
         GL.glTranslatef (0.0, 0.0, self.depth)
         GL.glBegin (GL.GL_QUADS)
         GL.glTexCoord2f(0, 0), GL.glVertex2f (x, y)
-        GL.glTexCoord2f(s, 0), GL.glVertex2f (x+w-1, y)
-        GL.glTexCoord2f(s, t), GL.glVertex2f (x+w-1, y+h-1)
-        GL.glTexCoord2f(0, t), GL.glVertex2f (x, y+h-1)
+        GL.glTexCoord2f(s, 0), GL.glVertex2f (x+w, y)
+        GL.glTexCoord2f(s, t), GL.glVertex2f (x+w, y+h)
+        GL.glTexCoord2f(0, t), GL.glVertex2f (x, y+h)
         GL.glEnd()
 
         # Save actual console geometry
@@ -528,22 +514,6 @@ class Terminal (StringTerminal):
         GL.glEnable (GL.GL_SCISSOR_TEST)
         GL.glScissor (self.border, self.border,
                       self.width-2*self.border,self.height-2*self.border)
-
-        # Rendering logo 
-        if self.logo:
-            GL.glEnable (GL.GL_TEXTURE_2D)
-            x, y = self.x, self.y
-            w,h = self.width, self.height
-            b = 16
-            GL.glBindTexture (GL.GL_TEXTURE_2D, self.logo_texid)
-            GL.glColor4f (1, 1, 1, .5)
-            GL.glTranslatef (0.0,0.0,0.1)            
-            GL.glBegin (GL.GL_QUADS)
-            GL.glTexCoord2f (0.0,0.01), GL.glVertex2f (x+w-128-2*b, b)
-            GL.glTexCoord2f (1.0,0.01), GL.glVertex2f (x+w-2*b, b)
-            GL.glTexCoord2f (1.0,1.0), GL.glVertex2f (x+w-2*b, 128+b)
-            GL.glTexCoord2f (0.0,1.0), GL.glVertex2f (x+w-2*b-128, 128+b)
-            GL.glEnd()
 
         # Actual rendering of lines
         if self.scroll < 0:
