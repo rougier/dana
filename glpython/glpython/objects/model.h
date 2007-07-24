@@ -24,6 +24,8 @@
 #include <lib3ds/vector.h>
 #include <lib3ds/light.h>
 #include "../core/object.h"
+#include "../core/color.h"
+
 
 using namespace boost::python;
 
@@ -31,39 +33,19 @@ namespace glpython { namespace objects {
 
     typedef boost::shared_ptr<class Model> ModelPtr;
 
-    typedef struct vertex {
-        float x,y,z;
-    };
-    typedef struct color {
-        float r,g,b;
-    };
-    typedef struct face {
-        int v1, v2, v3, v4;
-        int n1, n2, n3, n4;
-    };
-    typedef struct material {
-        color   diffuse;
-        color   ambient;
-        color   specular;
-    };
-    typedef struct group  {
-        std::string       name;
-        material          mat;
-        std::vector<face> faces;
-    };
-
-
     class Model : public core::Object {
         public:
-//            std::vector<vertex> vertices;
-//            std::vector<vertex> normals;
-//            std::vector<group>  groups;
-            Lib3dsFile *file;
+            Lib3dsFile *    file;        
+            core::ColorPtr  color;
+            float           alpha;
 
         public:
-            Model (std::string filename, std::string name = "Model");
+            Model (std::string filename,
+                   tuple color = make_tuple (.75,.75,.75),
+                   float alpha = 1.0f,
+                   std::string name = "Model");
             virtual ~Model (void);
-            virtual void render_node (Lib3dsNode *node);
+            virtual void render_node (Lib3dsNode *node, int mode = 0);
             virtual void render (void);
             static void python_export (void);
     };

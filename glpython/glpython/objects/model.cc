@@ -19,11 +19,14 @@ using namespace glpython::objects;
 
 //________________________________________________________________________Model
 Model::Model (std::string filename,
+              tuple color, float alpha,
               std::string name) : core::Object (name)
 
 {
+    this->color = core::ColorPtr (new core::Color (color));
+    this->alpha = alpha;
 
-    file = lib3ds_file_load(filename.c_str());
+    file = lib3ds_file_load (filename.c_str());
     if (!file) {
         std::cerr << "Error loading file '" << filename << "'\n";
         return;
@@ -48,11 +51,11 @@ Model::~Model (void)
 
 //__________________________________________________________________render_node
 void
-Model::render_node (Lib3dsNode *node)
+Model::render_node (Lib3dsNode *node, int mode)
 {
     Lib3dsNode *p;
     for (p=node->childs; p!=0; p=p->next)
-        render_node(p);
+        render_node(p,mode);
 
     if (node->type != LIB3DS_OBJECT_NODE)
         return;
@@ -66,14 +69,16 @@ Model::render_node (Lib3dsNode *node)
     if (mesh == NULL)
         mesh = lib3ds_file_mesh_by_name(file, node->name);
 
-    if (!mesh->user.d) {
+    if (!mesh->user.p) {
         ASSERT(mesh);
-        if (!mesh) {
+        if (!mesh)
             return;
-        }
 
-        mesh->user.d=glGenLists(1);
-        glNewList (mesh->user.d, GL_COMPILE);
+        mesh->user.p = new int[2];
+        int *list = (int *) mesh->user.p;
+
+        list[0] = glGenLists(1);
+        glNewList (list[0], GL_COMPILE);
         unsigned p;
         Lib3dsVector *normalL = (Lib3dsVector *) malloc(3*sizeof(Lib3dsVector)*mesh->faces);
         Lib3dsMaterial *oldmat = (Lib3dsMaterial *)-1;
@@ -82,13 +87,6 @@ Model::render_node (Lib3dsNode *node)
         lib3ds_matrix_inv(M);
         glMultMatrixf(&M[0][0]);
         lib3ds_mesh_calculate_normals(mesh, normalL);
-
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
-        glDisable (GL_DEPTH_TEST);
-        glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-        glPolygonOffset (1.0f, 1.0f);
-        glEnable (GL_POLYGON_OFFSET_FILL);
 
         for (p=0; p<mesh->faces; ++p) {
             Lib3dsFace *f=&mesh->faceL[p];
@@ -99,15 +97,11 @@ Model::render_node (Lib3dsNode *node)
 
             if (mat != oldmat) {
                 if (mat) {
-//                    if( mat->two_sided )
-//                        glDisable(GL_CULL_FACE);
-//                    else
-//                        glEnable(GL_CULL_FACE);
                     glMaterialfv(GL_FRONT, GL_AMBIENT, mat->ambient);
                     glMaterialfv(GL_FRONT, GL_DIFFUSE, mat->diffuse);
                     glMaterialfv(GL_FRONT, GL_SPECULAR, mat->specular);
                     glMaterialf(GL_FRONT, GL_SHININESS, pow (2, 10.0*mat->shininess));
-                    glColor4f (mat->diffuse[0],mat->diffuse[1], mat->diffuse[2], .5);
+                    glColor4f (mat->diffuse[0],mat->diffuse[1], mat->diffuse[2], alpha);
                 } else {
                     static const Lib3dsRgba a={0.7, 0.7, 0.7, 1.0};
                     static const Lib3dsRgba d={0.7, 0.7, 0.7, 1.0};
@@ -127,29 +121,39 @@ Model::render_node (Lib3dsNode *node)
             }
             glEnd();
         }
-        glDisable (GL_POLYGON_OFFSET_FILL);
-        glColor4f (1,1,1,.1);
-        glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
+        glEndList();
+
+        list[1] = glGenLists(1);
+        glNewList (list[1], GL_COMPILE);
+
         for (p=0; p<mesh->faces; ++p) {
             Lib3dsFace *f=&mesh->faceL[p];
+            Lib3dsMaterial *mat=0;
+            if (f->material[0]) {
+                mat=lib3ds_file_material_by_name(file, f->material);
+            }
+
             glBegin(GL_TRIANGLES);
             glNormal3fv(f->normal);
-            for (int i=0; i<3; ++i)
+            for (int i=0; i<3; ++i) {
+                glNormal3fv(normalL[3*p+i]);
                 glVertex3fv(mesh->pointL[f->points[i]].pos);
+            }
             glEnd();
         }
-        
         free(normalL);
         glEndList();
     }
 
-    if (mesh->user.d) {
+
+    if (mesh->user.p) {
+        int *list = (int *) mesh->user.p;
         Lib3dsObjectData *d;
         glPushMatrix();
         d=&node->data.object;
         glMultMatrixf(&node->matrix[0][0]);
         glTranslatef(-d->pivot[0], -d->pivot[1], -d->pivot[2]);
-        glCallList(mesh->user.d);
+        glCallList(list[mode]);
         glPopMatrix();
     }
 }
@@ -161,8 +165,42 @@ void
 Model::render (void)
 {
     Lib3dsNode *p;
+
+    glPushAttrib( GL_ALL_ATTRIB_BITS );
+
+    glEnable (GL_BLEND);
+    glFrontFace(GL_CCW);
+    glEnable(GL_CULL_FACE);
+    glEnable (GL_DEPTH_TEST);
+    glBlendFunc (GL_SRC_ALPHA ,GL_ONE_MINUS_SRC_ALPHA);
+
+    glClearStencil(0);
+    glClear (GL_STENCIL_BUFFER_BIT);
+    glEnable (GL_STENCIL_TEST);
+    glStencilFunc (GL_ALWAYS, 1, 0xFFFF );
+    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE );
+
+    glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+    glColor4f (color->get_red(), color->get_green(), color->get_blue(), alpha);
     for (p=file->nodes; p!=0; p=p->next)
-      render_node(p);
+        render_node(p,0);
+
+    glStencilFunc (GL_NOTEQUAL, 1, 0xFFFF);
+    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);
+    glLineWidth (3.0f);
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE);
+    glColor3f (0.0f, 0.0f, 0.0f);
+    glHint (GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glEnable (GL_LINE_SMOOTH);    
+    glEnable (GL_BLEND);
+    glEnable (GL_DEPTH_TEST);
+    glBlendFunc (GL_SRC_ALPHA ,GL_ONE_MINUS_SRC_ALPHA);
+    for (p=file->nodes; p!=0; p=p->next)
+        render_node(p,1);
+
+    
+
+    glPopAttrib();
 }
 
 //________________________________________________________________python_export
@@ -177,8 +215,10 @@ Model::python_export (void)
     " ______________________________________________________________________\n"
     "                                                                       \n"
     " ______________________________________________________________________\n",
-    init<std::string, optional <std::string> > (
+    init<std::string, optional <tuple, float, std::string> > (
         (arg("filename"),
+         arg("color") = make_tuple (.75,.75,.75),
+         arg("alpha") = .25,
          arg("name") = "Model"),
         "__init__ (filename, name)\n"))
     ;
