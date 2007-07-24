@@ -36,7 +36,6 @@ Focus[0].fill(core.Unit)
 Focus.name = 'Focus'
 net.append(Focus)
 
-
 p = proj.projection()
 p.distance = proj.distance.euclidean (True)
 p.density = proj.density.full(1)
@@ -45,6 +44,7 @@ p.shape = proj.shape.point()
 p.src = Input[0]
 p.dst = Focus[0]
 p.connect()
+
 
 p.self = False
 p.profile = proj.profile.dog (2.20, 3.0/width, 0.65, 11.0/width)
