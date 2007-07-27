@@ -34,18 +34,24 @@ import dana.projection.density as density
 import dana.projection.shape as shape
 import dana.projection.profile as profile
 
-from dana.visualization import View2D
+from glpython.core import *
+from glpython import window
+from glpython.objects import *
+from dana.visualization.glpython import Figure
+from dana.gui.gtk import ControlPanel
 
 import time, random, math
 import gobject, gtk
 
-from glpython.window import window as glwindow
-from dana.gl.network import View
+#from glpython.window import window as glwindow
+#from dana.gl.network import View
 
 from dana.image import *
 
 # Create a new network
+model = core.Model()
 net = core.Network ()
+model.append(net)
 width  = 100
 height = 100
 
@@ -108,6 +114,14 @@ def clear(m):
     for u in m[0]:
         u.potential = 0.0
 
-win = glwindow(locals(),backend='gtk')
-win.view.append (View (net, fontsize = 8))
+control = ControlPanel (model)
+fig = Figure()
+win,fig = window (figure=fig,has_terminal=True,namespace=locals())
+fac = 8.0
+fig.network (net, title='Visual attention')
+fig.colorbar(cmap=CM_Fire)
+fig[0].has_border = False
+fig[1].has_border = False
+
 win.show()
+

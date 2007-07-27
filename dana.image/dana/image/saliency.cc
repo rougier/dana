@@ -53,12 +53,6 @@ Saliency::Saliency()
 	comp_sal = false;
 	verbose = false;
     comp_save = false;
-//     pyr_level = 7;
-//     min_level = 2;
-//     max_level = 4;
-//     min_delta = 3;
-//     max_delta = 4;
-//     size_level = 4; 
     image_loaded = false;
 }
 
@@ -71,12 +65,6 @@ Saliency::Saliency(bool color, bool orientation, bool save=false,bool verb=false
     comp_save = save;
     verbose = verb;
 	comp_sal = true;
-//     pyr_level = 7;
-//     min_level = 2;
-//     max_level = 4;
-//     min_delta = 3;
-//     max_delta = 4;
-//     size_level = 4;  
     image_loaded = false;
 }
 
@@ -286,7 +274,29 @@ void Saliency::process_color(void)
         {
             yb_salMap += cs_yb[i];
         }	
-    //Normalisation<ImageDouble,ImageDouble>(yb_salMap,yb_salMap);	    
+    //Normalisation<ImageDouble,ImageDouble>(yb_salMap,yb_salMap);
+
+    // We finally scale the resulting saliency maps	   
+    std::vector< float > maxs_color;
+    float max_color;
+    
+    maxs_color.push_back(Util<ImageDouble>::maximum(rg_salMap));
+    maxs_color.push_back(Util<ImageDouble>::maximum(gr_salMap));
+    maxs_color.push_back(Util<ImageDouble>::maximum(by_salMap));
+    maxs_color.push_back(Util<ImageDouble>::maximum(yb_salMap));
+
+    max_color = maxs_color[0];
+    
+    for(unsigned int i = 0 ; i < maxs_color.size() ; i++)
+        {
+            if(max_color < maxs_color[i])
+                max_color = maxs_color[i];
+        }
+    Scale<ImageDouble,ImageDouble>(rg_salMap,rg_salMap,max_color);
+    Scale<ImageDouble,ImageDouble>(gr_salMap,gr_salMap,max_color);
+    Scale<ImageDouble,ImageDouble>(by_salMap,by_salMap,max_color);
+    Scale<ImageDouble,ImageDouble>(yb_salMap,yb_salMap,max_color);    
+ 
 }
 
 void Saliency::process_orientation(void)
@@ -308,7 +318,9 @@ void Saliency::process_orientation(void)
     sobel_orientations.resize(intensity._dimension);
     mirage::algo::BinaryOp<ImageDouble,ImageDouble,ImageDouble,AngleOp>(sobel_res_h,sobel_res_v,sobel_orientations);
 
-
+    float max_orientation = 0.0;
+    float tmp_value = 0.0;
+    
     for(unsigned int i = 0 ; i < orientations.size() ; i++)
         {
             AngleFiltOp::angle = orientations[i];
@@ -334,8 +346,17 @@ void Saliency::process_orientation(void)
                     sobels_sal[i] += sobels_cs[i][j];			
                 }	
             //Normalisation<ImageDouble,ImageDouble>(sobels_sal[i],sobels_sal[i]);
-
+            
+            // We finally compute the maximum over the saliency map
+            tmp_value = Util<ImageDouble>::maximum(sobels_sal[i]);
+            if(max_orientation < tmp_value)
+                max_orientation = tmp_value;
         }
+
+    // We scale all the orientation maps
+    for(unsigned int i = 0 ; i < sobels_sal.size() ; i ++)
+        Scale<ImageDouble,ImageDouble>(sobels_sal[i],sobels_sal[i],max_orientation);
+
     if(sobels_sal.size() >= 1)
         {
             sobel_salMap.resize(sobels_sal[0]._dimension);
@@ -429,21 +450,21 @@ void Saliency::save(void)
     if(comp_color)
         {
             if(verbose) std::cout << "Saving comp_color" <<std::endl;
-            
+
             img_temp.resize(rg_salMap._dimension);
-            Scale<ImageDouble, ImageGray8>(rg_salMap,img_temp);
+            Scale<ImageDouble, ImageGray8>(rg_salMap,img_temp,1.0);
             mirage::img::JPEG::write(img_temp,"saliency_rg.jpg",100);
             
             img_temp.resize(gr_salMap._dimension);
-            Scale<ImageDouble, ImageGray8>(gr_salMap,img_temp);
+            Scale<ImageDouble, ImageGray8>(gr_salMap,img_temp,1.0);
             mirage::img::JPEG::write(img_temp,"saliency_gr.jpg",100);
             
             img_temp.resize(by_salMap._dimension);
-            Scale<ImageDouble, ImageGray8>(by_salMap,img_temp);		
+            Scale<ImageDouble, ImageGray8>(by_salMap,img_temp,1.0);		
             mirage::img::JPEG::write(img_temp,"saliency_by.jpg",100);
             
             img_temp.resize(yb_salMap._dimension);
-            Scale<ImageDouble, ImageGray8>(yb_salMap,img_temp);		
+            Scale<ImageDouble, ImageGray8>(yb_salMap,img_temp,1.0);		
             mirage::img::JPEG::write(img_temp,"saliency_yb.jpg",100);            
         }
         
@@ -516,6 +537,7 @@ void Saliency::clamp(void)
             tmp_channels.push_back(&by_salMap);
             tmp_channels.push_back(&yb_salMap);
         }
+
     for(unsigned int i = 0 ; i < sobels_sal.size() ; i++)
         {
             tmp_channels.push_back(&(sobels_sal[i]));
@@ -528,10 +550,6 @@ void Saliency::clamp(void)
             int tmp_height = (tmp_layer->get_map()->height);
             int tmp_index = (*cur).second;
             
-            // We get the channel and copy it in tmp
-            // If you add channels, be carefull with the index of orientation !!
-            
-
             tmp_image.resize((tmp_channels[tmp_index])->_dimension);
             tmp_image = *(tmp_channels[tmp_index]);
 
@@ -540,7 +558,8 @@ void Saliency::clamp(void)
 
             tmp_image.rescale(tmp_dimension);
  
-            Scale<ImageDouble, ImageDouble>(tmp_image,tmp_image,1.0);
+            // The saliency maps are scaled when they are computed 
+            //Scale<ImageDouble, ImageDouble>(tmp_image,tmp_image,1.0);
 
             // And clamp the result in the layer
             ImageDouble::pixel_type sal_pxl,sal_pxl_end;
