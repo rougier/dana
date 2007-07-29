@@ -20,17 +20,13 @@ if os.path.exists('MANIFEST'): os.remove('MANIFEST')
 import sys,glob
 from distutils.core import setup
 from distutils.core import setup, Extension
-from distutils.util import get_platform
+from distutils.command.build_ext import build_ext
 from distutils.command.install_data import install_data
 import distutils.sysconfig
 import numpy
 
 include_dirs = []
 include_dirs.append (numpy.get_include())
-
-
-# HACK: we should get this file from distutils
-libtmp_dir = "./build/lib.%s-%s/glpython/" % (get_platform(), sys.version[0:3])
 
 
 libcore_srcs = glob.glob ("glpython/core/*.cc")
@@ -44,7 +40,6 @@ core_srcs = glob.glob ("glpython/core/core.cc")
 core_ext = Extension (
     'glpython.core._core',
     sources = core_srcs,
-    library_dirs = [libtmp_dir,],
     libraries = ['boost_python', 'GL', 'GLU', 'core']
 )
 
@@ -54,7 +49,6 @@ libobjects_lib = Extension (
     'glpython.libobjects',
     sources = libobjects_srcs,
     include_dirs = include_dirs,
-    library_dirs = [libtmp_dir,],
     libraries = ['GL', 'GLU', 'core', '3ds']
 )
 objects_srcs = glob.glob ("glpython/objects/*.cc")
@@ -62,16 +56,36 @@ objects_ext = Extension (
     'glpython.objects._objects',
     sources = objects_srcs,
     include_dirs = include_dirs,
-    library_dirs = [libtmp_dir,],
     libraries = ['boost_python', 'GL', 'GLU', 'core', '3ds']
 )
 
+#______________________________________________________________________________
+def force_optimisation(compiler):
+    for i in range(4):      
+        try: compiler.compiler_so.remove("-O%s" % i)
+        except:	pass
+    try:
+        compiler.compiler_so.remove('-Wstrict-prototypes')
+        compiler.compiler_so.remove('-g')
+        compiler.compiler_so.remove('-DNDEBUG')
+    except:
+        pass
+    compiler.compiler_so.append("-O3")
+
+class my_build_ext(build_ext):
+    def build_extension(self, ext):
+        force_optimisation(self.compiler)
+        extra_dir = self.build_lib
+        extra_dir = os.path.join(extra_dir, 'glpython')
+        ext.library_dirs.append(extra_dir)
+        build_ext.build_extension(self, ext)
 
 class my_install_data(install_data):
     def finalize_options (self):
         self.set_undefined_options ('install', ('install_lib', 'install_dir'))
         install_data.finalize_options(self)
 
+#______________________________________________________________________________
 s = setup (name='glpython',
        version = 'beta',
        author = 'Nicolas Rougier',
@@ -85,7 +99,8 @@ s = setup (name='glpython',
                    'glpython.backends',
                    'glpython.terminal',
                    'glpython.data'],
-       cmdclass = { 'install_data' : my_install_data },
+       cmdclass = { 'install_data' : my_install_data,
+                    'build_ext': my_build_ext},
        scripts=['bin/glpython', 'bin/glpython'],
        data_files = [
             ("glpython/data", glob.glob('glpython/data/*'))]

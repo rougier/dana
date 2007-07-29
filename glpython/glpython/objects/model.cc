@@ -168,30 +168,36 @@ Model::render (void)
 
     glPushAttrib( GL_ALL_ATTRIB_BITS );
 
-    glEnable (GL_BLEND);
-    glFrontFace(GL_CCW);
-    glEnable(GL_CULL_FACE);
-    glEnable (GL_DEPTH_TEST);
+
+//    glFrontFace(GL_CCW);
+//    glEnable(GL_CULL_FACE);
+    if (alpha < 1) {
+        glDisable (GL_DEPTH_TEST);
+        glEnable (GL_BLEND);
+    } else {
+        glEnable (GL_DEPTH_TEST);
+        glDisable (GL_BLEND); 
+    }
     glBlendFunc (GL_SRC_ALPHA ,GL_ONE_MINUS_SRC_ALPHA);
 
-    glClearStencil(0);
-    glClear (GL_STENCIL_BUFFER_BIT);
-    glEnable (GL_STENCIL_TEST);
-    glStencilFunc (GL_ALWAYS, 1, 0xFFFF );
-    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE );
+//    glClearStencil(0);
+//    glClear (GL_STENCIL_BUFFER_BIT);
+//    glEnable (GL_STENCIL_TEST);
+//    glStencilFunc (GL_ALWAYS, 1, 0xFFFF );
+//    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE );
 
     glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
     glColor4f (color->get_red(), color->get_green(), color->get_blue(), alpha);
     for (p=file->nodes; p!=0; p=p->next)
         render_node(p,0);
 
-    glStencilFunc (GL_NOTEQUAL, 1, 0xFFFF);
-    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);
-    glLineWidth (3.0f);
+//    glStencilFunc (GL_NOTEQUAL, 1, 0xFFFF);
+//    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);
+    glLineWidth (0.5f);
     glPolygonMode( GL_FRONT_AND_BACK, GL_LINE);
-    glColor3f (0.0f, 0.0f, 0.0f);
-    glHint (GL_LINE_SMOOTH_HINT, GL_NICEST);
-    glEnable (GL_LINE_SMOOTH);    
+    glColor4f (0.0f, 0.0f, 0.0f, .1);
+//    glHint (GL_LINE_SMOOTH_HINT, GL_NICEST);
+//    glEnable (GL_LINE_SMOOTH);    
     glEnable (GL_BLEND);
     glEnable (GL_DEPTH_TEST);
     glBlendFunc (GL_SRC_ALPHA ,GL_ONE_MINUS_SRC_ALPHA);

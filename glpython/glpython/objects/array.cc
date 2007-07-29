@@ -9,6 +9,7 @@
 // $Id$
 
 #include "array.h"
+#include <numpy/arrayobject.h>
 
 using namespace boost::python;
 using namespace glpython::objects;

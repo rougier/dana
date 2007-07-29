@@ -22,7 +22,9 @@
 
 BOOST_PYTHON_MODULE(_objects) {
     using namespace glpython::objects;
-    
+    import_array();
+    numeric::array::set_module_and_type ("numpy", "ndarray");  
+
     Cube::python_export();
     Background::python_export();
     Colorbar::python_export();
