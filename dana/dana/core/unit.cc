@@ -9,9 +9,9 @@
 // $Id$
 
 #include <boost/python.hpp>
-#include <numpy/arrayobject.h>
 #include <cmath>
 #include "unit.h"
+#include <numpy/arrayobject.h>
 #include "link.h"
 #include "layer.h"
 #include "map.h"

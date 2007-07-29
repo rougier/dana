@@ -11,6 +11,7 @@
 #include <algorithm>
 #include "map.h"
 #include "layer.h"
+#include <numpy/arrayobject.h>
 #include "unit.h"
 
 using namespace dana::core;
