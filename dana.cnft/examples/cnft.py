@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 #------------------------------------------------------------------------------
 # Copyright (c) 2006-2007 Nicolas Rougier.
-# All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -11,32 +10,17 @@
 # $Id$
 #------------------------------------------------------------------------------
 
-import matplotlib.pylab as pylab
-import matplotlib.colors as colors
-
+import random, math
 import dana.core as core
 import dana.projection as proj
 import dana.cnft as cnft
-from dana.visualization import View2D
+from glpython import window
+from dana.visualization.glpython import Figure
+import dana.gui.gtk as gui
 
-import time, random, math
-import gobject, gtk
-
-
-print "--------------------------------------------------------------------"
-print "CNFT using full connectivity"
-print ""
-print "Author:    Nicolas Rougier"
-print "Date:      01/03/2005"
-print "Reference: Rougier N.P. & Vitay J."
-print "           'Emergence of Attention within a Neural Population'"
-print "           Neural Networks, 19, 5, pp 573-581, June 2006."
-print "--------------------------------------------------------------------"
-print ""
-
-
-# Create a new network
+model = core.Model()
 net = core.Network ()
+model.append(net)
 width  = 30
 height = width
 
@@ -75,47 +59,36 @@ p.connect()
 # Create focus laterals connections
 p.self = False
 #p.density = proj.density.sparser(.5)
-p.profile = proj.profile.dog (2.20, 3.0/width, 0.65, 11.0/width)
+p.profile = proj.profile.dog (2.20, 3.0/width, 0.55, 11.0/width)
 
 p.shape = proj.shape.box(1,1)
 p.src = Focus[0]
 p.dst = Focus[0]
 p.connect()
 
+env = cnft.Environment()
+env.attach (Input)
+model.append (env)
 
 
-for u in Input[0]:
-    u.potential = random.uniform(0.0, 1.0)
-
-for i in xrange(Input.shape[0]):
-    for j in xrange(Input.shape[1]):
-        x0 = i/float(Input.shape[0])-.25
-        y0 = j/float(Input.shape[1])-.25
-        x1 = i/float(Input.shape[0])-.75
-        y1 = j/float(Input.shape[1])-.75
-        Input[0].unit(i,j).potential =  + math.exp (-(x0*x0+y0*y0)/0.0125) + math.exp (-(x1*x1+y1*y1)/0.0125) + .15*random.uniform(0.0, 1.0)
-        
-# Show network
-netview = View2D (net)
+#for u in Input[0]:
+#    u.potential = random.uniform(0.0, 1.0)
+#for i in xrange(Input.shape[0]):
+#    for j in xrange(Input.shape[1]):
+#        x0 = i/float(Input.shape[0])-.25
+#        y0 = j/float(Input.shape[1])-.25
+#        x1 = i/float(Input.shape[0])-.75
+#        y1 = j/float(Input.shape[1])-.75
+#        Input[0].unit(i,j).potential =  + math.exp (-(x0*x0+y0*y0)/0.0125) + math.exp (-(x1*x1+y1*y1)/0.0125) + .15*random.uniform(0.0, 1.0)
 
 
 
-manager = pylab.get_current_fig_manager()
-cnt = 0
-tstart = time.time()
-
-def updatefig(*args):
-#    global cnt, start,net
-#    net.evaluate(1,False)
-    netview.update()
-#    cnt += 1
-#    if cnt==500:
-#        print 'FPS', cnt/(time.time() - tstart)
-#        return False
-    return True
-cnt = 0
-
-gobject.idle_add(updatefig)
-pylab.show()
+fig = Figure()
+win,fig = window (backend='gtk', figure=fig, has_terminal=True, namespace=locals())
+fig.network (net, style='flat', show_colorbar=False)
+fig.text (size=.1, position = (.5, -.05), text="Emergence of Attention within a Neural Population")
+fig.text (size=.05, position = (.5, -.085), text="Neural Networks, 19, 5, pp 573-581, June 2006")
+panel = gui.ControlPanel (model)
+win.show()
 
 

@@ -9,6 +9,7 @@
 #include "kunit.h"
 #include "unit.h"
 #include "spec.h"
+#include "environment.h"
 
 BOOST_PYTHON_MODULE(_cnft) {
     using namespace dana::cnft;
@@ -16,4 +17,5 @@ BOOST_PYTHON_MODULE(_cnft) {
     KUnit::boost();
     Unit::boost();
     Spec::boost();
+    Environment::python_export();
 }

@@ -20,6 +20,7 @@ if os.path.exists('MANIFEST'): os.remove('MANIFEST')
 
 import glob
 from distutils.core import setup, Extension
+from distutils.command.build_ext import build_ext
 import distutils.sysconfig
 import numpy
 
@@ -46,7 +47,38 @@ cnft_ext = Extension (
     extra_objects=[core]
 )
 
+#______________________________________________________________________________
+def force_optimisation(compiler):
+    for i in range(4):      
+        try: compiler.compiler_so.remove("-O%s" % i)
+        except:	pass
+    try:
+        compiler.compiler_so.remove('-Wstrict-prototypes')
+        compiler.compiler_so.remove('-g')
+        compiler.compiler_so.remove('-DNDEBUG')
+    except:
+        pass
+    compiler.compiler_so.append("-O3")
 
+class my_build_ext(build_ext):
+    def initialize_options(self):
+        self.package = None
+        build_ext.initialize_options(self)
+		
+    def finalize_options(self):
+        if self.package is None:
+            self.package = self.distribution.ext_package
+        build_ext.finalize_options(self)
+		
+    def build_extension(self, ext):
+        force_optimisation(self.compiler)
+        extra_dir = self.build_lib
+        if self.package:
+            extra_dir = os.path.join(extra_dir, self.package)
+        ext.library_dirs.append(extra_dir)
+        build_ext.build_extension(self, ext)
+
+#______________________________________________________________________________
 setup (name='dana.cnft',
        version = '1.0',
        author = 'Nicolas Rougier',
@@ -55,6 +87,9 @@ setup (name='dana.cnft',
        description = "DANA: Continuum Neural Field Theory",
        packages = ['dana.cnft'],
        ext_modules = [cnft_ext],
+       cmdclass = {
+		"build_ext": my_build_ext
+	   },
        data_files = [
             ("include/dana/cnft", glob.glob("dana/cnft/*.h")) ]
       )
