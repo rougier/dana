@@ -230,7 +230,6 @@ def compute_error():
 fig = Figure()
 win,fig = window (size=(800,600), title = "Perceptron",has_terminal=True,namespace=locals(),figure=fig)
 fig.network (net, style='flat', show_colorbar=False)
-#win.view.append (View (net, fontsize=48))
 control = ControlPanel (model)
 win.show()
 
