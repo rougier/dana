@@ -23,6 +23,7 @@ import distutils.sysconfig
 import numpy
 
 # Get core shared object filename
+from dana.cnft._cnft import __file__ as cnft
 from dana.core._core import __file__ as core
 include_dir = core[:core.find('python')]
 include_dir = os.path.normpath (os.path.join (include_dir, '../include/dana/'))
@@ -41,7 +42,7 @@ sigmapi_ext = Extension (
     sources = sigmapi_srcs,
     libraries = ['boost_python'],
     include_dirs =  [numpy.get_include(),include_dir],
-    extra_objects=[core]
+    extra_objects=[core,cnft]
 )
 
 print "Compiling dana.sigmapi ....."

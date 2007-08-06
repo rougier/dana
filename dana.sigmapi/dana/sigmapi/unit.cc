@@ -10,6 +10,7 @@
 #include "core/map.h"
 #include "core/layer.h"
 #include "core/spec.h"
+#include "cnft/spec.h"
 #include "link.h"
 #include "unit.h"
 #include <iostream>
@@ -43,13 +44,18 @@ Unit::connect(core::LinkPtr link)
 float
 Unit::compute_dp (void)
 {
-    object spec = layer->map->get_spec();
+    core::SpecPtr sp = layer->get_spec();
+    if (sp.get() == NULL)
+        return 0.0f;
+    cnft::Spec *s = dynamic_cast<cnft::Spec *>(sp.get());
+    if (s == 0)
+        return 0.0f;
 
-    float tau      = extract<float> (spec.attr("tau"));
-    float alpha    = extract<float> (spec.attr("alpha"));
-    float baseline = extract<float> (spec.attr("baseline"));
-    float min_act  = extract<float> (spec.attr("min_act"));
-    float max_act  = extract<float> (spec.attr("max_act"));
+    float tau      = s->tau;
+    float alpha    = s->alpha;
+    float baseline = s->baseline;
+    float min_act  = s->min_act;
+    float max_act  = s->max_act;    
 
     float input = 0;
     unsigned int size = afferents.size();
@@ -66,7 +72,7 @@ Unit::compute_dp (void)
     {
         lateral += laterals[i]->compute();
     }
-
+    this->input = input ; //(1.0f/alpha)*(lateral + input);
     float du = (-potential + baseline + (1.0f/alpha)*(lateral + input)) / tau;
     float value = potential;
     potential += du;
@@ -122,6 +128,22 @@ Unit::get_weights (const core::LayerPtr layer)
 	return extract<numeric::array>(obj);	
 }
 
+/*int
+Unit::count_connections(void)
+{
+    int numb = 0;
+    for (unsigned int i=0; i<afferents.size(); i++)
+    {
+        numb += afferents[i]->count_connections();
+    }
+    for (unsigned int i=0; i<laterals.size(); i++)
+    {
+        numb += laterals[i]->count_connections();
+    }
+    return numb;
+}*/
+
+
 // ============================================================================
 //    Boost wrapping code
 // ============================================================================
@@ -145,6 +167,7 @@ Unit::boost (void)
                                      "\n"
                                      "======================================================================\n",
                                      init<>(
-                                         "__init__ () -- initialize unit\n")
-                                    );
+                                         "__init__ () -- initialize unit\n"))
+				    .def_readonly ("input", &Unit::get_input)
+                                    ;
 }

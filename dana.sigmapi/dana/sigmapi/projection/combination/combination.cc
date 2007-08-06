@@ -65,6 +65,8 @@ std::vector<core::LinkPtr> Linear::combine (core::UnitPtr dst,core::LayerPtr src
     // fac1_x*i + offset_x = fac2_x*m + fac3_x*k
     // fac1_y*j + offset_y = fac2_y*n + fac3_y*l
 
+    // La vraie formule est : fac2*src2 + fac3 * src1 = fac1 * dst + offset
+    
     std::vector<core::LinkPtr> links;
     if(fac2_x != 0 && fac2_y != 0)
     {

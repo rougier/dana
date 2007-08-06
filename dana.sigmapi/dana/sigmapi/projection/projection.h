@@ -12,6 +12,7 @@
 #define __DANA_SIGMAPI_PROJECTION_H__
 
 #include <boost/python.hpp>
+#include <numpy/arrayobject.h>
 #include "core/layer.h"
 #include "core/object.h"
 #include "../unit.h"
@@ -39,6 +40,8 @@ public:
     virtual ~Projection (void);
     void connect (void);
     void connect_all_to_one(float weight);
+    void connect_as_mod_cos(float scale_pos,float scale_neg);
+    
     void connect_max_one_to_one(boost::python::list layers, float weight);
     void connect_point_mod_one(float weight);
     void connect_dog_mod_one(float A,float a,float B,float b);

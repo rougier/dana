@@ -14,11 +14,15 @@ import dana.projection.distance as distance
 import dana.projection.density as density
 import dana.projection.shape as shape
 import dana.projection.profile as profile
-from dana.visualization import View2D
-#import dana.view as view
+
+
+from glpython import window as glwindow
+from dana.visualization.glpython import Figure
 
 import time, random, math
 import gobject, gtk
+
+gobject.threads_init()
 
 
 print "------------------------------------------------------------------------"
@@ -31,7 +35,9 @@ print ""
 
 
 # Create a new network
+model = core.Model()
 net = core.Network ()
+model.append(net)
 width  = 30
 height = width
 
@@ -81,10 +87,7 @@ p1.src2 = Input2[0]
 p1.dst = Output[0]
 p1.connect();
 
-# Show network
-view = View2D (net, title='Click on unit to see weights', size=4)
-
-manager = pylab.get_current_fig_manager()
+# Tools
 
 def updatefig(*args):
     view.update()
@@ -146,9 +149,11 @@ vbox.add(step_button)
 
 window.add (vbox)
 window.show_all()	
-	
-	
-gobject.idle_add(updatefig)
-pylab.show()
 
+
+# Show network
+fig = Figure()
+win,fig = glwindow (size=(800,600), title = "Perceptron",has_terminal=True,namespace=locals(),figure=fig)
+fig.network (net, style='flat', show_colorbar=False)
+win.show() 
 

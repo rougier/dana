@@ -26,9 +26,9 @@ class Unit : public core::Unit
 {
 
 public:
-    //std::vector<core::LinkPtr> afferents;
-    //std::vector<core::LinkPtr> laterals;
-
+    // Input of the neuron : lateral and afferent contributions
+    float input;
+	
 public:
     // Constructor
     Unit(void);
@@ -42,10 +42,14 @@ public:
     // Evaluate new potential and return difference
     virtual float compute_dp (void);
 
+    // Get the computed input of the neuron (lateral + afferent)
+    float get_input(void) { return input;};
+    //virtual int count_connections(void);
+    
     // convenient methods
     // =================================================================
     virtual object      get_weights  (const core::LayerPtr layer); 
-    
+
 public:
     // Boost python extension
     static void boost (void);

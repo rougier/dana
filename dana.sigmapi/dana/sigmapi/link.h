@@ -66,8 +66,10 @@ public:
 
     core::UnitPtr get_source (const int i) const;
     void add_source (const core::UnitPtr src);
-
+    
     virtual float compute(void);
+    //virtual int count_connections(void);
+    
 public:
     static void	boost (void);
 };

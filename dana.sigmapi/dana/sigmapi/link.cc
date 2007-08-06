@@ -74,6 +74,12 @@ Link::compute(void)
     return value;
 }
 
+/*int
+Link::count_connections(void)
+{
+return 1;
+}*/
+
 
 // ===================================================================
 //  Boost wrapping code

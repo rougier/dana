@@ -23,6 +23,7 @@ import distutils.sysconfig
 import numpy
 
 # Get core shared object filename
+from dana.cnft._cnft import __file__ as cnft
 from dana.core._core import __file__ as core
 include_dir = core[:core.find('python')]
 include_dir = os.path.normpath (os.path.join (include_dir, '../include/dana/'))
@@ -46,7 +47,7 @@ projection_ext = Extension (
     sources = projection_srcs,
     libraries = ['boost_python'],
     include_dirs =  [numpy.get_include(),include_dir],
-    extra_objects=[core,sigmapi]
+    extra_objects=[core,cnft,sigmapi]
 )
 
 combination_srcs = glob.glob ("dana/sigmapi/projection/combination/*.cc")
@@ -55,7 +56,7 @@ combination_ext = Extension (
     sources = combination_srcs,
     libraries = ['boost_python'],
     include_dirs =  [numpy.get_include(),include_dir],
-    extra_objects=[core,sigmapi]
+    extra_objects=[core,cnft,sigmapi]
 )
 
 setup (name='dana.sigmapi',
