@@ -25,8 +25,8 @@ import dana.projection.profile as profile
 import dana.cnft as cnft
 import dana.learn as learn
 
-from glpython.window import window
-from dana.visualization.gl.network import View
+from glpython import window
+from dana.visualization.glpython import Figure
 from dana.gui.gtk import ControlPanel
 
 import time, random, math
@@ -227,8 +227,10 @@ def compute_error():
 	return err
 
 # Show network
-win = window(locals(), backend='gtk')
-win.view.append (View (net, fontsize=48))
+fig = Figure()
+win,fig = window (size=(800,600), title = "Perceptron",has_terminal=True,namespace=locals(),figure=fig)
+fig.network (net, style='flat', show_colorbar=False)
+#win.view.append (View (net, fontsize=48))
 control = ControlPanel (model)
 win.show()
 
