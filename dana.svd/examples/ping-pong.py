@@ -15,18 +15,23 @@ import random, math
 import dana.core as core
 import dana.projection as proj
 import dana.cnft as cnft
-from glpython.window import window
-from dana.visualization.gl.network import View
+
+from glpython.core import CM_Fire
+from glpython import window
+from dana.visualization.glpython import Figure
 from dana.gui.gtk import ControlPanel
+
 import dana.svd as svd
 
 import time
 
 print "-----------------------------------------------------------------------"
-print " CNFT using full connectivity"
-print " Example coming from dana.cnft package"
-print " but using Singular Value Decomposition for computing the contributions"
-print " of the links"
+print " Ping-ping example"
+print " The input map provides the targets, the focus map selects one of them,"
+print " this map being inhibited by the inhib map which contains units with a "
+print " longer time constant, providing a ping-pong effect in the Focus map   "
+print " It works fine with 70x70 maps but the weights must be adjusted for    "
+print " other sizes"
 print "-----------------------------------------------------------------------"
 print "(see the script for details)"
 
@@ -94,8 +99,6 @@ p1 = svd.projection()
 # p1.separable = 0 : core::Link
 # p1.separable = 1 : svd::Link the links are shared and contained by the layer
 # p1.separable = 2 : svd::Link computed with Singular Value Decomposition
-
-## Tests avec deux fois les memes connexions
 
 p1.self = True
 p1.separable = 0
@@ -165,8 +168,9 @@ def evaluate(nb_steps):
     print 'Elapsed time : %f second(s)' % (end-start)    
 
 # Show network
-win = window(locals(), backend='gtk')
-win.view.append (View (net, fontsize=48))
+fig = Figure()
+win,fig = window (figure=fig,has_terminal=True,namespace=locals())
+fignet = fig.network (net, style = 'flat', title='Ping pong')
+fignet.colorbar.cmap = CM_Fire
 control = ControlPanel (model)
 win.show()
-

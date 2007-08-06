@@ -15,9 +15,12 @@ import random, math
 import dana.core as core
 import dana.projection as proj
 import dana.cnft as cnft
-from glpython.window import window
-from dana.visualization.gl.network import View
+
+from glpython.core import CM_Fire
+from glpython import window
+from dana.visualization.glpython import Figure
 from dana.gui.gtk import ControlPanel
+
 import dana.svd as svd
 
 import time
@@ -28,7 +31,8 @@ print " Example coming from dana.cnft package"
 print " but using Singular Value Decomposition for computing the contributions"
 print " of the links"
 print "-----------------------------------------------------------------------"
-print "(see the script for details)"
+print "(see the script for details)\n"
+
 
 ########
 # See below to switch between non-optimized and optimized computations
@@ -75,7 +79,7 @@ p1 = svd.projection()
 
 ## Tests avec deux fois les memes connexions
 p1.self = True
-p1.separable = 0
+p1.separable = 2
 p1.distance = proj.distance.euclidean (True)
 p1.profile = proj.profile.gaussian(0.5,0.05)
 p1.density = proj.density.full(1)
@@ -84,7 +88,15 @@ p1.src = Input[0]
 p1.dst = Focus[0]
 p1.connect()
 
-p1.separable = 0
+print "Projections from Input to Focus..."
+if(p1.separable == 0):
+    print "    [Non optimized core::Links]"
+elif(p1.separable == 1):
+    print "    [Shared links]"
+elif(p1.separable == 2):
+    print "    [Optimized SVD::links]"
+
+p1.separable = 2
 p1.distance = proj.distance.euclidean (True)
 p1.profile =  proj.profile.dog(0.8,0.1,0.6,1.4)
 p1.density = proj.density.full(1)
@@ -92,6 +104,15 @@ p1.shape = proj.shape.box(1,1)
 p1.src = Focus[0]
 p1.dst = Focus[0]
 p1.connect()
+
+print "Lateral projections in Focus..."
+if(p1.separable == 0):
+    print "    [Non optimized core::Links]"
+elif(p1.separable == 1):
+    print "    [Shared links]"
+elif(p1.separable == 2):
+    print "    [Optimized SVD::links]"
+
 
 for u in Input[0]:
     u.potential = random.uniform(0.0, 1.0)
@@ -114,8 +135,15 @@ def evaluate(nb_steps):
     print 'Elapsed time : %f second(s)' % (end-start)    
 
 # Show network
-win = window(locals(), backend='gtk')
-win.view.append (View (net, fontsize=48))
+fig = Figure()
+
+win,fig = window (figure=fig)
+# If you want to perform some benchmarks, using the evaluate function
+# comment the previous line and uncomment the following
+#win,fig = window (figure=fig,has_terminal=True,namespace=locals())
+
+fignet = fig.network (net, style = 'flat', title='CNFT Fully connected using SVD')
+fignet.colorbar.cmap = CM_Fire
 control = ControlPanel (model)
 win.show()
 
