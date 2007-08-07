@@ -559,18 +559,18 @@ void Saliency::clamp(void)
             tmp_image.rescale(tmp_dimension);
  
             // The saliency maps are scaled when they are computed 
-            //Scale<ImageDouble, ImageDouble>(tmp_image,tmp_image,1.0);
+            Scale<ImageDouble, ImageDouble>(tmp_image,tmp_image,1.0);
 
             // And clamp the result in the layer
             ImageDouble::pixel_type sal_pxl,sal_pxl_end;
             sal_pxl = tmp_image.begin();
             sal_pxl_end =  tmp_image.end();
 
-            for(int j = 0 ; j < tmp_height ; j++)
+            for(int j = 1 ; j <= tmp_height ; j++)
                 {
                     for(int i = 0 ; i < tmp_width ; i++)
                         {
-                            tmp_layer->get(i,j)->potential = *sal_pxl;
+                            tmp_layer->get(i,tmp_height - j)->potential = *sal_pxl;
                             sal_pxl++;
                         }
                 }

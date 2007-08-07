@@ -117,11 +117,8 @@ def clear(m):
 control = ControlPanel (model)
 fig = Figure()
 win,fig = window (figure=fig,has_terminal=True,namespace=locals())
-#fac = 8.0
-fig.network (net, title='Dana.image sample script')
-fig.colorbar(cmap=CM_Fire)
-#fig[0].has_border = False
-#fig[1].has_border = False
+fnet = fig.network (net, title='Dana.image sample script')
+fnet.colorbar.cmap = CM_Fire
 
 win.show()
 
