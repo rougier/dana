@@ -153,7 +153,7 @@ window.show_all()
 
 # Show network
 fig = Figure()
-win,fig = glwindow (size=(800,600), title = "Perceptron",has_terminal=True,namespace=locals(),figure=fig)
+win,fig = glwindow (size=(800,600), title = "Sigmapi sample",has_terminal=True,namespace=locals(),figure=fig)
 fig.network (net, style='flat', show_colorbar=False)
 win.show() 
 
