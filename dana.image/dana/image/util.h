@@ -163,7 +163,7 @@ public:
 template<class SOURCE, class RESULT >
 class Scale {
 public:
-	inline Scale(SOURCE& src,RESULT& res,double max_value=255.0) {
+	inline Scale(SOURCE& src,RESULT& res,double max_value=255.0, typename SOURCE::value_type global_min = -1, typename SOURCE::value_type global_max = -1) {
         // We first determine the minimum and maximum values of the image
         typename SOURCE::pixel_type src_pxl,src_pxl_end;
         typename RESULT::pixel_type res_pxl;
@@ -175,6 +175,15 @@ public:
             min = *src_pxl < min ? *src_pxl : min;
             max = *src_pxl > max ? *src_pxl : max;
         }
+
+        //TODO Optimiser les lignes qui suivent et les precedentes
+        // pour eviter le calcul du max ou min de l'image
+        // si un global_min ou un global_max est donné en argument
+        if(global_min != -1)
+            min = global_min;
+        if(global_max != -1)
+            max = global_max;
+        
         //std::cout << "Max : " << max << " - Min : " << min << std::endl;
         // We then scale the image  
         for(src_pxl = src.begin(),res_pxl = res.begin();src_pxl != src_pxl_end; ++src_pxl,++res_pxl)

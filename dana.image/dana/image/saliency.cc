@@ -424,7 +424,65 @@ void Saliency::process(void)
         {
             process_orientation();
         }
-				
+	
+    //*******************************
+    // Normalisation of the channels
+    //*******************************
+    
+    Scale<ImageDouble, ImageDouble>(intensity_salMap,intensity_salMap,1.0);
+
+    if(comp_color)
+        {
+            // We determine the min and max over all the color channels
+            ImageDouble::value_type min,max,mintmp,maxtmp;
+            min = Util<ImageDouble>::minimum (rg_salMap);
+            max = Util<ImageDouble>::maximum (rg_salMap);
+
+            mintmp = Util<ImageDouble>::minimum (gr_salMap);
+            maxtmp = Util<ImageDouble>::maximum (gr_salMap);
+            min = min < mintmp ? min : mintmp;
+            max = max > maxtmp ? max : maxtmp;
+            
+            mintmp = Util<ImageDouble>::minimum (by_salMap);
+            maxtmp = Util<ImageDouble>::maximum (by_salMap);
+            min = min < mintmp ? min : mintmp;
+            max = max > maxtmp ? max : maxtmp;
+
+            mintmp = Util<ImageDouble>::minimum (yb_salMap);
+            maxtmp = Util<ImageDouble>::maximum (yb_salMap);
+            min = min < mintmp ? min : mintmp;
+            max = max > maxtmp ? max : maxtmp;
+            
+            // And use these global min and max to scale the channels
+            Scale<ImageDouble, ImageDouble>(rg_salMap,rg_salMap,1.0,min,max);
+            Scale<ImageDouble, ImageDouble>(gr_salMap,gr_salMap,1.0,min,max);
+            Scale<ImageDouble, ImageDouble>(by_salMap,by_salMap,1.0,min,max);
+            Scale<ImageDouble, ImageDouble>(yb_salMap,yb_salMap,1.0,min,max);
+        }
+    
+    if(comp_orientation && (orientations.size() != 0))
+        {
+            ImageDouble::value_type min,max,mintmp,maxtmp;
+            min = 0;
+            max = 0;
+
+            // We determine the min and max over all the orientation channels
+            for(unsigned int i = 0 ; i < sobels_sal.size() ; i ++)
+                {
+                    mintmp = Util<ImageDouble>::minimum (sobels_sal[i]);
+                    maxtmp = Util<ImageDouble>::maximum (sobels_sal[i]);
+                    min = min < mintmp ? min : mintmp;
+                    max = max > maxtmp ? max : maxtmp;
+                }
+            // And use these global min and max to scale the channels
+            for(unsigned int i = 0 ; i < sobels_sal.size() ; i ++)
+                {
+                    Scale<ImageDouble, ImageDouble>(sobels_sal[i],sobels_sal[i],1.0,min,max);
+                }
+
+        }
+
+			
     //********************
     // We save the results
     //********************
@@ -432,6 +490,7 @@ void Saliency::process(void)
         {
             save();
         }
+
 }
 
 void Saliency::save(void)
@@ -452,19 +511,19 @@ void Saliency::save(void)
             if(verbose) std::cout << "Saving comp_color" <<std::endl;
 
             img_temp.resize(rg_salMap._dimension);
-            Scale<ImageDouble, ImageGray8>(rg_salMap,img_temp,1.0);
+            Scale<ImageDouble, ImageGray8>(rg_salMap,img_temp);
             mirage::img::JPEG::write(img_temp,"saliency_rg.jpg",100);
             
             img_temp.resize(gr_salMap._dimension);
-            Scale<ImageDouble, ImageGray8>(gr_salMap,img_temp,1.0);
+            Scale<ImageDouble, ImageGray8>(gr_salMap,img_temp);
             mirage::img::JPEG::write(img_temp,"saliency_gr.jpg",100);
             
             img_temp.resize(by_salMap._dimension);
-            Scale<ImageDouble, ImageGray8>(by_salMap,img_temp,1.0);		
+            Scale<ImageDouble, ImageGray8>(by_salMap,img_temp);		
             mirage::img::JPEG::write(img_temp,"saliency_by.jpg",100);
             
             img_temp.resize(yb_salMap._dimension);
-            Scale<ImageDouble, ImageGray8>(yb_salMap,img_temp,1.0);		
+            Scale<ImageDouble, ImageGray8>(yb_salMap,img_temp);		
             mirage::img::JPEG::write(img_temp,"saliency_yb.jpg",100);            
         }
         
@@ -559,7 +618,7 @@ void Saliency::clamp(void)
             tmp_image.rescale(tmp_dimension);
  
             // The saliency maps are scaled when they are computed 
-            Scale<ImageDouble, ImageDouble>(tmp_image,tmp_image,1.0);
+            // Scale<ImageDouble, ImageDouble>(tmp_image,tmp_image,1.0);
 
             // And clamp the result in the layer
             ImageDouble::pixel_type sal_pxl,sal_pxl_end;
