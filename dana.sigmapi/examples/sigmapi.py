@@ -17,6 +17,7 @@ import dana.projection.profile as profile
 
 
 from glpython import window as glwindow
+from glpython.core import CM_Fire
 from dana.visualization.glpython import Figure
 
 import time, random, math
@@ -154,6 +155,7 @@ window.show_all()
 # Show network
 fig = Figure()
 win,fig = glwindow (size=(800,600), title = "Sigmapi sample",has_terminal=True,namespace=locals(),figure=fig)
-fig.network (net, style='flat', show_colorbar=False)
+fnet = fig.network (net, style='flat', show_colorbar=True)
+fnet.colorbar.cmap = CM_Fire
 win.show() 
 
