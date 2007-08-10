@@ -184,10 +184,19 @@ public:
         if(global_max != -1)
             max = global_max;
         
-        //std::cout << "Max : " << max << " - Min : " << min << std::endl;
         // We then scale the image  
-        for(src_pxl = src.begin(),res_pxl = res.begin();src_pxl != src_pxl_end; ++src_pxl,++res_pxl)
-            *res_pxl = (typename RESULT::value_type)((max_value/(max-min))*(*src_pxl-min));
+        if(max == min)
+            {
+                // TODO : Check whether or not it is correct to set all pixels to 0 when max = min
+                // ie when the image is uniform
+                for(src_pxl = src.begin(),res_pxl = res.begin();src_pxl != src_pxl_end; ++src_pxl,++res_pxl)
+                    *res_pxl = (typename RESULT::value_type)(0);                
+            }
+        else
+            {
+                for(src_pxl = src.begin(),res_pxl = res.begin();src_pxl != src_pxl_end; ++src_pxl,++res_pxl)
+                    *res_pxl = (typename RESULT::value_type)((max_value/(max-min))*(*src_pxl-min));
+            }
 	}            
 };
 

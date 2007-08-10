@@ -160,10 +160,18 @@ void Saliency::init_images(void)
 }
 
 
-void Saliency::read(char * img_filename)
+void Saliency::read(char * img_filename, int type)
 {
     // Read the image with mirage
-    mirage::img::JPEG::read(source,img_filename);
+    if(type == 0)
+        mirage::img::JPEG::read(source,img_filename);
+    else if(type == 1)
+        mirage::img::PPM::read(source,img_filename);
+    else
+        {
+            std::cerr << "type == 0 for JPEG, type == 1 for PPM" << std::endl;
+            return;
+        }
     
     // Say that an image is loaded
     image_loaded = true;
