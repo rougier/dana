@@ -160,20 +160,19 @@ void Saliency::init_images(void)
 }
 
 
-void Saliency::read(char * img_filename, int type)
+void Saliency::read(char * img_filename, char * type)
 {
-    // Read the image with mirage
-    if(type == 0)
-        mirage::img::JPEG::read(source,img_filename);
-    else if(type == 1)
+
+    if(strcmp(type,"ppm") == 0)
         mirage::img::PPM::read(source,img_filename);
+    else if(strcmp(type,"jpg") == 0)
+        mirage::img::JPEG::read(source,img_filename);
     else
         {
-            std::cerr << "type == 0 for JPEG, type == 1 for PPM" << std::endl;
+            printf("Unrecognized file type, valid types are \"jpg\" and \"ppm\" \n");
             return;
         }
     
-    // Say that an image is loaded
     image_loaded = true;
 }
 
@@ -662,7 +661,7 @@ Saliency::boost (void) {
                      init<> ("init() : Compute all the channels and save them by default")
                      )
         .def(init<bool,bool,bool,bool>(args("color","orientation","save","verbose"), "init(color,orientation,save,verbose) Specifies which channels to compute, and if we save the results \n"))
-        .def("read",&Saliency::read,"Read an image to be processed\n")
+        .def("read",&Saliency::read,"Read an image to be processed, the second argument is the type : ppm or jpg \n")
         .def("add_orientation",&Saliency::add_orientation,"Add an orientation to compute\n")
         .def("process",&Saliency::process,
              "Processes the input image and produces the conspicuity maps\n")

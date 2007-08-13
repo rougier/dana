@@ -24,6 +24,7 @@
 #include <boost/python.hpp>
 #include "mirage.h"
 
+
 #include "types.h"
 #include "convolution.h"
 #include "util.h"
@@ -104,7 +105,7 @@ namespace dana {
                 Saliency(void);
                 Saliency(bool color,bool orientation, bool save, bool verb);
                 ~Saliency(void);
-                void read(char * img_filename, int type);
+                void read(char * img_filename, char * type);
                 void add_orientation(double o) 
                     {
                         orientations.push_back(o);
