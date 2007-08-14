@@ -71,7 +71,7 @@ projection_ext = Extension (
     libraries = ['boost_python', 'boost_thread']
 )
 
-
+#______________________________________________________________________________
 def force_optimisation(compiler):
     for i in range(4):      
         try: compiler.compiler_so.remove("-O%s" % i)
@@ -102,7 +102,7 @@ class my_build_ext(build_ext):
         ext.library_dirs.append(extra_dir)
         build_ext.build_extension(self, ext)
 
-
+#______________________________________________________________________________
 setup (name='dana.core',
        version = '1.0',
        author = 'Nicolas Rougier',

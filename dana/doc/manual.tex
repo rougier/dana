@@ -1,0 +1,79 @@
+% Complete documentation on the extended LaTeX markup used for Python
+% documentation is available in ``Documenting Python'', which is part
+% of the standard documentation for Python.  It may be found online
+% at:
+%
+%     http://www.python.org/doc/current/doc/doc.html
+
+\documentclass{manual}
+
+\title{Distributed Asynchronous Numerical Adaptive computing}
+
+\author{Nicolas Rougier}
+\authoraddress{\email{Nicolas.Rougier@loria.fr}}
+\date{August 13, 2007}
+\release{1.0}
+\makeindex
+\makemodindex
+
+
+\begin{document}
+
+\maketitle
+
+% This makes the contents more accessible from the front page of the HTML.
+\ifhtml
+\chapter*{Front Matter\label{front}}
+\fi
+
+\input{copyright}
+
+\begin{abstract}
+\noindent
+D.A.N.A is a library that support distributed, asynchronous, numerical and
+adaptive computation which is closely related to both the notion of artificial
+neural networks and cellular automaton. However, there exist two major
+differences. The first difference lies in the distributed nature of computation
+that does not allow to implement "regular" neural networks which require non
+local functions. The second difference lies in the asynchronous nature of
+computations: units are evaluated in random order and updated immediately.
+\end{abstract}
+
+\tableofcontents
+
+
+
+\chapter{Installation}
+\input{installation}
+
+
+\appendix
+
+\chapter{Revision history}
+\input{revision}
+
+\chapter{About the book}
+
+\chapter{GNU Free Documentation License \label{License}}
+\input{fdl}
+
+
+%
+%  The ugly "%begin{latexonly}" pseudo-environments are really just to
+%  keep LaTeX2HTML quiet during the \renewcommand{} macros; they're
+%  not really valuable.
+%
+%  If you don't want the Module Index, you can remove all of this up
+%  until the second \input line.
+%
+%begin{latexonly}
+%\renewcommand{\indexname}{Module Index}
+%end{latexonly}
+%\input{mod\jobname.ind}		% Module Index
+
+%begin{latexonly}
+%\renewcommand{\indexname}{Index}
+%end{latexonly}
+%\input{\jobname.ind}			% Index
+
+\end{document}

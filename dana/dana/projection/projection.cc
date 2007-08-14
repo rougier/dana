@@ -47,11 +47,9 @@ Projection::connect (object data)
         //float cd = (*distance) (x0,y0,.5f,.5f);
         int src_x = int (dst_x * src_width/dst_width);
         int src_y = int (dst_y * src_height/dst_height);        
-
         for (unsigned int j=0; j<points.size(); j++) {
             int x = src_x - points[j].x;
             int y = src_y - points[j].y;
-            
             if ((x >= 0) && (y>=0) && (x<src_width) && (y<src_height)) {
                 float x1 = x/float(src_width);
                 float y1 = y/float(src_height);

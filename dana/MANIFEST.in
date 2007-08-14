@@ -5,3 +5,4 @@ recursive-include bin *
 recursive-include tests *
 recursive-include dana *.cc *.h
 recursive-include examples *.py
+recursive-include doc *.tex *.css *.py Makefile
