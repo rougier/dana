@@ -1,15 +1,11 @@
 #! /bin/env python
-
+#
 import sys, os, glob
 from HTMLParser import HTMLParser
 
 path = 'manual/'
 
-
 class Parser (HTMLParser):
-    """
-    """
-    
     title = None
     parent = None
     next = None
@@ -112,11 +108,11 @@ for filename in glob.glob( os.path.join(path, '*.html') ):
             lines.append ('</div>\n')
             lines.append ('<table width="100%" class="footer"><tr>\n')
             if parser.prev:
-                lines.append ('<td class="left" width="50%%"><a href="%s"><</a></td>\n' % (parser.prev))
+                lines.append ('<td class="left" width="50%%"><a href="%s">prev</a></td>\n' % (parser.prev))
             else:
                 lines.append ('<td class="left" width="50%"></td>\n')
             if parser.next:
-                lines.append ('<td class="right" width="50%%"><a href="%s">></a></td>\n' % (parser.next))
+                lines.append ('<td class="right" width="50%%"><a href="%s">next</a></td>\n' % (parser.next))
             else:
                 lines.append ('<td class="right" width="50%"></td>\n')       
             lines.append ('</tr></table>\n')

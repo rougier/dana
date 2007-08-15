@@ -1,60 +1,27 @@
 # Makefile to process a file LaTeX with the Python LaTeX system.
 #  Optionally processes reStructuredText files.
 
-#
-# Change the following to point to your Python source code.
-#
 PYTHON_SRC = /usr/lib/python2.5
 DOCUTILS_DIR = /usr/lib/python2.5/doc
 SRC_NAME=manual
-
-#
-# Change the following to point to your Docutils installation.
-#
 DOCUTILSTOOLS_DIR = $(DOCUTILS_DIR)/tools
-TRANSFORMDOCPY = $(DOCUTILSTOOLS_DIR)/python_latex.py \
-    --documentclass=howto
-
-#
-# Change these flags for your purposes.
-#
-#HTMLFLAGS= --image-type png --html -s 1 --favicon ../icons/pyfav.gif
-#HTMLFLAGS= --iconserver ../icons --html -s 1 --favicon ../icons/pyfav.gif
+TRANSFORMDOCPY = $(DOCUTILSTOOLS_DIR)/python_latex.py --documentclass=howto
 HTMLFLAGS=--up-title "DANA"
-
 MKHOWTO = $(PYTHON_SRC)/doc/tools/mkhowto
-
 PAPER = a4
-
-#
-# Change this to the name of your source file (without extension).
-#
-#SRC_NAME=pythonlatexsetup
-ifndef SRC_NAME
-$(error Must define SRC_NAME (no extension), e.g. make SRC_NAME=mysourcefile)
-endif
-
 TARGETS = $(SRC_NAME)/$(SRC_NAME).html
-
 FIGURES = 
 
 all:        html
 
 html:       $(TARGETS) $(FIGURES)
 
-$(SRC_NAME)/$(SRC_NAME).html: $(SRC_NAME).tex
+$(SRC_NAME)/$(SRC_NAME).html: *.tex
 	$(MKHOWTO) $(HTMLFLAGS) $(SRC_NAME).tex
 	python post_process.py
 	/bin/cp -f manual.css manual
 
-#
-# Remove or Comment out the following lines if your source file
-#   is a LaTeX file not a reST file.
-#
-#$(SRC_NAME).tex: $(SRC_NAME).txt
-#    $(TRANSFORMDOCPY) $(SRC_NAME).txt > $(SRC_NAME).tex
-
 clean:
-	rm -f *~ *.aux *.idx *.ilg *.ind *.log *.toc *.bkm *.syn *.pla *.eps *.pdf *.ps *.lof *.l2h *.tex2 *.dvi
+	-rm -f *~ *.aux *.idx *.ilg *.ind *.log *.toc *.dvi
 	-rm -f $(SRC_NAME)/*
 	-rmdir $(SRC_NAME)
