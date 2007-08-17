@@ -7,6 +7,8 @@
 
 \documentclass{manual}
 
+\usepackage[pdftex]{graphics}
+
 \title{Distributed Asynchronous Numerical Adaptive computing library}
 
 \author{Nicolas Rougier}
@@ -30,7 +32,7 @@
 
 \begin{abstract}
 \noindent
-D.A.N.A is a library that support distributed, asynchronous, numerical and
+D.A.N.A is a python library that support distributed, asynchronous, numerical and
 adaptive computation which is closely related to both the notion of artificial
 neural networks and cellular automaton. However, there exist two major
 differences. The first difference lies in the distributed nature of computation
@@ -41,11 +43,14 @@ computations: units are evaluated in random order and updated immediately.
 
 \tableofcontents
 
-
+\chapter{Concept}
+\input{concept}
 
 \chapter{Installation}
 \input{installation}
 
+\chapter{Core}
+\input{core}
 
 \appendix
 

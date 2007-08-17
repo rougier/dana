@@ -65,7 +65,7 @@ li {
 .content {
     text-align: justify;
 	padding: 24px;
-	min-height: 1000px;
+/*	min-height: 1000px; */
 	height: auto;
 	color: #333333;
 }
@@ -189,7 +189,13 @@ address                 { font-size: 80%; }
                           font-family: "lucida typewriter", lucidatypewriter,
                                        monospace;
                           font-size: 90%; }
-.verbatim               { margin-left: 2em; }
+.verbatim               {
+    margin-left: 2em;
+    background: white;
+    border: 1px dashed black;
+    padding-left: .5em;
+    padding-right: .5em;
+}
 .verbatim .footer       { padding: 0.05in;
                           font-size: 85%;
                           background-color: #99ccff;

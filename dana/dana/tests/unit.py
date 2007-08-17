@@ -17,7 +17,7 @@ import dana.core as core
 class UnitTests (unittest.TestCase):
     def setUp (self):
         self.unit = core.Unit()
-        
+    
     def testPotential (self):
         """ Check unit default potential is 0.0 """
         self.assertEqual (self.unit.potential, 0.0)
@@ -29,7 +29,6 @@ class UnitTests (unittest.TestCase):
     def testPosition (self):
         """ Check unit default position is (-1,-1) """
         self.assertEqual (self.unit.position, (-1,-1))
-
 
     def testSetPosition(self):
         """ Check unit position is read-only """
