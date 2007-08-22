@@ -14,24 +14,16 @@
 using namespace dana::core;
 
 
-// ============================================================================
-//  constructor
-// ============================================================================
 Random::Random (void) : Object()
 {
     set_seed (0);
 }
 
-// ============================================================================
-//  destructor
-// ============================================================================
 Random::~Random (void)
-{}
+{
+}
 
 
-// ============================================================================
-//  Set new seed
-// ============================================================================
 void
 Random::set_seed (unsigned int seed)
 {
@@ -39,9 +31,6 @@ Random::set_seed (unsigned int seed)
     srandom (seed);
 }
 
-// ============================================================================
-//  Get current seed
-// ============================================================================
 unsigned int
 Random::get_seed (void)
 {
@@ -49,13 +38,10 @@ Random::get_seed (void)
 }
 
 
-// ============================================================================
-//    Boost wrapping code
-// ============================================================================
-
 void
 Random::boost (void)
 {
+    using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Random> >();
  
     class_<Random>("Random",
@@ -64,16 +50,15 @@ Random::boost (void)
     "A model gathers one to several networks and environments. Evaluation is\n"
     "done first on environments then on networks."
     "\n"
-    "Attributes:\n"
-    "-----------\n"
-    " - seed : seed for a sequence of pseudo-random number"
     "\n"
     "======================================================================\n",
         init<>(
         "__init__() -- initializes Random\n")
         )
 
-        .add_property ("seed", &Random::get_seed, &Random::set_seed)
+        .add_property ("seed",
+                       &Random::get_seed, &Random::set_seed,
+                       "Seed that governs all random generators (c++ and python)")
         ;
 }
 

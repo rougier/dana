@@ -29,7 +29,7 @@ Object::~Object (void)
 
 //_________________________________________________________________________self
 ObjectPtr
-Object::self (void) {
+Object::myself (void) {
     if (_internal_weak_this.expired())
         throw RuntimeError("Shared pointer not available.");
     shared_ptr<Object> self = shared_from_this();
@@ -42,6 +42,7 @@ void
 Object::python_export (void)
 {
     using namespace boost::python;
+
     register_ptr_to_python< boost::shared_ptr<Object> >();
     register_exception_translator<RuntimeError>(&::runtime_error);
 
@@ -55,6 +56,8 @@ Object::python_export (void)
     "______________________________________________________________________\n",
     
      init<>())
-        .def_readonly ("self", &Object::self)
+        .add_property ("self",
+                       &Object::myself,
+                       "underlying shared pointer (if it exists)")
         ;
 }

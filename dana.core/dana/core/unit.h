@@ -7,7 +7,7 @@
 // License, or (at your option) any later version.
 //
 // $Id: unit.h 246 2007-07-19 10:19:18Z rougier $
-
+// ____________________________________________________________________________
 
 #ifndef __DANA_CORE_UNIT_H__
 #define __DANA_CORE_UNIT_H__
@@ -19,49 +19,77 @@
 #include "link.h"
 #include "spec.h"
 
-using namespace boost::python;
-
 namespace dana { namespace core {
 
     typedef boost::shared_ptr<class Layer> LayerPtr;
     typedef boost::shared_ptr<class Link> LinkPtr;    
     typedef boost::shared_ptr<class Unit> UnitPtr;
 
-    class Unit : public Object
-    {
-        public:
-            class Layer *        layer;
-            float                potential;
-            std::vector<LinkPtr> laterals;
-            std::vector<LinkPtr> afferents;
-            SpecPtr              spec;
-            int                  x, y;
+    // _______________________________________________________________class Unit
+    class Unit : public Object {
 
-        public:
-            Unit (float potential = 0.0f);
-            virtual ~Unit(void);
+    public:
+        // ___________________________________________________________attributes
+        float                potential;
+        SpecPtr              spec;
+        std::vector<LinkPtr> laterals;
+        std::vector<LinkPtr> afferents;
+        class Layer *        layer;
+        int                  x, y;
 
-            virtual void        connect (UnitPtr source, float weight, object data);
-            virtual void        connect (UnitPtr source, float weight);
-            virtual void        connect (LinkPtr link);
-            virtual void        clear (void);
-            virtual float       compute_dp (void);
-            virtual float       compute_dw (void);
+    public:
+        // _________________________________________________________________life
+        Unit (float potential = 0.0f);
+        virtual ~Unit (void);
 
-            virtual LayerPtr    get_layer (void);
-            virtual void        set_layer (class Layer *layer);
-            virtual int         get_x (void);
-            virtual void        set_x (int x);
-            virtual int         get_y (void);
-            virtual void        set_y (int y);
-            virtual SpecPtr     get_spec (void);
-            virtual void        set_spec (SpecPtr s);
-            virtual tuple       get_position (void);
-            virtual void        set_position (tuple position);
-            virtual void        set_position (int x, const int y);
-            virtual object      get_weights  (LayerPtr layer);
+        // _________________________________________________________________main
+        virtual float          compute_dp (void);
+        virtual float          compute_dw (void);
+        virtual void           connect (UnitPtr source, float weight,
+                                        py::object data);
+        virtual void           connect (UnitPtr source, float weight);
+        virtual void           connect (LinkPtr link);
+        virtual void           clear (void);
 
-            static void         python_export (void);
+        // ______________________________________________________________get/set
+        virtual py::object const get_weights (LayerPtr layer);
+        virtual py::list   const get_afferents (void);
+        virtual py::list   const get_laterals (void);
+        virtual float      const get_potential (void);
+        virtual void             set_potential (const float &potential);
+        virtual SpecPtr    const get_spec (void);
+        virtual void             set_spec (SpecPtr const spec);
+        virtual LayerPtr   const get_layer (void);
+        virtual void             set_layer (class Layer * const layer);
+        virtual int        const get_x (void);
+        virtual void             set_x (int const x);
+        virtual int        const get_y (void);
+        virtual void             set_y (int const y);
+        virtual py::tuple  const get_position (void);
+        virtual void             set_position (py::tuple const position);
+        virtual void             set_position (int const x, int const y);
+        
+        // ___________________________________________________________arithmetic
+        virtual Unit &     operator= (const Unit &other);
+        virtual Unit const operator+ (Unit const &other) const;
+        virtual Unit const operator- (Unit const &other) const;
+        virtual Unit const operator* (Unit const &other) const;
+        virtual Unit const operator/ (Unit const &other) const;
+        virtual Unit const operator+ (float value) const;
+        virtual Unit const operator- (float value) const;
+        virtual Unit const operator* (float value) const;
+        virtual Unit const operator/ (float value) const;
+        virtual Unit &     operator+= (Unit const &other);
+        virtual Unit &     operator-= (Unit const &other);
+        virtual Unit &     operator*= (Unit const &other);
+        virtual Unit &     operator/= (Unit const &other);
+        virtual Unit &     operator+= (float value);
+        virtual Unit &     operator-= (float value);
+        virtual Unit &     operator*= (float value);
+        virtual Unit &     operator/= (float value);
+        
+        // _______________________________________________________________export
+        static void  python_export (void);
     };
 }}
 

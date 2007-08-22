@@ -14,8 +14,6 @@
 #include <boost/python.hpp>
 #include "object.h"
 
-using namespace boost::python;
-
 
 namespace dana { namespace core {
 

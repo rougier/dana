@@ -14,9 +14,16 @@
 
 #include <string>
 #include <boost/python.hpp>
+#include <boost/python/numeric.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include <iomanip>
+#include <sstream>
+#include <cmath>
 
+
+namespace py      = boost::python;
+namespace numeric = boost::python::numeric;
 
 namespace dana { namespace core {
 
@@ -35,7 +42,7 @@ namespace dana { namespace core {
         public:
             Object (void);
             virtual ~Object (void);
-            virtual ObjectPtr self (void);
+            virtual ObjectPtr myself (void);
             static void python_export (void);
     };
 }}

@@ -17,22 +17,20 @@
 #include "object.h"
 #include "map.h"
 
-using namespace boost::python;
-
 
 namespace dana { namespace core {
 
 	typedef boost::shared_ptr<class Network> NetworkPtr;
 
     class Network : public Object {
-	    public:
-	        //  attributes
-            // ================================================================
-	        std::vector<MapPtr>  maps;         // maps composing the network
-            unsigned int         width, height;// global shape
-            unsigned long        age;          // age
-            boost::barrier *     barrier;     // thread synchronization barrier
-            object               spec;         // Specification of the network
+    public:
+        //  attributes
+        // ================================================================
+        std::vector<MapPtr>  maps;         // maps composing the network
+        unsigned int         width, height;// global shape
+        unsigned long        age;          // age
+        boost::barrier *     barrier;     // thread synchronization barrier
+        py::object               spec;         // Specification of the network
             
 	public:
             // life management 
@@ -54,7 +52,7 @@ namespace dana { namespace core {
         
             //  attribute manipulation
             // ================================================================
-            virtual object      get_shape (void);
+        virtual py::object      get_shape (void);
 
 
             //  convenience functions

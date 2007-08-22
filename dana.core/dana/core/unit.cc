@@ -7,20 +7,17 @@
 // License, or (at your option) any later version.
 //
 // $Id: unit.cc 257 2007-07-29 11:38:44Z rougier $
+// _____________________________________________________________________________
 
-#include <boost/python.hpp>
-#include <cmath>
 #include "unit.h"
-#include <numpy/arrayobject.h>
 #include "link.h"
 #include "layer.h"
 #include "map.h"
+#include <numpy/arrayobject.h>
 
-
-using namespace boost::python::numeric;
 using namespace dana::core;
 
-//_________________________________________________________________________Unit
+// _________________________________________________________________________Unit
 Unit::Unit (float potential) : Object()
 {
     this->potential = potential;
@@ -31,9 +28,263 @@ Unit::Unit (float potential) : Object()
     afferents.clear();
 }
 
-//________________________________________________________________________~Unit
+// ________________________________________________________________________~Unit
 Unit::~Unit(void)
-{}
+{
+    laterals.clear();
+    afferents.clear();
+}
+
+// ________________________________________________________________get_afferents
+py::list const
+Unit:: get_afferents (void)
+{
+    py::list l;
+    for (unsigned int i=0; i<afferents.size(); i++)
+        l.append (afferents[i]->get());
+    return l;
+}
+
+// ________________________________________________________________get_laterals
+py::list const
+Unit::get_laterals (void)
+{
+    py::list l;
+    for (unsigned int i=0; i<laterals.size(); i++)
+        l.append (laterals[i]->get());
+    return l;
+}
+
+//_________________________________________________________________get_potential
+float const
+Unit:: get_potential (void)
+{
+    return potential;
+}
+
+//_________________________________________________________________set_potential
+void
+Unit::set_potential (const float &potential)
+{
+    this->potential = potential;
+}
+
+//_____________________________________________________________________get_layer
+LayerPtr const
+Unit::get_layer (void)
+{
+    return LayerPtr (layer);
+}
+
+//_____________________________________________________________________set_layer
+void
+Unit::set_layer (Layer * const layer)
+{
+    this->layer = layer;
+}
+
+//______________________________________________________________________get_spec
+SpecPtr const
+Unit::get_spec (void)
+{
+    return SpecPtr(spec);
+}
+
+//______________________________________________________________________set_spec
+void
+Unit::set_spec (SpecPtr const spec)
+{
+    this->spec = SpecPtr(spec);
+}
+
+//__________________________________________________________________get_position
+py::tuple const
+Unit::get_position (void)
+{
+    return py::make_tuple (x,y);
+}
+
+//__________________________________________________________________set_position
+void
+Unit::set_position (py::tuple const position)
+{
+    try {
+        x = py::extract <int> (position[0])();
+        y = py::extract <int> (position[1])();
+    } catch (...) {
+        PyErr_Print();
+        return;
+    }
+}
+
+//__________________________________________________________________set_position
+void
+Unit::set_position (int const x, int const y)
+{
+    this->x = x;
+    this->y = y;
+}
+
+//_________________________________________________________________________get_x
+int const 
+Unit::get_x (void)
+{
+    return x;
+}
+
+//_________________________________________________________________________set_x
+void
+Unit::set_x (int const x)
+{
+    this->x = x;
+}
+
+//_________________________________________________________________________get_y
+int const 
+Unit::get_y (void)
+{
+    return y;
+}
+
+//_________________________________________________________________________set_y
+void
+Unit::set_y (int const y)
+{
+    this->y = y;
+}
+
+//_____________________________________________________________________operator=
+Unit &
+Unit::operator= (const Unit &other)
+{
+    if (this == &other)
+        return *this;
+    this->potential = other.potential;
+    return *this;
+}
+
+//_____________________________________________________________________operator+
+Unit const 
+Unit::operator+ (Unit const &other) const
+{
+    return Unit (potential+other.potential);
+}
+
+//_____________________________________________________________________operator-
+Unit const
+Unit::operator- (Unit const &other) const
+{
+    return Unit(potential-other.potential);
+}
+
+//_____________________________________________________________________operator*
+Unit const
+Unit::operator* (Unit const &other) const
+{
+    return Unit (potential*other.potential);
+}
+
+//_____________________________________________________________________operator/
+Unit const
+Unit::operator/ (Unit const &other) const
+{
+    return Unit (potential/other.potential);
+}
+
+//_____________________________________________________________________operator+
+Unit const
+Unit::operator+ (float value) const
+{
+    return Unit (potential + value);
+}
+
+
+//_____________________________________________________________________operator-
+Unit const
+Unit::operator- (float value) const
+{
+    return Unit (potential - value);
+}
+
+
+//_____________________________________________________________________operator*
+Unit const
+Unit::operator* (float value) const
+{
+    return Unit (potential * value);
+}
+
+
+//_____________________________________________________________________operator/
+Unit const
+Unit::operator/ (float value) const
+{
+    return Unit (potential / value);
+}
+
+//____________________________________________________________________operator+=
+Unit &
+Unit::operator+= (Unit const &other)
+{
+    potential += other.potential;
+    return *this;
+}
+
+//____________________________________________________________________operator-=
+Unit &
+Unit::operator-= (Unit const &other)
+{
+    potential -= other.potential;
+    return *this;
+}
+
+//____________________________________________________________________operator*=
+Unit &
+Unit::operator*= (Unit const &other)
+{
+    potential *= other.potential;
+    return *this;
+}
+
+//____________________________________________________________________operator/=
+Unit &
+Unit::operator/= (Unit const &other)
+{
+    potential /= other.potential;
+    return *this;
+}
+
+//____________________________________________________________________operator+=
+Unit &
+Unit::operator+= (float value)
+{
+    potential += value;
+    return *this;
+}
+
+//____________________________________________________________________operator-=
+Unit &
+Unit::operator-= (float value)
+{
+    potential -= value;
+    return *this;
+}
+
+//____________________________________________________________________operator*=
+Unit &
+Unit::operator*= (float value)
+{
+    potential *= value;
+    return *this;
+}
+
+//____________________________________________________________________operator/=
+Unit &
+Unit::operator/= (float value)
+{
+    potential /= value;
+    return *this;
+}
 
 //___________________________________________________________________compute_dp
 float
@@ -51,11 +302,11 @@ Unit::compute_dw (void)
 
 //______________________________________________________________________connect
 void
-Unit::connect (UnitPtr source, float weight, object data)
+Unit::connect (UnitPtr source, float weight, py::object data)
 {
     LinkPtr link = LinkPtr (new Link (source, weight));
 
-    if (source->layer == layer)
+    if ((source.get() == this) || ((layer) && (source->layer == layer)))
         laterals.push_back (link);
     else
         afferents.push_back (link);
@@ -65,7 +316,7 @@ Unit::connect (UnitPtr source, float weight, object data)
 void
 Unit::connect (UnitPtr source, float weight)
 {
-    connect (source, weight, object());
+    connect (source, weight, py::object());
 }
 
 //______________________________________________________________________connect
@@ -86,105 +337,28 @@ Unit::clear (void)
     afferents.clear();
 }
 
-//________________________________________________________________get/set layer
-LayerPtr
-Unit::get_layer (void)
-{
-    return LayerPtr(layer);
-}
-
-void
-Unit::set_layer (Layer *layer)
-{
-    this->layer = layer;
-}
-
-//_____________________________________________________________get/set position
-int
-Unit::get_x (void)
-{
-    return x;
-}
-
-void
-Unit::set_x (int x)
-{
-    this->x = x;
-}
-
-int
-Unit::get_y (void)
-{
-    return y;
-}
-
-void
-Unit::set_y (int y)
-{
-    this->y = y;
-}
-
-tuple
-Unit::get_position (void)
-{
-    return make_tuple (x,y);
-}
-
-void
-Unit::set_position (tuple position)
-{
-    try	{
-        x = extract< int >(position[0])();
-        y = extract< int >(position[1])();
-    } catch (...) {
-        PyErr_Print();
-        return;
-    }
-}
-
-void
-Unit::set_position (int x, int y)
-{
-    this->x = x;
-    this->y = y;
-}
-
-//_________________________________________________________________get/set spec
-SpecPtr
-Unit::get_spec (void)
-{
-    if ((spec == SpecPtr()) && (layer))
-        return layer->get_spec();
-    return SpecPtr(spec);
-}
-
-void
-Unit::set_spec (SpecPtr sepc)
-{
-    this->spec = SpecPtr(spec);
-}
 
 //__________________________________________________________________get_weights
-object
+py::object const
 Unit::get_weights (LayerPtr layer)
 {
-    if (layer == object()) {
+    if (layer == py::object()) {
         PyErr_SetString(PyExc_AssertionError, "layer is None");
-        throw_error_already_set();
-        return object();
+        py::throw_error_already_set();
+        return py::object();
     }
 
     if ((layer->map == 0) || (layer->map->width == 0)) {
         PyErr_SetString(PyExc_AssertionError, "layer has no shape");
-        throw_error_already_set();
-        return object();
+        py::throw_error_already_set();
+        return py::object();
     }
 
     unsigned int width = layer->map->width;
     unsigned int height = layer->map->height;
 
     npy_intp dims[2] = {height, width};
-    object obj(handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
+    py::object obj(py::handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
     PyArrayObject *array = (PyArrayObject *) obj.ptr();
     PyArray_FILLWBYTE(array, 0);
     
@@ -201,69 +375,163 @@ Unit::get_weights (LayerPtr layer)
             if ((unit->y > -1) && (unit->x > -1))
                 data[unit->y*width+unit->x] += wts->at(i)->weight;
     }
-    return extract<numeric::array>(obj);  
+    return py::extract<numeric::array>(obj);  
 }
+
+
+// _________________________________________________________some more arithmetic
+Unit const operator+ (float value, Unit const &other)
+{ return Unit(value+other.potential); }
+Unit const operator- (float value, Unit const &other)
+{ return Unit(value-other.potential); }
+Unit const operator* (float value, Unit const &other)
+{ return Unit(value*other.potential); }
+Unit const operator/ (float value, Unit const &other)
+{ return Unit(value/other.potential); }
+
+
+// __________________________________________________________________UnitWrapper
+//
+// This ensures that some methods are overridable from within python
+//
+class UnitWrapper:  public Unit, public py::wrapper<Unit> {
+public:
+    
+    UnitWrapper (float potential = 0.0f) : Unit (potential) {};
+
+    // _______________________________________________________________compute_dp
+    float compute_dp (void)
+    {
+        PyGILState_STATE gstate;
+        gstate = PyGILState_Ensure();
+        if (py::override compute_dp = this->get_override("compute_dp")) {
+            float result = compute_dp();
+            PyGILState_Release(gstate);
+            return result;
+        }
+        float result = Unit::compute_dp();
+        PyGILState_Release(gstate);
+        return result;        
+    }
+    float default_compute_dp() { return this->Unit::compute_dp(); }
+
+    // _______________________________________________________________compute_dw
+    float compute_dw (void)
+    {
+        PyGILState_STATE gstate;
+        gstate = PyGILState_Ensure();
+        if (py::override compute_dw = this->get_override("compute_dw")) {
+            float result = compute_dw();
+            PyGILState_Release(gstate);
+            return result;
+        }
+        float result = Unit::compute_dw();
+        PyGILState_Release(gstate);
+        return result;        
+    }
+    float default_compute_dw() { return this->Unit::compute_dw(); }
+};
 
 
 //________________________________________________________________python_export
 void
 Unit::python_export (void) {
-
     using namespace boost::python;
+
     register_ptr_to_python< boost::shared_ptr<Unit> >();
 
     import_array();
-    numeric::array::set_module_and_type("numpy", "ndarray");  
+    boost::python::numeric::array::set_module_and_type("numpy", "ndarray");
 
     // member function pointers for overloading
     void (Unit::*connect_src_data)(UnitPtr,float,object) = &Unit::connect;        
     void (Unit::*connect_src)(UnitPtr,float) = &Unit::connect;    
     void (Unit::*connect_link)(LinkPtr) = &Unit::connect;
     
-    class_<Unit, bases <Object> >("Unit",
+    class_<UnitWrapper, bases <Object>, boost::noncopyable>("Unit",
     "______________________________________________________________________\n"
     "                                                                      \n"
     "A unit is a potential that is computed on the basis of some external  \n"
     "sources that feed the unit. Those sources can be anything as long as  \n"
-    "they have some potential.                                             \n"
-    "                                                                      \n"
-    "Attributes:                                                           \n"
-    "-----------                                                           \n"
-    "   potential -- unit potential                                        \n"
-    "   position  -- unit position within layer (read only)                \n"
-    "   spec -- specification of parameters related to unit behavior       \n"
+    "they possess some potential. The potential is evaluated with a call to\n"
+    "'update_dp()' while links are updated with a call to 'update_dw()'.   \n"
+    "Note that these two methods can be overriden from within python. Unit \n"
+    "also implements the float interface and may be manipulated like any   \n"
+    "float.                                                                \n"
     "______________________________________________________________________\n",
 
     init < optional <float> > (
         (arg("potential") = 0.0f),
         "__init__ (potential=0)" ))
                 
-    .def_readwrite ("potential", &Unit::potential)
-    .def_readonly  ("position", &Unit::get_position)
-    .add_property  ("spec", &Unit::get_spec, &Unit::set_spec)
-            
-    .def ("compute_dp", &Unit::compute_dp,
-          "compute_dp() -> float\n\n"
-          "computes potential and return dp")
+        .add_property ("potential",
+                       &Unit::get_potential, &Unit::set_potential,
+                       "membrane potential")
 
-    .def ("compute_dw", &Unit::compute_dw,
-          "compute_dw() -> float\n\n"
-          "computes weights and returns dw")
+        .add_property ("position",
+                       &Unit::get_position,
+                       "position within layer (read only)")
+
+        .add_property ("spec",
+                       &Unit::get_spec, &Unit::set_spec,
+                       "specifications that governs unit potential evaluation")
+
+        .add_property ("laterals",
+                       &Unit::get_laterals,
+                       "list of lateral links (read only)")
+
+        .add_property ("afferents",
+                       &Unit::get_afferents,
+                       "list of afferent links (read only)")
+
+        .def ("weights", &Unit::get_weights,
+              "weights(layer)\n"
+              "return weights from layer as a numpy::array")
+
+        .def ("__float__", &Unit::get_potential)
+
+        .def ("compute_dp", &Unit::compute_dp, &UnitWrapper::default_compute_dp,
+              "compute_dp() -> float\n"
+              "computes potential and return dp")
+
+        .def ("compute_dw", &Unit::compute_dw, &UnitWrapper::default_compute_dw,
+              "compute_dw() -> float\n"
+              "computes weights and returns dw")
     
-    .def ("connect", connect_src)
-    .def ("connect", connect_src_data)
-    .def ("connect", connect_link,
-          "connect (source, weight, data=None)\n\n"
-          "connect to source using weight\n\n"  
-          "connect (link)\n\n"
-          "connect using link")
+        .def ("connect", connect_src)
+        .def ("connect", connect_src_data)
+        .def ("connect", connect_link,
+              "connect (source, weight, data=None)\n"
+              "connect (link)\n"
+              "connect to source using weight or connect using link")
+        
+        .def ("clear", &Unit::clear,
+              "clear ()\n"
+              "remove all links")
 
-    .def ("clear", &Unit::clear,
-          "clear ()\n\n"
-          "remove all links")
+        
+        .def(self + self)
+        .def(self + float())
+        .def(float() + self)
+        .def(self += self)
+        .def(self += float())
 
-    .def ("weights", &Unit::get_weights,
-          "weights(layer)\n\n"
-          "return weights from layer as a numpy::array")
+        .def(self - self)
+        .def(self - float())
+        .def(float() - self)
+        .def(self -= self)
+        .def(self -= float())
+
+        .def(self * self)
+        .def(self * float())
+        .def(float() * self)
+        .def(self *= self)
+        .def(self *= float())
+
+        .def(self / self)
+        .def(self / float())
+        .def(float() / self)
+        .def(self /= self)
+        .def(self /= float())            
         ;
 }

@@ -26,13 +26,13 @@ Map *Map::map = 0;
 // ============================================================================
 //  constructor
 // ============================================================================
-Map::Map (object shape, object position) : Object()
+Map::Map (py::object shape, py::object position) : Object()
 {
     layers.clear();
     network = 0;
     set_position (position);
     set_shape (shape);
-    frame = make_tuple (0,0,1,1);
+    frame = py::make_tuple (0,0,1,1);
     shuffle_index = 0;
 }
 
@@ -55,9 +55,8 @@ Map::append (LayerPtr layer)
     
     layers.push_back (LayerPtr (layer));
     layer->set_map (this);
-    for (int i=0; i < layer->size(); i++) {
+    for (int i=0; i < layer->size(); i++)
         layer->units[i]->set_position (i % width, i / width);
-    }
 }
 
 // ============================================================================
@@ -74,7 +73,7 @@ Map::get (int index)
         return LayerPtr(layers.at(i));
     } catch (...) {
         PyErr_SetString(PyExc_IndexError, "index out of range");
-        throw_error_already_set();
+        py::throw_error_already_set();
     }
     return LayerPtr();
 }
@@ -110,7 +109,7 @@ Map::unit (int x,  int y)
 //  fill layer 0
 // ============================================================================
 int
-Map::fill (object type)
+Map::fill (py::object type)
 {
     return layers[0]->fill(type);
 }
@@ -118,7 +117,7 @@ Map::fill (object type)
 // ============================================================================
 //  get layer 0 potentials as a nupy::array
 // ============================================================================
-object
+py::object
 Map::get_potentials (void) 
 {
     return layers[0]->get_potentials();
@@ -196,10 +195,10 @@ Map::set_spec (SpecPtr spec)
 // ============================================================================
 //  get shape as a tuple of int
 // ============================================================================
-object
+py::object
 Map::get_shape (void) 
 {
-    object shape = make_tuple (width, height);
+    py::object shape = py::make_tuple (width, height);
     return shape;
 }
 
@@ -207,12 +206,12 @@ Map::get_shape (void)
 //  set shape from a tuple of int
 // ============================================================================
 void
-Map::set_shape (object shape)
+Map::set_shape (py::object shape)
 {
     int w, h;
     try	{
-        w = extract< int >(shape[0])();
-        h = extract< int >(shape[1])();
+        w = py::extract< int >(shape[0])();
+        h = py::extract< int >(shape[1])();
     } catch (...) {
         PyErr_Print();
         return;
@@ -247,10 +246,10 @@ Map::set_shape (int w,  int h)
 // ============================================================================
 //  get position as a tuple of int
 // ============================================================================
-object
+py::object
 Map::get_position (void) 
 {
-    object position = make_tuple (x, y);
+    py::object position = py::make_tuple (x, y);
     return position;
 }
 
@@ -258,24 +257,24 @@ Map::get_position (void)
 //  
 // ============================================================================
 void
-Map::set_position ( object position)
+Map::set_position (py::object position)
 {
     try	{
-        int size = extract< int > (position.attr("__len__")());
-        x = extract< int >(position[0])();
-        y = extract< int >(position[1])();
+        int size = py::extract< int > (position.attr("__len__")());
+        x = py::extract< int >(position[0])();
+        y = py::extract< int >(position[1])();
         dx = 0;
         dy = 0;
         zoom = 1;
         if (size == 3) {
-            zoom = extract< int >(position[2])();
+            zoom = py::extract< int >(position[2])();
         } else if (size == 4) {
-            dx = extract< int >(position[2])();
-            dy = extract< int >(position[3])();        
+            dx = py::extract< int >(position[2])();
+            dy = py::extract< int >(position[3])();        
         } else if (size == 5) {
-            dx = extract< int >(position[2])();
-            dy = extract< int >(position[3])();        
-            zoom = extract< int >(position[4])();
+            dx = py::extract< int >(position[2])();
+            dy = py::extract< int >(position[3])();        
+            zoom = py::extract< int >(position[4])();
         }
 
     } catch (...) {
@@ -297,7 +296,7 @@ Map::set_position (int x,  int y)
 // ============================================================================
 //  
 // ============================================================================
-object
+py::object
 Map::get_frame (void) 
 {
     return frame;
@@ -307,7 +306,7 @@ Map::get_frame (void)
 //  
 // ============================================================================
 void
-Map::set_frame (object f)
+Map::set_frame (py::object f)
 {
     frame = f;
 }

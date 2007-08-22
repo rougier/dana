@@ -11,8 +11,8 @@
 #include <algorithm>
 #include "map.h"
 #include "layer.h"
-#include <numpy/arrayobject.h>
 #include "unit.h"
+#include <numpy/arrayobject.h>
 
 using namespace dana::core;
 
@@ -52,7 +52,7 @@ Layer::append (UnitPtr unit)
             unit->set_layer (this);
         } else {
             PyErr_SetString(PyExc_MemoryError, "no space left within layer");
-            throw_error_already_set();
+            py::throw_error_already_set();
         }
     } else {
         units.push_back (UnitPtr(unit));
@@ -74,7 +74,7 @@ Layer::get (const int index) const
         return units.at(i);
     } catch (...) {
         PyErr_SetString(PyExc_IndexError, "index out of range");
-        throw_error_already_set();
+        py::throw_error_already_set();
     }
     return UnitPtr();
 }
@@ -89,7 +89,7 @@ Layer::get (const int x, const int y) const
     int j = y;
     if ( (!map) || (map->width == 0)) {
         PyErr_SetString(PyExc_IndexError, "index out of range");
-        throw_error_already_set();
+        py::throw_error_already_set();
         return UnitPtr(new Unit());
     }
     
@@ -100,7 +100,7 @@ Layer::get (const int x, const int y) const
         
     if ((i >= map->width) || (j >= map->height)) {
         PyErr_SetString(PyExc_IndexError, "index out of range");
-        throw_error_already_set();
+        py::throw_error_already_set();
         return UnitPtr(new Unit());
     }
     int index = j*map->width + i;
@@ -120,24 +120,24 @@ Layer::size (void) const
 //  fill layer with objects of given type
 // ============================================================================
 int
-Layer::fill (object type)
+Layer::fill (py::object type)
 {
-    extract <UnitPtr> unit (type());
+    py::extract <UnitPtr> unit (type());
     if (!unit.check()) {
         PyErr_SetString(PyExc_TypeError,"type is not derived from unit class");
-        throw_error_already_set();
+        py::throw_error_already_set();
         return 0;
     }
     
     if ((map) && (map->width)) {
         units.clear();
         for (int i=0; i< map->width*map->height; i++) {
-            UnitPtr unit = extract <UnitPtr> (type());
+            UnitPtr unit = py::extract <UnitPtr> (type());
             append (UnitPtr(unit));
         }
      } else {
         PyErr_SetString(PyExc_AssertionError, "layer has no shape");
-        throw_error_already_set();
+        py::throw_error_already_set();
         return 0;
      }
     return units.size();
@@ -202,12 +202,11 @@ Layer::get_map (void) const
 //  set owning layer
 // ============================================================================
 void
-Layer::set_map (Map *m)
+Layer::set_map (Map *map)
 {
-    map = m;
-    
-    npy_intp dims[2] = {map->height, map->width};    
-    potentials = object(handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
+    this->map = map;
+    npy_intp dims[2] = {map->height, map->width};
+    potentials = py::object(py::handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
 }
 
 // ============================================================================
@@ -234,27 +233,27 @@ Layer::set_spec (const SpecPtr s)
 // ============================================================================
 //  Get all potentials as a numpy::array
 // ============================================================================
-object
+py::object
 Layer::get_potentials (void)
 {
     if ((map == 0) || (map->width == 0)) {
         PyErr_SetString(PyExc_AssertionError, "layer has no shape");
-        throw_error_already_set();
-        return object();
+        py::throw_error_already_set();
+        return py::object();
     }
 
     PyArrayObject *array = (PyArrayObject *) potentials.ptr();
     if ((map->height != PyArray_DIM(array, 0)) ||
         (map->width  != PyArray_DIM(array, 1))) {
         npy_intp dims[2] = {map->height, map->width};    
-        potentials = object(handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
+        potentials = py::object(py::handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
     }
     PyArray_FILLWBYTE(array, 0);
     float *data = (float *) array->data;
     for (unsigned int i=0; i<units.size(); i++)
         data[i] = units[i]->potential;
 
-    return extract<numeric::array>(potentials);
+    return py::extract<numeric::array>(potentials);
 }
 
 // ============================================================================
@@ -263,14 +262,17 @@ Layer::get_potentials (void)
 void
 Layer::boost (void)
 {
+    using namespace boost::python;    
     register_ptr_to_python< boost::shared_ptr<Layer> >();
+
     import_array();
-    numeric::array::set_module_and_type("numpy", "ndarray");  
+    boost::python::numeric::array::set_module_and_type("numpy", "ndarray");
 
     // member function pointers for overloading
     UnitPtr    (Layer::*get_index)(int) const = &Layer::get;
     UnitPtr    (Layer::*get_xy)(int, int) const = &Layer::get;
  
+
     class_<Layer, bases <Object> >("Layer",
     "======================================================================\n"
     "\n"

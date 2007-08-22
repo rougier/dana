@@ -54,10 +54,26 @@ class UnitTests (unittest.TestCase):
         """ Check unit weights computation """
         self.assertEqual (self.unit.compute_dw(), 0.0)
 
+    def testSelfConnect (self):
+        """ Check unit connect function """    
+        self.unit.connect (self.unit, 1.0)
+        self.assertEqual (self.unit.laterals, [(self.unit, 1.0)])
+
     def testConnect (self):
         """ Check unit connect function """    
         other = core.Unit()
         self.unit.connect (other, 1.0)
+        self.assertEqual (self.unit.afferents, [(other, 1.0)])
+
+    def testClear (self):
+        """ Check unit clear """
+        other = core.Unit()
+        self.unit.connect (self.unit, 1.0)
+        self.unit.connect (other, 1.0)
+        self.unit.clear()
+        self.assertEqual (self.unit.afferents, [])
+        self.assertEqual (self.unit.laterals, [])
+
 
 # Test suite
 suite = unittest.TestLoader().loadTestsFromTestCase(UnitTests)

@@ -10,9 +10,7 @@
 
 #include "spec.h"
 
-using namespace boost;
 using namespace dana::core;
-
 
 //_________________________________________________________________________Spec
 Spec::Spec (void) : Object()

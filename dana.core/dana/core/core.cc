@@ -8,8 +8,6 @@
 //
 // $Id: core.cc 245 2007-07-19 10:10:31Z rougier $
 
-#include <boost/python.hpp>
-#include <numpy/arrayobject.h>
 #include "object.h"
 #include "environment.h"
 #include "network.h"
@@ -24,9 +22,6 @@
 
 BOOST_PYTHON_MODULE(_core) {
     using namespace dana::core;
-    import_array();
-    numeric::array::set_module_and_type("numpy", "ndarray");
-  
   
     Object::python_export();
     Model::python_export();

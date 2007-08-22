@@ -7,59 +7,69 @@
 // License, or (at your option) any later version.
 //
 // $Id: link.cc 244 2007-07-19 10:09:40Z rougier $
+// _____________________________________________________________________________
 
 #include "link.h"
 #include "unit.h"
 
 using namespace dana::core;
 
-//_________________________________________________________________________Link
+// _________________________________________________________________________Link
 Link::Link ()
 {}
 
-//_________________________________________________________________________Link
+// _________________________________________________________________________Link
 Link::Link (UnitPtr source, float weight)
      : source (source), weight (weight)
 {}
 
-//________________________________________________________________________~Link
+// ________________________________________________________________________~Link
 Link::~Link (void)
 {}
 
-//_______________________________________________________________get/set source
-UnitPtr
+// __________________________________________________________________________get
+py::tuple const
+Link::get (void)
+{
+    return py::make_tuple (source, weight);
+}
+
+// ___________________________________________________________________get_source
+UnitPtr const
 Link::get_source (void)
 {
 	return source;
 }
 
+// ___________________________________________________________________set_source
 void
 Link::set_source (UnitPtr source) 
 {
     this->source = source;
 }
 
-//_______________________________________________________________get/set weight
-float
+// ___________________________________________________________________get_weight
+float const
 Link::get_weight (void)
 {
 	return weight;
 }
 
+// ___________________________________________________________________set_weight
 void
 Link::set_weight (float weight)
 {
     this->weight = weight;
 }
 
-//______________________________________________________________________compute
+// ______________________________________________________________________compute
 float
 Link::compute (void)
 {
     return source->potential * weight;
 }
 
-//________________________________________________________________python_export
+// ________________________________________________________________python_export
 void
 Link::python_export (void)
 {
@@ -69,19 +79,20 @@ Link::python_export (void)
     class_<Link> ("Link",
     "______________________________________________________________________\n"
     "                                                                      \n"
-    "A link describes the influence of a source over a target that owns    \n"
-    "the link.                                                             \n"
-    "                                                                      \n"
-    "Attributes:                                                           \n"
-    "   source -- source unit                                              \n"
-    "   weight -- weight of the link                                       \n"
+    "A link describes the influence of a source over a target that owns the\n"
+    "link.                                                                 \n"
     "______________________________________________________________________\n",
 
     init < UnitPtr, optional < float > > (
         (arg("source"),
          arg("weight") = 0.0f),
         "__init__ (source, weight=0)\n"))
-    .add_property ("source", &Link::get_source, &Link::set_source)        
-    .add_property ("weight", &Link::get_weight, &Link::set_weight)
-    ;
+
+    .add_property ("source",
+                   &Link::get_source, &Link::set_source,
+                   "source that feed the link")
+    .add_property ("weight",
+                   &Link::get_weight, &Link::set_weight,
+                   "weight of the link")
+     ;
 }

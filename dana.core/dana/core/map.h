@@ -22,44 +22,43 @@ namespace dana { namespace core {
     
     typedef boost::shared_ptr<class Map> MapPtr;
 
-    class Map : public Object
-    {
-        public:
-            //  attributes
-            // ================================================================
-            class Network *       network; // network owning this map
-            std::vector<LayerPtr> layers;  // layers composing the map
-            std::vector<std::vector<int> > shuffles;
-            int                            shuffle_index;
-            int                   width,height; // shape
-            int                   x,y;     // position
-            int                   dx, dy;  // offset
-            int                   zoom;    // zoom
-            object                frame;   // normalized position & shape
-            static unsigned long  epochs; // proxy epochs for thread evaluation
-            static Map *          map;     // proxy map for thread evaluation
-            SpecPtr               spec;    // specification for this map
-            boost::barrier *      barrier; // thread synchronization barrier
+    class Map : public Object {
+    public:
+        //  attributes
+        // ================================================================
+        class Network *       network; // network owning this map
+        std::vector<LayerPtr> layers;  // layers composing the map
+        std::vector<std::vector<int> > shuffles;
+        int                            shuffle_index;
+        int                   width,height; // shape
+        int                   x,y;     // position
+        int                   dx, dy;  // offset
+        int                   zoom;    // zoom
+        py::object                frame;   // normalized position & shape
+        static unsigned long  epochs; // proxy epochs for thread evaluation
+        static Map *          map;     // proxy map for thread evaluation
+        SpecPtr               spec;    // specification for this map
+        boost::barrier *      barrier; // thread synchronization barrier
             
         public:
-            // life management 
-            // ================================================================
-            Map (object shape    = make_tuple(0,0),
-                 object position = make_tuple(0,0,0,0,1));
-            virtual ~Map (void);
-
-            // content management
-            // ================================================================
-            virtual void       append (LayerPtr layer);
-            virtual LayerPtr   get (int index);
-            virtual int        size (void);
-            
-            // proxied management (default to layer 0)
-            // ================================================================
-            virtual UnitPtr    unit (int index);
-            virtual UnitPtr    unit (int x, int y);
-            virtual int        fill (object type);
-            virtual object     get_potentials (void);
+        // life management 
+        // ================================================================
+        Map (py::object shape    = py::make_tuple(0,0),
+             py::object position = py::make_tuple(0,0,0,0,1));
+        virtual ~Map (void);
+        
+        // content management
+        // ================================================================
+        virtual void       append (LayerPtr layer);
+        virtual LayerPtr   get (int index);
+        virtual int        size (void);
+        
+        // proxied management (default to layer 0)
+        // ================================================================
+        virtual UnitPtr    unit (int index);
+        virtual UnitPtr    unit (int x, int y);
+        virtual int        fill (py::object type);
+        virtual py::object     get_potentials (void);
 
 
             // activity management
@@ -74,14 +73,14 @@ namespace dana { namespace core {
             // ===========r====================================================
             virtual SpecPtr    get_spec (void);
             virtual void       set_spec (SpecPtr s);  
-            virtual object     get_shape (void);
-            virtual void       set_shape (object shape);
+        virtual py::object     get_shape (void);
+        virtual void       set_shape (py::object shape);
             virtual void       set_shape (int w, int h);
-            virtual object     get_position (void);
-            virtual void       set_position (object position);
+        virtual py::object     get_position (void);
+        virtual void       set_position (py::object position);
             virtual void       set_position (int x, int y);
-            virtual object     get_frame (void);
-            virtual void       set_frame (object frame);
+        virtual py::object     get_frame (void);
+        virtual void       set_frame (py::object frame);
 
         public:
             // python export

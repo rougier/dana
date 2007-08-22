@@ -10,7 +10,7 @@
 # 
 # $Id: __init__.py 166 2007-05-18 07:54:33Z rougier $
 #------------------------------------------------------------------------------
-""" core library
+""" core component
 
 From a conceptual point of view, the computational paradigm supporting the
 library is grounded on the notion of a unit that is essentially a potential
@@ -19,6 +19,16 @@ Those units are organized into layers, maps and network: a network is made
 of one to several map, a map is made of one to several layer and a layer is
 made of a set of several units. Each unit can be linked to any other unit
 (included itself) using a weighted link.
+
+  Unit
+  Link
+  Layer
+  Map
+  Network
+  Spec
+  Environment
+  Model
+  
 
 """
 
@@ -38,9 +48,4 @@ def seed (s = None):
     return _random.seed
 
 seed (12345)
-
-__all__ = ['Model', 'Environment', 'Network',
-           'Map', 'Layer', 'Unit', 'Link', 'Random',
-           'seed']
-
 

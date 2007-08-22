@@ -59,7 +59,7 @@ Network::get (const int index)
         return maps.at(i);
     } catch (...) {
         PyErr_SetString(PyExc_IndexError, "index out of range");
-        throw_error_already_set();
+        py::throw_error_already_set();
     }
     return maps.at(0);
 }
@@ -115,10 +115,10 @@ Network::clear (void)
 // ============================================================================
 //  get shape
 // ============================================================================
-object
+py::object
 Network::get_shape (void) 
 {
-    object shape = make_tuple (width, height);
+    py::object shape = py::make_tuple (width, height);
     return shape;
 }
 
@@ -202,7 +202,7 @@ Network::compute_geometry (void)
         int x = maps[i]->x - xmin;
         int y = maps[i]->y - ymin;
         
-        object frame = make_tuple (
+        py::object frame = py::make_tuple (
             (column_start[x] + maps[i]->dx) * 1.0f/w,
             (line_start[y]   + maps[i]->dy) * 1.0f/h,
             (maps[i]->width  * maps[i]->zoom )* 1.0f/w,                                   

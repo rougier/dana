@@ -13,7 +13,7 @@
 
 #include "object.h"
 
-using namespace boost::python;
+//using namespace boost::python;
 
 namespace dana { namespace core {
 
