@@ -19,6 +19,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <iomanip>
 #include <sstream>
+#include <fstream>
 #include <cmath>
 
 
@@ -37,13 +38,26 @@ namespace dana { namespace core {
     
     void runtime_error (RuntimeError const &x);
 
-    class Object : public boost::enable_shared_from_this <Object> 
-    {
-        public:
-            Object (void);
-            virtual ~Object (void);
-            virtual ObjectPtr myself (void);
-            static void python_export (void);
+    // ___________________________________________________________________Object
+    class Object : public boost::enable_shared_from_this <Object> {
+    public:
+        static unsigned int id_counter;
+        unsigned int id;
+        
+    public:
+        // _________________________________________________________________life
+        Object (void);
+        virtual ~Object (void);
+        virtual ObjectPtr myself (void);
+
+        // __________________________________________________________________I/O
+        virtual int save (const std::string filename);
+        virtual int save (std::ofstream &file);
+        virtual int load (const std::string filename);
+        virtual int load (std::ifstream &file);
+
+        // _______________________________________________________________export
+        static void python_export (void);
     };
 }}
 

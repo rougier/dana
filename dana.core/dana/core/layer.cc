@@ -128,7 +128,7 @@ Layer::fill (py::object type)
         py::throw_error_already_set();
         return 0;
     }
-    
+
     if ((map) && (map->width)) {
         units.clear();
         for (int i=0; i< map->width*map->height; i++) {

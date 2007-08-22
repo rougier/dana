@@ -43,31 +43,34 @@ namespace dana { namespace core {
         virtual ~Unit (void);
 
         // _________________________________________________________________main
-        virtual float          compute_dp (void);
-        virtual float          compute_dw (void);
-        virtual void           connect (UnitPtr source, float weight,
-                                        py::object data);
-        virtual void           connect (UnitPtr source, float weight);
-        virtual void           connect (LinkPtr link);
-        virtual void           clear (void);
+        virtual float compute_dp (void);
+        virtual float compute_dw (void);
+        virtual void  connect    (UnitPtr source, float weight, py::object data);
+        virtual void  connect    (UnitPtr source, float weight);
+        virtual void  connect    (LinkPtr link);
+        virtual void  clear      (void);
 
+        // __________________________________________________________________I/O
+        virtual int save (std::ofstream &file);
+        virtual int load (std::ifstream &file);
+        
         // ______________________________________________________________get/set
-        virtual py::object const get_weights (LayerPtr layer);
-        virtual py::list   const get_afferents (void);
-        virtual py::list   const get_laterals (void);
-        virtual float      const get_potential (void);
-        virtual void             set_potential (const float &potential);
-        virtual SpecPtr    const get_spec (void);
-        virtual void             set_spec (SpecPtr const spec);
-        virtual LayerPtr   const get_layer (void);
-        virtual void             set_layer (class Layer * const layer);
-        virtual int        const get_x (void);
-        virtual void             set_x (int const x);
-        virtual int        const get_y (void);
-        virtual void             set_y (int const y);
-        virtual py::tuple  const get_position (void);
-        virtual void             set_position (py::tuple const position);
-        virtual void             set_position (int const x, int const y);
+        virtual py::object get_weights   (LayerPtr layer);
+        virtual py::list   get_afferents (void);
+        virtual py::list   get_laterals  (void);
+        virtual float      get_potential (void);
+        virtual void       set_potential (float potential);
+        virtual SpecPtr    get_spec      (void);
+        virtual void       set_spec      (SpecPtr spec);
+        virtual LayerPtr   get_layer     (void);
+        virtual void       set_layer     (class Layer *layer);
+        virtual int        get_x         (void);
+        virtual void       set_x         (int x);
+        virtual int        get_y         (void);
+        virtual void       set_y         (int y);
+        virtual py::tuple  get_position  (void);
+        virtual void       set_position  (py::tuple position);
+        virtual void       set_position  (int x, int y);
         
         // ___________________________________________________________arithmetic
         virtual Unit &     operator= (const Unit &other);

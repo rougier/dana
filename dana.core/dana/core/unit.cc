@@ -9,6 +9,7 @@
 // $Id: unit.cc 257 2007-07-29 11:38:44Z rougier $
 // _____________________________________________________________________________
 
+#include <fstream>
 #include "unit.h"
 #include "link.h"
 #include "layer.h"
@@ -35,8 +36,29 @@ Unit::~Unit(void)
     afferents.clear();
 }
 
+// _________________________________________________________________________save
+int
+Unit::save (std::ofstream &file)
+{
+    Object::save (file);
+
+    file << "type: \"dana.core.Unit\"" << std::endl;
+    file << "id: " << id << std::endl;
+    file << "potential: " << potential << std::endl;
+    file << "nb_link: \"\"" << std::endl;    
+    
+    return 0;
+}
+
+// _________________________________________________________________________load
+int
+Unit::load (std::ifstream &file)
+{
+    return 0;
+}
+
 // ________________________________________________________________get_afferents
-py::list const
+py::list
 Unit:: get_afferents (void)
 {
     py::list l;
@@ -46,7 +68,7 @@ Unit:: get_afferents (void)
 }
 
 // ________________________________________________________________get_laterals
-py::list const
+py::list
 Unit::get_laterals (void)
 {
     py::list l;
@@ -56,7 +78,7 @@ Unit::get_laterals (void)
 }
 
 //_________________________________________________________________get_potential
-float const
+float
 Unit:: get_potential (void)
 {
     return potential;
@@ -64,13 +86,13 @@ Unit:: get_potential (void)
 
 //_________________________________________________________________set_potential
 void
-Unit::set_potential (const float &potential)
+Unit::set_potential (float potential)
 {
     this->potential = potential;
 }
 
 //_____________________________________________________________________get_layer
-LayerPtr const
+LayerPtr
 Unit::get_layer (void)
 {
     return LayerPtr (layer);
@@ -78,13 +100,13 @@ Unit::get_layer (void)
 
 //_____________________________________________________________________set_layer
 void
-Unit::set_layer (Layer * const layer)
+Unit::set_layer (Layer *layer)
 {
     this->layer = layer;
 }
 
 //______________________________________________________________________get_spec
-SpecPtr const
+SpecPtr
 Unit::get_spec (void)
 {
     return SpecPtr(spec);
@@ -92,13 +114,13 @@ Unit::get_spec (void)
 
 //______________________________________________________________________set_spec
 void
-Unit::set_spec (SpecPtr const spec)
+Unit::set_spec (SpecPtr spec)
 {
     this->spec = SpecPtr(spec);
 }
 
 //__________________________________________________________________get_position
-py::tuple const
+py::tuple
 Unit::get_position (void)
 {
     return py::make_tuple (x,y);
@@ -106,7 +128,7 @@ Unit::get_position (void)
 
 //__________________________________________________________________set_position
 void
-Unit::set_position (py::tuple const position)
+Unit::set_position (py::tuple position)
 {
     try {
         x = py::extract <int> (position[0])();
@@ -119,14 +141,14 @@ Unit::set_position (py::tuple const position)
 
 //__________________________________________________________________set_position
 void
-Unit::set_position (int const x, int const y)
+Unit::set_position (int x, int y)
 {
     this->x = x;
     this->y = y;
 }
 
 //_________________________________________________________________________get_x
-int const 
+int 
 Unit::get_x (void)
 {
     return x;
@@ -134,13 +156,13 @@ Unit::get_x (void)
 
 //_________________________________________________________________________set_x
 void
-Unit::set_x (int const x)
+Unit::set_x (int x)
 {
     this->x = x;
 }
 
 //_________________________________________________________________________get_y
-int const 
+int 
 Unit::get_y (void)
 {
     return y;
@@ -148,7 +170,7 @@ Unit::get_y (void)
 
 //_________________________________________________________________________set_y
 void
-Unit::set_y (int const y)
+Unit::set_y (int y)
 {
     this->y = y;
 }
@@ -339,7 +361,7 @@ Unit::clear (void)
 
 
 //__________________________________________________________________get_weights
-py::object const
+py::object
 Unit::get_weights (LayerPtr layer)
 {
     if (layer == py::object()) {
