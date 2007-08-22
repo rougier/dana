@@ -42,10 +42,10 @@ Unit::save (std::ofstream &file)
 {
     Object::save (file);
 
-    file << "type: \"dana.core.Unit\"" << std::endl;
+    file << "type: dana.core.Unit" << std::endl;
     file << "id: " << id << std::endl;
     file << "potential: " << potential << std::endl;
-    file << "nb_link: \"\"" << std::endl;    
+    file << "nb_link: 0" << std::endl;    
     
     return 0;
 }

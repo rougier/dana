@@ -71,11 +71,11 @@ Object::save (const std::string filename)
     std::string comment = "";
 
     file << "DANA file" << std::endl;
-    file << "version: \"" << version << "\"" << std::endl;
-    file << "type:    \"" << type    << "\"" << std::endl;
-    file << "date:    \"" << date    << "\"" << std::endl;
-    file << "author:  \"" << login   << "\"" << std::endl;
-    file << "comment: \"" << comment << "\"" << std::endl;
+    file << "version: " << version << std::endl;
+    file << "type:    " << type    << std::endl;
+    file << "date:    " << date    << std::endl;
+    file << "author:  " << login   << std::endl;
+    file << "comment: " << comment << std::endl;
     file << std::endl;
 
     save (file);
