@@ -11,6 +11,7 @@
 #include <ctime>
 #include <unistd.h>
 #include "object.h"
+#include "xml.h"
 
 using namespace dana::core;
 using namespace boost;
@@ -49,7 +50,7 @@ int
 Object::save (const std::string filename)
 {
     std::ofstream file (filename.c_str());
-
+  
     // Get time
     time_t rawtime;
     struct tm * timeinfo;
@@ -69,16 +70,16 @@ Object::save (const std::string filename)
 
     // Get comment
     std::string comment = "";
+    
+    //    file << "DANA file" << std::endl;
+    //    file << "version: " << version << std::endl;
+    //     file << "type:    " << type    << std::endl;
+    //     file << "date:    " << date    << std::endl;
+    //     file << "author:  " << login   << std::endl;
+    //     file << "comment: " << comment << std::endl;
+    //     file << std::endl;
 
-    file << "DANA file" << std::endl;
-    file << "version: " << version << std::endl;
-    file << "type:    " << type    << std::endl;
-    file << "date:    " << date    << std::endl;
-    file << "author:  " << login   << std::endl;
-    file << "comment: " << comment << std::endl;
-    file << std::endl;
-
-    save (file);
+    //save (file);
     file.close();
     return 0;
 }
