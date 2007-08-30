@@ -15,17 +15,41 @@
 using namespace dana::core;
 
 // _________________________________________________________________________Link
-Link::Link ()
+Link::Link () : Object()
 {}
 
 // _________________________________________________________________________Link
 Link::Link (UnitPtr source, float weight)
-     : source (source), weight (weight)
+    : Object(), source (source), weight (weight)
 {}
 
 // ________________________________________________________________________~Link
 Link::~Link (void)
 {}
+
+// ________________________________________________________________________write
+int
+Link::write (xmlTextWriterPtr writer)
+{
+    xmlTextWriterWriteFormatAttribute (writer,
+                                       BAD_CAST "source", "%d", source->id);
+    xmlTextWriterWriteFormatAttribute (writer,
+                                       BAD_CAST "weight", "%f", weight);
+
+    return 0;
+}
+
+// _________________________________________________________________________read
+int
+Link::read (xmlTextReaderPtr reader)
+{
+    
+    printf("source: %s\n",  read_attribute (reader, "source").c_str());
+    printf("weight: %s\n", read_attribute (reader, "weight").c_str());
+    
+    xmlTextReaderNext(reader);
+    return 0;
+}
 
 // __________________________________________________________________________get
 py::tuple const
@@ -76,14 +100,14 @@ Link::python_export (void)
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Link> >();
    
-    class_<Link> ("Link",
+    class_<Link, bases < Object> > ("Link",
     "______________________________________________________________________\n"
     "                                                                      \n"
     "A link describes the influence of a source over a target that owns the\n"
     "link.                                                                 \n"
     "______________________________________________________________________\n",
 
-    init < UnitPtr, optional < float > > (
+    init <optional <UnitPtr, float> > (
         (arg("source"),
          arg("weight") = 0.0f),
         "__init__ (source, weight=0)\n"))

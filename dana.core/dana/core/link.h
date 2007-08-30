@@ -21,12 +21,13 @@ namespace dana { namespace core {
     typedef boost::shared_ptr<class Unit>  UnitPtr;
     typedef boost::shared_ptr<class Link>  LinkPtr;
 
-    // _______________________________________________________________class Unit
-    class Link {
+    // _______________________________________________________________class Link
+    class Link : public Object {
         // ___________________________________________________________attributes
     public:
-        UnitPtr	source;
-        float	weight;
+        UnitPtr	          source;
+        unsigned long int source_id;
+        float	          weight;
 
     public:
         // _________________________________________________________________life
@@ -36,6 +37,10 @@ namespace dana { namespace core {
 
         // _________________________________________________________________main
         virtual float              compute (void);
+
+        // __________________________________________________________________I/O
+        virtual int write (xmlTextWriterPtr writer);
+        virtual int read  (xmlTextReaderPtr reader);
 
         // ______________________________________________________________get/set
         virtual py::tuple    const get (void);

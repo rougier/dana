@@ -46,12 +46,26 @@ Object::myself (void) {
     return self;
 }
 
-// _________________________________________________________________________save
+// ________________________________________________________________________write
 int
-Object::save (const std::string filename,
-              const std::string base,
-              const std::string klass,
-              const std::string module)
+Object::write (xmlTextWriterPtr writer)
+{
+    return 0;
+}
+
+// _________________________________________________________________________read
+int
+Object::read (xmlTextReaderPtr reader)
+{
+    return 0;
+}
+
+// ________________________________________________________________________write
+int
+Object::write (const std::string filename,
+               const std::string base,
+               const std::string klass,
+               const std::string module)
 {
     xmlTextWriterPtr writer;
     std::string uri = filename; //+ ".gz";
@@ -100,7 +114,9 @@ Object::save (const std::string filename,
     xmlTextWriterWriteAttribute (writer, BAD_CAST "class",  BAD_CAST klass.c_str());
     xmlTextWriterWriteAttribute (writer, BAD_CAST "module", BAD_CAST module.c_str());
     xmlTextWriterWriteFormatAttribute (writer, BAD_CAST "id", "%d", id);
-    save (writer);    
+
+    write (writer);    
+
     // </Object>
     xmlTextWriterEndElement (writer);
 
@@ -111,28 +127,30 @@ Object::save (const std::string filename,
     return 0;
 }
 
-// _________________________________________________________________________save
-int
-Object::save (xmlTextWriterPtr writer)
+// ________________________________________________________________________write
+void
+Object::write_element (xmlTextWriterPtr writer,
+                       std::string basetype,
+                       ObjectPtr object)
 {
-    return 0;
-}
+    py::object obj (object->myself());
+    py::object obj_class = obj.attr("__class__");
+    std::string klass  = py::extract <std::string> (obj_class.attr("__name__"));
+    std::string module = py::extract <std::string> (obj.attr("__module__"));
 
-// _______________________________________________________________read_attribute
-std::string
-Object::read_attribute (xmlTextReaderPtr reader, std::string name) {
-    xmlChar *tmp = xmlTextReaderGetAttribute (reader, BAD_CAST name.c_str());
-    if (tmp != NULL) {
-        std::string value = (char *) tmp;
-        xmlFree (tmp);
-        return value;
-    }
-    return std::string("");
+    xmlTextWriterStartElement (writer,
+                               BAD_CAST basetype.c_str());
+    xmlTextWriterWriteAttribute (writer,
+                                 BAD_CAST "class",  BAD_CAST klass.c_str());
+    xmlTextWriterWriteAttribute (writer,
+                                 BAD_CAST "module", BAD_CAST module.c_str());
+    xmlTextWriterWriteFormatAttribute (writer,
+                                       BAD_CAST "id", "%d", object->id);
 }
 
 // _________________________________________________________________________load
 int
-Object::load (const std::string filename,
+Object::read (const std::string filename,
               const std::string base,
               const std::string klass,
               const std::string module)
@@ -160,10 +178,8 @@ Object::load (const std::string filename,
                 printf("Author: %s\n",  author.c_str());
             }
             
-            if ((xmlTextReaderNodeType(reader) == XML_ELEMENT_NODE) && (name == "Unit")) {
-                printf("class: %s\n", read_attribute (reader, "class").c_str());
-                printf("module: %s\n", read_attribute (reader, "module").c_str());
-                load (reader);
+            else if ((xmlTextReaderNodeType(reader) == XML_ELEMENT_NODE)) {
+                read (reader);
             }
             ret = xmlTextReaderRead(reader);
         }
@@ -178,11 +194,18 @@ Object::load (const std::string filename,
     return 0;
 }
 
-// _________________________________________________________________________load
-int
-Object::load (xmlTextReaderPtr reader)
+// _______________________________________________________________read_attribute
+std::string
+Object::read_attribute (xmlTextReaderPtr reader,
+                        std::string name)
 {
-    return 0;
+    xmlChar *tmp = xmlTextReaderGetAttribute (reader, BAD_CAST name.c_str());
+    if (tmp != NULL) {
+        std::string value = (char *) tmp;
+        xmlFree (tmp);
+        return value;
+    }
+    return std::string("");
 }
 
 // ________________________________________________________________python_export
@@ -194,10 +217,10 @@ Object::python_export (void)
     register_ptr_to_python< boost::shared_ptr<Object> >();
     register_exception_translator<RuntimeError>(&::runtime_error);
 
-    int (Object::*save)(const std::string, const std::string,
-                        const std::string, const std::string ) = &Object::save;
-    int (Object::*load)(const std::string, const std::string,
-                        const std::string, const std::string ) = &Object::load;
+    int (Object::*write)(const std::string, const std::string,
+                        const std::string, const std::string ) = &Object::write;
+    int (Object::*read)(const std::string, const std::string,
+                        const std::string, const std::string ) = &Object::read;
 
     class_<Object> ("Object", 
     "______________________________________________________________________\n"
@@ -213,9 +236,9 @@ Object::python_export (void)
                        &Object::myself,
                        "underlying shared pointer (if it exists)")
 
-        .def ("save", save,
-              "save(filename) -> status")
-        .def ("load", load,
-              "load(filename) -> status")
+        .def ("write", write,
+              "write(filename) -> status")
+        .def ("read", read,
+              "read(filename) -> status")
         ;
 }

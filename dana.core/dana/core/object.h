@@ -53,18 +53,24 @@ namespace dana { namespace core {
         virtual ObjectPtr myself (void);
 
         // __________________________________________________________________I/O
-        virtual std::string read_attribute (xmlTextReaderPtr reader,
-                                            std::string name);
-        virtual int save (const std::string filename,
-                          const std::string base,
-                          const std::string klass,
-                          const std::string module);
-        virtual int save (xmlTextWriterPtr writer);
-        virtual int load (const std::string filename,
-                          const std::string base,
-                          const std::string klass,
-                          const std::string module);
-        virtual int load (xmlTextReaderPtr reader);
+        virtual int         write (xmlTextWriterPtr writer);
+        virtual int         read (xmlTextReaderPtr reader);
+
+        virtual int         write (const std::string filename,
+                                   const std::string base,
+                                   const std::string klass,
+                                   const std::string module);
+        virtual void        write_element (xmlTextWriterPtr writer,
+                                           std::string basetype,
+                                           ObjectPtr object);
+
+        virtual int         read  (const std::string filename,
+                                   const std::string base,
+                                   const std::string klass,
+                                   const std::string module);
+
+        virtual std::string read_attribute   (xmlTextReaderPtr reader,
+                                              std::string name);
 
         // _______________________________________________________________export
         static void python_export (void);

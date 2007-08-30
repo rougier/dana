@@ -15,6 +15,7 @@
 #include "layer.h"
 #include "map.h"
 #include <numpy/arrayobject.h>
+#include <numpy/arrayobject.h>
 
 using namespace dana::core;
 
@@ -36,23 +37,71 @@ Unit::~Unit(void)
     afferents.clear();
 }
 
-// _________________________________________________________________________save
+// ________________________________________________________________________write
 int
-Unit::save (xmlTextWriterPtr writer)
+Unit::write (xmlTextWriterPtr writer)
 {
     xmlTextWriterWriteFormatAttribute (writer, BAD_CAST "potential", "%f", potential);
+
+    for (unsigned int i=0; i< laterals.size(); i++) {
+        write_element (writer, "Link", laterals[i]);
+
+        laterals[i]->write(writer);
         
+        xmlTextWriterEndElement (writer);
+    }
+
+    for (unsigned int i=0; i< afferents.size(); i++) {
+        write_element (writer, "Link", afferents[i]);
+
+        afferents[i]->write(writer);
+
+        xmlTextWriterEndElement (writer);
+    }
+
     return 0;
 }
 
-// _________________________________________________________________________load
+// _________________________________________________________________________read
 int
-Unit::load (xmlTextReaderPtr reader)
+Unit::read (xmlTextReaderPtr reader)
 {
     
     printf("id: %s\n", read_attribute (reader, "id").c_str());
     printf("potential: %s\n", read_attribute (reader, "potential").c_str());
 
+
+    int ret = 1;
+    while (ret == 1) {
+        std::string name = (char *) xmlTextReaderConstName(reader);
+
+        if ((xmlTextReaderNodeType(reader) == XML_ELEMENT_DECL) && (name == "Unit"))
+            return 0;
+        
+        if ((xmlTextReaderNodeType(reader) == XML_ELEMENT_NODE) && (name == "Link")) {
+            std::string klassname  = read_attribute (reader, "class");
+            std::string modulename = read_attribute (reader, "module");
+
+            // Retrieve the main module
+            py::object main = py::import("__main__");
+  
+            // Retrieve the main module's namespace
+            py::object global (main.attr("__dict__"));
+
+            // Build python code to create the requested Object (some Link)
+            std::string code = std::string ("import ") + modulename + std::string ("\n");
+            code += std::string("__dana_generated_object = ")
+                + modulename + std::string(".") + klassname + std::string ("()\n");
+
+            // Execute code
+            py::exec (code.c_str(), global, global);            
+
+            LinkPtr link = py::extract<LinkPtr>(global["__dana_generated_object"]);
+        }
+        ret = xmlTextReaderRead(reader);
+    }
+    
+    xmlTextReaderNext(reader);
     return 0;
 }
 

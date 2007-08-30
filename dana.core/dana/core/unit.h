@@ -51,8 +51,8 @@ namespace dana { namespace core {
         virtual void  clear      (void);
 
         // __________________________________________________________________I/O
-        virtual int save (xmlTextWriterPtr writer);
-        virtual int load (xmlTextReaderPtr reader);
+        virtual int write (xmlTextWriterPtr writer);
+        virtual int read  (xmlTextReaderPtr reader);
         
         // ______________________________________________________________get/set
         virtual py::object get_weights   (LayerPtr layer);

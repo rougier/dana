@@ -52,28 +52,28 @@ def seed (s = None):
 seed (12345)
 
 
-Object.__save = Object.save
-def __save (self, filename):
-    " Proxy save function for Object"
+Object.__write = Object.write
+def __write (self, filename):
+    " Proxy write function for Object"
     # Get core type for object (the one above core.Object)
     derived = self.__class__
     base    = self.__class__
     while base is not Object:
         derived = base
         base = base.__bases__[0]        
-    self.__save (filename, derived.__name__,
+    self.__write (filename, derived.__name__,
                  self.__class__.__name__, self.__module__)
-Object.save = __save
+Object.write = __write
 
-Object.__load = Object.load
-def __load (self, filename):
-    " Proxy load function for Object"
+Object.__read = Object.read
+def __read (self, filename):
+    " Proxy read function for Object"
     # Get core type for object (the one above core.Object)
     derived = self.__class__
     base    = self.__class__
     while base is not Object:
         derived = base
         base = base.__bases__[0]
-    self.__load (filename, derived.__name__,
+    self.__read (filename, derived.__name__,
                  self.__class__.__name__, self.__module__)
-Object.load = __load
+Object.read = __read
