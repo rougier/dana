@@ -21,6 +21,7 @@
 #include <sstream>
 #include <fstream>
 #include <cmath>
+#include <libxml/xmlwriter.h>
 
 
 namespace py      = boost::python;
@@ -51,8 +52,11 @@ namespace dana { namespace core {
         virtual ObjectPtr myself (void);
 
         // __________________________________________________________________I/O
-        virtual int save (const std::string filename);
-        virtual int save (std::ofstream &file);
+        virtual int save (const std::string filename,
+                          const std::string base,
+                          const std::string klass,
+                          const std::string module);
+        virtual int save (xmlTextWriterPtr writer);
         virtual int load (const std::string filename);
         virtual int load (std::ifstream &file);
 

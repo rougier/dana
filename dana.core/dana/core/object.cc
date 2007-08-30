@@ -10,8 +10,9 @@
 
 #include <ctime>
 #include <unistd.h>
+#include <iostream>
 #include "object.h"
-#include <libxml/xmlwriter.h>
+
 
 using namespace dana::core;
 using namespace boost;
@@ -47,14 +48,23 @@ Object::myself (void) {
 
 // _________________________________________________________________________save
 int
-Object::save (const std::string filename)
+Object::save (const std::string filename,
+              const std::string base,
+              const std::string klass,
+              const std::string module)
 {
-    XMLNode main = XMLNode::createXMLTopNode("xml",TRUE);
-    main.addAttribute("version","1.0");
+//     py::object me(meme);
+//     py::object klass = me.attr("__class__");
+//     std::string klass_name = py::extract <std::string>  (klass.attr("__name__"));
+//     std::string module_name = py::extract <std::string> (me.attr("__module__"));
+//     std::string fullname = module_name + std::string (".") + klass_name;
+//     std::cout << "Object type: " << fullname << std::endl;
 
-    XMLNode node = main.addChild ("dana");
+    
+    xmlTextWriterPtr writer;
+    std::string uri = filename; //+ ".gz";
 
-    //    std::ofstream file (filename.c_str());
+    // Collect information
 
     // Get time
     time_t rawtime;
@@ -69,40 +79,58 @@ Object::save (const std::string filename)
 
     // Get type
     std::string type = "archive";
-
+    
     // Get version
     std::string version = "1.0";
-
+    
     // Get comment
     std::string comment = "";
+    
+    // Actual save
+    writer = xmlNewTextWriterFilename (uri.c_str(), 0);
+    if (writer == NULL) {
+        printf ("Error creating the xml writer\n");
+        return 1;
+    }
+    xmlTextWriterSetIndent (writer, 1);
+    xmlTextWriterSetIndentString (writer, BAD_CAST "    ");    
+    xmlTextWriterStartDocument (writer, NULL, "utf-8", NULL);
 
-    node = node.addChild ("header");
-    node.addAttribute ("version", version.c_str());
-    node.addAttribute ("type", type.c_str());
-    node.addAttribute ("date", date.c_str());
-    node.addAttribute ("author", author.c_str());
-    node.addAttribute ("comment", comment.c_str());
+    // <dana>
+    xmlTextWriterStartElement (writer, BAD_CAST "dana");
+
+    // <meta>
+    xmlTextWriterStartElement(writer, BAD_CAST "meta");
+
+    xmlTextWriterWriteFormatElement (writer, BAD_CAST "version", "%s", BAD_CAST version.c_str());
+    xmlTextWriterWriteFormatElement (writer, BAD_CAST "type",    "%s", BAD_CAST type.c_str());
+    xmlTextWriterWriteFormatElement (writer, BAD_CAST "date",    "%s", BAD_CAST date.c_str());
+    xmlTextWriterWriteFormatElement (writer, BAD_CAST "author",  "%s", BAD_CAST author.c_str());
+    
+    // </meta>
+    xmlTextWriterEndElement(writer);
+
         
-    
-    main.writeToFile (filename.c_str());
+    // <Object>
+    xmlTextWriterStartElement (writer, BAD_CAST base.c_str());
+    xmlTextWriterWriteAttribute (writer, BAD_CAST "class",  BAD_CAST klass.c_str());
+    xmlTextWriterWriteAttribute (writer, BAD_CAST "module", BAD_CAST module.c_str());
 
+    save (writer);
     
-    //    file << "DANA file" << std::endl;
-    //    file << "version: " << version << std::endl;
-    //     file << "type:    " << type    << std::endl;
-    //     file << "date:    " << date    << std::endl;
-    //     file << "author:  " << login   << std::endl;
-    //     file << "comment: " << comment << std::endl;
-    //     file << std::endl;
+    // </Object>
+    xmlTextWriterEndElement (writer);
 
-    //save (file);
-    //    file.close();
+    // </dana>
+    xmlTextWriterEndDocument(writer);
+    
+    xmlFreeTextWriter(writer);
     return 0;
 }
 
 // _________________________________________________________________________save
 int
-Object::save (std::ofstream &file)
+Object::save (xmlTextWriterPtr writer)
 {
     return 0;
 }
@@ -130,7 +158,8 @@ Object::python_export (void)
     register_ptr_to_python< boost::shared_ptr<Object> >();
     register_exception_translator<RuntimeError>(&::runtime_error);
 
-    int (Object::*save)(const std::string) = &Object::save;
+    int (Object::*save)(const std::string, const std::string,
+                        const std::string, const std::string ) = &Object::save;
     int (Object::*load)(const std::string) = &Object::load;
 
     class_<Object> ("Object", 

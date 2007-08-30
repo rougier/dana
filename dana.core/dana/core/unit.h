@@ -51,7 +51,7 @@ namespace dana { namespace core {
         virtual void  clear      (void);
 
         // __________________________________________________________________I/O
-        virtual int save (std::ofstream &file);
+        virtual int save (xmlTextWriterPtr writer);
         virtual int load (std::ifstream &file);
         
         // ______________________________________________________________get/set

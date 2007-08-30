@@ -9,7 +9,7 @@
 // $Id: unit.cc 257 2007-07-29 11:38:44Z rougier $
 // _____________________________________________________________________________
 
-#include <fstream>
+#include <iostream>
 #include "unit.h"
 #include "link.h"
 #include "layer.h"
@@ -38,14 +38,9 @@ Unit::~Unit(void)
 
 // _________________________________________________________________________save
 int
-Unit::save (std::ofstream &file)
+Unit::save (xmlTextWriterPtr writer)
 {
-    Object::save (file);
-
-    file << "type: dana.core.Unit" << std::endl;
-    file << "id: " << id << std::endl;
-    file << "potential: " << potential << std::endl;
-    file << "nb_link: 0" << std::endl;    
+    xmlTextWriterWriteFormatElement (writer, BAD_CAST "potential", "%f", potential);
     
     return 0;
 }
