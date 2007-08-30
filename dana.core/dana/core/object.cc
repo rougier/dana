@@ -11,7 +11,7 @@
 #include <ctime>
 #include <unistd.h>
 #include "object.h"
-#include "xml.h"
+#include <libxml/xmlwriter.h>
 
 using namespace dana::core;
 using namespace boost;
@@ -49,8 +49,13 @@ Object::myself (void) {
 int
 Object::save (const std::string filename)
 {
-    std::ofstream file (filename.c_str());
-  
+    XMLNode main = XMLNode::createXMLTopNode("xml",TRUE);
+    main.addAttribute("version","1.0");
+
+    XMLNode node = main.addChild ("dana");
+
+    //    std::ofstream file (filename.c_str());
+
     // Get time
     time_t rawtime;
     struct tm * timeinfo;
@@ -59,8 +64,8 @@ Object::save (const std::string filename)
     std::string date = asctime(timeinfo);
     date.erase (date.size()-1);   
 
-    // Get login name
-    std::string login = getlogin();
+    // Get author name
+    std::string author = getlogin();
 
     // Get type
     std::string type = "archive";
@@ -70,6 +75,17 @@ Object::save (const std::string filename)
 
     // Get comment
     std::string comment = "";
+
+    node = node.addChild ("header");
+    node.addAttribute ("version", version.c_str());
+    node.addAttribute ("type", type.c_str());
+    node.addAttribute ("date", date.c_str());
+    node.addAttribute ("author", author.c_str());
+    node.addAttribute ("comment", comment.c_str());
+        
+    
+    main.writeToFile (filename.c_str());
+
     
     //    file << "DANA file" << std::endl;
     //    file << "version: " << version << std::endl;
@@ -80,7 +96,7 @@ Object::save (const std::string filename)
     //     file << std::endl;
 
     //save (file);
-    file.close();
+    //    file.close();
     return 0;
 }
 

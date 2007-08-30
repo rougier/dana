@@ -46,7 +46,7 @@
 //    'XMLNode::openFileHelper' : cannot convert parameter 2 from 'const char [5]' to 'const wchar_t *'
 // The _XMLWIDECHAR preprocessor variable force the XMLParser library into either utf16/32-mode (the proprocessor variable
 // must be defined) or utf8-mode(the pre-processor variable must be undefined).
-#define _XMLWIDECHAR
+//#define _XMLWIDECHAR
 #endif
 
 #if defined(WIN32) || defined(UNDER_CE)
