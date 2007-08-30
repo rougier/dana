@@ -40,15 +40,19 @@ Unit::~Unit(void)
 int
 Unit::save (xmlTextWriterPtr writer)
 {
-    xmlTextWriterWriteFormatElement (writer, BAD_CAST "potential", "%f", potential);
-    
+    xmlTextWriterWriteFormatAttribute (writer, BAD_CAST "potential", "%f", potential);
+        
     return 0;
 }
 
 // _________________________________________________________________________load
 int
-Unit::load (std::ifstream &file)
+Unit::load (xmlTextReaderPtr reader)
 {
+    
+    printf("id: %s\n", read_attribute (reader, "id").c_str());
+    printf("potential: %s\n", read_attribute (reader, "potential").c_str());
+
     return 0;
 }
 

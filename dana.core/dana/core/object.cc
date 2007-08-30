@@ -34,7 +34,7 @@ Object::~Object (void)
 {}
 
 // ___________________________________________________________________id_counter
-unsigned int Object::id_counter = 1;
+unsigned long int Object::id_counter = 1;
 
 // _______________________________________________________________________myself
 ObjectPtr
@@ -53,14 +53,6 @@ Object::save (const std::string filename,
               const std::string klass,
               const std::string module)
 {
-//     py::object me(meme);
-//     py::object klass = me.attr("__class__");
-//     std::string klass_name = py::extract <std::string>  (klass.attr("__name__"));
-//     std::string module_name = py::extract <std::string> (me.attr("__module__"));
-//     std::string fullname = module_name + std::string (".") + klass_name;
-//     std::cout << "Object type: " << fullname << std::endl;
-
-    
     xmlTextWriterPtr writer;
     std::string uri = filename; //+ ".gz";
 
@@ -98,26 +90,17 @@ Object::save (const std::string filename,
 
     // <dana>
     xmlTextWriterStartElement (writer, BAD_CAST "dana");
+    xmlTextWriterWriteAttribute (writer, BAD_CAST "version",  BAD_CAST version.c_str());
+    xmlTextWriterWriteAttribute (writer, BAD_CAST "type",  BAD_CAST type.c_str());
+    xmlTextWriterWriteAttribute (writer, BAD_CAST "date",  BAD_CAST date.c_str());
+    xmlTextWriterWriteAttribute (writer, BAD_CAST "author",  BAD_CAST author.c_str());
 
-    // <meta>
-    xmlTextWriterStartElement(writer, BAD_CAST "meta");
-
-    xmlTextWriterWriteFormatElement (writer, BAD_CAST "version", "%s", BAD_CAST version.c_str());
-    xmlTextWriterWriteFormatElement (writer, BAD_CAST "type",    "%s", BAD_CAST type.c_str());
-    xmlTextWriterWriteFormatElement (writer, BAD_CAST "date",    "%s", BAD_CAST date.c_str());
-    xmlTextWriterWriteFormatElement (writer, BAD_CAST "author",  "%s", BAD_CAST author.c_str());
-    
-    // </meta>
-    xmlTextWriterEndElement(writer);
-
-        
     // <Object>
     xmlTextWriterStartElement (writer, BAD_CAST base.c_str());
     xmlTextWriterWriteAttribute (writer, BAD_CAST "class",  BAD_CAST klass.c_str());
     xmlTextWriterWriteAttribute (writer, BAD_CAST "module", BAD_CAST module.c_str());
-
-    save (writer);
-    
+    xmlTextWriterWriteFormatAttribute (writer, BAD_CAST "id", "%d", id);
+    save (writer);    
     // </Object>
     xmlTextWriterEndElement (writer);
 
@@ -135,16 +118,69 @@ Object::save (xmlTextWriterPtr writer)
     return 0;
 }
 
+// _______________________________________________________________read_attribute
+std::string
+Object::read_attribute (xmlTextReaderPtr reader, std::string name) {
+    xmlChar *tmp = xmlTextReaderGetAttribute (reader, BAD_CAST name.c_str());
+    if (tmp != NULL) {
+        std::string value = (char *) tmp;
+        xmlFree (tmp);
+        return value;
+    }
+    return std::string("");
+}
+
 // _________________________________________________________________________load
 int
-Object::load (const std::string filename)
+Object::load (const std::string filename,
+              const std::string base,
+              const std::string klass,
+              const std::string module)
 {
+    xmlTextReaderPtr reader;
+    int ret;
+
+    std::string version, date, author, type;    
+
+    reader = xmlReaderForFile (filename.c_str(), NULL, 0);
+    if (reader != NULL) {
+        ret = xmlTextReaderRead (reader);
+
+        while (ret == 1) {
+            std::string name = (char *) xmlTextReaderConstName(reader);
+
+            if ((xmlTextReaderNodeType(reader) == XML_ELEMENT_NODE) && (name == "dana")) {
+                version = read_attribute (reader, "version");
+                type    = read_attribute (reader, "type");
+                date    = read_attribute (reader, "date");
+                author  = read_attribute (reader, "author");
+                printf("Type: %s\n",    type.c_str());
+                printf("Version: %s\n", version.c_str());
+                printf("Date: %s\n",    date.c_str());
+                printf("Author: %s\n",  author.c_str());
+            }
+            
+            if ((xmlTextReaderNodeType(reader) == XML_ELEMENT_NODE) && (name == "Unit")) {
+                printf("class: %s\n", read_attribute (reader, "class").c_str());
+                printf("module: %s\n", read_attribute (reader, "module").c_str());
+                load (reader);
+            }
+            ret = xmlTextReaderRead(reader);
+        }
+
+        xmlFreeTextReader(reader);
+        if (ret != 0) {
+            fprintf(stderr, "%s : failed to parse\n", filename.c_str());
+        }
+    } else {
+        fprintf(stderr, "Unable to open %s\n", filename.c_str());
+    }
     return 0;
 }
 
 // _________________________________________________________________________load
 int
-Object::load (std::ifstream &file)
+Object::load (xmlTextReaderPtr reader)
 {
     return 0;
 }
@@ -160,7 +196,8 @@ Object::python_export (void)
 
     int (Object::*save)(const std::string, const std::string,
                         const std::string, const std::string ) = &Object::save;
-    int (Object::*load)(const std::string) = &Object::load;
+    int (Object::*load)(const std::string, const std::string,
+                        const std::string, const std::string ) = &Object::load;
 
     class_<Object> ("Object", 
     "______________________________________________________________________\n"

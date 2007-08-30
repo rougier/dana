@@ -52,7 +52,7 @@ namespace dana { namespace core {
 
         // __________________________________________________________________I/O
         virtual int save (xmlTextWriterPtr writer);
-        virtual int load (std::ifstream &file);
+        virtual int load (xmlTextReaderPtr reader);
         
         // ______________________________________________________________get/set
         virtual py::object get_weights   (LayerPtr layer);

@@ -64,3 +64,16 @@ def __save (self, filename):
     self.__save (filename, derived.__name__,
                  self.__class__.__name__, self.__module__)
 Object.save = __save
+
+Object.__load = Object.load
+def __load (self, filename):
+    " Proxy load function for Object"
+    # Get core type for object (the one above core.Object)
+    derived = self.__class__
+    base    = self.__class__
+    while base is not Object:
+        derived = base
+        base = base.__bases__[0]
+    self.__load (filename, derived.__name__,
+                 self.__class__.__name__, self.__module__)
+Object.load = __load

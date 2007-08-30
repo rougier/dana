@@ -22,6 +22,7 @@
 #include <fstream>
 #include <cmath>
 #include <libxml/xmlwriter.h>
+#include <libxml/xmlreader.h>
 
 
 namespace py      = boost::python;
@@ -42,8 +43,8 @@ namespace dana { namespace core {
     // ___________________________________________________________________Object
     class Object : public boost::enable_shared_from_this <Object> {
     public:
-        static unsigned int id_counter;
-        unsigned int id;
+        static unsigned long int id_counter;
+        unsigned long int id;
         
     public:
         // _________________________________________________________________life
@@ -52,13 +53,18 @@ namespace dana { namespace core {
         virtual ObjectPtr myself (void);
 
         // __________________________________________________________________I/O
+        virtual std::string read_attribute (xmlTextReaderPtr reader,
+                                            std::string name);
         virtual int save (const std::string filename,
                           const std::string base,
                           const std::string klass,
                           const std::string module);
         virtual int save (xmlTextWriterPtr writer);
-        virtual int load (const std::string filename);
-        virtual int load (std::ifstream &file);
+        virtual int load (const std::string filename,
+                          const std::string base,
+                          const std::string klass,
+                          const std::string module);
+        virtual int load (xmlTextReaderPtr reader);
 
         // _______________________________________________________________export
         static void python_export (void);
