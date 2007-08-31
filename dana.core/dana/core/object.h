@@ -39,6 +39,9 @@ namespace dana { namespace core {
     };
     
     void runtime_error (RuntimeError const &x);
+    
+    std::string read_attribute   (xmlTextReaderPtr reader,
+                                  const char *name);
 
     // ___________________________________________________________________Object
     class Object : public boost::enable_shared_from_this <Object> {
@@ -55,13 +58,10 @@ namespace dana { namespace core {
         // __________________________________________________________________I/O
         virtual int         write (xmlTextWriterPtr writer);
         virtual int         read (xmlTextReaderPtr reader);
-
         virtual int         write (const std::string filename,
                                    const std::string script_file ="None",
                                    const std::string script_content ="");
         virtual int         read  (const std::string filename);
-        virtual std::string read_attribute   (xmlTextReaderPtr reader,
-                                              std::string name);
 
         // _______________________________________________________________export
         static void python_export (void);

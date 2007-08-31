@@ -22,7 +22,7 @@ namespace dana { namespace core {
     typedef boost::shared_ptr<class Link>  LinkPtr;
 
     // _______________________________________________________________class Link
-    class Link : public Object {
+    class Link {
         // ___________________________________________________________attributes
     public:
         UnitPtr	          source;

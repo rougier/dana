@@ -42,7 +42,8 @@ int
 Unit::write (xmlTextWriterPtr writer)
 {
     // <Unit>
-    xmlTextWriterStartElement (writer, BAD_CAST "Unit");
+    xmlTextWriterStartElement (writer,
+                               BAD_CAST "Unit");
     
     xmlTextWriterWriteFormatAttribute (writer,
                                        BAD_CAST "potential",

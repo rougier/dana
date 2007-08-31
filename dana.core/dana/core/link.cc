@@ -15,12 +15,12 @@
 using namespace dana::core;
 
 // _________________________________________________________________________Link
-Link::Link () : Object()
+Link::Link ()
 {}
 
 // _________________________________________________________________________Link
 Link::Link (UnitPtr source, float weight)
-    : Object(), source (source), weight (weight)
+    : source (source), weight (weight)
 {}
 
 // ________________________________________________________________________~Link
@@ -103,7 +103,7 @@ Link::python_export (void)
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Link> >();
    
-    class_<Link, bases < Object> > ("Link",
+    class_<Link> ("Link",
     "______________________________________________________________________\n"
     "                                                                      \n"
     "A link describes the influence of a source over a target that owns the\n"

@@ -23,6 +23,20 @@ void runtime_error (RuntimeError const &x)
     PyErr_SetString(PyExc_RuntimeError, x.what());
 }
 
+// _______________________________________________________________read_attribute
+std::string
+dana::core::read_attribute (xmlTextReaderPtr reader,
+                            const char *name)
+{
+    xmlChar *tmp = xmlTextReaderGetAttribute (reader, BAD_CAST name);
+    if (tmp != NULL) {
+        std::string value = (char *) tmp;
+        xmlFree (tmp);
+        return value;
+    }
+    return std::string("");
+}
+    
 // _______________________________________________________________________Object
 Object::Object (void)
 {
@@ -133,7 +147,7 @@ Object::write (const std::string filename,
 }
 
 
-// _________________________________________________________________________load
+// _________________________________________________________________________read
 int
 Object::read (const std::string filename)
 {
@@ -181,19 +195,6 @@ Object::read (const std::string filename)
     return 0;
 }
 
-// _______________________________________________________________read_attribute
-std::string
-Object::read_attribute (xmlTextReaderPtr reader,
-                        std::string name)
-{
-    xmlChar *tmp = xmlTextReaderGetAttribute (reader, BAD_CAST name.c_str());
-    if (tmp != NULL) {
-        std::string value = (char *) tmp;
-        xmlFree (tmp);
-        return value;
-    }
-    return std::string("");
-}
 
 // ________________________________________________________________python_export
 void
