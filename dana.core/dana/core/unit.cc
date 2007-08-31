@@ -44,7 +44,9 @@ Unit::write (xmlTextWriterPtr writer)
     // <Unit>
     xmlTextWriterStartElement (writer, BAD_CAST "Unit");
     
-    xmlTextWriterWriteFormatAttribute (writer, BAD_CAST "potential", "%f", potential);
+    xmlTextWriterWriteFormatAttribute (writer,
+                                       BAD_CAST "potential",
+                                       "%f", potential);
 
     for (unsigned int i=0; i< laterals.size(); i++)
         laterals[i]->write(writer);

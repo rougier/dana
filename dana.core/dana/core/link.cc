@@ -110,7 +110,7 @@ Link::python_export (void)
     "link.                                                                 \n"
     "______________________________________________________________________\n",
 
-    init <optional <UnitPtr, float> > (
+    init < UnitPtr, optional <float> > (
         (arg("source"),
          arg("weight") = 0.0f),
         "__init__ (source, weight=0)\n"))

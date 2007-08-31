@@ -43,8 +43,8 @@ namespace dana { namespace core {
     // ___________________________________________________________________Object
     class Object : public boost::enable_shared_from_this <Object> {
     public:
-        static unsigned long int id_counter;
-        unsigned long int id;
+        //        static unsigned long int id_counter;
+        //        unsigned long int id;
         
     public:
         // _________________________________________________________________life

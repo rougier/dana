@@ -11,35 +11,71 @@
 # $Id: setup.py 275 2007-08-14 15:01:41Z rougier $
 #------------------------------------------------------------------------------
 
-# BEFORE importing disutils, remove MANIFEST. distutils doesn't properly
-# update it when the contents of directories change.
+import sys
 import os
-if os.path.exists('MANIFEST'): os.remove('MANIFEST')
-
-
 import glob
 from distutils.core import setup, Extension
 from distutils.command.build_ext import build_ext
 import distutils.sysconfig
-import numpy
+import commands
 
-boost_python_lib = 'boost_python-gcc41-mt'
-boost_thread_lib = 'boost_thread-gcc41-mt'
+if os.path.exists('MANIFEST'): os.remove('MANIFEST')
 
 
+# ___________________________________________________________check configuration
+print "============================================================"
+print "Checking configuration"
+print
+
+# _________________________________________________________________________numpy
+sys.stdout.write ("Checking for numpy package... ")
+try:
+    import numpy
+except:
+    print "failed"
+    print " -> Consider installing numpy (http://numpy.scipy.org/)"
+    sys.exit(1)
+else:
+    print "ok"
+
+# _________________________________________________________________________boost
+print "Checking for boost libraries... unknown status"
+print " -> Make sure boost-python library has been installed"
+print " -> Make sure boost-thread library has been installed"
+boost_python_lib = 'boost_python-mt'
+boost_thread_lib = 'boost_thread-mt'
+
+# _______________________________________________________________________libxml2
+libxml2_include_path = ""
+sys.stdout.write ("Checking for libxml2...")
+(status, text) = commands.getstatusoutput("pkg-config xml2po --exists")
+if status == 0:
+    print "ok"
+    libxml2_include_path = commands.getoutput("pkg-config xml2po --cflags")[2:]
+else:
+    print "failed"
+    print " -> Consider installing libxml2 (http://xmlsoft.org/)"
+    sys.exit(1)
+
+print "============================================================"
+
+
+
+# __________________________________________________________________________core
 core_srcs = glob.glob ("dana/core/*.cc")
 core_ext = Extension (
     'dana.core._core',
     sources = core_srcs,
-    include_dirs=[numpy.get_include(), '/usr/include/libxml2'],
+    include_dirs=[numpy.get_include(), libxml2_include_path],
     libraries = [boost_python_lib, boost_thread_lib, 'xml2']
 )
 
+# _______________________________________________________________________profile
 profile_srcs = glob.glob ("dana/projection/profile/*.cc")
 profile_ext = Extension (
     'dana.projection.profile._profile',
     sources = profile_srcs,
-    include_dirs=[numpy.get_include(), '/usr/include/libxml2'],
+    include_dirs=[numpy.get_include(), libxml2_include_path],
     libraries = [boost_python_lib]
 )
 
@@ -47,7 +83,7 @@ density_srcs = glob.glob ("dana/projection/density/*.cc")
 density_ext = Extension (
     'dana.projection.density._density',
     sources = density_srcs,
-    include_dirs=[numpy.get_include(), '/usr/include/libxml2'],
+    include_dirs=[numpy.get_include(), libxml2_include_path],
     libraries = [boost_python_lib]
 )
 
@@ -55,7 +91,7 @@ distance_srcs = glob.glob ("dana/projection/distance/*.cc")
 distance_ext = Extension (
     'dana.projection.distance._distance',
     sources = distance_srcs,
-    include_dirs=[numpy.get_include(), '/usr/include/libxml2'],
+    include_dirs=[numpy.get_include(), libxml2_include_path],
     libraries = [boost_python_lib]
 )
 
@@ -63,7 +99,7 @@ shape_srcs = glob.glob ("dana/projection/shape/*.cc")
 shape_ext = Extension (
     'dana.projection.shape._shape',
     sources = shape_srcs,
-    include_dirs=[numpy.get_include(), '/usr/include/libxml2'],
+    include_dirs=[numpy.get_include(), libxml2_include_path],
     libraries = [boost_python_lib]
 )
 
@@ -71,7 +107,7 @@ projection_srcs = glob.glob ("dana/projection/*.cc")
 projection_ext = Extension (
     'dana.projection._projection',
     sources = projection_srcs,
-    include_dirs=[numpy.get_include(), '/usr/include/libxml2'],
+    include_dirs=[numpy.get_include(), libxml2_include_path],
     libraries = [boost_python_lib, boost_thread_lib]
 )
 

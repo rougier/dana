@@ -26,7 +26,7 @@ void runtime_error (RuntimeError const &x)
 // _______________________________________________________________________Object
 Object::Object (void)
 {
-    id = id_counter++;
+    //    id = id_counter++;
 }
 
 // ______________________________________________________________________~Object
@@ -34,7 +34,7 @@ Object::~Object (void)
 {}
 
 // ___________________________________________________________________id_counter
-unsigned long int Object::id_counter = 1;
+// unsigned long int Object::id_counter = 1;
 
 // _______________________________________________________________________myself
 ObjectPtr
