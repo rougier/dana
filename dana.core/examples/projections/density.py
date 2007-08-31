@@ -65,6 +65,9 @@ if __name__ == '__main__':
     proj.dst      = m2[0]
     proj.connect()
     
+
+    #    print m1[0].unit(2,3).weights (m1[0])
+
     view = View (net, title='Click on unit to see weights', size=12)
     view.show()
 

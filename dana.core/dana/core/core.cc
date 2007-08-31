@@ -22,11 +22,11 @@
 
 BOOST_PYTHON_MODULE(_core) {
     using namespace dana::core;
-  
+
     Object::python_export();
     Model::python_export();
     Spec::python_export();
-    Environment::boost();
+    Environment::python_export();
     Network::python_export();
     Map::python_export();
     Layer::python_export();

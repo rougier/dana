@@ -15,9 +15,6 @@
 
 using namespace dana::core;
 
-unsigned long Environment::epochs = 0;
-Environment *Environment::env = 0;
-
 //__________________________________________________________________Environment
 Environment::Environment (void) : Object()
 {}
@@ -30,19 +27,6 @@ Environment::~Environment (void)
 void
 Environment::evaluate (void)
 {}
-
-//______________________________________________________________static_evaluate 
-void
-Environment::static_evaluate (void)
-{
-    if (env) {
-        Environment *e = env;
-        for (unsigned long i=0; i<epochs; i++) {
-            e->evaluate ();
-            e->barrier->wait();
-        }
-    }
-}
 
 //_______________________________________________________________________attach
 void
@@ -57,7 +41,7 @@ Environment::attach (MapPtr map)
 
 //________________________________________________________________python_export
 void
-Environment::boost (void)
+Environment::python_export (void)
 {
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Environment> >();

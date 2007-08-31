@@ -26,17 +26,13 @@ namespace dana { namespace core {
     class Environment : public Object {
         public:
             std::vector<MapPtr>  maps;
-            boost::barrier *     barrier;
-            static unsigned long epochs;
-            static Environment * env;
             
         public:
             Environment (void);
             virtual ~Environment (void);
             void attach (MapPtr map);
             virtual void evaluate  (void);
-            static void static_evaluate (void);
-            static void boost (void);
+            static void python_export (void);
     };
 
 }} // namespace dana::core

@@ -166,7 +166,6 @@ Object::read (const std::string filename)
                 printf("Author: %s\n",  author.c_str());
             }
             else if (name == "script") {
-                printf ("Found script\n");
             }
             else {
                 read (reader);

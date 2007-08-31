@@ -95,8 +95,10 @@ Model::entry_point (void)
     while (go) {
         for (unsigned int i = 0; i < model->environments.size(); i++)
             model->environments[i]->evaluate ();
-        for (unsigned int i = 0; i < model->networks.size(); i++)
-            model->networks[i]->evaluate (1, false);
+        for (unsigned int i = 0; i < model->networks.size(); i++) {
+            model->networks[i]->compute_dp ();
+            model->networks[i]->compute_dw ();
+        }
         model->time += 1;
         model->age++;
 

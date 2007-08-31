@@ -8,7 +8,6 @@
 //
 // $Id: network.cc 241 2007-07-19 08:52:13Z rougier $
 
-#include <boost/thread/thread.hpp>
 #include "network.h"
 
 using namespace dana::core;
@@ -74,31 +73,20 @@ Network::size (void) const
     return maps.size();
 }
 
-// ============================================================================
-//  evaluate maps activity
-// ============================================================================
+// ___________________________________________________________________compute_dp
 void
-Network::evaluate (unsigned long epochs, bool use_thread)
+Network::compute_dp (void)
 {
-    if (use_thread) {
-        boost::thread_group threads;
-        barrier = new boost::barrier (maps.size());
-        for (unsigned int i = 0; i < maps.size(); i++) {
-            maps[i]->barrier = barrier;
-            Map::map = maps[i].get();
-            Map::epochs = epochs;
-            threads.create_thread (&Map::evaluate);
-        }
-        threads.join_all();
-        delete barrier;
-     } else {
-        for (unsigned long j=0; j<epochs; j++) {
-           for (unsigned int i = 0; i < maps.size(); i++)
-                maps[i]->compute_dp ();
-           for (unsigned int i = 0; i < maps.size(); i++)
-                maps[i]->compute_dw ();
-        }
-     }
+    for (unsigned int i = 0; i < maps.size(); i++)
+        maps[i]->compute_dp ();
+}
+
+// ___________________________________________________________________compute_dw
+void
+Network::compute_dw (void)
+{
+    for (unsigned int i = 0; i < maps.size(); i++)
+            maps[i]->compute_dw ();
 }
 
 // ============================================================================
@@ -263,7 +251,7 @@ Network::compute_geometry (void)
 //  python export
 // ============================================================================
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(evaluate_overloads, evaluate, 0, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(evaluate_overloads, evaluate, 0, 1)
 
 void
 Network::python_export (void)
@@ -285,7 +273,13 @@ Network::python_export (void)
         init<> (
         "__init__() -- initializes network\n")
         )
-        
+
+        .def ("compute_dp", &Network::compute_dp,
+        "compute_dp() -> float -- computes potentials and return dp\n")
+
+        .def ("compute_dw", &Network::compute_dw,
+        "compute_dw() -> float -- computes weights and returns dw\n")
+
         .def ("__getitem__", &Network::get,
          "x.__getitem__ (y)  <==> x[y]\n\n"
         "Use of negative indices is supported.\n")
@@ -299,11 +293,6 @@ Network::python_export (void)
         .def ("clear",       &Network::clear,
         "clear() -- clear map activity\n")
 
-        .def ("evaluate",    &Network::evaluate,
-        evaluate_overloads (args("n", "use_thread"), 
-        "evaluate(n=1, use_thread=false) -- evaluate all maps for n epochs")
-        )
-         
         .def_readwrite ("spec", &Network::spec)
         .def_readonly ("shape", &Network::get_shape)
         ;

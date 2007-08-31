@@ -466,32 +466,26 @@ public:
     // _______________________________________________________________compute_dp
     float compute_dp (void)
     {
-        PyGILState_STATE gstate;
-        gstate = PyGILState_Ensure();
+        //        PyGILState_STATE gstate = PyGILState_Ensure();
         if (py::override compute_dp = this->get_override("compute_dp")) {
-            float result = compute_dp();
-            PyGILState_Release(gstate);
-            return result;
+            //            PyGILState_Release(gstate);
+            return compute_dp();
         }
-        float result = Unit::compute_dp();
-        PyGILState_Release(gstate);
-        return result;        
+        //        PyGILState_Release(gstate);
+        return Unit::compute_dp();
     }
     float default_compute_dp() { return this->Unit::compute_dp(); }
 
     // _______________________________________________________________compute_dw
     float compute_dw (void)
     {
-        PyGILState_STATE gstate;
-        gstate = PyGILState_Ensure();
+        //        PyGILState_STATE gstate = PyGILState_Ensure();
         if (py::override compute_dw = this->get_override("compute_dw")) {
-            float result = compute_dw();
-            PyGILState_Release(gstate);
-            return result;
+            //            PyGILState_Release(gstate);
+            return compute_dw();
         }
-        float result = Unit::compute_dw();
-        PyGILState_Release(gstate);
-        return result;        
+        //        PyGILState_Release(gstate);
+        return Unit::compute_dw();
     }
     float default_compute_dw() { return this->Unit::compute_dw(); }
 };
@@ -506,6 +500,7 @@ Unit::python_export (void) {
 
     import_array();
     boost::python::numeric::array::set_module_and_type("numpy", "ndarray");
+    
 
     // member function pointers for overloading
     void (Unit::*connect_src_data)(UnitPtr,float,object) = &Unit::connect;        
@@ -554,11 +549,11 @@ Unit::python_export (void) {
 
         .def ("__float__", &Unit::get_potential)
 
-        .def ("compute_dp", &Unit::compute_dp, &UnitWrapper::default_compute_dp,
+        .def ("compute_dp", &Unit::compute_dp,  &UnitWrapper::default_compute_dp,
               "compute_dp() -> float\n"
               "computes potential and return dp")
 
-        .def ("compute_dw", &Unit::compute_dw, &UnitWrapper::default_compute_dw,
+        .def ("compute_dw", &Unit::compute_dw,  &UnitWrapper::default_compute_dw,
               "compute_dw() -> float\n"
               "computes weights and returns dw")
     

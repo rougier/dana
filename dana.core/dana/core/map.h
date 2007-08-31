@@ -11,7 +11,6 @@
 #ifndef __DANA_CORE_MAP_H__
 #define __DANA_CORE_MAP_H__
 
-#include <boost/thread/barrier.hpp>
 #include <vector>
 #include "object.h"
 #include "layer.h"
@@ -36,10 +35,7 @@ namespace dana { namespace core {
         int                   dx, dy;  // offset
         int                   zoom;    // zoom
         py::object                frame;   // normalized position & shape
-        static unsigned long  epochs; // proxy epochs for thread evaluation
-        static Map *          map;     // proxy map for thread evaluation
         SpecPtr               spec;    // specification for this map
-        boost::barrier *      barrier; // thread synchronization barrier
             
         public:
         // _________________________________________________________________life
@@ -54,7 +50,6 @@ namespace dana { namespace core {
         virtual UnitPtr    unit (int index);
         virtual UnitPtr    unit (int x, int y);
         virtual int        fill (py::object type);
-        static void        evaluate  (void);
         virtual void       clear (void);
         virtual void       compute_dp  (void);
         virtual void       compute_dw  (void);

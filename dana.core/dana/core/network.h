@@ -12,7 +12,6 @@
 #define __DANA_CORE_NETWORK_H__
 
 #include <boost/python.hpp>
-#include <boost/thread/barrier.hpp>
 #include <vector>
 #include "object.h"
 #include "map.h"
@@ -29,8 +28,7 @@ namespace dana { namespace core {
         std::vector<MapPtr>  maps;         // maps composing the network
         unsigned int         width, height;// global shape
         unsigned long        age;          // age
-        boost::barrier *     barrier;     // thread synchronization barrier
-        py::object               spec;         // Specification of the network
+        py::object           spec;         // Specification of the network
             
 	public:
         // _________________________________________________________________life
@@ -41,10 +39,10 @@ namespace dana { namespace core {
         virtual void         append (MapPtr layer);
         virtual MapPtr       get (const int index);
         virtual int          size (void) const;
-        virtual void         evaluate (unsigned long n=1,
-                                       bool use_thread=false);
+        virtual void         compute_dp (void);
+        virtual void         compute_dw (void);
         virtual void         clear (void);
-        virtual void        compute_geometry (void);
+        virtual void         compute_geometry (void);
         
         // __________________________________________________________________I/O
         virtual int write (xmlTextWriterPtr writer);
