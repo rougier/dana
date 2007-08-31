@@ -31,11 +31,14 @@ Link::~Link (void)
 int
 Link::write (xmlTextWriterPtr writer)
 {
-    xmlTextWriterWriteFormatAttribute (writer,
-                                       BAD_CAST "source", "%d", source->id);
-    xmlTextWriterWriteFormatAttribute (writer,
-                                       BAD_CAST "weight", "%f", weight);
+    // <Link>
+    xmlTextWriterStartElement (writer, BAD_CAST "Link");
 
+    // weigth = ""
+    xmlTextWriterWriteFormatAttribute (writer, BAD_CAST "weight", "%f", weight);
+
+    // </Link>
+    xmlTextWriterEndElement (writer);
     return 0;
 }
 
@@ -43,11 +46,11 @@ Link::write (xmlTextWriterPtr writer)
 int
 Link::read (xmlTextReaderPtr reader)
 {
-    
-    printf("source: %s\n",  read_attribute (reader, "source").c_str());
-    printf("weight: %s\n", read_attribute (reader, "weight").c_str());
-    
-    xmlTextReaderNext(reader);
+    std::istringstream iss;
+    iss.clear();
+    iss.str(read_attribute (reader, "weight"));
+    iss >> weight;
+
     return 0;
 }
 

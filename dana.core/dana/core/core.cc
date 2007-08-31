@@ -27,9 +27,9 @@ BOOST_PYTHON_MODULE(_core) {
     Model::python_export();
     Spec::python_export();
     Environment::boost();
-    Network::boost();
-    Map::boost();
-    Layer::boost();
+    Network::python_export();
+    Map::python_export();
+    Layer::python_export();
     Unit::python_export();
     Link::python_export();
     Random::boost();

@@ -23,51 +23,45 @@ namespace dana { namespace core {
     typedef boost::shared_ptr<class Unit> UnitPtr;
     typedef boost::shared_ptr<class Layer> LayerPtr;
 
+
+    // ______________________________________________________________class Layer
     class Layer : public Object {
     public:
-        //  attributes
-        // ================================================================
-        class Map *          map;       // map owning this layer
-        std::vector<UnitPtr> units;     // units composing the layer
-        std::vector<UnitPtr> permuted;  // permuted units
-        SpecPtr              spec;      // specification of the layer
-        py::object           potentials;//
-            
+        // ___________________________________________________________attributes
+        class Map *          map; 
+        std::vector<UnitPtr> units;
+        std::vector<UnitPtr> permuted;
+        SpecPtr              spec;
+        py::object           potentials;
 
     public:
-        // life management
-        // ================================================================
+        // _________________________________________________________________life
         Layer (void);
         virtual ~Layer (void);
-        
-        // content management
-        // ================================================================
+
+        // _________________________________________________________________main
         virtual void         append (UnitPtr unit);
         virtual UnitPtr      get (const int index) const;
         virtual UnitPtr      get (const int x, const int y) const;
         virtual int          size (void) const;
         virtual int          fill (py::object type);
-
-        // activity management
-        // ================================================================
         virtual void         clear (void);
         virtual float        compute_dp (void);
         virtual float        compute_dw (void);
-        
-        //  attribute manipulation
-        // ================================================================
+
+        // __________________________________________________________________I/O
+        virtual int write (xmlTextWriterPtr writer);
+        virtual int read  (xmlTextReaderPtr reader);
+
+        // ______________________________________________________________get/set
         virtual Map *        get_map (void) const;
         virtual void         set_map (class Map *map);
         virtual SpecPtr      get_spec (void) const;
-        virtual void         set_spec (const SpecPtr s);
+        virtual void         set_spec (const SpecPtr spec);
+        virtual py::object   get_potentials (void);
 
-        // convenient methods
-        // ================================================================
-        virtual py::object       get_potentials (void);
-        
-        // python export
-        // ================================================================
-        static void          boost (void);
+        // _______________________________________________________________export
+        static void          python_export (void);
     };
 
 }} // namespace dana::core

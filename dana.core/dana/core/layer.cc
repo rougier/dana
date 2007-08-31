@@ -189,6 +189,53 @@ Layer::compute_dw (void)
     return d;
 }
 
+
+
+// ________________________________________________________________________write
+int
+Layer::write (xmlTextWriterPtr writer)
+{
+    // <Layer>
+    xmlTextWriterStartElement (writer, BAD_CAST "Layer");
+    
+    for (unsigned int i=0; i< units.size(); i++)
+        units[i]->write(writer);
+
+    // </Layer>
+    xmlTextWriterEndElement (writer);
+
+    return 0;
+}
+
+// _________________________________________________________________________read
+int
+Layer::read (xmlTextReaderPtr reader)
+{
+    xmlReaderTypes type   = XML_READER_TYPE_NONE;
+    std::string    name   = "";
+    int            status = 1;
+
+    unsigned int index = 0;
+    do  {
+        status = xmlTextReaderRead(reader);
+        if (status != 1)
+            break;
+        name = (char *) xmlTextReaderConstName(reader);
+        type = (xmlReaderTypes) xmlTextReaderNodeType(reader);
+
+        if ((type == XML_READER_TYPE_END_ELEMENT) && (name == "Layer"))
+            break;
+
+        if ((type == XML_READER_TYPE_ELEMENT) && (name == "Unit")) {
+            if (index < units.size())
+                units[index]->read (reader);
+            index++;
+        }        
+    } while (status == 1);    
+    
+    return 0;
+}
+
 // ============================================================================
 //  get owning layer
 // ============================================================================
@@ -260,7 +307,7 @@ Layer::get_potentials (void)
 //    Boost wrapping code
 // ============================================================================
 void
-Layer::boost (void)
+Layer::python_export (void)
 {
     using namespace boost::python;    
     register_ptr_to_python< boost::shared_ptr<Layer> >();

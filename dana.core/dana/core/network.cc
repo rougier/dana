@@ -112,6 +112,52 @@ Network::clear (void)
 }
 
 
+// ________________________________________________________________________write
+int
+Network::write (xmlTextWriterPtr writer)
+{
+    // <Network>
+    xmlTextWriterStartElement (writer, BAD_CAST "Network");
+    
+    for (unsigned int i=0; i< maps.size(); i++)
+        maps[i]->write(writer);
+
+    // </Network>
+    xmlTextWriterEndElement (writer);
+
+    return 0;
+}
+
+// _________________________________________________________________________read
+int
+Network::read (xmlTextReaderPtr reader)
+{
+    xmlReaderTypes type   = XML_READER_TYPE_NONE;
+    std::string    name   = "";
+    int            status = 1;
+
+    unsigned int index = 0;
+    do  {
+        status = xmlTextReaderRead(reader);
+        if (status != 1)
+            break;
+        name = (char *) xmlTextReaderConstName(reader);
+        type = (xmlReaderTypes) xmlTextReaderNodeType(reader);
+
+        if ((type == XML_READER_TYPE_END_ELEMENT) && (name == "Network"))
+            break;
+
+        if ((type == XML_READER_TYPE_ELEMENT) && (name == "Map")) {
+            if (index < maps.size())
+                maps[index]->read (reader);
+            index++;
+        }        
+    } while (status == 1);    
+    return 0;
+}
+
+
+
 // ============================================================================
 //  get shape
 // ============================================================================
@@ -220,7 +266,7 @@ Network::compute_geometry (void)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(evaluate_overloads, evaluate, 0, 2)
 
 void
-Network::boost (void)
+Network::python_export (void)
 {
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Network> >();

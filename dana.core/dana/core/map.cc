@@ -174,6 +174,52 @@ Map::compute_dw (void)
     }
 }
 
+// ________________________________________________________________________write
+int
+Map::write (xmlTextWriterPtr writer)
+{
+    // <Map>
+    xmlTextWriterStartElement (writer, BAD_CAST "Map");
+    
+    for (unsigned int i=0; i< layers.size(); i++)
+        layers[i]->write(writer);
+
+    // </Map>
+    xmlTextWriterEndElement (writer);
+
+    return 0;
+}
+
+// _________________________________________________________________________read
+int
+Map::read (xmlTextReaderPtr reader)
+{
+    xmlReaderTypes type   = XML_READER_TYPE_NONE;
+    std::string    name   = "";
+    int            status = 1;
+
+    unsigned int index = 0;
+    do  {
+        status = xmlTextReaderRead(reader);
+        if (status != 1)
+            break;
+        name = (char *) xmlTextReaderConstName(reader);
+        type = (xmlReaderTypes) xmlTextReaderNodeType(reader);
+
+        if ((type == XML_READER_TYPE_END_ELEMENT) && (name == "Map"))
+            break;
+
+        if ((type == XML_READER_TYPE_ELEMENT) && (name == "Layer")) {
+            if (index < layers.size())
+                layers[index]->read (reader);
+            index++;
+        }        
+    } while (status == 1);    
+    return 0;
+}
+
+
+
 // ============================================================================
 //  get map specification
 // ============================================================================
@@ -317,7 +363,7 @@ Map::set_frame (py::object f)
 //    Boost wrapping code
 // ============================================================================
 void
-Map::boost (void) {
+Map::python_export (void) {
 
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Map> >();

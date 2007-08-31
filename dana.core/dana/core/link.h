@@ -26,7 +26,6 @@ namespace dana { namespace core {
         // ___________________________________________________________attributes
     public:
         UnitPtr	          source;
-        unsigned long int source_id;
         float	          weight;
 
     public:

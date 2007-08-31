@@ -57,18 +57,9 @@ namespace dana { namespace core {
         virtual int         read (xmlTextReaderPtr reader);
 
         virtual int         write (const std::string filename,
-                                   const std::string base,
-                                   const std::string klass,
-                                   const std::string module);
-        virtual void        write_element (xmlTextWriterPtr writer,
-                                           std::string basetype,
-                                           ObjectPtr object);
-
-        virtual int         read  (const std::string filename,
-                                   const std::string base,
-                                   const std::string klass,
-                                   const std::string module);
-
+                                   const std::string script_file ="None",
+                                   const std::string script_content ="");
+        virtual int         read  (const std::string filename);
         virtual std::string read_attribute   (xmlTextReaderPtr reader,
                                               std::string name);
 

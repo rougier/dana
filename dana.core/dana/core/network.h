@@ -22,10 +22,10 @@ namespace dana { namespace core {
 
 	typedef boost::shared_ptr<class Network> NetworkPtr;
 
+    // ____________________________________________________________class Network
     class Network : public Object {
     public:
-        //  attributes
-        // ================================================================
+        // ___________________________________________________________attributes
         std::vector<MapPtr>  maps;         // maps composing the network
         unsigned int         width, height;// global shape
         unsigned long        age;          // age
@@ -33,36 +33,28 @@ namespace dana { namespace core {
         py::object               spec;         // Specification of the network
             
 	public:
-            // life management 
-            // ================================================================
-            Network (void);       
-            virtual ~Network (void);
-            
-            // content management
-            // ================================================================
-            virtual void         append (MapPtr layer);
-            virtual MapPtr       get (const int index);
-            virtual int          size (void) const;
+        // _________________________________________________________________life
+        Network (void);       
+        virtual ~Network (void);
 
-            //  activity management
-            // ================================================================
-            virtual void         evaluate (unsigned long n=1,
-                                           bool use_thread=false);
-            virtual void         clear (void);
+        // _________________________________________________________________main
+        virtual void         append (MapPtr layer);
+        virtual MapPtr       get (const int index);
+        virtual int          size (void) const;
+        virtual void         evaluate (unsigned long n=1,
+                                       bool use_thread=false);
+        virtual void         clear (void);
+        virtual void        compute_geometry (void);
         
-            //  attribute manipulation
-            // ================================================================
+        // __________________________________________________________________I/O
+        virtual int write (xmlTextWriterPtr writer);
+        virtual int read  (xmlTextReaderPtr reader);
+
+        // ______________________________________________________________get/set
         virtual py::object      get_shape (void);
 
-
-            //  convenience functions
-            // ================================================================
-            virtual void        compute_geometry (void);
-
-        public:
-            // python export
-            // ================================================================
-            static void	        boost (void);
+        // _______________________________________________________________export        
+        static void	        python_export (void);
     };
     
 }} // namespace dana::core

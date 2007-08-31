@@ -32,6 +32,7 @@ made of a set of several units. Each unit can be linked to any other unit
 
 """
 
+import sys, os.path
 from _core import *
 import random
 
@@ -47,33 +48,20 @@ def seed (s = None):
     _random.seed = s
     return _random.seed
 
-
-
 seed (12345)
 
 
 Object.__write = Object.write
 def __write (self, filename):
-    " Proxy write function for Object"
-    # Get core type for object (the one above core.Object)
-    derived = self.__class__
-    base    = self.__class__
-    while base is not Object:
-        derived = base
-        base = base.__bases__[0]        
-    self.__write (filename, derived.__name__,
-                 self.__class__.__name__, self.__module__)
+    """ """
+    co = sys._getframe(1).f_code
+    script = "\n"
+    f = file (co.co_filename, "r")
+    for line in f:
+        script += line
+    f.close()
+    if filename[-3:] != '.gz':
+        filename += '.gz'
+    self.__write (filename,  os.path.abspath(co.co_filename), script)
 Object.write = __write
 
-Object.__read = Object.read
-def __read (self, filename):
-    " Proxy read function for Object"
-    # Get core type for object (the one above core.Object)
-    derived = self.__class__
-    base    = self.__class__
-    while base is not Object:
-        derived = base
-        base = base.__bases__[0]
-    self.__read (filename, derived.__name__,
-                 self.__class__.__name__, self.__module__)
-Object.read = __read

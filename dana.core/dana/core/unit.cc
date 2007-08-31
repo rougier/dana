@@ -41,23 +41,19 @@ Unit::~Unit(void)
 int
 Unit::write (xmlTextWriterPtr writer)
 {
+    // <Unit>
+    xmlTextWriterStartElement (writer, BAD_CAST "Unit");
+    
     xmlTextWriterWriteFormatAttribute (writer, BAD_CAST "potential", "%f", potential);
 
-    for (unsigned int i=0; i< laterals.size(); i++) {
-        write_element (writer, "Link", laterals[i]);
-
+    for (unsigned int i=0; i< laterals.size(); i++)
         laterals[i]->write(writer);
-        
-        xmlTextWriterEndElement (writer);
-    }
 
-    for (unsigned int i=0; i< afferents.size(); i++) {
-        write_element (writer, "Link", afferents[i]);
-
+    for (unsigned int i=0; i< afferents.size(); i++)
         afferents[i]->write(writer);
 
-        xmlTextWriterEndElement (writer);
-    }
+    // </Unit>
+    xmlTextWriterEndElement (writer);
 
     return 0;
 }
@@ -66,42 +62,38 @@ Unit::write (xmlTextWriterPtr writer)
 int
 Unit::read (xmlTextReaderPtr reader)
 {
+    std::istringstream iss;
+
+    // Get potential
+    iss.clear();
+    iss.str (read_attribute (reader, "potential"));
+    iss >> potential;
     
-    printf("id: %s\n", read_attribute (reader, "id").c_str());
-    printf("potential: %s\n", read_attribute (reader, "potential").c_str());
+    xmlReaderTypes type   = XML_READER_TYPE_NONE;
+    std::string    name   = "";
+    int            status = 1;
 
+    unsigned int index = 0;
+    do  {
+        status = xmlTextReaderRead(reader);
+        if (status != 1)
+            break;
+        name = (char *) xmlTextReaderConstName(reader);
+        type = (xmlReaderTypes) xmlTextReaderNodeType(reader);
 
-    int ret = 1;
-    while (ret == 1) {
-        std::string name = (char *) xmlTextReaderConstName(reader);
+        if ((type == XML_READER_TYPE_END_ELEMENT) && (name == "Unit"))
+            break;
 
-        if ((xmlTextReaderNodeType(reader) == XML_ELEMENT_DECL) && (name == "Unit"))
-            return 0;
-        
-        if ((xmlTextReaderNodeType(reader) == XML_ELEMENT_NODE) && (name == "Link")) {
-            std::string klassname  = read_attribute (reader, "class");
-            std::string modulename = read_attribute (reader, "module");
-
-            // Retrieve the main module
-            py::object main = py::import("__main__");
-  
-            // Retrieve the main module's namespace
-            py::object global (main.attr("__dict__"));
-
-            // Build python code to create the requested Object (some Link)
-            std::string code = std::string ("import ") + modulename + std::string ("\n");
-            code += std::string("__dana_generated_object = ")
-                + modulename + std::string(".") + klassname + std::string ("()\n");
-
-            // Execute code
-            py::exec (code.c_str(), global, global);            
-
-            LinkPtr link = py::extract<LinkPtr>(global["__dana_generated_object"]);
+        if ((type == XML_READER_TYPE_ELEMENT) && (name == "Link")) {
+            if (index < laterals.size())
+                laterals[index]->read (reader);
+            else if ((index-laterals.size()) < afferents.size())
+                afferents[index-laterals.size()]->read (reader);
+            index++;
         }
-        ret = xmlTextReaderRead(reader);
-    }
+        
+    } while (status == 1);    
     
-    xmlTextReaderNext(reader);
     return 0;
 }
 
