@@ -16,13 +16,13 @@ import dana.projection as proj
 
 
 class Unit (core.Unit):
-    """ """
+    """ Game of Life unit
+    """
     def compute_dp (self):
         n = 0
         for src,w in self.laterals:
-            if src.potential == 1.0:
-                n += 1
-        if n == 3 or n == 4:
+            n += src.potential
+        if n in [3,4]:
             self._potential = 1.0
         else:
             self._potential = 0.0

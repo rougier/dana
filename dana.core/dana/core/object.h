@@ -31,7 +31,7 @@ namespace numeric = boost::python::numeric;
 namespace dana { namespace core {
 
     typedef boost::shared_ptr<class Object> ObjectPtr;
-   
+    
     struct RuntimeError {
         RuntimeError(std::string msg) : message(msg) { }
         const char *what() const throw() { return message.c_str(); }
@@ -46,8 +46,7 @@ namespace dana { namespace core {
     // ___________________________________________________________________Object
     class Object : public boost::enable_shared_from_this <Object> {
     public:
-        //        static unsigned long int id_counter;
-        //        unsigned long int id;
+        ObjectWPtr owner;
         
     public:
         // _________________________________________________________________life

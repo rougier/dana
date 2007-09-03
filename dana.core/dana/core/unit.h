@@ -35,6 +35,7 @@ namespace dana { namespace core {
         std::vector<LinkPtr> laterals;
         std::vector<LinkPtr> afferents;
         class Layer *        layer;
+        
         int                  x, y;
 
     public:

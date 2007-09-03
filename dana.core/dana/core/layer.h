@@ -23,7 +23,6 @@ namespace dana { namespace core {
     typedef boost::shared_ptr<class Unit> UnitPtr;
     typedef boost::shared_ptr<class Layer> LayerPtr;
 
-
     // ______________________________________________________________class Layer
     class Layer : public Object {
     public:
