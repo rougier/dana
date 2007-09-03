@@ -15,16 +15,17 @@
 
 using namespace dana::projection;
 
-Projection *Projection::current = 0;
-
-Projection::Projection (void) : object ()
+// ___________________________________________________________________Projection
+Projection::Projection (void) : Object ()
 {
-    self = true;
+    self_connect = true;
 }
 
+// __________________________________________________________________~Projection
 Projection::~Projection (void)
 {}
 
+// ______________________________________________________________________connect
 void
 Projection::connect (object data)
 {
@@ -55,7 +56,7 @@ Projection::connect (object data)
                 float y1 = y/float(src_height);
                 float d = distance->call (x0,y0,x1,y1);
                 float de = density->call (d);
-                if ((de) && (self || (dst->get(i) != src->get (y*src_width +x)))) {
+                if ((de) && (self_connect || (dst->get(i) != src->get (y*src_width +x)))) {
                     float w = profile->call(d);
                     dst->get(i)->connect (src->get (y*src_width+x), w, data);
                 }
@@ -64,85 +65,57 @@ Projection::connect (object data)
     }    
 }
 
-// =============================================================================
-//
-// =============================================================================
-void
-Projection::static_connect (void)
-{
-    if (current)
-        current->connect();
-}
 
-
-
-// ============================================================================
-//    Python export
-// ============================================================================
+// ________________________________________________________________python_export
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(connect_overloads, connect, 0, 1)
 
 void
-Projection::boost (void) {
+Projection::python_export (void) {
+    using namespace boost::python;
 
-    class_<Projection>("projection",
-    "======================================================================\n"
-    "\n"
-    "A projection is the specification of a pattern of connection between\n"
-    "two layers. It can be precisely defined using four different notions:\n"
-    "\n"
-    "- a distance : it defines how to measure distances between a source and\n"
-    "               a target and can be either the euclidean, the manhattan\n"
-    "               or the max distance. Each distance can be made toric.\n"
-    "\n"
-    "- a shape    : it defines the most general set of sources that can\n"
-    "               potentially be connected to a target. It can be a point,\n"
-    "               a box of a given size or a disc of a given radius.\n"
-    "- a profile  : it defines connection weights as a function of the\n"
-    "               distance between a source and a target.\n"
-    "- a density  : it defines the probability of a connection to be actually\n"
-    "               instantiated as a function of the distance.\n"
-    "\n"
-    "Attributes:\n"
-    "-----------\n"
-    " self:     whether self connections are to be made\n"
-    " src:      source layer\n"
-    " dst:      destination layer\n"
-    " shape:    shape\n"
-    " density:  density\n"
-    " distance: distance\n"
-    " profile:  profile\n"
-    "\n"
-    "======================================================================\n",
-        init<> (
+    register_ptr_to_python< boost::shared_ptr<Projection> >();
+
+    class_<Projection, bases <core::Object> > ("Projection",
+    "______________________________________________________________________\n"
+    "                                                                      \n"
+    "A projection is the specification of a pattern of connection between  \n"
+    "two layers. It can be precisely defined using four different notions: \n"
+    "                                                                      \n"
+    " distance : it defines how to measure distances between a source and  \n"
+    "            a target and can be either the euclidean, the manhattan   \n"
+    "            or the max distance. Each distance can be made toric.     \n"
+    "                                                                      \n"
+    " shape    : it defines the most general set of sources that can       \n"
+    "            potentially be connected to a target. It can be a point,  \n"
+    "            a box of a given size or a disc of a given radius.        \n"
+    "                                                                      \n"                       
+    " profile  : it defines connection weights as a function of the        \n"
+    "            distance between a source and a target.                   \n"
+    "                                                                      \n"
+    " density  : it defines the probability of a connection to be actually \n"
+    "            instantiated as a function of the distance.               \n"
+    "______________________________________________________________________\n",
+    init<> (
         "init() -- initializes the projection\n"
         )
     )
     
-        .def_readwrite ("self", &Projection::self) 
-        .def_readwrite ("src", &Projection::src)
-        .def_readwrite ("dst", &Projection::dst)
-        .def_readwrite ("shape", &Projection::shape)
-        .def_readwrite ("distance", &Projection::distance)
-        .def_readwrite ("density", &Projection::density)
-        .def_readwrite ("profile", &Projection::profile)
+    .def_readwrite ("self_connect", &Projection::self_connect) 
+    .def_readwrite ("src", &Projection::src)
+    .def_readwrite ("dst", &Projection::dst)
+    .def_readwrite ("shape", &Projection::shape)
+    .def_readwrite ("distance", &Projection::distance)
+    .def_readwrite ("density", &Projection::density)
+    .def_readwrite ("profile", &Projection::profile)
     
-     .def ("connect", &Projection::connect,
-           connect_overloads (args("data"), 
-           "connect(data=None) -- instantiates the connection\n")
+    .def ("connect", &Projection::connect,
+          connect_overloads (args("data"), 
+          "connect(data=None) -- instantiates the connection\n")
           )
     ;
 }
 
-
-
-
-// ===================================================================
-//  Boost module
-// ===================================================================
 BOOST_PYTHON_MODULE(_projection)
 {
-    using namespace boost::python;
-    
-    Projection::boost();
-    Projector::boost();
+    Projection::python_export();
 }
