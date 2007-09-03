@@ -1,25 +1,25 @@
 #!/usr/bin/env python
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # Copyright (c) 2006-2007 Nicolas Rougier.
-# All rights reserved.
 #
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# This program is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 2 of the License, or (at your option) any later
+# version.
 # 
 # $Id: setup.py 275 2007-08-14 15:01:41Z rougier $
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
-import sys
+# BEFORE importing disutils, remove MANIFEST. distutils doesn't properly
+# update it when the contents of directories change.
 import os
-import glob
+if os.path.exists('MANIFEST'): os.remove('MANIFEST')
+
+import sys, glob
 from distutils.core import setup, Extension
 from distutils.command.build_ext import build_ext
 import distutils.sysconfig
 import commands
-
-if os.path.exists('MANIFEST'): os.remove('MANIFEST')
 
 
 # ___________________________________________________________check configuration
@@ -61,54 +61,110 @@ print "============================================================"
 
 
 
+
+
 # __________________________________________________________________________core
-core_srcs = glob.glob ("dana/core/*.cc")
+core_lib_srcs = glob.glob ("dana/core/*.cc")
+core_lib_srcs = filter(lambda x: not 'core.cc' in x, core_lib_srcs)
+core_lib = Extension (
+    'dana.libdana_core',
+    sources = core_lib_srcs,
+    include_dirs=[numpy.get_include(), libxml2_include_path],
+    libraries = [boost_thread_lib, 'xml2']
+)
+
+core_ext_srcs = glob.glob ("dana/core/core.cc")
 core_ext = Extension (
     'dana.core._core',
-    sources = core_srcs,
+    sources = core_ext_srcs,
     include_dirs=[numpy.get_include(), libxml2_include_path],
-    libraries = [boost_python_lib, boost_thread_lib, 'xml2']
+    libraries = [boost_python_lib, boost_thread_lib, 'xml2', 'dana_core']
 )
+
 
 # _______________________________________________________________________profile
-profile_srcs = glob.glob ("dana/projection/profile/*.cc")
+profile_lib_srcs = glob.glob ("dana/projection/profile/*.cc")
+profile_lib_srcs = filter(lambda x: not 'profile_export.cc' in x, profile_lib_srcs)
+profile_lib = Extension (
+    'dana.libdana_projection_profile',
+    sources      = profile_lib_srcs,
+    include_dirs =[numpy.get_include(), libxml2_include_path],
+    libraries    = ['xml2', 'dana_core']
+)
+profile_ext_srcs = glob.glob ("dana/projection/profile/profile_export.cc")
 profile_ext = Extension (
     'dana.projection.profile._profile',
-    sources = profile_srcs,
+    sources = profile_ext_srcs,
     include_dirs=[numpy.get_include(), libxml2_include_path],
-    libraries = [boost_python_lib]
+    libraries = [boost_python_lib, 'xml2', 'dana_projection_profile', 'dana_core']
 )
 
-density_srcs = glob.glob ("dana/projection/density/*.cc")
-density_ext = Extension (
-    'dana.projection.density._density',
-    sources = density_srcs,
-    include_dirs=[numpy.get_include(), libxml2_include_path],
-    libraries = [boost_python_lib]
+# _______________________________________________________________________distance
+distance_lib_srcs = glob.glob ("dana/projection/distance/*.cc")
+distance_lib_srcs = filter(lambda x: not 'distance_export.cc' in x, distance_lib_srcs)
+distance_lib = Extension (
+    'dana.libdana_projection_distance',
+    sources      = distance_lib_srcs,
+    include_dirs =[numpy.get_include(), libxml2_include_path],
+    libraries    = ['xml2', 'dana_core']
 )
-
-distance_srcs = glob.glob ("dana/projection/distance/*.cc")
+distance_ext_srcs = glob.glob ("dana/projection/distance/distance_export.cc")
 distance_ext = Extension (
     'dana.projection.distance._distance',
-    sources = distance_srcs,
+    sources = distance_ext_srcs,
     include_dirs=[numpy.get_include(), libxml2_include_path],
-    libraries = [boost_python_lib]
+    libraries = [boost_python_lib, 'xml2', 'dana_projection_distance', 'dana_core']
 )
 
-shape_srcs = glob.glob ("dana/projection/shape/*.cc")
+# _______________________________________________________________________shape
+shape_lib_srcs = glob.glob ("dana/projection/shape/*.cc")
+shape_lib_srcs = filter(lambda x: not 'shape_export.cc' in x, shape_lib_srcs)
+shape_lib = Extension (
+    'dana.libdana_projection_shape',
+    sources      = shape_lib_srcs,
+    include_dirs =[numpy.get_include(), libxml2_include_path],
+    libraries    = ['xml2', 'dana_core']
+)
+shape_ext_srcs = glob.glob ("dana/projection/shape/shape_export.cc")
 shape_ext = Extension (
     'dana.projection.shape._shape',
-    sources = shape_srcs,
+    sources = shape_ext_srcs,
     include_dirs=[numpy.get_include(), libxml2_include_path],
-    libraries = [boost_python_lib]
+    libraries = [boost_python_lib, 'xml2', 'dana_projection_shape', 'dana_core']
 )
 
-projection_srcs = glob.glob ("dana/projection/*.cc")
+# _______________________________________________________________________density
+density_lib_srcs = glob.glob ("dana/projection/density/*.cc")
+density_lib_srcs = filter(lambda x: not 'density_export.cc' in x, density_lib_srcs)
+density_lib = Extension (
+    'dana.libdana_projection_density',
+    sources      = density_lib_srcs,
+    include_dirs =[numpy.get_include(), libxml2_include_path],
+    libraries    = ['xml2', 'dana_core']
+)
+density_ext_srcs = glob.glob ("dana/projection/density/density_export.cc")
+density_ext = Extension (
+    'dana.projection.density._density',
+    sources = density_ext_srcs,
+    include_dirs=[numpy.get_include(), libxml2_include_path],
+    libraries = [boost_python_lib, 'xml2', 'dana_projection_density', 'dana_core']
+)
+
+
+
+# ____________________________________________________________________projection
+projection_ext_srcs = glob.glob ("dana/projection/*.cc")
 projection_ext = Extension (
     'dana.projection._projection',
-    sources = projection_srcs,
+    sources = projection_ext_srcs,
     include_dirs=[numpy.get_include(), libxml2_include_path],
-    libraries = [boost_python_lib, boost_thread_lib]
+    libraries = [boost_python_lib,
+                 'dana_core',
+                 'dana_projection_distance',
+                 'dana_projection_density',
+                 'dana_projection_shape',
+                 'dana_projection_profile']
+                 
 )
 
 #______________________________________________________________________________
@@ -137,8 +193,7 @@ class my_build_ext(build_ext):
     def build_extension(self, ext):
         force_optimisation(self.compiler)
         extra_dir = self.build_lib
-        if self.package:
-            extra_dir = os.path.join(extra_dir, self.package)
+        extra_dir = os.path.join(extra_dir, 'dana')
         ext.library_dirs.append(extra_dir)
         build_ext.build_extension(self, ext)
 
@@ -160,8 +215,12 @@ setup (name='dana.core',
                    'dana.projection.shape'
                   ],
        ext_modules = [
-            core_ext,
-            projection_ext, profile_ext, density_ext, distance_ext, shape_ext
+            core_lib,     core_ext,
+            profile_lib,  profile_ext,
+            density_lib,  density_ext,
+            distance_lib, distance_ext,
+            shape_lib,    shape_ext,
+            projection_ext
        ],
        cmdclass = {
 		"build_ext": my_build_ext
@@ -171,3 +230,12 @@ setup (name='dana.core',
         ("include/dana/core", glob.glob("dana/core/*.h"))
        ]
       )
+
+print
+print "======================================================================="
+print
+print " You have to modify your LD_LIBRARY_PATH environment variable by adding"
+print "  $prefix + 'python%s/site-packages/dana'" % sys.version[0:3]
+print
+print "======================================================================="
+print

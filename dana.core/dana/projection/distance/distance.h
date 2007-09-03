@@ -57,56 +57,8 @@ namespace dana { namespace projection { namespace distance {
             float call (float x0, float y0, float x1, float y1);
     };
         
-    
 
-
-    struct euclidean : public object {
-        bool _toric;
-        euclidean (bool toric) : object(), _toric(toric) {};
-        float operator()(float x0, float y0, float x1, float y1)
-        {
-            float dx = fabs(x0-x1);
-            float dy = fabs(y0-y1);
-            if (_toric) {
-                dx = ((1-dx) < dx) ? (1-dx) : dx;
-                dy = ((1-dy) < dy) ? (1-dy) : dy;
-            }
-            return sqrt (dx*dx+dy*dy); 
-        };
-    };
-
-    struct manhattan : public object {
-        bool _toric;
-        manhattan (bool toric) : object(), _toric(toric) {};
-        float operator()(float x0, float y0, float x1, float y1)
-        {
-            float dx = fabs(x0-x1);
-            float dy = fabs(y0-y1);
-            if (_toric) {
-                dx = ((1-dx) < dx) ? (1-dx) : dx;
-                dy = ((1-dy) < dy) ? (1-dy) : dy;
-            }
-            return dx+dy;
-        };
-    };
-    
-     struct max : public object {
-        bool _toric;
-        max (bool toric) : object(), _toric(toric) {};
-        float operator()(float x0, float y0, float x1, float y1)
-        {
-            float dx = fabs(x0-x1);
-            float dy = fabs(y0-y1);
-            if (_toric) {
-                dx = ((1-dx) < dx) ? (1-dx) : dx;
-                dy = ((1-dy) < dy) ? (1-dy) : dy;
-            }
-            return (dx > dy) ? dx : dy;
-        };
-    };
-
-} // namespace distance
-}} // namespace dana::projection
+}}} // namespace dana::projection::distance
 
 #endif
 

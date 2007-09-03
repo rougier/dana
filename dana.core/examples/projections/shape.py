@@ -1,69 +1,72 @@
 #!/usr/bin/env python
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # Copyright (c) 2006-2007 Nicolas Rougier.
-# All rights reserved.
 #
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# This program is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 2 of the License, or (at your option) any later
+# version.
 # 
 # $Id: shape.py 171 2007-05-28 18:30:43Z rougier $
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 import dana.core as core
-import dana.projection as projection
-import dana.projection.distance as distance
-import dana.projection.density as density
-import dana.projection.shape as shape
-import dana.projection.profile as profile
+import dana.projection as proj
 
-from dana.visualization.pylab import View
 
-if __name__ == '__main__':
+size = 10
+network = core.Network()
+map = core.Map((10,10), (0,0))
+network.append (map)
+layer = core.Layer()
+map.append (layer)
+layer.fill (core.Unit)
 
-    size = 40;
 
-    net = core.Network()
-    
-    m0 = core.Map( (size, size), (0,0) )
-    m0.append( core.Layer() )
-    m0[0].fill(core.Unit)
-    m0.name = 'm0: disc'
-    net.append(m0)
-    
-    m1 = core.Map( (size, size), (1,0) )
-    m1.append( core.Layer() )
-    m1[0].fill(core.Unit)
-    m1.name = 'm1: box'
-    net.append(m1)
+p = proj.Projection()
+p.self_connect = True
+p.distance = proj.distance.Euclidean (False)
+p.density  = proj.density.Full(1)
+p.shape    = proj.shape.Point()
+p.profile  = proj.profile.Constant(1)
+p.src      = layer
+p.dst      = layer
+p.connect()
+print 'Point shape'
+print layer.unit(size/2,size/2).weights (layer)
 
-    m2 = core.Map( (size, size), (2,0) )
-    m2.append( core.Layer() )
-    m2[0].fill(core.Unit)
-    m2.name = 'm2: point'
-    net.append(m2)
-    
-    proj          = projection.projection()
-    proj.self     = True
-    proj.distance = distance.euclidean(False)
-    proj.density  = density.full(1)
-    proj.shape    = shape.point()
-    proj.profile  = profile.constant(1)
-    proj.src      = m0[0]
-    proj.dst      = m0[0]
-    proj.connect()
-    
-    proj.shape    = shape.box (.25, .25)
-    proj.src      = m1[0]
-    proj.dst      = m1[0]
-    proj.connect()
-    
-    proj.shape    = shape.disc(.25)
-    proj.src      = m2[0]
-    proj.dst      = m2[0]
-    proj.connect()
 
-    view = View (net, title='Click on unit to see weights', size=12)
-    view.show()
+for u in layer: u.clear()
+p.shape    = proj.shape.Box (.25, .25)
+p.connect()
+print 'Box shape'
+print layer.unit(size/2,size/2).weights (layer)
+
+for u in layer: u.clear()
+p.shape    = proj.shape.Disc(.25)
+p.connect()
+print 'Disc shape'
+print layer.unit(size/2,size/2).weights (layer)
+
+for u in layer: u.clear()
+p.shape    = proj.shape.Box (1.0, 0.0)
+p.connect()
+print 'Line shape'
+print layer.unit(size/2,size/2).weights (layer)
+
+for u in layer: u.clear()
+p.shape    = proj.shape.Box (0.0, 1.0)
+p.connect()
+print 'Column shape'
+print layer.unit(size/2,size/2).weights (layer)
+
+for u in layer: u.clear()
+p.shape    = proj.shape.Box (0.0, 1.0)
+p.connect()
+p.self_connect = False
+p.shape    = proj.shape.Box (1.0, 0.0)
+p.connect()
+print 'Cross shape'
+print layer.unit(size/2,size/2).weights (layer)
+
 

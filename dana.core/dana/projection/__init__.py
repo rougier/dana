@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 #------------------------------------------------------------------------------
 # Copyright (c) 2006-2007 Nicolas Rougier.
-# All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -28,10 +27,69 @@ It can be precisely defined using four different notions:
                  instantiated as a function of the distance.
 """
 
+from distance import *
+from profile import *
+from shape import *
+from density import *
 from _projection import *
-import density
-import distance
-import profile
-import shape
 
-__all__ = ['projector', 'projection', 'density', 'distance', 'profile', 'shape']
+
+def one_to_one (src, dst, w=1.0, self_connect=False):
+    """ One to one connection """
+
+    return Projection (src, dst,
+                       shape       = Point(),
+                       distance    = Euclidean(),
+                       density     = Full(),
+                       profile     = Constant(w),
+                       self_connect= self_connect)
+
+def linear (src, dst, w=1.0, self_connect=False):
+    """ Linear connection """
+
+    return Projection (src, dst,
+                       shape       = Box (1.0, 0.0),
+                       distance    = Euclidean(),
+                       density     = Full(),
+                       profile     = Constant(w),
+                       self_connect= self_connect)
+
+def columnar (src, dst, w=1.0, self_connect=False):
+    """ Columnar connection """
+
+    return Projection (src, dst,
+                       shape       = Box (0.0, 1.0),
+                       distance    = Euclidean(),
+                       density     = Full(),
+                       profile     = Constant(w),
+                       self_connect= self_connect)
+
+def all_to_one (src, dst, w=1.0, self_connect=False):
+    """ All to one connection """
+
+    return Projection (src, dst,
+                       shape       = Box (1.0, 1.0),
+                       distance    = Euclidean(),
+                       density     = Full(),
+                       profile     = Constant(w),
+                       self_connect= self_connect)
+
+def gaussian (src, dst, a=1.0, b=1.0, self_connect=False):
+    """ Gaussian connection """
+
+    return Projection (src, dst,
+                       shape       = Box (1.0, 1.0),
+                       distance    = Euclidean(),
+                       density     = Full(),
+                       profile     = Gaussian(a,b),
+                       self_connect= self_connect)
+
+def dog (src, dst, a1=1.0, b1=1.0, a2=.5, b2=.5, self_connect=False):
+    """ Difference of Gaussian connection """
+
+    return Projection (src, dst,
+                       shape       = Box (1.0, 1.0),
+                       distance    = Euclidean(),
+                       density     = Full(),
+                       profile     = DoG(a1,b1,a2,b2),
+                       self_connect= self_connect)

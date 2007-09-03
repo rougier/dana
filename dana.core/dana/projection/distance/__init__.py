@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 #------------------------------------------------------------------------------
 # Copyright (c) 2006-2007 Nicolas Rougier.
-# All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -18,4 +17,3 @@ the distance between a source and a target.
 """
 
 from _distance import *
-__all__ = ['distance', 'euclidean', 'manhattan', 'max']

@@ -40,7 +40,14 @@ namespace dana { namespace projection {
 
     public:
         // _________________________________________________________________life
-        Projection (void);
+        Projection (core::LayerPtr src              = core::LayerPtr(),
+                    core::LayerPtr dst              = core::LayerPtr(),
+                    shape::ShapePtr shape           = shape::ShapePtr (new shape::Point()),
+                    profile::ProfilePtr profile     = profile::ProfilePtr (new profile::Constant (1.0f)),
+                    density::DensityPtr density     = density::DensityPtr (new density::Full()),
+                    distance::DistancePtr distance  = distance::DistancePtr (new distance::Euclidean()),
+                    bool self_connect = false);
+                    
         virtual ~Projection (void);
 
         // _________________________________________________________________main

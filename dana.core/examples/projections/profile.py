@@ -1,81 +1,57 @@
 #!/usr/bin/env python
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # Copyright (c) 2006-2007 Nicolas Rougier.
-# All rights reserved.
 #
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# This program is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 2 of the License, or (at your option) any later
+# version.
 # 
-# $Id: profile.py 171 2007-05-28 18:30:43Z rougier $
-#------------------------------------------------------------------------------
+# $Id$
+#-------------------------------------------------------------------------------
 
 import dana.core as core
-import dana.projection as projection
-import dana.projection.distance as distance
-import dana.projection.density as density
-import dana.projection.shape as shape
-import dana.projection.profile as profile
+import dana.projection as proj
 
-from dana.visualization.pylab import View
 
-if __name__ == '__main__':
+size = 10
+network = core.Network()
+map = core.Map((10,10), (0,0))
+network.append (map)
+layer = core.Layer()
+map.append (layer)
+layer.fill (core.Unit)
 
-    size = 40;
 
-    net = core.Network()
-    
-    m0 = core.Map( (size, size), (0,0) )
-    m0.append( core.Layer() )
-    m0[0].fill(core.Unit)
-    m0.name = 'm0: constant'
-    net.append(m0)
-    
-    m1 = core.Map( (size, size), (1,0) )
-    m1.append( core.Layer() )
-    m1[0].fill(core.Unit)
-    m1.name = 'm1: linear'
-    net.append(m1)
+p = proj.Projection()
+p.self_connect = True
+p.distance = proj.distance.Euclidean (False)
+p.density  = proj.density.Full(1)
+p.shape    = proj.shape.Box(1.0, 1.0)
+p.profile  = proj.profile.Constant(1)
+p.src      = layer
+p.dst      = layer
+p.connect()
+print 'Constant profile'
+print layer.unit(size/2,size/2).weights (layer)
 
-    m2 = core.Map( (size, size), (0,1) )
-    m2.append( core.Layer() )
-    m2[0].fill(core.Unit)
-    m2.name = 'm2: gaussian'
-    net.append(m2)
+for u in layer: u.clear()
+p.profile = proj.profile.Linear (0, 1)
+p.connect()
+print 'Linear profile'
+print layer.unit(size/2,size/2).weights (layer)
 
-    m3 = core.Map( (size, size), (1,1) )
-    m3.append( core.Layer() )
-    m3[0].fill(core.Unit)
-    m3.name = 'm3: DoG'
-    net.append(m3)
-    
-    
-    proj          = projection.projection()
-    proj.self     = True
-    proj.distance = distance.euclidean(False)
-    proj.density  = density.full(1)
-    proj.shape    = shape.box(1,1)
-    proj.profile  = profile.constant(1)
-    proj.src      = m0[0]
-    proj.dst      = m0[0]
-    proj.connect()
-    
-    proj.profile  = profile.linear(0,1)
-    proj.src      = m1[0]
-    proj.dst      = m1[0]
-    proj.connect()
-    
-    proj.profile  = profile.gaussian(1,.25)
-    proj.src      = m2[0]
-    proj.dst      = m2[0]
-    proj.connect()
-    
-    proj.profile = profile.dog (2.2,0.1, .65,.35)
-    proj.src      = m3[0]
-    proj.dst      = m3[0]
-    proj.connect()
-    
-    view = View (net, title='Click on unit to see weights', size=8)
-    view.show()
+for u in layer: u.clear()
+p.profile = proj.profile.Gaussian (1, .25)
+p.connect()
+print 'Gaussian profile'
+print layer.unit(size/2,size/2).weights (layer)
+
+for u in layer: u.clear()
+p.profile = proj.profile.DoG (2.2,0.1, .65,.35)
+p.connect()
+print 'DoG profile'
+print layer.unit(size/2,size/2).weights (layer)
+
+
 

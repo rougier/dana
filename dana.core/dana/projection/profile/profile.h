@@ -17,73 +17,70 @@ using namespace boost::python;
 
 namespace dana { namespace projection { namespace profile {
 
-    // Forward declaration of shared pointers
-    // =========================================================================
-    typedef boost::shared_ptr<class Profile>  ProfilePtr;
-    typedef boost::shared_ptr<class Constant> ConstantPtr;
-    typedef boost::shared_ptr<class Linear>   LinearPtr;
-    typedef boost::shared_ptr<class Uniform>  UniformPtr;
-    typedef boost::shared_ptr<class Gaussian> GaussianPtr;
-    typedef boost::shared_ptr<class DoG>      DoGPtr;    
+        //______________________________________________________________________
+        typedef boost::shared_ptr<class Profile>  ProfilePtr;
+        typedef boost::shared_ptr<class Constant> ConstantPtr;
+        typedef boost::shared_ptr<class Linear>   LinearPtr;
+        typedef boost::shared_ptr<class Uniform>  UniformPtr;
+        typedef boost::shared_ptr<class Gaussian> GaussianPtr;
+        typedef boost::shared_ptr<class DoG>      DoGPtr;    
 
-    // =========================================================================
-    class Profile {
+        //______________________________________________________________________
+        class Profile {
         public:
             float density;
         public:
             Profile (void);
             virtual ~Profile ();
             virtual float call (float distance);
-    };
-    
-    // =========================================================================
-    class Constant : public Profile {
+        };
+
+        //______________________________________________________________________
+        class Constant : public Profile {
         public:
             float value;
         public:
             Constant (float v);
             float call (float distance);
-    };
+        };
 
-    // =========================================================================
-    class Linear : public Profile {
+        //______________________________________________________________________
+        class Linear : public Profile {
         public:
             float minimum, maximum;
         public:
             Linear (float min, float max);
             float call (float distance);
-    };
+        };
 
-    // =========================================================================
-    class Uniform : public Profile {
+        //______________________________________________________________________
+        class Uniform : public Profile {
         public:
             float minimum, maximum;
         public:
             Uniform (float min, float max);
             float call (float distance);
-    };
-    
-    // =========================================================================
-    class Gaussian : public Profile {
+        };
+
+        //______________________________________________________________________
+        class Gaussian : public Profile {
         public:
             float scale, mean;
         public:
             Gaussian (float s, float m);
             float call (float distance);
-    };
+        };
 
-    // =========================================================================
-    class DoG : public Profile {
+        class DoG : public Profile {
         public:
             float scale_1, mean_1;
             float scale_2, mean_2;            
         public:
             DoG (float s1, float m1, float s2, float m2);
             float call (float distance);
-    };    
+        };    
 
-
-}}} // namespace dana::projection::density
+}}} // namespace dana::projection::profile
 
 #endif
 

@@ -17,4 +17,4 @@ Shape functions describes the overall shape of a link pattern.
 """
 
 from _shape import *
-__all__ = ['shape', 'point', 'box','disc']
+

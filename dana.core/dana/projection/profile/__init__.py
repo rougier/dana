@@ -18,4 +18,3 @@ as a function of their distance.
 """
 
 from _profile import *
-__all__ = ['profile', 'constant', 'linear', 'gaussian', 'dog', 'uniform']
