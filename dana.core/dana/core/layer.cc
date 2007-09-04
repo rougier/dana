@@ -330,7 +330,7 @@ Layer::set_potentials (numeric::array potentials)
     }
     
     // Check array shape against map shape
-    int* dims_ptr = PyArray_DIMS (potentials.ptr());
+    npy_intp *dims_ptr = PyArray_DIMS (potentials.ptr());
     int rank = PyArray_NDIM (potentials.ptr());
     if (rank != 2) {
         PyErr_SetString(PyExc_ValueError, "Expected a 2-dimensional array");
