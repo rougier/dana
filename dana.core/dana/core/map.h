@@ -71,7 +71,6 @@ namespace dana { namespace core {
         virtual void           set_position (int x, int y);
         virtual py::object     get_frame (void);
         virtual void           set_frame (py::object frame);
-        virtual py::object     get_potentials (void);
 
         // _______________________________________________________________export
         static void        python_export (void);

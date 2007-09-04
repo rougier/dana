@@ -17,6 +17,8 @@
 #include "link.h"
 #include "spec.h"
 #include "model.h"
+#include "event.h"
+#include "observer.h"
 #include "random.h"
 
 
@@ -32,5 +34,7 @@ BOOST_PYTHON_MODULE(_core) {
     Layer::python_export();
     Unit::python_export();
     Link::python_export();
+    Event::python_export();
+    Observer::python_export();
     Random::boost();
 }

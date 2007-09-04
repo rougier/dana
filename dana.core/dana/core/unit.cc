@@ -70,9 +70,11 @@ Unit::read (xmlTextReaderPtr reader)
     std::istringstream iss;
 
     // Get potential
+    float p;
     iss.clear();
     iss.str (read_attribute (reader, "potential"));
-    iss >> potential;
+    iss >> p;
+    set_potential (p);
     
     xmlReaderTypes type   = XML_READER_TYPE_NONE;
     std::string    name   = "";
@@ -228,7 +230,7 @@ Unit::operator= (const Unit &other)
 {
     if (this == &other)
         return *this;
-    this->potential = other.potential;
+    set_potential (other.potential);
     return *this;
 }
 
@@ -295,7 +297,7 @@ Unit::operator/ (float value) const
 Unit &
 Unit::operator+= (Unit const &other)
 {
-    potential += other.potential;
+    set_potential (potential + other.potential);
     return *this;
 }
 
@@ -303,7 +305,7 @@ Unit::operator+= (Unit const &other)
 Unit &
 Unit::operator-= (Unit const &other)
 {
-    potential -= other.potential;
+    set_potential (potential - other.potential);
     return *this;
 }
 
@@ -311,7 +313,7 @@ Unit::operator-= (Unit const &other)
 Unit &
 Unit::operator*= (Unit const &other)
 {
-    potential *= other.potential;
+    set_potential (potential * other.potential);
     return *this;
 }
 
@@ -319,7 +321,7 @@ Unit::operator*= (Unit const &other)
 Unit &
 Unit::operator/= (Unit const &other)
 {
-    potential /= other.potential;
+    set_potential (potential / other.potential);
     return *this;
 }
 
@@ -327,7 +329,7 @@ Unit::operator/= (Unit const &other)
 Unit &
 Unit::operator+= (float value)
 {
-    potential += value;
+    set_potential (potential + value);
     return *this;
 }
 
@@ -335,7 +337,7 @@ Unit::operator+= (float value)
 Unit &
 Unit::operator-= (float value)
 {
-    potential -= value;
+    set_potential (potential - value);
     return *this;
 }
 
@@ -343,7 +345,7 @@ Unit::operator-= (float value)
 Unit &
 Unit::operator*= (float value)
 {
-    potential *= value;
+    set_potential (potential * value);
     return *this;
 }
 
@@ -351,7 +353,7 @@ Unit::operator*= (float value)
 Unit &
 Unit::operator/= (float value)
 {
-    potential /= value;
+    set_potential (potential / value);
     return *this;
 }
 

@@ -152,7 +152,7 @@ void
 Layer::clear (void)
 {
     for (unsigned int i = 0; i< units.size(); i++)
-        units[i]->potential = 0.0f;
+        units[i]->set_potential (0.0f);
 }
 
 // ============================================================================
@@ -352,7 +352,7 @@ Layer::set_potentials (numeric::array potentials)
 
     for (int i=0; i<w; i++)
         for (int j=0; j<h; j++)
-            get(i,j)->potential = py::extract<float> (potentials[py::make_tuple(j,i)]);
+            get(i,j)->set_potential (py::extract<float> (potentials[py::make_tuple(j,i)]));
 
     return;
 }
@@ -403,7 +403,6 @@ Layer::python_export (void)
                        &Layer::get_potentials, &Layer::set_potentials,
                        "Layer potentials (as a numpy array)")
 
-
 //        .add_property("map", 
 //          make_function (&Layer::get_map,
 //                            return_value_policy<reference_existing_object>()))
@@ -417,9 +416,6 @@ Layer::python_export (void)
 
         .def ("__len__", &Layer::size,
         "__len__() -> integer -- return number of units\n")
-        
-//        .def ("append", &Layer::append,
-//        "append(unit) -- append unit to end\n")
         
         .def ("__getitem__", get_index,
         "x.__getitem__ (y)  <==> x[y]\n\n"

@@ -107,16 +107,7 @@ int
 Map::fill (py::object type)
 {
     return layers[0]->fill(type);
-}
-            
-// ============================================================================
-//  get layer 0 potentials as a nupy::array
-// ============================================================================
-py::object
-Map::get_potentials (void) 
-{
-    return layers[0]->get_potentials();
-}
+}            
 
 // ============================================================================
 //  Clear layer activities
@@ -414,10 +405,6 @@ Map::python_export (void) {
         .def ("fill", &Map::fill,
         "fill(type) -> integer -- fill layer 0 with type object")
 
-        .def ("potentials", &Map::get_potentials,
-        "potentials() -> numpy::array -- "
-        "get units potential from layer 0 as an array")
-        
         
         .add_property  ("shape",  &Map::get_shape, set_shape_object)
         .add_property  ("position",  &Map::get_position, set_position_object)
