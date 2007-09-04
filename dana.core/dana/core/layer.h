@@ -58,6 +58,7 @@ namespace dana { namespace core {
         virtual SpecPtr      get_spec (void) const;
         virtual void         set_spec (const SpecPtr spec);
         virtual py::object   get_potentials (void);
+        virtual void         set_potentials (numeric::array a);
 
         // _______________________________________________________________export
         static void          python_export (void);

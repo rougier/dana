@@ -300,6 +300,64 @@ Layer::get_potentials (void)
     return py::extract<numeric::array>(potentials);
 }
 
+// _______________________________________________________________set_potentials
+void
+Layer::set_potentials (numeric::array potentials)
+{
+    // Check layer belongs to a map
+    if ((map == 0) || (map->width == 0)) {
+        PyErr_SetString (PyExc_AssertionError, "Layer has no shape yet");
+        py::throw_error_already_set();
+        return;
+    }
+
+    // Check given potentials is an array
+    if (!PyArray_Check(potentials.ptr())){
+        PyErr_SetString(PyExc_ValueError, "Expected a PyArrayObject");
+        py::throw_error_already_set();
+        return;
+    };
+
+    // Check array type
+    PyArray_TYPES t = PyArray_TYPES(PyArray_TYPE(potentials.ptr()));
+    if (t != PyArray_DOUBLE) {
+        PyErr_SetString (PyExc_ValueError, "Array data type must be float");
+        py::throw_error_already_set();
+        return; 
+    }
+    
+    // Check array shape against map shape
+    int* dims_ptr = PyArray_DIMS (potentials.ptr());
+    int rank = PyArray_NDIM (potentials.ptr());
+    if (rank != 2) {
+        PyErr_SetString(PyExc_ValueError, "Expected a 2-dimensional array");
+        py::throw_error_already_set();
+        return;
+    };
+
+    int w = (int) (*(dims_ptr + 1));
+    int h = (int) (*(dims_ptr + 0));
+    if ((w != map->width) || (h != map->height)) {
+        std::ostringstream s;
+        s << "Array shape (" << w << ", " << h
+          << ") does not correspond to layer shape ("
+          << map->width << ", " << map->height << ")";
+        
+        PyErr_SetString (PyExc_ValueError, s.str().c_str());
+        py::throw_error_already_set();
+        return;
+        
+    }
+
+
+    for (int i=0; i<w; i++)
+        for (int j=0; j<h; j++)
+            get(i,j)->potential = py::extract<float> (potentials[py::make_tuple(j,i)]);
+
+    return;
+}
+
+
 // ============================================================================
 //    Boost wrapping code
 // ============================================================================
@@ -341,11 +399,16 @@ Layer::python_export (void)
                        &Layer::get_spec, &Layer::set_spec,
                        "Parameters of the layer")
 
+        .add_property ("potentials",
+                       &Layer::get_potentials, &Layer::set_potentials,
+                       "Layer potentials (as a numpy array)")
 
-        .add_property("map", 
-          make_function (&Layer::get_map,
-                            return_value_policy<reference_existing_object>()))
 
+//        .add_property("map", 
+//          make_function (&Layer::get_map,
+//                            return_value_policy<reference_existing_object>()))
+
+        // Methods
         .def ("compute_dp", &Layer::compute_dp,
         "compute_dp() -> float -- computes potentials and return dp\n")
 
@@ -374,10 +437,7 @@ Layer::python_export (void)
         "fill(type) -> integer -- fill layer with type object")
         
         .def ("clear", &Layer::clear,
-        "clear() -- remove all units\n")
-        
-        .def ("potentials", &Layer::get_potentials,
-        "potentials() -> numpy::array -- get units potential as an array")
+        "clear() -- Clear units activity\n")        
         ;
 }
 

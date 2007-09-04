@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 #
 # Copyright (c) 2006-2007 Nicolas Rougier.
-# All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -17,7 +16,7 @@
 
 import sys
 import unittest
-import unit,layer,map
+import unit,layer,map,spec
 
 def test(verbosity=2):
     """ Perform dana regression tests """
@@ -26,6 +25,7 @@ def test(verbosity=2):
     suite.addTest (unit.suite)
     suite.addTest (layer.suite)
     suite.addTest (map.suite)
+    suite.addTest (spec.suite)
     runner = unittest.TextTestRunner(stream=sys.stdout, verbosity=verbosity)
     result = runner.run(suite)
 

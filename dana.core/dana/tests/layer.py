@@ -11,6 +11,7 @@
 # $Id: layer.py 161 2007-05-11 13:03:44Z rougier $
 
 import unittest
+import numpy
 import dana.core as core
 
 
@@ -27,13 +28,13 @@ class LayerTests (unittest.TestCase):
         self.assertEqual (len(self.layer), 0)
 
     def testAccessWhenEmpty (self):
-        """ Check IndexError raise when accessing an empty layer """
+        """ Check layer raises IndexError when accessing an empty layer """
         self.assertRaises (IndexError, self.layer.__getitem__, 0)
         self.assertRaises (IndexError, self.layer.unit, 0)
         self.assertRaises (IndexError, self.layer.unit, 0, 0)
 
     def testAccess (self):
-        """ Check IndexError raise when accessing beyond layer """
+        """ Check layer raises IndexError raise when accessing beyond capacity """
         m = core.Map ((1,2), (0,0))
         m.append (self.layer)
         self.layer.fill(core.Unit)
@@ -42,7 +43,7 @@ class LayerTests (unittest.TestCase):
         self.assertRaises (IndexError, self.layer.unit, 1,0)
 
     def testFillNoShape (self):
-        """ Check layer cannot be filled  without a shape """
+        """ Check layer cannot be filled without a shape """
         self.assertRaises (AssertionError, self.layer.fill, core.Unit)
 
     def testFill (self):
@@ -73,7 +74,7 @@ class LayerTests (unittest.TestCase):
         m = core.Map ((2,4), (0,0))
         m.append (self.layer)
         self.layer.fill(core.Unit)
-        potentials = self.layer.potentials()
+        potentials = self.layer.potentials
         self.assertEqual (potentials.shape, (4,2))
 
     def testPotentials (self):
@@ -84,7 +85,18 @@ class LayerTests (unittest.TestCase):
         self.layer.unit(0,0).potential = 1.0
         self.layer.unit(0,1).potential = 2.0
         self.layer.unit(0,2).potential = 3.0
-        potentials = self.layer.potentials()
+        potentials = self.layer.potentials
+
+    def testSetPotentials (self):
+        """ Check layer set potentials value """
+        m = core.Map ((1,2), (0,0))
+        m.append (self.layer)
+        self.layer.fill(core.Unit)
+        self.layer.unit(0,0).potential = 0
+        self.layer.unit(0,1).potential = 0
+        potentials = numpy.array ([[1.0],[1.0]])
+        self.layer.potentials = potentials
+        self.assertTrue ((self.layer.potentials == potentials).all())
 
     def testComputeDP (self):
         """ Check layer potential computation """
