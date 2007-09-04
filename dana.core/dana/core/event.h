@@ -13,6 +13,7 @@
 
 #include <vector>
 #include "object.h"
+#include "observer.h"
 
 
 namespace dana { namespace core {
@@ -34,12 +35,39 @@ namespace dana { namespace core {
         virtual ~Event (void);
 
         // _________________________________________________________________main
-        static  void attach (ObserverPtr observer);
-        static  void detach (ObserverPtr observer);
-        virtual void notify (ObjectPtr subject);
+        static void attach (ObserverPtr observer);
+        static void detach (ObserverPtr observer);
+        static void notify (ObjectPtr subject);
         
         // _______________________________________________________________export
         static void python_export (void);
+    };
+
+    class EventDP : public Event {
+    public:
+        EventDP (ObjectPtr subject = ObjectPtr()) : Event(subject)
+        { };
+
+        static void notify (ObjectPtr subject)
+        {
+            EventPtr event = EventPtr (new EventDP(subject));
+            std::vector<ObserverPtr>::iterator i;
+            for (i=observers.begin(); i!=observers.end(); i++)
+                (*i)->notify (event);
+        }
+    };
+    class EventDW : public Event {
+    public:
+        EventDW (ObjectPtr subject = ObjectPtr()) : Event(subject)
+        { };
+
+        static void notify (ObjectPtr subject)
+        {
+            EventPtr event = EventPtr (new EventDW(subject));
+            std::vector<ObserverPtr>::iterator i;
+            for (i=observers.begin(); i!=observers.end(); i++)
+                (*i)->notify (event);
+        }
     };
 }}
 

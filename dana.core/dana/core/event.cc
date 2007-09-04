@@ -62,6 +62,8 @@ Event::python_export (void)
 {
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Event> >();
+    register_ptr_to_python< boost::shared_ptr<EventDP> >();
+    register_ptr_to_python< boost::shared_ptr<EventDW> >();
  
     class_<Event, bases <Object> >(
         "Event",
@@ -80,5 +82,23 @@ Event::python_export (void)
               "detach(observer)")
         .staticmethod ("detach")
         ;
+
+    class_<EventDP, bases <Event> >(
+        "EventDP",
+        "______________________________________________________________________\n"
+        "                                                                      \n"
+        "______________________________________________________________________\n",
+        init<>("__init__(subject)"))
+        ;
+
+
+    class_<EventDW, bases <Event> >(
+        "EventDW",
+        "______________________________________________________________________\n"
+        "                                                                      \n"
+        "______________________________________________________________________\n",
+        init<>("__init__(subject)"))
+        ;
+
 }
 

@@ -136,6 +136,7 @@ void
 Unit::set_potential (float potential)
 {
     this->potential = potential;
+    //    EventDP::notify(this->myself());
 }
 
 //_____________________________________________________________________get_layer

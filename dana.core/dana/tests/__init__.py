@@ -16,7 +16,7 @@
 
 import sys
 import unittest
-import unit,layer,map,spec
+import unit,layer,map,spec,event
 
 def test(verbosity=2):
     """ Perform dana regression tests """
@@ -26,6 +26,7 @@ def test(verbosity=2):
     suite.addTest (layer.suite)
     suite.addTest (map.suite)
     suite.addTest (spec.suite)
+    suite.addTest (event.suite)
     runner = unittest.TextTestRunner(stream=sys.stdout, verbosity=verbosity)
     result = runner.run(suite)
 
