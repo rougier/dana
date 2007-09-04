@@ -21,30 +21,40 @@ namespace dana { namespace core {
 
     typedef boost::shared_ptr<class Model> ModelPtr;
 
-    class Model : public Object
-    {
-        public:
-            std::vector<NetworkPtr>     networks;
-            std::vector<EnvironmentPtr> environments;
-            bool                        running;
-            boost::barrier *            barrier;
-            unsigned long               age;
-            unsigned long               time, start_time, stop_time;
-            static Model *              current_model;
-           
-        public:
-            Model (void);
-            virtual ~Model (void);
+    // ____________________________________________________________class Object
+    class Model : public Object {
 
-            virtual void        append (NetworkPtr net);
-            virtual void        append (EnvironmentPtr env);
-            virtual void        clear (void);
-            virtual bool        start (unsigned long n=0);
-            virtual void        stop (void);
-            static void         entry_point (void);
-            static void         python_export (void);
+        // ___________________________________________________________attributes
+    public:
+        std::vector<NetworkPtr>     networks;
+        std::vector<EnvironmentPtr> environments;
+        SpecPtr                     spec;
+        bool                        running;
+        boost::barrier *            barrier;
+        unsigned long               age;
+        unsigned long               time, start_time, stop_time;
+        static Model *              current_model;
+        
+    public:
+        // _________________________________________________________________life
+        Model (void);
+        virtual ~Model (void);
+
+        // _________________________________________________________________main
+        virtual void        append (NetworkPtr net);
+        virtual void        append (EnvironmentPtr env);
+        virtual void        clear (void);
+        virtual bool        start (unsigned long n=0);
+        virtual void        stop (void);
+        static void         entry_point (void);
+
+        // ______________________________________________________________get/set
+        virtual SpecPtr       get_spec (void);
+        virtual void          set_spec (SpecPtr spec);  
+        
+        // _______________________________________________________________export
+        static void         python_export (void);
     };
-
 }}
 
 #endif

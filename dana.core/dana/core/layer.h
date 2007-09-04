@@ -53,7 +53,7 @@ namespace dana { namespace core {
         virtual int read  (xmlTextReaderPtr reader);
 
         // ______________________________________________________________get/set
-        virtual Map *        get_map (void) const;
+        virtual Map *        get_map (void);
         virtual void         set_map (class Map *map);
         virtual SpecPtr      get_spec (void) const;
         virtual void         set_spec (const SpecPtr spec);

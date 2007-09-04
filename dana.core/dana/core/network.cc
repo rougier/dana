@@ -8,6 +8,7 @@
 //
 // $Id: network.cc 241 2007-07-19 08:52:13Z rougier $
 
+#include "model.h"
 #include "network.h"
 
 using namespace dana::core;
@@ -17,7 +18,9 @@ using namespace dana::core;
 //  constructor
 // ============================================================================
 Network::Network (void): Object (), width(1), height(1)
-{}
+{
+    model = 0;
+}
 
 // ============================================================================
 //  destructor
@@ -39,7 +42,7 @@ Network::append (MapPtr map)
         return;
         
     maps.push_back (MapPtr (map));
-    map->network = this;
+    map->set_network(this);
     compute_geometry();
 }
 
@@ -63,10 +66,7 @@ Network::get (const int index)
     return maps.at(0);
 }
 
-
-// ============================================================================
-//  get size
-// ============================================================================
+// _________________________________________________________________________size
 int
 Network::size (void) const
 {
@@ -144,6 +144,36 @@ Network::read (xmlTextReaderPtr reader)
     return 0;
 }
 
+// ____________________________________________________________________get_model
+Model *
+Network::get_model (void)
+{
+    return model;
+}
+
+// ____________________________________________________________________set_model
+void
+Network::set_model (class Model *model)
+{
+    this->model = model;
+}
+
+// _____________________________________________________________________get_spec
+SpecPtr
+Network::get_spec (void)
+{
+    if ((spec == SpecPtr()) && (model))
+        return model->get_spec();
+    return SpecPtr(spec);
+
+}
+
+// _____________________________________________________________________set_spec
+void
+Network::set_spec (SpecPtr spec)
+{
+    this->spec = SpecPtr(spec);
+}
 
 
 // ============================================================================
@@ -259,41 +289,53 @@ Network::python_export (void)
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Network> >();
 
-    class_<Network, bases <Object> > ("Network",
-     "======================================================================\n"
-    "\n"
-    "A network is a set of maps that are evaluated synchronously.\n"
-    "\n"
-    "Attributes:\n"
-    "-----------\n" 
-    "   spec : Specification for the network\n"
-    "   shape: Shape of the network (tuple, read_only) \n"
-    "\n"
-    "======================================================================\n",
-        init<> (
-        "__init__() -- initializes network\n")
-        )
+    class_<Network, bases <Object> > (
+        "Network",
+        "======================================================================\n"
+        "\n"
+        "A network is a set of maps that are evaluated synchronously.\n"
+        "\n"
+        "\n"
+        "======================================================================\n",
+        init<> ("__init__()"))
 
-        .def ("compute_dp", &Network::compute_dp,
-        "compute_dp() -> float -- computes potentials and return dp\n")
 
-        .def ("compute_dw", &Network::compute_dw,
-        "compute_dw() -> float -- computes weights and returns dw\n")
+        // Properties
+        .add_property ("spec",
+                       &Network::get_spec, &Network::set_spec,
+                       "Parameters of the network")
 
-        .def ("__getitem__", &Network::get,
-         "x.__getitem__ (y)  <==> x[y]\n\n"
-        "Use of negative indices is supported.\n")
+        .add_property ("shape",
+                       &Network::get_shape,
+                       "Shape of the network in terms of unit")
         
-        .def ("__len__",     &Network::size,
-        "__len__() -> integer -- return number of maps\n")
-        
-        .def ("append",      &Network::append,
-        "append(map) -- append map to end\n")
-        
-        .def ("clear",       &Network::clear,
-        "clear() -- clear map activity\n")
+        // Attributes
 
-        .def_readwrite ("spec", &Network::spec)
-        .def_readonly ("shape", &Network::get_shape)
+        
+        // Methods
+        .def ("compute_dp",
+              &Network::compute_dp,
+              "compute_dp() -> float -- computes potentials and return dp\n")
+
+        .def ("compute_dw",
+              &Network::compute_dw,
+              "compute_dw() -> float -- computes weights and returns dw\n")
+
+        .def ("__getitem__",
+              &Network::get,
+              "x.__getitem__ (y)  <==> x[y]\n\n"
+              "Use of negative indices is supported.\n")
+        
+        .def ("__len__",
+              &Network::size,
+              "__len__() -> integer -- return number of maps\n")
+        
+        .def ("append",
+              &Network::append,
+              "append(map) -- append map to end\n")
+        
+        .def ("clear",
+              &Network::clear,
+              "clear() -- clear map activity\n")
         ;
 }

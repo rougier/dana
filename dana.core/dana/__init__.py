@@ -14,10 +14,11 @@
 DANA --- Distributed Asyncronous Numerical Adaptive computing package
 =====================================================================
 
-DANA is a multi-platform python library for distributed asynchronous numerical
-and adaptive computation. The computational paradigm supporting the library is
-grounded on the notion of a unit that is essentially a potential that can vary
-along time under the influence of some other units.
+DANA is a multi-platform python library for distributed asynchronous
+numerical and adaptive computation. The computational paradigm
+supporting the library is grounded on the notion of a unit that is
+essentially a potential that can vary along time under the influence
+of some other units.
 
 Available packages
 ------------------

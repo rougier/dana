@@ -24,6 +24,7 @@ Map::Map (py::object shape, py::object position) : Object()
 {
     layers.clear();
     network = 0;
+    spec.reset();
     set_position (position);
     set_shape (shape);
     frame = py::make_tuple (0,0,1,1);
@@ -195,20 +196,30 @@ Map::read (xmlTextReaderPtr reader)
     return 0;
 }
 
+// __________________________________________________________________get_network
+Network *
+Map::get_network (void)
+{
+    return network;
+}
+// __________________________________________________________________set_network
+void
+Map::set_network (class Network *network)
+{
+    this->network = network;
+}
 
-
-// ============================================================================
-//  get map specification
-// ============================================================================
+// _____________________________________________________________________get_spec
 SpecPtr
 Map::get_spec (void) 
 {
+    if ((spec == SpecPtr()) && (network)) {
+        return network->get_spec();
+    }
     return SpecPtr(spec);
 }
 
-// ============================================================================
-//  Set map specification.
-// ============================================================================
+// _____________________________________________________________________set_spec
 void
 Map::set_spec (SpecPtr spec)
 {
@@ -356,19 +367,19 @@ Map::python_export (void) {
     "\n"
     "A map is a set of layers that are evaluated synchronously.\n"
     "\n"
-    "Attributes:\n"
-    "-----------\n"
-    "   spec :    Specification for the map\n"
-    "   shape:    Shape of the map (tuple) \n"
-    "   position: Position of the map (tuple) \n"
-    "   frame:    Normalized frame containing the map (tuple, read-only)\n"
     "\n"
     "======================================================================\n",
     
         init<optional <tuple,tuple> > (
-        "__init__(shape, position) -- initializes map\n")
+            "__init__(shape, position)\n")
         )
- 
+
+        // Properties
+        .add_property ("spec",
+                       &Map::get_spec, &Map::set_spec,
+                       "Parameters of the map")
+
+        
         .def ("compute_dp", &Map::compute_dp,
         "compute_dp() -> float -- computes potentials and return dp\n")
 
@@ -408,7 +419,6 @@ Map::python_export (void) {
         "get units potential from layer 0 as an array")
         
         
-        .def_readwrite ("spec", &Map::spec)
         .add_property  ("shape",  &Map::get_shape, set_shape_object)
         .add_property  ("position",  &Map::get_position, set_position_object)
         .add_property  ("frame", &Map::get_frame, &Map::set_frame)

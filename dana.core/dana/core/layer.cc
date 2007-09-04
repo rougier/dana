@@ -24,6 +24,7 @@ Layer::Layer (void) : Object()
 {
     units.clear();
     map = 0;
+    spec.reset();
 }
 
 // ============================================================================
@@ -133,6 +134,7 @@ Layer::fill (py::object type)
         units.clear();
         for (int i=0; i< map->width*map->height; i++) {
             UnitPtr unit = py::extract <UnitPtr> (type());
+            unit->set_layer (this);
             append (UnitPtr(unit));
         }
      } else {
@@ -237,10 +239,10 @@ Layer::read (xmlTextReaderPtr reader)
 }
 
 // ============================================================================
-//  get owning layer
+//  get owning map
 // ============================================================================
 Map *
-Layer::get_map (void) const
+Layer::get_map (void)
 {
     return map;
 }
@@ -256,9 +258,7 @@ Layer::set_map (Map *map)
     potentials = py::object(py::handle<>(PyArray_SimpleNew (2, dims, PyArray_FLOAT)));
 }
 
-// ============================================================================
-//  get layer specification
-// ============================================================================
+//______________________________________________________________________get_spec
 SpecPtr
 Layer::get_spec (void) const
 {
@@ -267,14 +267,11 @@ Layer::get_spec (void) const
     return SpecPtr(spec);
 }
 
-// ============================================================================
-//  Set layer specification.
-//  If given specification is none, specification from owning map is used.
-// ============================================================================
+//______________________________________________________________________set_spec
 void
-Layer::set_spec (const SpecPtr s)
+Layer::set_spec (const SpecPtr spec)
 {
-    spec = SpecPtr(s);
+    this->spec = SpecPtr(spec);
 }
 
 // ============================================================================
@@ -339,7 +336,11 @@ Layer::python_export (void)
         "__init__() -- initializes layer\n")
         )
 
-        .def_readwrite ("spec", &Layer::spec)
+        // Properties
+        .add_property ("spec",
+                       &Layer::get_spec, &Layer::set_spec,
+                       "Parameters of the layer")
+
 
         .add_property("map", 
           make_function (&Layer::get_map,

@@ -24,15 +24,30 @@ namespace dana { namespace core {
     typedef boost::shared_ptr<class Environment> EnvironmentPtr;
 
     class Environment : public Object {
-        public:
-            std::vector<MapPtr>  maps;
-            
-        public:
-            Environment (void);
-            virtual ~Environment (void);
-            void attach (MapPtr map);
-            virtual void evaluate  (void);
-            static void python_export (void);
+
+        // ___________________________________________________________attributes
+    public:
+        std::vector<MapPtr>  maps;
+        SpecPtr              spec;
+        class Model *        model;
+        
+    public:
+        // _________________________________________________________________life
+        Environment (void);
+        virtual ~Environment (void);
+
+        // _________________________________________________________________main
+        virtual void attach (MapPtr map);
+        virtual void evaluate  (void);
+        
+        // ______________________________________________________________get/set
+        virtual class Model * get_model (void);
+        virtual void          set_model (class Model *model);
+        virtual SpecPtr       get_spec (void);
+        virtual void          set_spec (SpecPtr spec);  
+
+        // _______________________________________________________________export
+        static void python_export (void);
     };
 
 }} // namespace dana::core

@@ -46,9 +46,6 @@ namespace dana { namespace core {
     // ___________________________________________________________________Object
     class Object : public boost::enable_shared_from_this <Object> {
     public:
-        ObjectWPtr owner;
-        
-    public:
         // _________________________________________________________________life
         Object (void);
         virtual ~Object (void);

@@ -35,7 +35,6 @@ namespace dana { namespace core {
         std::vector<LinkPtr> laterals;
         std::vector<LinkPtr> afferents;
         class Layer *        layer;
-        
         int                  x, y;
 
     public:
@@ -56,22 +55,22 @@ namespace dana { namespace core {
         virtual int read  (xmlTextReaderPtr reader);
         
         // ______________________________________________________________get/set
-        virtual py::object get_weights   (LayerPtr layer);
-        virtual py::list   get_afferents (void);
-        virtual py::list   get_laterals  (void);
-        virtual float      get_potential (void);
-        virtual void       set_potential (float potential);
-        virtual SpecPtr    get_spec      (void);
-        virtual void       set_spec      (SpecPtr spec);
-        virtual LayerPtr   get_layer     (void);
-        virtual void       set_layer     (class Layer *layer);
-        virtual int        get_x         (void);
-        virtual void       set_x         (int x);
-        virtual int        get_y         (void);
-        virtual void       set_y         (int y);
-        virtual py::tuple  get_position  (void);
-        virtual void       set_position  (py::tuple position);
-        virtual void       set_position  (int x, int y);
+        virtual py::object   get_weights   (LayerPtr layer);
+        virtual py::list     get_afferents (void);
+        virtual py::list     get_laterals  (void);
+        virtual float        get_potential (void);
+        virtual void         set_potential (float potential);
+        virtual SpecPtr      get_spec      (void);
+        virtual void         set_spec      (SpecPtr spec = SpecPtr());
+        virtual class Layer *get_layer     (void);
+        virtual void         set_layer     (class Layer *layer);
+        virtual int          get_x         (void);
+        virtual void         set_x         (int x);
+        virtual int          get_y         (void);
+        virtual void         set_y         (int y);
+        virtual py::tuple    get_position  (void);
+        virtual void         set_position  (py::tuple position);
+        virtual void         set_position  (int x, int y);
         
         // ___________________________________________________________arithmetic
         virtual Unit &     operator= (const Unit &other);

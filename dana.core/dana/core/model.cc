@@ -17,21 +17,21 @@
 using namespace boost;
 using namespace dana::core;
 
-//________________________________________________________________current_model
+// ________________________________________________________________current_model
 Model *Model::current_model = 0;
 
-//________________________________________________________________________Model
+// ________________________________________________________________________Model
 Model::Model (void) : Object()
 {
     running = false;
     age = 0;
 }
 
-//_______________________________________________________________________~Model
+// _______________________________________________________________________~Model
 Model::~Model (void)
 {}
 
-//_______________________________________________________________________append
+// _______________________________________________________________________append
 void
 Model::append (NetworkPtr net)
 {
@@ -39,11 +39,12 @@ Model::append (NetworkPtr net)
     result = find (networks.begin(), networks.end(), net);
     if (result != networks.end())
         return;
-
+    
     networks.push_back (NetworkPtr(net));
+    net->set_model (this);
 }
 
-//_______________________________________________________________________append
+// _______________________________________________________________________append
 void
 Model::append (EnvironmentPtr env)
 {
@@ -53,9 +54,10 @@ Model::append (EnvironmentPtr env)
         return;
 
     environments.push_back (EnvironmentPtr(env));
+    env->set_model (this);
 }
 
-//________________________________________________________________________clear
+// ________________________________________________________________________clear
 void
 Model::clear (void)
 {
@@ -63,7 +65,7 @@ Model::clear (void)
     environments.clear();
 }
 
-//________________________________________________________________________start
+// ________________________________________________________________________start
 bool
 Model::start (unsigned long n)
 {
@@ -83,7 +85,7 @@ Model::start (unsigned long n)
 	return true;
 }
 
-//__________________________________________________________________entry_point
+// __________________________________________________________________entry_point
 void
 Model::entry_point (void)
 {
@@ -109,15 +111,28 @@ Model::entry_point (void)
     model->running = false;
 }
 
-//_________________________________________________________________________stop
+// _________________________________________________________________________stop
 void
 Model::stop (void)
 {
     current_model->running = false;
 }
 
+// _____________________________________________________________________get_spec
+SpecPtr
+Model::get_spec (void)
+{
+    return SpecPtr(spec);
+}
 
-//________________________________________________________________python_export
+// _____________________________________________________________________set_spec
+void
+Model::set_spec (SpecPtr spec)
+{
+    this->spec = SpecPtr(spec);
+}
+
+// _______________________________________________________________________export
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(start_overloads, start, 0, 1)
 
 void
@@ -129,27 +144,30 @@ Model::python_export (void)
     void (Model::*append_net)(NetworkPtr)     = &Model::append;
     void (Model::*append_env)(EnvironmentPtr) = &Model::append;
  
-    class_<Model, bases <Object> >("Model",
-    "======================================================================\n"
-    "\n"
-    "A model gathers one to several networks and environments. Evaluation is\n"
-    "done first on environments then on networks."
-    "\n"
-    "Attributes:\n"
-    "-----------\n"
-    "\n"
-    "======================================================================\n",
-        init<>(
-        "__init__() -- initializes Model\n")
-        )
-   
+    class_<Model, bases <Object> >(
+        "Model",
+        "======================================================================\n"
+        "\n"
+        "A model gathers one to several networks and environments. Evaluation is\n"
+        "done first on environments then on networks."
+        "\n"
+        "Attributes:\n"
+        "-----------\n"
+        "\n"
+        "======================================================================\n",
+        init<>("__init__()\n"))
+
+        .add_property ("spec",
+                       &Model::get_spec, &Model::set_spec,
+                       "Parameters of the model")
+
         .def ("append", append_net)
         .def ("append", append_env,
-        "append(net) -- append net to end\n",        
-        "append(env) -- append env to end\n")
+              "append(net) -- append a network to the model\n",        
+              "append(env) -- append an environment toe the model\n")
 
         .def ("clear", &Model::clear,
-        "clear() -- remove all networks and environments\n")
+              "clear() -- remove all networks and environments\n")
         
         .def ("start", &Model::start, start_overloads (
                 args("epochs"), "start(epochs = 0) -- start simulation\n"))

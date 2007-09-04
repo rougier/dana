@@ -9,6 +9,7 @@
 // $Id: environment.cc 275 2007-08-14 15:01:41Z rougier $
 
 #include "environment.h"
+#include "model.h"
 #include "network.h"
 #include "map.h"
 #include "layer.h"
@@ -38,6 +39,38 @@ Environment::attach (MapPtr map)
         return;
     maps.push_back (MapPtr (map));
 }
+
+// ____________________________________________________________________get_model
+Model *
+Environment::get_model (void)
+{
+    return model;
+}
+
+// ____________________________________________________________________set_model
+void
+Environment::set_model (class Model *model)
+{
+    this->model = model;
+}
+
+// _____________________________________________________________________get_spec
+SpecPtr
+Environment::get_spec (void)
+{
+    if ((spec == SpecPtr()) && (model))
+        return model->get_spec();
+    return SpecPtr(spec);
+
+}
+
+// _____________________________________________________________________set_spec
+void
+Environment::set_spec (SpecPtr spec)
+{
+    this->spec = SpecPtr(spec);
+}
+
 
 //________________________________________________________________python_export
 void

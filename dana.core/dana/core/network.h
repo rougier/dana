@@ -25,10 +25,11 @@ namespace dana { namespace core {
     class Network : public Object {
     public:
         // ___________________________________________________________attributes
-        std::vector<MapPtr>  maps;         // maps composing the network
-        unsigned int         width, height;// global shape
-        unsigned long        age;          // age
-        py::object           spec;         // Specification of the network
+        std::vector<MapPtr>  maps; 
+        unsigned int         width, height;
+        unsigned long        age;
+        SpecPtr              spec;
+        class Model *        model;
             
 	public:
         // _________________________________________________________________life
@@ -49,7 +50,11 @@ namespace dana { namespace core {
         virtual int read  (xmlTextReaderPtr reader);
 
         // ______________________________________________________________get/set
-        virtual py::object      get_shape (void);
+        virtual class Model * get_model (void);
+        virtual void          set_model (class Model *model);
+        virtual SpecPtr       get_spec (void);
+        virtual void          set_spec (SpecPtr spec);  
+        virtual py::object    get_shape (void);
 
         // _______________________________________________________________export        
         static void	        python_export (void);

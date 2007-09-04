@@ -26,16 +26,16 @@ namespace dana { namespace core {
 
     public:
         // ___________________________________________________________attributes
-        class Network *       network; // network owning this map
-        std::vector<LayerPtr> layers;  // layers composing the map
+        class Network *                network;
+        std::vector<LayerPtr>          layers;
         std::vector<std::vector<int> > shuffles;
         int                            shuffle_index;
-        int                   width,height; // shape
-        int                   x,y;     // position
-        int                   dx, dy;  // offset
-        int                   zoom;    // zoom
-        py::object                frame;   // normalized position & shape
-        SpecPtr               spec;    // specification for this map
+        int                            width,height;
+        int                            x,y;
+        int                            dx, dy;
+        int                            zoom;
+        py::object                     frame;
+        SpecPtr                        spec;
             
         public:
         // _________________________________________________________________life
@@ -59,17 +59,19 @@ namespace dana { namespace core {
         virtual int read  (xmlTextReaderPtr reader);
 
         // ______________________________________________________________get/set
-        virtual SpecPtr    get_spec (void);
-        virtual void       set_spec (SpecPtr s);  
-        virtual py::object get_shape (void);
-        virtual void       set_shape (py::object shape);
-        virtual void       set_shape (int w, int h);
-        virtual py::object get_position (void);
-        virtual void       set_position (py::object position);
-        virtual void       set_position (int x, int y);
-        virtual py::object get_frame (void);
-        virtual void       set_frame (py::object frame);
-        virtual py::object get_potentials (void);
+        virtual class Network *get_network (void);
+        virtual void           set_network (class Network *network);
+        virtual SpecPtr        get_spec (void);
+        virtual void           set_spec (SpecPtr spec);  
+        virtual py::object     get_shape (void);
+        virtual void           set_shape (py::object shape);
+        virtual void           set_shape (int w, int h);
+        virtual py::object     get_position (void);
+        virtual void           set_position (py::object position);
+        virtual void           set_position (int x, int y);
+        virtual py::object     get_frame (void);
+        virtual void           set_frame (py::object frame);
+        virtual py::object     get_potentials (void);
 
         // _______________________________________________________________export
         static void        python_export (void);

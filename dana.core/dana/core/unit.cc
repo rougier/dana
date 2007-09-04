@@ -36,6 +36,7 @@ Unit::~Unit(void)
 {
     laterals.clear();
     afferents.clear();
+    layer = 0;
 }
 
 // ________________________________________________________________________write
@@ -136,10 +137,10 @@ Unit::set_potential (float potential)
 }
 
 //_____________________________________________________________________get_layer
-LayerPtr
+Layer *
 Unit::get_layer (void)
 {
-    return LayerPtr (layer);
+    return layer;
 }
 
 //_____________________________________________________________________set_layer
@@ -153,6 +154,8 @@ Unit::set_layer (Layer *layer)
 SpecPtr
 Unit::get_spec (void)
 {
+    if ((spec == SpecPtr()) && (layer))
+        return layer->get_spec();
     return SpecPtr(spec);
 }
 
@@ -524,7 +527,8 @@ Unit::python_export (void) {
     init < optional <float> > (
         (arg("potential") = 0.0f),
         "__init__ (potential=0)" ))
-                
+
+        // Properties
         .add_property ("potential",
                        &Unit::get_potential, &Unit::set_potential,
                        "membrane potential")
@@ -535,7 +539,7 @@ Unit::python_export (void) {
 
         .add_property ("spec",
                        &Unit::get_spec, &Unit::set_spec,
-                       "specifications that governs unit potential evaluation")
+                       "Parameters of the unit")
 
         .add_property ("laterals",
                        &Unit::get_laterals,
