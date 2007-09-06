@@ -5,7 +5,7 @@ import glob
 import os, os.path
 import distutils.sysconfig
 
-# __________________________________________________________check configure stage
+# _________________________________________________________check configure stage
 if not os.path.exists ('.cache/config'):
     print "Please run './configure' first"
     print
@@ -60,7 +60,7 @@ env.Append (
                          '.cvsignore','.dblite','.log','.pl', 'bz2', 'gz'
                          ],
     DISTTAR_EXCLUDEDIRS=['CVS','.svn','.sconf_temp', '.cache',
-                         'manual', 'dist'])
+                         '.libs', 'manual', 'dist'])
 if 'dist' in sys.argv:
     env.Alias ('dist',
                env.DistTar("dist/dana.core", [env.Dir('.')]))
