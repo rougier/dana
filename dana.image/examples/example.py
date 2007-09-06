@@ -96,9 +96,9 @@ def init():
     sal.set_map(7,I_PI_4[0])
     sal.set_map(8,I_3PI_4[0])
 
-def read(img):
+def read(img,type):
     global sal
-    sal.read(img)
+    sal.read(img,type)
 
 
 def clamp():
@@ -117,7 +117,7 @@ def clear(m):
 control = ControlPanel (model)
 fig = Figure()
 win,fig = window (figure=fig,has_terminal=True,namespace=locals())
-fnet = fig.network (net, title='Dana.image sample script')
+fnet = fig.network (net, title='Dana.image sample script',show_label=False)
 fnet.colorbar.cmap = CM_Fire
 
 win.show()

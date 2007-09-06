@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 //
-// Copyright (C) 2006 Nicolas Rougier
+// Copyright (C) 2006 Nicolas Rougier, Jeremy Fix
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -93,6 +93,7 @@ void Saliency::init_images(void)
     // sobels vector
     if(sobels.size() != orientations.size())
         {
+            // TODO: sobels.clear() ???
             for(unsigned int i = 0 ; i < orientations.size() ; i++)
                 {
                     sobels.push_back(*(new ImageDouble()));
@@ -257,7 +258,6 @@ void Saliency::process_color(void)
         {
             rg_salMap += cs_rg[i];
         }
-    //Normalisation<ImageDouble,ImageDouble>(rg_salMap,rg_salMap);
 
     gr_salMap.resize(gr_pyr[size_level]._dimension);
     gr_salMap = 0;		
@@ -265,15 +265,13 @@ void Saliency::process_color(void)
         {
             gr_salMap += cs_gr[i];
         }
-    //Normalisation<ImageDouble,ImageDouble>(gr_salMap,gr_salMap);
-            
+
     by_salMap.resize(by_pyr[size_level]._dimension);
     by_salMap = 0;			
     for(unsigned int i = 0 ; i < cs_by.size() ; i ++)
         {
             by_salMap += cs_by[i];
         }	
-    //Normalisation<ImageDouble,ImageDouble>(by_salMap,by_salMap);		
             
     yb_salMap.resize(yb_pyr[size_level]._dimension);
     yb_salMap = 0;			
@@ -281,29 +279,6 @@ void Saliency::process_color(void)
         {
             yb_salMap += cs_yb[i];
         }	
-    //Normalisation<ImageDouble,ImageDouble>(yb_salMap,yb_salMap);
-
-    // We finally scale the resulting saliency maps	   
-    std::vector< float > maxs_color;
-    float max_color;
-    
-    maxs_color.push_back(Util<ImageDouble>::maximum(rg_salMap));
-    maxs_color.push_back(Util<ImageDouble>::maximum(gr_salMap));
-    maxs_color.push_back(Util<ImageDouble>::maximum(by_salMap));
-    maxs_color.push_back(Util<ImageDouble>::maximum(yb_salMap));
-
-    max_color = maxs_color[0];
-    
-    for(unsigned int i = 0 ; i < maxs_color.size() ; i++)
-        {
-            if(max_color < maxs_color[i])
-                max_color = maxs_color[i];
-        }
-    Scale<ImageDouble,ImageDouble>(rg_salMap,rg_salMap,max_color);
-    Scale<ImageDouble,ImageDouble>(gr_salMap,gr_salMap,max_color);
-    Scale<ImageDouble,ImageDouble>(by_salMap,by_salMap,max_color);
-    Scale<ImageDouble,ImageDouble>(yb_salMap,yb_salMap,max_color);    
- 
 }
 
 void Saliency::process_orientation(void)
@@ -325,9 +300,6 @@ void Saliency::process_orientation(void)
     sobel_orientations.resize(intensity._dimension);
     mirage::algo::BinaryOp<ImageDouble,ImageDouble,ImageDouble,AngleOp>(sobel_res_h,sobel_res_v,sobel_orientations);
 
-    float max_orientation = 0.0;
-    float tmp_value = 0.0;
-    
     for(unsigned int i = 0 ; i < orientations.size() ; i++)
         {
             AngleFiltOp::angle = orientations[i];
@@ -352,17 +324,7 @@ void Saliency::process_orientation(void)
                 {
                     sobels_sal[i] += sobels_cs[i][j];			
                 }	
-            //Normalisation<ImageDouble,ImageDouble>(sobels_sal[i],sobels_sal[i]);
-            
-            // We finally compute the maximum over the saliency map
-            tmp_value = Util<ImageDouble>::maximum(sobels_sal[i]);
-            if(max_orientation < tmp_value)
-                max_orientation = tmp_value;
         }
-
-    // We scale all the orientation maps
-    for(unsigned int i = 0 ; i < sobels_sal.size() ; i ++)
-        Scale<ImageDouble,ImageDouble>(sobels_sal[i],sobels_sal[i],max_orientation);
 
     if(sobels_sal.size() >= 1)
         {
@@ -373,6 +335,98 @@ void Saliency::process_orientation(void)
                 }
         }
 }
+
+void Saliency::test_pyramid(void)
+{
+    ImageDouble r,g,b;
+    ImageRGB24 img_tmp;
+    std::vector<ImageDouble> r_pyr, g_pyr, b_pyr;
+    //ImageRGB24 img_temp;
+
+    if(!(image_loaded))
+        {
+            std::cerr << "[ERROR] No image has been loaded, you must read one before processing." << std::endl;
+            return;
+        }
+
+    init_images();
+
+    intensity.resize(source._dimension);
+    r.resize(source._dimension);
+    g.resize(source._dimension);
+    b.resize(source._dimension);
+
+    // We extract the three components R,G,B
+    mirage::algo::UnaryOp<ImageRGB24,ImageDouble,RGBToIntensity<ImageRGB24, ImageDouble> > (source,intensity);
+    mirage::algo::UnaryOp<ImageRGB24,ImageDouble,RGBToR<ImageRGB24, ImageDouble> > (source,r);
+    mirage::algo::UnaryOp<ImageRGB24,ImageDouble,RGBToG<ImageRGB24, ImageDouble> > (source,g);
+    mirage::algo::UnaryOp<ImageRGB24,ImageDouble,RGBToB<ImageRGB24, ImageDouble> > (source,b);
+
+    // Build the gaussian pyramids
+    r_pyr.push_back(r);	
+    pyr_temp = r;			
+    for(int i = 0 ; i < pyr_level ; i ++)
+        {
+            GaussianPyramid<ImageDouble, ImageDouble> (pyr_temp, pyr_temp);
+            r_pyr.push_back(pyr_temp);
+        }
+
+    g_pyr.push_back(g);
+    pyr_temp = g;
+    for(int i = 0 ; i < pyr_level ; i ++)
+        {
+            GaussianPyramid<ImageDouble, ImageDouble> (pyr_temp, pyr_temp);
+            g_pyr.push_back(pyr_temp);
+        }
+
+    b_pyr.push_back(b);
+    pyr_temp = b;
+    for(int i = 0 ; i < pyr_level ; i ++)
+        {
+            GaussianPyramid<ImageDouble, ImageDouble> (pyr_temp, pyr_temp);
+            b_pyr.push_back(pyr_temp);
+        }
+
+    intensity_pyr.push_back(intensity);	
+    pyr_temp = intensity;			
+    for(int i = 0 ; i < pyr_level ; i ++)
+        {
+            GaussianPyramid<ImageDouble, ImageDouble> (pyr_temp, pyr_temp);
+            intensity_pyr.push_back(pyr_temp);
+        }
+
+    // Save the results
+    char filename[50];
+    
+    for(unsigned int i = 0 ; i < r_pyr.size() ; i ++)
+        {
+            sprintf(filename, "pyr_%i.jpg",i);
+            img_tmp.resize(r_pyr[i]._dimension);
+            ImageRGB24::iterator iter,iter_end;
+            ImageDouble::iterator iterd,iterd_end;
+            
+            for(iter=img_tmp.begin(),iter_end=img_tmp.end(),iterd=r_pyr[i].begin(),iterd_end=r_pyr[i].end();
+                iter!=iter_end,iterd!=iterd_end; ++iter,++iterd)
+                (*iter)._red = int(*iterd);
+
+            for(iter=img_tmp.begin(),iter_end=img_tmp.end(),iterd=g_pyr[i].begin(),iterd_end=g_pyr[i].end();
+                iter!=iter_end,iterd!=iterd_end; ++iter,++iterd)
+                (*iter)._green = int(*iterd);          
+
+            for(iter=img_tmp.begin(),iter_end=img_tmp.end(),iterd=b_pyr[i].begin(),iterd_end=b_pyr[i].end();
+                iter!=iter_end,iterd!=iterd_end; ++iter,++iterd)
+                (*iter)._blue = int(*iterd);
+
+            mirage::img::JPEG::write(img_tmp,filename,100);
+
+            img_temp.resize(intensity_pyr[i]._dimension);
+            Scale<ImageDouble, ImageGray8>(intensity_pyr[i],img_temp);
+            sprintf(filename, "i_pyr_%i.jpg",i);
+            mirage::img::JPEG::write(img_temp,filename,100);
+
+        }
+}
+
 
 void Saliency::process(void)
 {
@@ -413,7 +467,6 @@ void Saliency::process(void)
         {
             intensity_salMap += cs_intensity[i];			
         }
-    //Normalisation<ImageDouble,ImageDouble>(intensity_salMap,intensity_salMap);
 
     //*******************************
     // Compute the opponency channels
@@ -436,8 +489,10 @@ void Saliency::process(void)
     // Normalisation of the channels
     //*******************************
     
+    // For the intensity
     Scale<ImageDouble, ImageDouble>(intensity_salMap,intensity_salMap,1.0);
 
+    // For the color
     if(comp_color)
         {
             // We determine the min and max over all the color channels
@@ -467,6 +522,7 @@ void Saliency::process(void)
             Scale<ImageDouble, ImageDouble>(yb_salMap,yb_salMap,1.0,min,max);
         }
     
+    // For the orientations
     if(comp_orientation && (orientations.size() != 0))
         {
             ImageDouble::value_type min,max,mintmp,maxtmp;
@@ -503,7 +559,8 @@ void Saliency::process(void)
 void Saliency::save(void)
 {
     char filename[50];
-
+    int index;
+    
     if(verbose) std::cout << "Saving the images " << std::endl;
     mirage::img::JPEG::write(source,"source.jpg",100);
 		
@@ -512,6 +569,30 @@ void Saliency::save(void)
     Scale<ImageDouble, ImageGray8>(intensity_salMap,img_temp);
     mirage::img::JPEG::write(img_temp,"saliency_intensity.jpg",100);			
 
+    //     // Save the pyramid
+    //     for(unsigned int i = 0 ; i < intensity_pyr.size() ; i++)
+    //         {
+    //             sprintf(filename, "intensity_pyr%i.jpg",i);
+    //             img_temp.resize(intensity_pyr[i]._dimension);
+    //             Scale<ImageDouble, ImageGray8>(intensity_pyr[i],img_temp);		
+    //             mirage::img::JPEG::write(img_temp,filename,100);  
+    //         }
+    
+
+    //     // Save the CS images
+    //     index = 0;
+    //     for(unsigned int i = min_level ; i <= max_level & i< intensity_pyr.size() ; i++)
+    //         {
+    //             for(unsigned int j = i + min_delta ; j <= i+max_delta & j < intensity_pyr.size() ; j++)
+    //                 {
+    //                     sprintf(filename, "intensity_cs%i-%i.jpg",i,j);
+    //                     img_temp.resize(cs_intensity[index]._dimension);
+    //                     Scale<ImageDouble, ImageGray8>(cs_intensity[index],img_temp);		
+    //                     mirage::img::JPEG::write(img_temp,filename,100); 
+    //                     index++;
+    //                 }
+    //         }
+    
     //**** For color ****/
     if(comp_color)
         {
@@ -521,17 +602,117 @@ void Saliency::save(void)
             Scale<ImageDouble, ImageGray8>(rg_salMap,img_temp);
             mirage::img::JPEG::write(img_temp,"saliency_rg.jpg",100);
             
+            //             // Save the pyramid
+            //             for(unsigned int i = 0 ; i < rg_pyr.size() ; i++)
+            //                 {
+            //                     sprintf(filename, "rg_pyr%i.jpg",i);
+            //                     img_temp.resize(rg_pyr[i]._dimension);
+            //                     Scale<ImageDouble, ImageGray8>(rg_pyr[i],img_temp);		
+            //                     mirage::img::JPEG::write(img_temp,filename,100);  
+            //                 }
+            
+            
+            //             // Save the CS images
+            //             index = 0;
+            //             for(unsigned int i = min_level ; i <= max_level & i< rg_pyr.size() ; i++)
+            //                 {
+            //                     for(unsigned int j = i + min_delta ; j <= i+max_delta & j < rg_pyr.size() ; j++)
+            //                         {
+            //                             sprintf(filename, "rg_cs%i-%i.jpg",i,j);
+            //                             img_temp.resize(cs_rg[index]._dimension);
+            //                             Scale<ImageDouble, ImageGray8>(cs_rg[index],img_temp);		
+            //                             mirage::img::JPEG::write(img_temp,filename,100); 
+            //                             index++;
+            //                         }
+            //                 }
+
+
+
             img_temp.resize(gr_salMap._dimension);
             Scale<ImageDouble, ImageGray8>(gr_salMap,img_temp);
             mirage::img::JPEG::write(img_temp,"saliency_gr.jpg",100);
             
+            //             // Save the pyramid
+            //             for(unsigned int i = 0 ; i < gr_pyr.size() ; i++)
+            //                 {
+            //                     sprintf(filename, "gr_pyr%i.jpg",i);
+            //                     img_temp.resize(gr_pyr[i]._dimension);
+            //                     Scale<ImageDouble, ImageGray8>(gr_pyr[i],img_temp);		
+            //                     mirage::img::JPEG::write(img_temp,filename,100);  
+            //                 }
+            
+            
+            //             // Save the CS images
+            //             index = 0;
+            //             for(unsigned int i = min_level ; i <= max_level & i< gr_pyr.size() ; i++)
+            //                 {
+            //                     for(unsigned int j = i + min_delta ; j <= i+max_delta & j < gr_pyr.size() ; j++)
+            //                         {
+            //                             sprintf(filename, "gr_cs%i-%i.jpg",i,j);
+            //                             img_temp.resize(cs_gr[index]._dimension);
+            //                             Scale<ImageDouble, ImageGray8>(cs_gr[index],img_temp);		
+            //                             mirage::img::JPEG::write(img_temp,filename,100); 
+            //                             index++;
+            //                         }
+            //                 }
+
+
             img_temp.resize(by_salMap._dimension);
             Scale<ImageDouble, ImageGray8>(by_salMap,img_temp);		
             mirage::img::JPEG::write(img_temp,"saliency_by.jpg",100);
             
+            //             // Save the pyramid
+            //             for(unsigned int i = 0 ; i < by_pyr.size() ; i++)
+            //                 {
+            //                     sprintf(filename, "by_pyr%i.jpg",i);
+            //                     img_temp.resize(by_pyr[i]._dimension);
+            //                     Scale<ImageDouble, ImageGray8>(by_pyr[i],img_temp);		
+            //                     mirage::img::JPEG::write(img_temp,filename,100);  
+            //                 }
+            
+            
+            //             // Save the CS images
+            //             index = 0;
+            //             for(unsigned int i = min_level ; i <= max_level & i< by_pyr.size() ; i++)
+            //                 {
+            //                     for(unsigned int j = i + min_delta ; j <= i+max_delta & j < by_pyr.size() ; j++)
+            //                         {
+            //                             sprintf(filename, "by_cs%i-%i.jpg",i,j);
+            //                             img_temp.resize(cs_by[index]._dimension);
+            //                             Scale<ImageDouble, ImageGray8>(cs_by[index],img_temp);		
+            //                             mirage::img::JPEG::write(img_temp,filename,100); 
+            //                             index++;
+            //                         }
+            //                 }
+
             img_temp.resize(yb_salMap._dimension);
             Scale<ImageDouble, ImageGray8>(yb_salMap,img_temp);		
-            mirage::img::JPEG::write(img_temp,"saliency_yb.jpg",100);            
+            mirage::img::JPEG::write(img_temp,"saliency_yb.jpg",100); 
+
+            //             // Save the pyramid
+            //             for(unsigned int i = 0 ; i < yb_pyr.size() ; i++)
+            //                 {
+            //                     sprintf(filename, "yb_pyr%i.jpg",i);
+            //                     img_temp.resize(yb_pyr[i]._dimension);
+            //                     Scale<ImageDouble, ImageGray8>(yb_pyr[i],img_temp);		
+            //                     mirage::img::JPEG::write(img_temp,filename,100);  
+            //                 }
+            
+            
+            //             // Save the CS images
+            //             index = 0;
+            //             for(unsigned int i = min_level ; i <= max_level & i< yb_pyr.size() ; i++)
+            //                 {
+            //                     for(unsigned int j = i + min_delta ; j <= i+max_delta & j < yb_pyr.size() ; j++)
+            //                         {
+            //                             sprintf(filename, "yb_cs%i-%i.jpg",i,j);
+            //                             img_temp.resize(cs_yb[index]._dimension);
+            //                             Scale<ImageDouble, ImageGray8>(cs_yb[index],img_temp);		
+            //                             mirage::img::JPEG::write(img_temp,filename,100); 
+            //                             index++;
+            //                         }
+            //                 }
+            
         }
         
     //**** For the orientations ****//
@@ -546,7 +727,74 @@ void Saliency::save(void)
                     sprintf(filename, "saliency_sobel_0.%i.jpg",i);
                     mirage::img::JPEG::write(img_temp,filename,100);
                 }
+
+
+            //             // Save the pyramid
+            //             for(unsigned int i = 0 ; i < sobels_pyr.size() ; i ++)
+            //                 {
+            //                     for(unsigned int j = 0 ; j < sobels_pyr[i].size() ; j++)
+            //                         {
+            //                             sprintf(filename, "sobel_%i_pyr%i.jpg",i,j);
+            //                             img_temp.resize(sobels_pyr[i][j]._dimension);
+            //                             Scale<ImageDouble, ImageGray8>(sobels_pyr[i][j],img_temp);		
+            //                             mirage::img::JPEG::write(img_temp,filename,100);  
+            //                         }
+            //                 }
+            
+            //             // Save the CS images
+            
+            //             for(unsigned int i = 0 ; i < sobels_cs.size() ; i ++)
+            //                 {            
+            //                     index = 0;
+            //                     for(unsigned int j = min_level ; j <= max_level & j< sobels_cs.size() ; j++)
+            //                         {
+            //                             for(unsigned int k = j + min_delta ; k <= j+max_delta & k < sobels_cs.size() ; k++)
+            //                                 {
+            //                                     sprintf(filename, "sobel_%i_cs%i-%i.jpg",i,j,k);
+            //                                     img_temp.resize(sobels_cs[i][index]._dimension);
+            //                                     Scale<ImageDouble, ImageGray8>(sobels_cs[i][index],img_temp);		
+            //                                     mirage::img::JPEG::write(img_temp,filename,100); 
+            //                                     index++;
+            //                                 }
+            //                         }
+            //                 }
+
         }
+
+    //**** We compute the saliency map by summing all the saliency maps ****//
+    salMap.resize(rg_salMap._dimension);
+    salMap = 0;
+    salMap = intensity_salMap + rg_salMap + gr_salMap + by_salMap + yb_salMap;
+    for(unsigned int i = 0 ; i < sobels_sal.size() ; i ++)
+        {   
+            salMap = salMap + sobels_sal[i];
+        }
+
+    // and normalize it between 0 and 255
+    Scale<ImageDouble, ImageDouble>(salMap,salMap);
+    img_temp.resize(salMap._dimension);
+
+    // we save the result
+    Scale<ImageDouble, ImageGray8>(salMap,img_temp);
+    mirage::img::JPEG::write(img_temp,"saliency.jpg",100);
+
+    // we now apply it as a mask
+    // we first need to rescale it
+    salMap.setRescalePolicy(new mirage::BilinearPolicy<ImageDouble>);
+    salMap.rescale(source._dimension);
+
+    // we normalize the result between 0 and 1
+    Scale<ImageDouble, ImageDouble>(salMap,salMap,1.0);
+
+    // and apply the mask and save it as source_saliency
+    ImageRGB24 source_saliency;   
+    source_saliency.resize(source._dimension);
+    
+    mirage::algo::BinaryOp<ImageRGB24,ImageDouble,ImageRGB24,computeMask<ImageRGB24, ImageDouble, ImageRGB24> > (source,salMap,source_saliency);
+
+    // and then save the result
+    mirage::img::JPEG::write(source_saliency,"saliency_source.jpg",100);
+    
 }
 
 void Saliency::print_channels()
@@ -570,7 +818,7 @@ void Saliency::print_channels()
         {
             for(unsigned int i = 0 ; i < orientations.size() ; i++)
                 {
-                    // An orientation is supposed to be a multiple of PI
+                    // An orientation is supposed to be a multiple of PI 
                     std::cout << i+index << " - Orientation : " << orientations[i]/M_PI << " Pi" <<  std::endl;
                 }
         }
@@ -625,6 +873,7 @@ void Saliency::clamp(void)
             tmp_image.rescale(tmp_dimension);
  
             // The saliency maps are scaled when they are computed 
+            // TODO: but when the tmp_image is rescaled, the values can exceed from the range [0; 1.0] ?
             // Scale<ImageDouble, ImageDouble>(tmp_image,tmp_image,1.0);
 
             // And clamp the result in the layer
@@ -665,6 +914,8 @@ Saliency::boost (void) {
         .def("add_orientation",&Saliency::add_orientation,"Add an orientation to compute\n")
         .def("process",&Saliency::process,
              "Processes the input image and produces the conspicuity maps\n")
+        .def("test_pyramid",&Saliency::test_pyramid,
+             "Computes the gaussian pyramid and save the resulting images \n")
         .def("print_channels",&Saliency::print_channels,
              "Print the available channels and the index to access to them\n")
         .def("set_map",&Saliency::set_map,
@@ -673,5 +924,3 @@ Saliency::boost (void) {
              "Clamp the results of the image processing in the previously specified maps\n")
         ;
 }
-
-

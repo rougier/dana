@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2006 Nicolas Rougier
+// Copyright (C) 2006 Nicolas Rougier, Jeremy Fix
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -30,8 +30,8 @@
 #define pyr_level 7
 #define min_level 2
 #define max_level 4
-#define min_delta 3
-#define max_delta 4
-#define size_level 4
+#define min_delta 2
+#define max_delta 3
+#define size_level 2 // 4
 
 #endif

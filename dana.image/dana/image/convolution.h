@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2006 Nicolas Rougier
+// Copyright (C) 2006 Nicolas Rougier, Jeremy Fix
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -85,7 +85,7 @@ public:
 
                                 val = 0.0;
                                 sum = 0.0;
-                                for(k = min_f ; k < max_f ; k++)
+                                for(k = min_f ; k <= max_f ; k++)
                                     {
                                         val += src._buffer(i*ws + j + fp - k) * filt._buffer(k);
                                         //std::cout << "value : " << val << std::endl;
@@ -128,7 +128,7 @@ public:
                                 max_f = min(wf-1,fp+i);
                                 val = 0.0;
                                 sum = 0.0;
-                                for(k = min_f ; k < max_f ; k++)
+                                for(k = min_f ; k <= max_f ; k++)
                                     {
                                         val += src._buffer((i+fp-k)*ws + j) * filt._buffer(k);
                                         sum += filt._buffer(k);

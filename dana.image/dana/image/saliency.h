@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2006 Nicolas Rougier
+// Copyright (C) 2006 Nicolas Rougier, Jeremy Fix
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -83,19 +83,9 @@ namespace dana {
     
                 // Rescaled,normalised maps used to compute the saliency map
                 ImageDouble scaled_intensity,scaled_rg,scaled_by,scaled_sobel,salMap;
-                //ImageRGB24 saliency;
-
-/*                 int pyr_level; */
-/*                 unsigned int min_level; */
-/*                 unsigned int max_level; */
-/*                 unsigned int min_delta; */
-/*                 unsigned int max_delta; */
-/*                 unsigned int size_level;  */	
-    
                 bool comp_orientation,comp_save,comp_color,comp_sal,verbose;
 
                 ///// For the dana part
-                //std::vector< channel_map > channel_maps;
                 std::map< core::LayerPtr, int> channel_maps;
                 
                 void init_images(void);
@@ -112,6 +102,7 @@ namespace dana {
                     };
                 void process_color(void);
                 void process_orientation(void);
+                void test_pyramid(void);
                 void process(void);
                 void save(void);
                 void print_channels(void);
@@ -124,7 +115,6 @@ namespace dana {
 
     
             };
- 
     }
 }
 

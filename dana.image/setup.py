@@ -18,6 +18,8 @@ if os.path.exists('MANIFEST'): os.remove('MANIFEST')
 
 import glob
 from distutils.core import setup, Extension
+from distutils.command.build_ext import build_ext
+from distutils.command.install_data import install_data
 import distutils.sysconfig
 import numpy
 import commands
@@ -44,13 +46,45 @@ dana_image_ext = Extension (
         libraries = ['boost_python', 'boost_thread'] + pkgconfig('mirage')['libraries'],
         )
 
+#______________________________________________________________________________
+def force_optimisation(compiler):
+    for i in range(4):      
+        try: compiler.compiler_so.remove("-O%s" % i)
+        except:	pass
+    try:
+        compiler.compiler_so.remove('-Wstrict-prototypes')
+        compiler.compiler_so.remove('-g')
+        compiler.compiler_so.remove('-DNDEBUG')
+    except:
+        pass
+    compiler.compiler_so.append("-O3")
+
+class my_build_ext(build_ext):
+    def build_extension(self, ext):
+        force_optimisation(self.compiler)
+        extra_dir = self.build_lib
+        #extra_dir = os.path.join(extra_dir, 'dana')
+        ext.library_dirs.append(extra_dir)
+        build_ext.build_extension(self, ext)
+
+class my_install_data(install_data):
+    def finalize_options (self):
+        self.set_undefined_options ('install', ('install_lib', 'install_dir'))
+        install_data.finalize_options(self)
+
+#______________________________________________________________________________
+
+
+
 setup (name='dana.image',
        version = '1.0',
        author = 'Jeremy Fix',
        author_email = 'Jeremy.Fix@Loria.fr',
-       url = 'http://www.loria.fr/~fix',
+       url = 'http://www.loria.fr/~rougier',
        description ="This packages provides a toolbox for processing an image from a file or a server",
        packages = ['dana.image'],
        ext_modules = [dana_image_ext],
+       cmdclass = { 'install_data' : my_install_data,
+                    'build_ext': my_build_ext},       
        data_files= []
        )

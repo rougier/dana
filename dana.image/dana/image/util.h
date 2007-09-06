@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2006 Nicolas Rougier
+// Copyright (C) 2006 Nicolas Rougier, Jeremy Fix
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -21,13 +21,48 @@
 #define __DANA_IMAGE_UTIL_H__
 
 template<class SOURCE, class RESULT>
+class RGBToR
+{
+public:
+	inline void operator()(typename SOURCE::value_type& rgb,
+                           typename RESULT::value_type& r)
+    {
+        r = (typename RESULT::value_type) (rgb._red);
+    }    
+};
+
+template<class SOURCE, class RESULT>
+class RGBToG
+{
+public:
+	inline void operator()(typename SOURCE::value_type& rgb,
+                           typename RESULT::value_type& g)
+    {
+        g = (typename RESULT::value_type) (rgb._green);
+    }    
+};
+
+template<class SOURCE, class RESULT>
+class RGBToB
+{
+public:
+	inline void operator()(typename SOURCE::value_type& rgb,
+                           typename RESULT::value_type& b)
+    {
+        b = (typename RESULT::value_type) (rgb._blue);
+    }    
+};
+
+
+template<class SOURCE, class RESULT>
 class RGBToIntensity
 {
 public:
 	inline void operator()(typename SOURCE::value_type& rgb,
                            typename RESULT::value_type& gray)
     {
-        gray = (typename RESULT::value_type) (0.33*rgb._red+0.33*rgb._green+0.33*rgb._blue);
+        //gray = (typename RESULT::value_type) (0.33*rgb._red+0.33*rgb._green+0.33*rgb._blue);
+        gray = (typename RESULT::value_type) (0.212671*rgb._red+0.715160*rgb._green+0.072169*rgb._blue);
     }    
 };
 
@@ -40,7 +75,6 @@ public:
                            typename RESULT::value_type& rg)
     {
 		rg = (typename RESULT::value_type) (rgb._red - rgb._green > 0 ? rgb._red - rgb._green : 0 );
-        //rg = (typename RESULT::value_type) (rgb._red);
     }      
 };
 
@@ -160,46 +194,6 @@ public:
 	} 
 };
 
-template<class SOURCE, class RESULT >
-class Scale {
-public:
-	inline Scale(SOURCE& src,RESULT& res,double max_value=255.0, typename SOURCE::value_type global_min = -1, typename SOURCE::value_type global_max = -1) {
-        // We first determine the minimum and maximum values of the image
-        typename SOURCE::pixel_type src_pxl,src_pxl_end;
-        typename RESULT::pixel_type res_pxl;
-        typename SOURCE::value_type min,max;
-        min = *src.begin();
-        max = min;
-        src_pxl_end = src.end();
-        for(src_pxl = src.begin();src_pxl != src_pxl_end; ++src_pxl) {
-            min = *src_pxl < min ? *src_pxl : min;
-            max = *src_pxl > max ? *src_pxl : max;
-        }
-
-        //TODO Optimiser les lignes qui suivent et les precedentes
-        // pour eviter le calcul du max ou min de l'image
-        // si un global_min ou un global_max est donné en argument
-        if(global_min != -1)
-            min = global_min;
-        if(global_max != -1)
-            max = global_max;
-        
-        // We then scale the image  
-        if(max == min)
-            {
-                // TODO : Check whether or not it is correct to set all pixels to 0 when max = min
-                // ie when the image is uniform
-                for(src_pxl = src.begin(),res_pxl = res.begin();src_pxl != src_pxl_end; ++src_pxl,++res_pxl)
-                    *res_pxl = (typename RESULT::value_type)(0);                
-            }
-        else
-            {
-                for(src_pxl = src.begin(),res_pxl = res.begin();src_pxl != src_pxl_end; ++src_pxl,++res_pxl)
-                    *res_pxl = (typename RESULT::value_type)((max_value/(max-min))*(*src_pxl-min));
-            }
-	}            
-};
-
 template<class SOURCE>
 class Util
 {
@@ -222,5 +216,47 @@ public:
         return value;
 	}
 };	
+
+template<class SOURCE, class RESULT >
+class Scale {
+public:
+	inline Scale(SOURCE& src,RESULT& res,double max_value=255.0, typename SOURCE::value_type global_min = -1, typename SOURCE::value_type global_max = -1) {
+        // We first determine the minimum and maximum values of the image
+        typename SOURCE::pixel_type src_pxl,src_pxl_end;
+        typename RESULT::pixel_type res_pxl;
+        typename SOURCE::value_type min,max;
+/*         min = *src.begin(); */
+/*         max = min; */
+/*         src_pxl_end = src.end(); */
+/*         for(src_pxl = src.begin();src_pxl != src_pxl_end; ++src_pxl) { */
+/*             min = *src_pxl < min ? *src_pxl : min; */
+/*             max = *src_pxl > max ? *src_pxl : max; */
+/*         } */
+
+        if(global_min != -1)
+            min = global_min;
+        else
+            min = Util<SOURCE>::minimum(src);
+        
+        if(global_max != -1)
+            max = global_max;
+        else
+            max = Util<SOURCE>::maximum(src);
+        
+        // We then scale the image  
+        if(max == min)
+            {
+                // TODO : Check whether or not it is correct to set all pixels to 0 when max = min
+                // ie when the image is uniform
+                for(src_pxl = src.begin(),res_pxl = res.begin();src_pxl != src_pxl_end; ++src_pxl,++res_pxl)
+                    *res_pxl = (typename RESULT::value_type)(0);                
+            }
+        else
+            {
+                for(src_pxl = src.begin(),res_pxl = res.begin();src_pxl != src_pxl_end; ++src_pxl,++res_pxl)
+                    *res_pxl = (typename RESULT::value_type)((max_value/(max-min))*(*src_pxl-min));
+            }
+	}            
+};
 
 #endif

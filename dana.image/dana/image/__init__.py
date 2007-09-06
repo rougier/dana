@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #------------------------------------------------------------------------------
-# Copyright (c) 2006-2007 Jeremy Fix.
+# Copyright (c) 2006-2007 Nicolas Rougier, Jeremy Fix.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
