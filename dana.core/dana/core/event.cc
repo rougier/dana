@@ -56,6 +56,13 @@ Event::notify (ObjectPtr subject)
         (*i)->notify (event);
 }
 
+// _____________________________________________________________static observers
+std::vector<ObserverPtr>  EventDP::observers;
+
+// _____________________________________________________________static observers
+std::vector<ObserverPtr>  EventDW::observers;
+
+
 // _______________________________________________________________________export
 void
 Event::python_export (void)

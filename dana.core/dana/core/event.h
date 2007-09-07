@@ -45,6 +45,9 @@ namespace dana { namespace core {
 
     class EventDP : public Event {
     public:
+        static std::vector<ObserverPtr>  observers;
+
+    public:
         EventDP (ObjectPtr subject = ObjectPtr()) : Event(subject)
         { };
 
@@ -57,6 +60,8 @@ namespace dana { namespace core {
         }
     };
     class EventDW : public Event {
+    public:
+        static std::vector<ObserverPtr>  observers;
     public:
         EventDW (ObjectPtr subject = ObjectPtr()) : Event(subject)
         { };
