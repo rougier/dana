@@ -1,198 +1,122 @@
 #! /usr/bin/env python
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
 import glob
 import os, os.path
 import distutils.sysconfig
+from tools.configure import configure
+from tools.module import make_module
+from tools.dist import make_dist_zip, make_dist_bz2, make_dist_tgz
 
-# _________________________________________________________check configure stage
-if not os.path.exists ('.cache/config'):
-    print "Please run './configure' first"
-    print
-    sys.exit (0)
+# _________________________________________________________________________setup
 
-# _____________________________________________________________setup environment
-opts = Options('.cache/config')
-opts.Add('PREFIX')
-opts.Add('LIBDIR')
-opts.Add('PYTHONDIR')
-opts.Add('CPPPATH')
-opts.Add('LIBS')
+PACKAGE_NAME    = 'dana.core'
+PACKAGE_VERSION = '1.0'
+SRCDIR          = 'dana'
+AUTHOR          = 'Nicolas P. Rougier'
+COPYRIGHT       = 'Copyright 2006,2007 Nicolas P. Rougier'
+DESCRIPTION     = 'Distributed Asynchronous Numerical Adaptive computations\n'\
+                  'Core package'
+PLATFORM        = sys.platform
+CACHEDIR        = './.cache'
 
-env = Environment (CACHEDIR='.cache',
-                   tools=['default', 'disttar'],
-                   toolpath=['.'],
-                   options = opts)
+CONFIG_FILENAME = os.path.join (CACHEDIR, 'config')
+
+
+# _____________________________________________________________environment setup
+
+# Read configuration file
+options = Options (CONFIG_FILENAME)
+for o in ['PREFIX', 'LIBDIR', 'INCLUDEDIR', 'PYTHONDIR', 'CPPPATH', 'LIBS']:
+    options.Add (o)
+
+# Create environment
+env = Environment (CACHEDIR=CACHEDIR, options = options)
 
 # Tell scons to put signatures within CACHEDIR
 SConsignFile ('%s/scons-signatures' % env['CACHEDIR'])
 
-# Create our own print command line
-def print_cmd_line (s, target, src, env):
-    """
-    s is the original command line, target and src are lists of target
-    and source nodes respectively, and env is the environment.
-    """
-    if (s[:7] == 'Install'):
-        sys.stdout.write (' Installing %s\n' % 
-                          (' and '.join([str(x) for x in target])))
-    else:
-        sys.stdout.write(' Making %s...\n' %
-                         (' and '.join([str(x) for x in target])))
-#env['PRINT_CMD_LINE_FUNC'] = print_cmd_line
+#_Check configure stage 
+if not os.path.exists (CONFIG_FILENAME):
+    print CONFIG_FILENAME
+    print "Please run './configure' before going any further"
+    sys.exit (0)
 
-conf = Configure (env,
-                  conf_dir=env['CACHEDIR'],
+conf = Configure (env, conf_dir=env['CACHEDIR'],
                   log_file=env['CACHEDIR']+'/config.log')
+env.BuildDir ('%s/%s' % (env['CACHEDIR'], SRCDIR) , SRCDIR)
 
-
-# ___________________________________________________________stdout redefinition
-class stdout:
-    """ Suppress all 'scons:' output """
+# _____________________________________________________________________verbosity
+class filtered_output:
     def write (self, s):
+        """ Suppress all 'scons: ' output """
         if s[:7] != 'scons: ':
             sys.__stdout__.write (s)
-
-# __________________________________________________________________________dist
-env['DISTTAR_FORMAT']='bz2'
-env.Append (
-    DISTTAR_EXCLUDEEXTS=['.o','.os','.so','.a','.dll','.cache','.pyc',
-                         '.cvsignore','.dblite','.log','.pl', 'bz2', 'gz'
-                         ],
-    DISTTAR_EXCLUDEDIRS=['CVS','.svn','.sconf_temp', '.cache',
-                         '.libs', 'manual', 'dist'])
-if 'dist' in sys.argv:
-    env.Alias ('dist',
-               env.DistTar("dist/dana.core", [env.Dir('.')]))
+#sys.stdout = filtered_output()
+#sys.stderr = filtered_output()
 
 
 # _____________________________________________________________________configure
-# Use this to avoid an error message 'how to make target configure ?'
-env.Alias('configure', None)
+if 'configure' in COMMAND_LINE_TARGETS:
+    Alias ('configure', None)
+    configure (env, conf, options, CONFIG_FILENAME)
+    sys.exit(0)
 
-if 'configure' in sys.argv:
+# ___________________________________________________________________________doc
+elif 'doc' in COMMAND_LINE_TARGETS:
+    pass
 
-    # Suppress scons output
-    sys.stdout = stdout()
+# __________________________________________________________________________test
+elif 'test' in COMMAND_LINE_TARGETS:
+    env.Alias ('test', None)
 
-    # Check for python library and header
-    conf.env.Append (CPPPATH = [distutils.sysconfig.get_python_inc()])
-    version = distutils.sysconfig.get_python_version()
-    print 'Checking for C library python%s...' % version,
-    if conf.CheckLibWithHeader ('python' + version, 'Python.h', 'c'):
-        print 'yes'
-    else:
-        print 'no'
-        sys.exit(1)
-        
-    # Check for boost python
-    print 'Checking for C library boost_python...',
-    if conf.CheckLibWithHeader ('boost_python-gcc-mt',
-                                'boost/python.hpp', 'c++'):
-        print 'yes'
-        env.Append (LIBS = 'boost_python-gcc-mt')
-    else:
-        if conf.CheckLibWithHeader ('boost_python-mt',
-                                    'boost/python.hpp', 'c++'):
-            print 'yes'
-            conf.env.Append (LIBS = 'boost_python-mt')
-        else:
-            if conf.CheckLibWithHeader ('boost_python',
-                                        'boost/python.hpp', 'c++'):            
-                print 'yes'
-                conf.env.Append (LIBS = 'boost_python')
-            else:
-                print 'no'
+# ______________________________________________________________________dist-zip
+elif 'dist-zip' in COMMAND_LINE_TARGETS:
+    make_dist_zip (env, '%s-%s' % (PACKAGE_NAME, PACKAGE_VERSION))
 
-    # Check for boost thread
-    print 'Checking for C library boost_thread...',
-    if conf.CheckLibWithHeader ('boost_thread-gcc-mt',
-                                'boost/thread.hpp', 'c++'):
-        print 'yes'
-        env.Append (LIBS = 'boost_thread-gcc-mt')
-    else:
-        if conf.CheckLibWithHeader ('boost_thread-mt',
-                                    'boost/thread.hpp', 'c++'):
-            print 'yes'
-            env.Append (LIBS = 'boost_thread-mt')
-        else:
-            if conf.CheckLibWithHeader ('boost_thread',
-                                        'boost/thread.hpp', 'c++'):            
-                print 'yes'
-                env.Append (LIBS = 'boost_thread')
-            else:
-                print 'no'
-        
-    # Check for xml-2.0
-    print 'Checking for C library xml-2.0...',
-    if conf.CheckLib ('xml2'):
-        print 'yes'
-    else:
-        print 'no'
-        sys.exit(1)
-    env.ParseConfig('pkg-config --cflags --libs libxml-2.0')
+# ______________________________________________________________________dist-tgz
+elif 'dist-tgz' in COMMAND_LINE_TARGETS:
+    make_dist_tgz (env, '%s-%s' % (PACKAGE_NAME, PACKAGE_VERSION))
 
-    # Check for numpy package
-    print 'Checking for Python package numpy... ',
-    try:
-        import numpy
-    except:
-        print 'no'
-        sys.exit(1)
-    else:
-        print 'yes'
-        conf.env.Append (CPPPATH = numpy.get_include())
+# ______________________________________________________________________dist-bz2
+elif 'dist-bz2' in COMMAND_LINE_TARGETS:
+    make_dist_bz2 (env, '%s-%s' % (PACKAGE_NAME, PACKAGE_VERSION))
 
-    # Save configuration
-    opts.Update (env)
-    opts.Save('.cache/config', env)
+# ___________________________________________________________________package-rpm
+elif 'package-rpm' in COMMAND_LINE_TARGETS:
+    env.Alias('package-rpm', None)
 
-# ___________________________________________________________________make_module
-def make_module (env, conf, path, libs=[]):
-    """ """
-    build_dir   = env["CACHEDIR"]
-    modname = os.path.basename (path)
-    libname = path.replace ('/', '_')
-    lib_install_dir = env['LIBDIR']
-    mod_install_dir = os.path.join (env['PYTHONDIR'], path)
+# ___________________________________________________________________package-deb
+elif 'package-deb' in COMMAND_LINE_TARGETS:
+    env.Alias('package-deb', None)
 
-    # Library
-    src = ['%s/%s' % (build_dir, s)
-           for s in glob.glob ('%s/*.cc' % path) if '_export' not in s]
-    if len(src):
-        lib = env.SharedLibrary ('.libs/lib%s' % libname,
-                                 src,
-                                 SHLIBPREFIX='',
-                                 LIBS=env['LIBS'])
-        env.Install (lib_install_dir, lib)
-        env.Alias('install', lib_install_dir)
+# ___________________________________________________________________________all
+else:
+    make_module (env, conf, 'dana')
+    make_module (env, conf, 'dana/core')
+    make_module (env, conf, 'dana/tests')
+    make_module (env, conf, 'dana/projection/profile',  ['dana_core'])
+    make_module (env, conf, 'dana/projection/distance', ['dana_core'])
+    make_module (env, conf, 'dana/projection/shape',    ['dana_core'])
+    make_module (env, conf, 'dana/projection/density',  ['dana_core'])
+    make_module (env, conf, 'dana/projection',  ['dana_core',
+                                                 'dana_projection_shape',
+                                                 'dana_projection_density',
+                                                 'dana_projection_profile',
+                                                 'dana_projection_distance'])
 
-    # Module
-    src = ['%s/%s' % (build_dir, s)
-           for s in glob.glob ('%s/*.cc' % path) if '_export' in s]
-    if len(src):
-        module = env.SharedLibrary ('.libs/_%s' % modname,
-                                    src,
-                                    SHLIBPREFIX='',
-                                    LIBPATH= ['.libs'],
-                                    LIBS = libs + env['LIBS'] + [libname])
-        env.Install (mod_install_dir, module)
 
-    src = ['%s/%s' % (build_dir, s) for s in glob.glob ('%s/*.py' % path)]
-    env.Install (mod_install_dir, src)
-    env.Alias('install', mod_install_dir)
 
-#________________________________________________________________build & install
-env.BuildDir('%s/dana' % env['CACHEDIR'], 'dana/')
-make_module (env, conf, 'dana')
-make_module (env, conf, 'dana/core')
-make_module (env, conf, 'dana/tests')
-make_module (env, conf, 'dana/projection/profile',  ['dana_core'])
-make_module (env, conf, 'dana/projection/distance', ['dana_core'])
-make_module (env, conf, 'dana/projection/shape',    ['dana_core'])
-make_module (env, conf, 'dana/projection/density',  ['dana_core'])
-make_module (env, conf, 'dana/projection',  ['dana_core',
-                                             'dana_projection_shape',
-                                             'dana_projection_density',
-                                             'dana_projection_profile',
-                                             'dana_projection_distance'])

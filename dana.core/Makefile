@@ -13,8 +13,20 @@ clean:
 uninstall:
 	@/usr/bin/scons -Q -c install
 
+doc:
+	@/usr/bin/scons -Q doc
+
 dist:
-	@/usr/bin/scons -Q dist
+	@/usr/bin/scons -Q dist-tgz
+
+dist-tgz:
+	@/usr/bin/scons -Q dist-tgz
+
+dist-bz2:
+	@/usr/bin/scons -Q dist-bz2
+
+dist-zip:
+	@/usr/bin/scons -Q dist-zip
 
 distclean:
 	@/usr/bin/scons -Q -c

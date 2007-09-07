@@ -60,7 +60,7 @@ CheckPython()
 
 
 
-# Checks for gcc. Honours $SCONS if set. Stores path to 'scons' in $SCONS.
+# Checks for scons. Honours $SCONS if set. Stores path to 'scons' in $SCONS.
 # Requires that $PYTHON is set.
 CheckSCons()
 {
@@ -78,20 +78,20 @@ CheckSCons()
     fi
 }
 
-# Checks for gcc. Honours $GCC if set. Stores path to 'gcc' in $GCC
+# Checks for g++. Honours $GPP if set. Stores path to 'gcc' in $GPP
 #
-CheckGcc()
+CheckGpp()
 {
-    echo -n "Checking for gcc:    "
-    if [ -z "$GCC" ]; then
-	GCC=`which gcc 2>/dev/null`
+    echo -n "Checking for g++:    "
+    if [ -z "$GPP" ]; then
+	GPP=`which g++ 2>/dev/null`
     fi
-    if [ ! -x "$GCC" ]; then
+    if [ ! -x "$GPP" ]; then
 	echo "not found!"
         TOOLS="missing"
     else
-        version=`gcc -dumpversion`
-        echo "$GCC [$version]"
+        version=`g++ -dumpversion`
+        echo "$GPP [$version]"
     fi
 }
 
@@ -135,8 +135,20 @@ clean:
 uninstall:
 	@$SCONS -c install
 
+doc:
+	@$SCONS doc
+
 dist:
-	@$SCONS dist
+	@$SCONS dist-tgz
+
+dist-tgz:
+	@$SCONS dist-tgz
+
+dist-bz2:
+	@$SCONS dist-bz2
+
+dist-zip:
+	@$SCONS dist-zip
 
 distclean:
 	@$SCONS -c
@@ -156,10 +168,11 @@ echo "-----------------------------"
 TOOLS="ok"
 CheckPython
 CheckSCons
-CheckGcc
+CheckGpp
 CheckMake
 echo
 if [ "$TOOLS" = "missing" ]; then
+    echo
     echo "Some tools are missing."
     echo "Please consider installing them before configuring again"
     exit 1
@@ -169,6 +182,7 @@ rm -rf .cache >& /dev/null
 mkdir .cache >& /dev/null
 PYTHON=`python -c "import sys; print 'python%s' % sys.version[:3]"`
 echo "PREFIX = '$PREFIX'" > .cache/config
+echo "INCLUDEDIR = '$PREFIX/include'" >> .cache/config
 echo "LIBDIR = '$PREFIX/lib'" >> .cache/config
 echo "PYTHONDIR = '$PREFIX/lib/$PYTHON/site-packages'" >> .cache/config
 
@@ -178,6 +192,9 @@ echo "---------------------------------"
 $SCONS configure
 # Does configure went ok ?
 if [ "$?" -ne "0" ]; then
+    echo
+    echo "Some libraries are missing."
+    echo "Please consider installing them before configuring again"
     exit 1
 fi
 
