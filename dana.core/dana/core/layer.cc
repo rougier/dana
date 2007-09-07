@@ -12,7 +12,6 @@
 #include "map.h"
 #include "layer.h"
 #include "unit.h"
-#include "event.h"
 #include <numpy/arrayobject.h>
 
 using namespace dana::core;
@@ -170,7 +169,7 @@ Layer::compute_dp (void)
     for (unsigned int i = 0; i< units.size(); i++) {
         index = map->shuffles[map->shuffle_index][i];
         d += units[index]->compute_dp();
-        EventDP::notify(units[index]);
+        //        EventDP::notify(units[index]);
     }
     return d;
 }
@@ -189,7 +188,7 @@ Layer::compute_dw (void)
     for (unsigned int i = 0; i< units.size(); i++) {
         index = map->shuffles[map->shuffle_index][i];
         d += units[index]->compute_dw();
-        EventDW::notify(units[index]);
+        //        EventDW::notify(units[index]);
     }
     return d;
 }

@@ -14,51 +14,52 @@
 #include <boost/python.hpp>
 #include <vector>
 #include "object.h"
+#include "observable.h"
 #include "map.h"
 
 
 namespace dana { namespace core {
 
-	typedef boost::shared_ptr<class Network> NetworkPtr;
+typedef boost::shared_ptr<class Network> NetworkPtr;
 
-    // ____________________________________________________________class Network
-    class Network : public Object {
-    public:
-        // ___________________________________________________________attributes
-        std::vector<MapPtr>  maps; 
-        unsigned int         width, height;
-        unsigned long        age;
-        SpecPtr              spec;
-        class Model *        model;
-            
-	public:
-        // _________________________________________________________________life
-        Network (void);       
-        virtual ~Network (void);
-
-        // _________________________________________________________________main
-        virtual void         append (MapPtr layer);
-        virtual MapPtr       get (const int index);
-        virtual int          size (void) const;
-        virtual void         compute_dp (void);
-        virtual void         compute_dw (void);
-        virtual void         clear (void);
-        virtual void         compute_geometry (void);
-        
-        // __________________________________________________________________I/O
-        virtual int write (xmlTextWriterPtr writer);
-        virtual int read  (xmlTextReaderPtr reader);
-
-        // ______________________________________________________________get/set
-        virtual class Model * get_model (void);
-        virtual void          set_model (class Model *model);
-        virtual SpecPtr       get_spec (void);
-        virtual void          set_spec (SpecPtr spec);  
-        virtual py::object    get_shape (void);
-
-        // _______________________________________________________________export        
-        static void	        python_export (void);
-    };
+// ________________________________________________________________class Network
+class Network : public Object, public Observable {
+public:
+    // _______________________________________________________________attributes
+    std::vector<MapPtr>  maps; 
+    unsigned int         width, height;
+    unsigned long        age;
+    SpecPtr              spec;
+    class Model *        model;
     
+public:
+    // _____________________________________________________________________life
+    Network (void);       
+    virtual ~Network (void);
+    
+    // _____________________________________________________________________main
+    virtual void         append (MapPtr layer);
+    virtual MapPtr       get (const int index);
+    virtual int          size (void) const;
+    virtual void         compute_dp (void);
+    virtual void         compute_dw (void);
+    virtual void         clear (void);
+    virtual void         compute_geometry (void);
+    
+    // ______________________________________________________________________I/O
+    virtual int write (xmlTextWriterPtr writer);
+    virtual int read  (xmlTextReaderPtr reader);
+    
+    // __________________________________________________________________get/set
+    virtual class Model * get_model (void);
+    virtual void          set_model (class Model *model);
+    virtual SpecPtr       get_spec (void);
+    virtual void          set_spec (SpecPtr spec);  
+    virtual py::object    get_shape (void);
+    
+    // ___________________________________________________________________export        
+    static void	        python_export (void);
+};
+
 }} // namespace dana::core
 #endif

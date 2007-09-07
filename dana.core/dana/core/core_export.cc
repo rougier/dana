@@ -19,6 +19,7 @@
 #include "model.h"
 #include "event.h"
 #include "observer.h"
+#include "observable.h"
 #include "random.h"
 
 
@@ -26,6 +27,8 @@ BOOST_PYTHON_MODULE(_core) {
     using namespace dana::core;
 
     Object::python_export();
+    Observable::python_export();
+
     Model::python_export();
     Spec::python_export();
     Environment::python_export();

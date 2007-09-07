@@ -8,35 +8,39 @@
 //
 // $Id$
 
-#ifndef __DANA_CORE_OBSERVER_H__
-#define __DANA_CORE_OBSERVER_H__
+#ifndef __DANA_CORE_OBSERVABLE_H__
+#define __DANA_CORE_OBSERVABLE_H__
 
+#include <vector>
 #include "object.h"
 #include "event.h"
 
 
 namespace dana { namespace core {
 
-typedef boost::shared_ptr<class Event> EventPtr;
+typedef boost::shared_ptr<class Observable> ObservablePtr;
 typedef boost::shared_ptr<class Observer> ObserverPtr;
-    
-// _______________________________________________________________class Observer
-class Observer : public Object {
+
+// _____________________________________________________________class Observable
+class Observable {
 
     // _______________________________________________________________attributes
 public:
-    EventPtr event;
-    
+    std::vector<ObserverPtr>  observers;
+        
 public:
     // _____________________________________________________________________life
-    Observer (void);
-    virtual ~Observer (void);
-    
+    Observable (void);
+    virtual ~Observable (void);
+
     // _____________________________________________________________________main
-    virtual void notify (EventPtr event);
-    
+    void attach (ObserverPtr observer,
+                 EventPtr    event);
+    void detach (ObserverPtr observer);
+    void notify (EventPtr event);
+        
     // ___________________________________________________________________export
-    static void  python_export (void);
+    static void python_export (void);
 };
 
 }}

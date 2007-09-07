@@ -14,54 +14,6 @@
 
 using namespace dana::core;
 
-// ________________________________________________________________________Event
-Event::Event (ObjectPtr subject) : Object(), subject(subject)
-{}
-
-// _______________________________________________________________________~Event
-Event::~Event (void)
-{}
-
-// _____________________________________________________________static observers
-std::vector<ObserverPtr>  Event::observers;
-
-// _______________________________________________________________________attach
-void
-Event::attach (ObserverPtr observer)
-{
-    std::vector<ObserverPtr>::iterator result;
-    result = std::find (observers.begin(), observers.end(), observer);
-    if (result != observers.end())
-        return;    
-    observers.push_back (ObserverPtr(observer));
-}
-
-// _______________________________________________________________________detach
-void
-Event::detach (ObserverPtr observer)
-{
-    std::vector<ObserverPtr>::iterator result;
-    result = std::find (observers.begin(), observers.end(), observer);
-    if (result != observers.end())
-        observers.erase (result);
-}
-
-// _______________________________________________________________________notify
-void
-Event::notify (ObjectPtr subject)
-{
-    EventPtr event = EventPtr (new Event(subject));
-    std::vector<ObserverPtr>::iterator i;
-    for (i=observers.begin(); i!=observers.end(); i++)
-        (*i)->notify (event);
-}
-
-// _____________________________________________________________static observers
-std::vector<ObserverPtr>  EventDP::observers;
-
-// _____________________________________________________________static observers
-std::vector<ObserverPtr>  EventDW::observers;
-
 
 // _______________________________________________________________________export
 void
@@ -77,17 +29,7 @@ Event::python_export (void)
         "______________________________________________________________________\n"
         "                                                                      \n"
         "______________________________________________________________________\n",
-        init<>("__init__(subject)"))
-
-        .def ("attach",
-              &Event::attach,
-              "attach(observer)")
-        .staticmethod ("attach")
-        
-        .def ("detach",
-              &Event::detach,
-              "detach(observer)")
-        .staticmethod ("detach")
+        init<>("__init__()"))
         ;
 
     class_<EventDP, bases <Event> >(
@@ -95,7 +37,7 @@ Event::python_export (void)
         "______________________________________________________________________\n"
         "                                                                      \n"
         "______________________________________________________________________\n",
-        init<>("__init__(subject)"))
+        init<>("__init__()"))
         ;
 
 
@@ -104,7 +46,7 @@ Event::python_export (void)
         "______________________________________________________________________\n"
         "                                                                      \n"
         "______________________________________________________________________\n",
-        init<>("__init__(subject)"))
+        init<>("__init__()"))
         ;
 
 }

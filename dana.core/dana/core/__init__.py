@@ -28,6 +28,8 @@ made of a set of several units. Each unit can be linked to any other unit
   Spec
   Environment
   Model
+  Event
+  Observer
   
 
 """

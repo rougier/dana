@@ -18,62 +18,32 @@
 
 namespace dana { namespace core {
 
-    typedef boost::shared_ptr<class Event> EventPtr;
-    typedef boost::shared_ptr<class Observer> ObserverPtr;
+typedef boost::shared_ptr<class Event> EventPtr;
+typedef boost::shared_ptr<class EventDP> EventDPPtr;
+typedef boost::shared_ptr<class EventDW> EventDWPtr;
 
-    // ______________________________________________________________class Event
-    class Event : public Object {
+// __________________________________________________________________class Event
+class Event : public Object {
+public:
+    std::string name;
+    Event (std::string name = "Event") : name(name), Object() {};
+    static void python_export (void);
+};
 
-        // ___________________________________________________________attributes
-    public:
-        static std::vector<ObserverPtr>  observers;
-        ObjectPtr                        subject;
-        
-    public:
-        // _________________________________________________________________life
-        Event (ObjectPtr subject = ObjectPtr());
-        virtual ~Event (void);
+// ________________________________________________________________class EventDP
+class EventDP : public Event {
+public:
+    EventDP (void) : Event("EventDP") { };
+    static void python_export (void);
+};
 
-        // _________________________________________________________________main
-        static void attach (ObserverPtr observer);
-        static void detach (ObserverPtr observer);
-        static void notify (ObjectPtr subject);
-        
-        // _______________________________________________________________export
-        static void python_export (void);
-    };
+// ________________________________________________________________class EventDW
+class EventDW : public Event {
+public:
+    EventDW (void) : Event("EventDW") { };    
+    static void python_export (void);
+};
 
-    class EventDP : public Event {
-    public:
-        static std::vector<ObserverPtr>  observers;
-
-    public:
-        EventDP (ObjectPtr subject = ObjectPtr()) : Event(subject)
-        { };
-
-        static void notify (ObjectPtr subject)
-        {
-            EventPtr event = EventPtr (new EventDP(subject));
-            std::vector<ObserverPtr>::iterator i;
-            for (i=observers.begin(); i!=observers.end(); i++)
-                (*i)->notify (event);
-        }
-    };
-    class EventDW : public Event {
-    public:
-        static std::vector<ObserverPtr>  observers;
-    public:
-        EventDW (ObjectPtr subject = ObjectPtr()) : Event(subject)
-        { };
-
-        static void notify (ObjectPtr subject)
-        {
-            EventPtr event = EventPtr (new EventDW(subject));
-            std::vector<ObserverPtr>::iterator i;
-            for (i=observers.begin(); i!=observers.end(); i++)
-                (*i)->notify (event);
-        }
-    };
 }}
 
 #endif

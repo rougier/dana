@@ -33,10 +33,9 @@ class EventTests (unittest.TestCase):
             def notify (self, event):
                 self.count += 1
         obs = Observer()
-        core.EventDP.attach (obs)
-        self.layer.compute_dp()
-        self.layer.compute_dw()
-        self.assertEqual (obs.count, 100)
+        self.network.attach (obs, core.EventDP())
+        self.network.compute_dp()
+        self.assertEqual (obs.count, 1)
 
     def testEventDW (self):
         """ EventDW triggered by layer """
@@ -45,10 +44,9 @@ class EventTests (unittest.TestCase):
             def notify (self, event):
                 self.count += 1
         obs = Observer()
-        core.EventDW.attach (obs)
-        self.layer.compute_dp()
-        self.layer.compute_dw()
-        self.assertEqual (obs.count, 100)
+        self.network.attach (obs, core.EventDW())
+        self.network.compute_dw()
+        self.assertEqual (obs.count, 1)
 
 
 # Test suite

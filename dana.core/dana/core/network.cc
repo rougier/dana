@@ -10,6 +10,7 @@
 
 #include "model.h"
 #include "network.h"
+#include "observable.h"
 
 using namespace dana::core;
 
@@ -17,7 +18,7 @@ using namespace dana::core;
 // ============================================================================
 //  constructor
 // ============================================================================
-Network::Network (void): Object (), width(1), height(1)
+Network::Network (void): Object (), Observable(), width(1), height(1)
 {
     model = 0;
 }
@@ -79,6 +80,9 @@ Network::compute_dp (void)
 {
     for (unsigned int i = 0; i < maps.size(); i++)
         maps[i]->compute_dp ();
+
+    EventDPPtr event (new EventDP());
+    notify (event);
 }
 
 // ___________________________________________________________________compute_dw
@@ -87,6 +91,9 @@ Network::compute_dw (void)
 {
     for (unsigned int i = 0; i < maps.size(); i++)
             maps[i]->compute_dw ();
+
+    EventDWPtr event (new EventDW());
+    notify (event);
 }
 
 // ============================================================================
@@ -289,7 +296,7 @@ Network::python_export (void)
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Network> >();
 
-    class_<Network, bases <Object> > (
+    class_<Network, bases <Object,Observable> > (
         "Network",
         "======================================================================\n"
         "\n"
@@ -304,11 +311,11 @@ Network::python_export (void)
         .add_property ("spec",
                        &Network::get_spec, &Network::set_spec,
                        "Parameters of the network")
-
-        .add_property ("shape",
-                       &Network::get_shape,
-                       "Shape of the network in terms of unit")
         
+        .add_property ("spec",
+                       &Network::get_spec, &Network::set_spec,
+                       "Parameters of the network")
+
         // Attributes
 
         
