@@ -35,6 +35,7 @@ class EventTests (unittest.TestCase):
         obs = Observer()
         core.EventDP.attach (obs)
         self.layer.compute_dp()
+        self.layer.compute_dw()
         self.assertEqual (obs.count, 100)
 
     def testEventDW (self):
@@ -45,6 +46,7 @@ class EventTests (unittest.TestCase):
                 self.count += 1
         obs = Observer()
         core.EventDW.attach (obs)
+        self.layer.compute_dp()
         self.layer.compute_dw()
         self.assertEqual (obs.count, 100)
 
