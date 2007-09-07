@@ -41,7 +41,7 @@ def make_archive_tree (path):
     exclusions = ['.*', '*.os', '*.pyc', '*.o', '*~',
                   '*.pdf', '*.ps', '*.so', '*.a',
                   '*.zip', '*.tgz', '*.gz', '*.bz2',
-                  '.cache', '.build', 'dist', '.libs']
+                  'manual', '.cache', '.build', 'dist', '.libs']
     exclusions.append (path)
     shutil.rmtree (path, ignore_errors=True)
     files = find ('.', exclusions)
