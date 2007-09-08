@@ -16,6 +16,9 @@ uninstall:
 doc:
 	@/usr/bin/scons -Q doc
 
+test:
+	@/usr/bin/scons -Q test
+
 dist:
 	@/usr/bin/scons -Q dist-tgz
 
@@ -27,6 +30,9 @@ dist-bz2:
 
 dist-zip:
 	@/usr/bin/scons -Q dist-zip
+
+dist-deb:
+	@/usr/bin/scons -Q dist-deb
 
 distclean:
 	@/usr/bin/scons -Q -c

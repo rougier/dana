@@ -138,6 +138,9 @@ uninstall:
 doc:
 	@$SCONS doc
 
+test:
+	@$SCONS test
+
 dist:
 	@$SCONS dist-tgz
 
@@ -149,6 +152,12 @@ dist-bz2:
 
 dist-zip:
 	@$SCONS dist-zip
+
+dist-deb:
+	@$SCONS dist-deb
+
+dist-rpm:
+	@$SCONS dist-rpm
 
 distclean:
 	@$SCONS -c

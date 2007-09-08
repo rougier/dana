@@ -17,6 +17,7 @@ import sys
 import glob
 import os, os.path
 import distutils.sysconfig
+from tools.files import find
 from tools.configure import configure
 from tools.module import make_module
 from tools.dist import make_dist_zip, make_dist_bz2, make_dist_tgz
@@ -32,8 +33,11 @@ DESCRIPTION     = 'Distributed Asynchronous Numerical Adaptive computations\n'\
                   'Core package'
 PLATFORM        = sys.platform
 CACHEDIR        = './.cache'
-
 CONFIG_FILENAME = os.path.join (CACHEDIR, 'config')
+DIST_EXCLUDED_FILES = ['.*', '*.os', '*.pyc', '*.o', '*~',
+                       '*.pdf', '*.ps', '*.so', '*.a',
+                       '*.zip', '*.tgz', '*.gz', '*.bz2',
+                       'manual', '.cache', 'dist', '.libs']
 
 
 # _____________________________________________________________environment setup
@@ -95,13 +99,13 @@ elif 'dist-tgz' in COMMAND_LINE_TARGETS:
 elif 'dist-bz2' in COMMAND_LINE_TARGETS:
     make_dist_bz2 (env, '%s-%s' % (PACKAGE_NAME, PACKAGE_VERSION))
 
-# ___________________________________________________________________package-rpm
-elif 'package-rpm' in COMMAND_LINE_TARGETS:
-    env.Alias('package-rpm', None)
+# ______________________________________________________________________dist-rpm
+elif 'dist-rpm' in COMMAND_LINE_TARGETS:
+    env.Alias('dist-rpm', None)
 
-# ___________________________________________________________________package-deb
-elif 'package-deb' in COMMAND_LINE_TARGETS:
-    env.Alias('package-deb', None)
+# ______________________________________________________________________dist-deb
+elif 'dist-deb' in COMMAND_LINE_TARGETS:
+    env.Alias('dist-deb', None)
 
 # ___________________________________________________________________________all
 else:
