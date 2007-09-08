@@ -146,15 +146,15 @@ Model::python_export (void)
  
     class_<Model, bases <Object> >(
         "Model",
-        "======================================================================\n"
+        "====================================================================\n"
         "\n"
-        "A model gathers one to several networks and environments. Evaluation is\n"
+        "A model gathers one to several networks and environments. Evaluation\n"
         "done first on environments then on networks."
         "\n"
         "Attributes:\n"
         "-----------\n"
         "\n"
-        "======================================================================\n",
+        "===================================================================\n",
         init<>("__init__()\n"))
 
         .add_property ("spec",

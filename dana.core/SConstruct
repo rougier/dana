@@ -17,10 +17,9 @@ import sys
 import glob
 import os, os.path
 import distutils.sysconfig
-from tools.files import find
 from tools.configure import configure
 from tools.module import make_module
-from tools.dist import make_dist_zip, make_dist_bz2, make_dist_tgz
+from tools.archive import Files, archive_builder
 
 # _________________________________________________________________________setup
 
@@ -34,10 +33,11 @@ DESCRIPTION     = 'Distributed Asynchronous Numerical Adaptive computations\n'\
 PLATFORM        = sys.platform
 CACHEDIR        = './.cache'
 CONFIG_FILENAME = os.path.join (CACHEDIR, 'config')
-DIST_EXCLUDED_FILES = ['.*', '*.os', '*.pyc', '*.o', '*~',
-                       '*.pdf', '*.ps', '*.so', '*.a',
-                       '*.zip', '*.tgz', '*.gz', '*.bz2',
-                       'manual', '.cache', 'dist', '.libs']
+ARCHIVE_INCLUDE = ['*']
+ARCHIVE_EXCLUDE = ['.*', '*.os', '*.pyc', '*.o', '*~',
+                   '*.pdf', '*.ps', '*.so', '*.a',
+                   '*.zip', '*.tgz', '*.gz', '*.bz2',
+                   'manual', '.cache', 'dist', '.libs']
 
 
 # _____________________________________________________________environment setup
@@ -61,7 +61,11 @@ if not os.path.exists (CONFIG_FILENAME):
 
 conf = Configure (env, conf_dir=env['CACHEDIR'],
                   log_file=env['CACHEDIR']+'/config.log')
+
+env.Append (BUILDERS = {'Archive' : archive_builder})
 env.BuildDir ('%s/%s' % (env['CACHEDIR'], SRCDIR) , SRCDIR)
+
+
 
 # _____________________________________________________________________verbosity
 class filtered_output:
@@ -89,15 +93,24 @@ elif 'test' in COMMAND_LINE_TARGETS:
 
 # ______________________________________________________________________dist-zip
 elif 'dist-zip' in COMMAND_LINE_TARGETS:
-    make_dist_zip (env, '%s-%s' % (PACKAGE_NAME, PACKAGE_VERSION))
+    archive = env.Archive ('toto/dana.core',
+                           Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE),
+                           ARCHIVE_TYPE = 'zip')
+    env.Alias ('dist-zip', archive)
 
 # ______________________________________________________________________dist-tgz
 elif 'dist-tgz' in COMMAND_LINE_TARGETS:
-    make_dist_tgz (env, '%s-%s' % (PACKAGE_NAME, PACKAGE_VERSION))
+    archive = env.Archive ('dana.core',
+                           Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE),
+                           ARCHIVE_TYPE = 'tgz')
+    env.Alias ('dist-tgz', archive)
 
 # ______________________________________________________________________dist-bz2
 elif 'dist-bz2' in COMMAND_LINE_TARGETS:
-    make_dist_bz2 (env, '%s-%s' % (PACKAGE_NAME, PACKAGE_VERSION))
+    archive = env.Archive ('dana.core',
+                           Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE),
+                           ARCHIVE_TYPE = 'bz2')
+    env.Alias ('dist-bz2', archive)
 
 # ______________________________________________________________________dist-rpm
 elif 'dist-rpm' in COMMAND_LINE_TARGETS:
