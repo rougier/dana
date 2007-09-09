@@ -18,11 +18,11 @@ import glob
 import os, os.path
 import distutils.sysconfig
 from tools.configure import configure
-from tools.module import make_module
-from tools.archive import Files, archive_builder
+from tools.module import Module
+from tools.archive import archive_builder, Files
+from tools.package import package_builder
 
 # _________________________________________________________________________setup
-
 PACKAGE_NAME    = 'dana.core'
 PACKAGE_VERSION = '1.0'
 SRCDIR          = 'dana'
@@ -30,7 +30,6 @@ AUTHOR          = 'Nicolas P. Rougier'
 COPYRIGHT       = 'Copyright 2006,2007 Nicolas P. Rougier'
 DESCRIPTION     = 'Distributed Asynchronous Numerical Adaptive computations\n'\
                   'Core package'
-PLATFORM        = sys.platform
 CACHEDIR        = './.cache'
 CONFIG_FILENAME = os.path.join (CACHEDIR, 'config')
 ARCHIVE_INCLUDE = ['*']
@@ -39,16 +38,23 @@ ARCHIVE_EXCLUDE = ['.*', '*.os', '*.pyc', '*.o', '*~',
                    '*.zip', '*.tgz', '*.gz', '*.bz2',
                    'manual', '.cache', 'dist', '.libs']
 
-
 # _____________________________________________________________environment setup
 
 # Read configuration file
 options = Options (CONFIG_FILENAME)
-for o in ['PREFIX', 'LIBDIR', 'INCLUDEDIR', 'PYTHONDIR', 'CPPPATH', 'LIBS']:
+for o in ['CPPPATH', 'LIBS', 'LIBDIR', 'PREFIX', 'PYTHON', 'ARCH']:
     options.Add (o)
 
 # Create environment
 env = Environment (CACHEDIR=CACHEDIR, options = options)
+
+# Setup default arch
+options.Add ('ARCH', '', os.uname()[-1])
+options.Update(env)
+
+# Setup BUILDIR and LIBDIR for specific arch
+env["BUILDDIR"] = './.build/%s' % env['ARCH']
+env["LIBDIR"] = './.libs/%s' % env['ARCH']
 
 # Tell scons to put signatures within CACHEDIR
 SConsignFile ('%s/scons-signatures' % env['CACHEDIR'])
@@ -63,9 +69,7 @@ conf = Configure (env, conf_dir=env['CACHEDIR'],
                   log_file=env['CACHEDIR']+'/config.log')
 
 env.Append (BUILDERS = {'Archive' : archive_builder})
-env.BuildDir ('%s/%s' % (env['CACHEDIR'], SRCDIR) , SRCDIR)
-
-
+env.Append (BUILDERS = {'Package' : package_builder})
 
 # _____________________________________________________________________verbosity
 class filtered_output:
@@ -112,28 +116,37 @@ elif 'dist-bz2' in COMMAND_LINE_TARGETS:
                            ARCHIVE_TYPE = 'bz2')
     env.Alias ('dist-bz2', archive)
 
+
+# _______________________________________________________________________modules
+modules = []
+modules.append (Module (env, 'dana'))
+modules.append (Module (env, 'dana/core'))
+modules.append (Module (env, 'dana/tests'))
+modules.append (Module (env, 'dana/projection/profile',  ['dana_core']))
+modules.append (Module (env, 'dana/projection/distance', ['dana_core']))
+modules.append (Module (env, 'dana/projection/shape',    ['dana_core']))
+modules.append (Module (env, 'dana/projection/density',  ['dana_core']))
+modules.append (Module (env, 'dana/projection',  ['dana_core',
+                                        'dana_projection_shape',
+                                        'dana_projection_density',
+                                        'dana_projection_profile',
+                                        'dana_projection_distance']))
+
 # ______________________________________________________________________dist-rpm
-elif 'dist-rpm' in COMMAND_LINE_TARGETS:
+if 'dist-rpm' in COMMAND_LINE_TARGETS:
     env.Alias('dist-rpm', None)
 
 # ______________________________________________________________________dist-deb
-elif 'dist-deb' in COMMAND_LINE_TARGETS:
-    env.Alias('dist-deb', None)
+if 'dist-deb' in COMMAND_LINE_TARGETS:
+    package = env.Package ('dana.core',
+                           'Makefile',
+                           PACKAGE_TYPE = 'deb')
+    for module in modules:
+        env.Depends (package, module)
+    env.Alias ('dist-deb', package)
+
+    print help(env.Install)
 
 # ___________________________________________________________________________all
-else:
-    make_module (env, conf, 'dana')
-    make_module (env, conf, 'dana/core')
-    make_module (env, conf, 'dana/tests')
-    make_module (env, conf, 'dana/projection/profile',  ['dana_core'])
-    make_module (env, conf, 'dana/projection/distance', ['dana_core'])
-    make_module (env, conf, 'dana/projection/shape',    ['dana_core'])
-    make_module (env, conf, 'dana/projection/density',  ['dana_core'])
-    make_module (env, conf, 'dana/projection',  ['dana_core',
-                                                 'dana_projection_shape',
-                                                 'dana_projection_density',
-                                                 'dana_projection_profile',
-                                                 'dana_projection_distance'])
-
-
-
+elif 'build' in COMMAND_LINE_TARGETS:
+    env.Alias ('build', modules)

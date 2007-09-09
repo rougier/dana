@@ -16,43 +16,49 @@
 import os, os.path
 import glob
 
-def make_module (env, conf, path, libs=[]):
+def Module (env, path, libs=[]):
     """ Make a python module """
 
-    build_dir       = env["CACHEDIR"]
+    env.BuildDir (env["BUILDDIR"], '.', duplicate=0)
     modname         = os.path.basename (path)
     libname         = path.replace ('/', '_')
-    lib_install_dir = env['LIBDIR']
-    lib_include_dir = env['INCLUDEDIR']
-    mod_install_dir = os.path.join (env['PYTHONDIR'], path)
+    lib_install_dir = '%s/lib' % env['PREFIX']
+    lib_include_dir = '%s/include' % env['PREFIX']
+    mod_install_dir = os.path.join (
+        '%s/lib/%s/site-packages' % (env['PREFIX'], env['PYTHON']), path)
 
     # Library
-    src = ['%s/%s' % (build_dir, s)
+    src = ['%s/%s' % (env["BUILDDIR"], s)
            for s in glob.glob ('%s/*.cc' % path) if '_export' not in s]
     if len(src):
-        lib = env.SharedLibrary ('.libs/lib%s' % libname,
+        lib = env.SharedLibrary ('%s/lib%s' % (env["LIBDIR"], libname),
                                  src,
                                  SHLIBPREFIX='',
                                  LIBS=env['LIBS'])
-        env.Install (lib_install_dir, lib)
+        tt = env.Install (lib_install_dir, lib)
+        print str(tt[0]), str(tt[0].sources[0])
         env.Alias('install', lib_install_dir)
 
     # Module
-    src = ['%s/%s' % (build_dir, s)
+    src = ['%s/%s' % (env["BUILDDIR"], s)
            for s in glob.glob ('%s/*.cc' % path) if '_export' in s]
     if len(src):
-        module = env.SharedLibrary ('.libs/_%s' % modname,
+        module = env.SharedLibrary ('%s/_%s' % (env["LIBDIR"], modname),
                                     src,
                                     SHLIBPREFIX='',
-                                    LIBPATH= ['.libs'],
+                                    LIBPATH= env['LIBDIR'],
                                     LIBS = libs + env['LIBS'] + [libname])
+        env.Depends (module, lib)
         env.Install (mod_install_dir, module)
-
-    src = ['%s/%s' % (build_dir, s) for s in glob.glob ('%s/*.py' % path)]
+    else:
+        module = None
+    src = ['%s/%s' % (env["BUILDDIR"], s) for s in glob.glob ('%s/*.py' % path)]
     env.Install (mod_install_dir, src)
     env.Alias ('install', mod_install_dir)
 
     headers = glob.glob ('%s/*.h' % path)
     env.Install (os.path.join (lib_include_dir, path), headers)
     env.Alias ('install', lib_include_dir)
+
+    return module
 

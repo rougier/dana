@@ -121,7 +121,11 @@ MakeMakefile()
 {
 	cat > Makefile << EOF
 all:
-	@$SCONS
+ifeq ("\${ARCH}","")
+	@$SCONS build
+else
+	@$SCONS build ARCH=\${ARCH}
+endif
 
 # it is also possible to use
 # @$SCONS -j4
@@ -154,7 +158,11 @@ dist-zip:
 	@$SCONS dist-zip
 
 dist-deb:
+ifeq ("\${ARCH}","")
 	@$SCONS dist-deb
+else
+	@$SCONS dist-deb ARCH=\${ARCH}
+endif
 
 dist-rpm:
 	@$SCONS dist-rpm
@@ -191,14 +199,12 @@ rm -rf .cache >& /dev/null
 mkdir .cache >& /dev/null
 PYTHON=`python -c "import sys; print 'python%s' % sys.version[:3]"`
 echo "PREFIX = '$PREFIX'" > .cache/config
-echo "INCLUDEDIR = '$PREFIX/include'" >> .cache/config
-echo "LIBDIR = '$PREFIX/lib'" >> .cache/config
-echo "PYTHONDIR = '$PREFIX/lib/$PYTHON/site-packages'" >> .cache/config
+echo "PYTHON = '$PYTHON'" >> .cache/config
 
 
 echo "Configuration stage 2 (libraries)"
 echo "---------------------------------"
-$SCONS configure
+$SCONS configure $#
 # Does configure went ok ?
 if [ "$?" -ne "0" ]; then
     echo
@@ -206,11 +212,12 @@ if [ "$?" -ne "0" ]; then
     echo "Please consider installing them before configuring again"
     exit 1
 fi
-
+echo
 echo "Final configuration"
 echo "-------------------"
 echo "Library directory: "$PREFIX"/lib"
 echo "Python directory:  "$PREFIX"/lib/"$PYTHON"/site-packages"
+echo "Include directory: "$PREFIX"/include"
 echo -e $BLUE
 echo "Make sure the library directory is accessible from your LD_LIBRARY_PATH"
 echo "Make sure the python directory is accessible from your PYTHONPATH"
