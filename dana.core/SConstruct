@@ -18,7 +18,7 @@ import glob
 import os, os.path
 import distutils.sysconfig
 from tools.configure import configure
-from tools.module import Module
+from tools.module import Modules
 from tools.archive import archive_builder, Files
 from tools.package import package_builder
 
@@ -37,6 +37,18 @@ ARCHIVE_EXCLUDE = ['.*', '*.os', '*.pyc', '*.o', '*~',
                    '*.pdf', '*.ps', '*.so', '*.a',
                    '*.zip', '*.tgz', '*.gz', '*.bz2',
                    'manual', '.cache', 'dist', '.libs']
+MODULES = [ ['dana', []],
+            ['dana/core', []],
+            ['dana/tests', []],
+            ['dana/projection/profile',  ['dana_core']],
+            ['dana/projection/distance', ['dana_core']],
+            ['dana/projection/shape',    ['dana_core']],
+            ['dana/projection/density',  ['dana_core']],
+            ['dana/projection', ['dana_core',
+                                 'dana_projection_shape',
+                                 'dana_projection_density',
+                                 'dana_projection_profile',
+                                 'dana_projection_distance']] ]
 
 # _____________________________________________________________environment setup
 
@@ -72,6 +84,7 @@ conf = Configure (env, conf_dir=env['CACHEDIR'],
                   log_file=env['CACHEDIR']+'/config.log')
 
 env.Append (BUILDERS = {'Archive' : archive_builder})
+env.Append (BUILDERS = {'Package' : package_builder})
 
 
 # _____________________________________________________________________verbosity
@@ -121,19 +134,7 @@ elif 'dist-bz2' in COMMAND_LINE_TARGETS:
 
 
 # _______________________________________________________________________modules
-modules = []
-modules.append (Module (env, 'dana'))
-modules.append (Module (env, 'dana/core'))
-modules.append (Module (env, 'dana/tests'))
-modules.append (Module (env, 'dana/projection/profile',  ['dana_core']))
-modules.append (Module (env, 'dana/projection/distance', ['dana_core']))
-modules.append (Module (env, 'dana/projection/shape',    ['dana_core']))
-modules.append (Module (env, 'dana/projection/density',  ['dana_core']))
-modules.append (Module (env, 'dana/projection',  ['dana_core',
-                                                  'dana_projection_shape',
-                                                  'dana_projection_density',
-                                                  'dana_projection_profile',
-                                                  'dana_projection_distance']))
+modules, installs = Modules (env, MODULES)
 
 # ______________________________________________________________________dist-rpm
 if 'dist-rpm' in COMMAND_LINE_TARGETS:
@@ -141,7 +142,16 @@ if 'dist-rpm' in COMMAND_LINE_TARGETS:
 
 # ______________________________________________________________________dist-deb
 if 'dist-deb' in COMMAND_LINE_TARGETS:
-    env.Alias('dist-deb', None)
+
+    files = []
+    for i in installs:
+        for s in i.sources:
+            files.append (str(s))
+
+    env["INSTALLS"] = installs
+    package = env.Package ('%s-%s.deb' % (PACKAGE_FULLNAME, env["ARCH"]),
+                           files, ARCHIVE_TYPE = 'deb')
+    env.Alias('dist-deb', package)
 
 # ___________________________________________________________________________all
 elif 'build' in COMMAND_LINE_TARGETS:

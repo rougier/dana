@@ -16,6 +16,22 @@
 import os, os.path
 import glob
 
+
+def Modules (env, modules):
+    """ Build a list of module """
+
+    modules_target = []
+    install_target = []
+    for m in modules:
+        name, libs = m
+        module, install = Module (env, name, libs)
+        if module:
+            modules_target.extend (module)
+        if install:
+            install_target.extend (install)
+    return modules_target, install_target
+
+
 def Module (env, path, libs=[]):
     """ Make a python module """
 
@@ -65,5 +81,5 @@ def Module (env, path, libs=[]):
 #        for s in i.sources:
 #            print "  ",s
 
-    return module
+    return module, install
 
