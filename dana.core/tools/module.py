@@ -35,8 +35,7 @@ def Module (env, path, libs=[]):
                                  src,
                                  SHLIBPREFIX='',
                                  LIBS=env['LIBS'])
-        tt = env.Install (lib_install_dir, lib)
-        print str(tt[0]), str(tt[0].sources[0])
+        env.Install (lib_install_dir, lib)
         env.Alias('install', lib_install_dir)
 
     # Module

@@ -25,7 +25,6 @@ from tools.package import package_builder
 # _________________________________________________________________________setup
 PACKAGE_NAME    = 'dana.core'
 PACKAGE_VERSION = '1.0'
-SRCDIR          = 'dana'
 AUTHOR          = 'Nicolas P. Rougier'
 COPYRIGHT       = 'Copyright 2006,2007 Nicolas P. Rougier'
 DESCRIPTION     = 'Distributed Asynchronous Numerical Adaptive computations\n'\
@@ -97,7 +96,7 @@ elif 'test' in COMMAND_LINE_TARGETS:
 
 # ______________________________________________________________________dist-zip
 elif 'dist-zip' in COMMAND_LINE_TARGETS:
-    archive = env.Archive ('toto/dana.core',
+    archive = env.Archive ('dana.core',
                            Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE),
                            ARCHIVE_TYPE = 'zip')
     env.Alias ('dist-zip', archive)
