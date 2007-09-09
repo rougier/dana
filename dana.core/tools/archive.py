@@ -74,14 +74,12 @@ def Archive (target, source, env):
     if not env.has_key ('ARCHIVE_TYPE'):
         env["ARCHIVE_TYPE"] = 'tgz' 
     
+    path = os.path.basename (str(target[0]))
     if env["ARCHIVE_TYPE"] == 'tgz':
-        path = '%s.tar.gz' % os.path.basename (str(target[0]))
         archive = tarfile.open (path, 'w:gz')
     elif env["ARCHIVE_TYPE"] == 'bz2':
-        path = '%s.tar.bz2' % os.path.basename (str(target[0]))
         archive = tarfile.open (path, 'w:bz2')
     elif env["ARCHIVE_TYPE"] == 'zip':
-        path = '%s.zip' % os.path.basename (str(target[0]))
         archive = tarfile.open (path, 'w:bz2')
     else:
         print "Unknown archive type (%s)" % env["ARCHIVE_TYPE"]

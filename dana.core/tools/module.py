@@ -19,45 +19,51 @@ import glob
 def Module (env, path, libs=[]):
     """ Make a python module """
 
-    env.BuildDir (env["BUILDDIR"], '.', duplicate=0)
-    modname         = os.path.basename (path)
-    libname         = path.replace ('/', '_')
-    lib_install_dir = '%s/lib' % env['PREFIX']
-    lib_include_dir = '%s/include' % env['PREFIX']
-    mod_install_dir = os.path.join (
-        '%s/lib/%s/site-packages' % (env['PREFIX'], env['PYTHON']), path)
+    module_name = os.path.basename (path)
+    library_name = path.replace ('/', '_')
+    install = []
 
     # Library
     src = ['%s/%s' % (env["BUILDDIR"], s)
            for s in glob.glob ('%s/*.cc' % path) if '_export' not in s]
     if len(src):
-        lib = env.SharedLibrary ('%s/lib%s' % (env["LIBDIR"], libname),
+        lib = env.SharedLibrary ('%s/lib%s' % (env["BUILDLIBDIR"], library_name),
                                  src,
                                  SHLIBPREFIX='',
                                  LIBS=env['LIBS'])
-        env.Install (lib_install_dir, lib)
-        env.Alias('install', lib_install_dir)
+        install.extend (env.Install (env['LIBDIR'], lib))
+
 
     # Module
     src = ['%s/%s' % (env["BUILDDIR"], s)
            for s in glob.glob ('%s/*.cc' % path) if '_export' in s]
     if len(src):
-        module = env.SharedLibrary ('%s/_%s' % (env["LIBDIR"], modname),
+        module = env.SharedLibrary ('%s/_%s' % (env["BUILDLIBDIR"], module_name),
                                     src,
                                     SHLIBPREFIX='',
-                                    LIBPATH= env['LIBDIR'],
-                                    LIBS = libs + env['LIBS'] + [libname])
+                                    LIBPATH= env['BUILDLIBDIR'],
+                                    LIBS = libs + env['LIBS'] + [library_name])
         env.Depends (module, lib)
-        env.Install (mod_install_dir, module)
+        install.extend (env.Install (os.path.join (env['PYTHONDIR'], path), module))
     else:
         module = None
-    src = ['%s/%s' % (env["BUILDDIR"], s) for s in glob.glob ('%s/*.py' % path)]
-    env.Install (mod_install_dir, src)
-    env.Alias ('install', mod_install_dir)
 
+    src = ['%s/%s' % (env["BUILDDIR"], s) for s in glob.glob ('%s/*.py' % path)]
+    install.extend (env.Install (os.path.join (env['PYTHONDIR'], path), src))
+
+    # Headers
     headers = glob.glob ('%s/*.h' % path)
-    env.Install (os.path.join (lib_include_dir, path), headers)
-    env.Alias ('install', lib_include_dir)
+    install.extend (env.Install (os.path.join (env['INCLUDEDIR'], path), headers))
+
+    env.Alias ('install', env['LIBDIR'])
+    env.Alias ('install', os.path.join (env['PYTHONDIR'], path))
+    env.Alias ('install', env['INCLUDEDIR'])
+
+#    print
+#    for i in install:
+#        print i
+#        for s in i.sources:
+#            print "  ",s
 
     return module
 

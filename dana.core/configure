@@ -32,7 +32,6 @@ while [ "$#" -gt "0" ]
 do
     OPTION=`echo $1 | cut -d'=' -f1`
     VALUE=`echo $1 | cut -d'=' -f2`
-
     if [ "$OPTION" = "--prefix" ]; then
         PREFIX=$VALUE
     fi
@@ -199,7 +198,9 @@ rm -rf .cache >& /dev/null
 mkdir .cache >& /dev/null
 PYTHON=`python -c "import sys; print 'python%s' % sys.version[:3]"`
 echo "PREFIX = '$PREFIX'" > .cache/config
-echo "PYTHON = '$PYTHON'" >> .cache/config
+echo "LIBDIR = '$PREFIX/lib'" >> .cache/config
+echo "INCLUDEDIR = '$PREFIX/include'" >> .cache/config
+echo "PYTHONDIR = '$PREFIX/lib/$PYTHON/site-packages'" >> .cache/config
 
 
 echo "Configuration stage 2 (libraries)"
