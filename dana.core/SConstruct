@@ -18,10 +18,10 @@ import glob
 import os, os.path
 import distutils.sysconfig
 from tools.configure import configure
-from tools.module import Modules, Module
+from tools.extension import Extension
 from tools.archive import archive_builder, Files
 from tools.package import package_builder
-from tools.extension import extension_builder
+
 
 # _________________________________________________________________________setup
 PACKAGE_NAME    = 'dana.core'
@@ -38,19 +38,6 @@ ARCHIVE_EXCLUDE = ['.*', '*.os', '*.pyc', '*.o', '*~',
                    '*.pdf', '*.ps', '*.so', '*.a',
                    '*.zip', '*.tgz', '*.gz', '*.bz2',
                    'manual', '.cache', 'dist', '.libs']
-
-MODULES = [ ['dana', []],
-            ['dana/core', []],
-            ['dana/tests', []],
-            ['dana/projection/profile',  ['dana_core']],
-            ['dana/projection/distance', ['dana_core']],
-            ['dana/projection/shape',    ['dana_core']],
-            ['dana/projection/density',  ['dana_core']],
-            ['dana/projection', ['dana_core',
-                                 'dana_projection_shape',
-                                 'dana_projection_density',
-                                 'dana_projection_profile',
-                                 'dana_projection_distance']] ]
 
 # _____________________________________________________________environment setup
 
@@ -96,7 +83,6 @@ conf = Configure (env, conf_dir=env['CACHEDIR'],
 
 env.Append (BUILDERS = {'Archive'  : archive_builder})
 env.Append (BUILDERS = {'Package'  : package_builder})
-env.Append (BUILDERS = {'Extension': extension_builder})
 
 
 # _____________________________________________________________________verbosity
@@ -142,9 +128,6 @@ elif 'dist-bz2' in COMMAND_LINE_TARGETS:
     env.Alias ('dist-bz2', archive)
 
 
-# _______________________________________________________________________modules
-modules, installs = Modules (env, MODULES)
-
 # ______________________________________________________________________dist-rpm
 if 'dist-rpm' in COMMAND_LINE_TARGETS:
     env.Alias('dist-rpm', None)
@@ -176,50 +159,14 @@ elif 'dist-zip' in COMMAND_LINE_TARGETS:
     env.Alias ('dist-zip', env.Archive ('%s.zip' % PACKAGE_FULLNAME, files))
 
 
-
 # ____________________________________________________________________Extensions
-def ExtensionSource (path):
-    return glob.glob (os.path.join (path, '*.cc'))
-
-def ExtensionTarget (path):
-    return '%s/%s' % (env["BUILDDIR"], path.replace ('/', '_'))
-
-def ExtensionBuild (path, libs=[]):
-    return env.Extension (ExtensionTarget(path), ExtensionSource(path),
-                   LIBS = env["LIBS"] + libs)
-
-def ExtensionInstall (extension_path):
-    p = env.Install (os.path.join (env["PYTHONDIR"], extension_path),
-                     glob.glob (os.path.join(extension_path, '*.py')))
-    h = env.Install (os.path.join (env["INCLUDEDIR"], extension_path),
-                     glob.glob (os.path.join(extension_path, '*.h')))
-    env.Alias ('install', p+h)
-    return p + h
-
-    
-#ExtensionBuild ('dana/core')
-#ExtensionInstall ('dana/core')
-
-#env.Extension (ExtensionTarget('dana/projection/profile'),
-#               ExtensionSource('dana/projection/profile'),
-#               LIBS = env["LIBS"] + ['dana_core'])
-
-#env.Extension (ExtensionTarget('dana/projection/density'),
-#               ExtensionSource('dana/projection/density'),
-#               LIBS = env["LIBS"] + ['dana_core'])
-
-#env.Extension (ExtensionTarget('dana/projection/shape'),
-#               ExtensionSource('dana/projection/shape'),
-#               LIBS = env["LIBS"] + ['dana_core'])
-
-#env.Extension (ExtensionTarget('dana/projection/distance'),
-#               ExtensionSource('dana/projection/distance'),
-#               LIBS = env["LIBS"] + ['dana_core'])
-
-#env.Extension (ExtensionTarget ('dana/projection'),
-#               ExtensionSource ('dana/projection'),
-#               LIBS = env["LIBS"] + ['dana_core',
-#                                     'dana_projection_density',
-#                                     'dana_projection_shape',
-#                                     'dana_projection_profile',
-#                                     'dana_projection_distance'])
+Extension (env, 'dana/core')
+Extension (env, 'dana/projection/profile', ['dana_core'])
+Extension (env, 'dana/projection/density', ['dana_core'])
+Extension (env, 'dana/projection/shape',   ['dana_core'])
+Extension (env, 'dana/projection/distance',['dana_core'])
+Extension (env, 'dana/projection',         ['dana_core',
+                                            'dana_projection_density',
+                                            'dana_projection_shape',
+                                            'dana_projection_profile',
+                                            'dana_projection_distance'])

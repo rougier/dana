@@ -13,71 +13,66 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-""" Extension builder for scons 
+import glob
+import os.path
 
-Example usage (from you Sconstruct file):
------------------------------------------
+# ________________________________________________________________ExtensionBuild
+def ExtensionBuild (env, path, libs=[]):
+    """ Build a python extension module from a given path """
 
-from extension import extension_builder
-
-...
- 
-env.Append (BUILDERS = {'Extension' : extension_builder})
-
-...
-
-env.Extension ('core', 'core.cc')
-
-"""
-
-from SCons.Script import *
-
-# _____________________________________________________________________Extension
-def Extension (target, source, env):
-
-    extension_dirname  = os.path.dirname (str(target[0]))
-    extension_basename = os.path.basename (str(target[0]))
+    all = glob.glob (os.path.join (path, '*.cc'))
+    module_name   = '_' + path.split('/')[-1]
+    library_name  = path.replace('/', '_')
 
     # Make the library
-    srcs = ['%s/%s' % (env["BUILDDIR"], str(s))
-            for s in source if '_export' not in str(s)]
-    if len(srcs):
-        library_name = os.path.join(extension_dirname, extension_basename)
-        library = env.SharedLibrary (library_name,
-                                     srcs,
+    src = ['%s/%s' % (env["BUILDDIR"], s) for s in all if '_export' not in s]
+    if len(src):
+        fullname = os.path.join (env["BUILDDIR"], library_name)
+        library = env.SharedLibrary (fullname, 
+                                     src,
                                      LIBPATH= env['BUILDDIR'],
                                      LIBS=env['LIBS'])
-        env.Install (env['LIBDIR'], library)
-        env.Alias ('install', env['LIBDIR'])
+    else:
+        library = None
 
     # Make the module
-    srcs = ['%s/%s' % (env["BUILDDIR"], str(s))
-            for s in source if '_export' in str(s)]
+    srcs = ['%s/%s' % (env["BUILDDIR"], s) for s in all if '_export' in s]
     if len(srcs):
-        path = ''
-        for p in extension_basename.split('_'):
-            path = os.path.join (path, p)
-        module_name = os.path.join (extension_dirname, path,
-                                    '_' + extension_basename.split('_')[-1])
-        module = env.SharedLibrary (module_name,
+        fullname = os.path.join (env["BUILDDIR"], path, module_name)
+        module = env.SharedLibrary (fullname,
                                     srcs,
                                     SHLIBPREFIX='',
                                     LIBPATH= env['BUILDDIR'],
-                                    LIBS = env['LIBS'] + [extension_basename])
+                                    LIBS = env['LIBS'] + [library_name])
         env.Depends (module, library)
-        env.Install (os.path.join (env['LIBDIR'], path), module)
-        env.Alias ('install', os.path.join (env['PYTHONDIR'], path))
+    else:
+        module = None
+    return library, module
 
-    return 0
+# ______________________________________________________________ExtensionInstall
+def ExtensionInstall (env, path, library, module):
+    """ Install a python extension module from a given path"""
 
+    p = env.Install (os.path.join (env["PYTHONDIR"], path),
+                     glob.glob (os.path.join(path, '*.py')))
+    env.Alias ('install', p)
+    h = env.Install (os.path.join (env["INCLUDEDIR"], path),
+                     glob.glob (os.path.join(path, '*.h')))
+    env.Alias ('install', h)
 
-# _______________________________________________________________ExtensionString
-def ExtensionString (target, source, env):
-    """ Information string for Archive """
+    l = env.Install (env['LIBDIR'], library)
+    env.Alias ('install', env['LIBDIR'])
 
-    extension_basename = os.path.basename (str(target[0]))
-    return 'Making extension %s' % (extension_basename.split('_')[-1])
+    m = env.Install (os.path.join (env['LIBDIR'], path), module)
+    env.Alias ('install', os.path.join (env['LIBDIR'], path))
 
-extension_builder = Builder (
-    action = SCons.Action.Action(Extension, ExtensionString))
+    return p + h + l + m
+
+# _____________________________________________________________________Extension
+def Extension (env, path, libs=[]):
+    """ Build and install a python extension module from a given path"""
+
+    l,m = ExtensionBuild (env, path, libs)
+    return ExtensionInstall (env, path, l, m)
+    
 
