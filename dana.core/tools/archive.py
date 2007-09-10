@@ -29,9 +29,8 @@ env.Append (BUILDERS = {'Archive' : archive_builder})
 ...
 
 if 'dist-tgz' in COMMAND_LINE_TARGETS:
-    archive = env.Archive ('archive',
-                           Files ('.', include=['*'], exclude=['*~', '.*', '*.o']),
-                           ARCHIVE_TYPE = 'tgz')
+    archive = env.Archive ('archive.tgz',
+                           Files ('.', include=['*'], exclude=['*~', '.*', '*.o']))
     env.Alias ('dist-tgz', archive)
 
 """
@@ -71,43 +70,28 @@ def Files (path, include = ['*'],  exclude= []):
 def Archive (target, source, env):
     """ Make an archive from sources """
 
-    if not env.has_key ('ARCHIVE_TYPE'):
-        env["ARCHIVE_TYPE"] = 'tgz' 
-    
     path = os.path.basename (str(target[0]))
-    if env["ARCHIVE_TYPE"] == 'tgz':
+    type = os.path.splitext (path)[-1]
+    if type == '.tgz' or type == '.gz':
         archive = tarfile.open (path, 'w:gz')
-    elif env["ARCHIVE_TYPE"] == 'bz2':
+    elif type == '.bz2':
         archive = tarfile.open (path, 'w:bz2')
-    elif env["ARCHIVE_TYPE"] == 'zip':
-        archive = tarfile.open (path, 'w:bz2')
+    elif type == '.zip':
+        archive = zipfile.ZipFile (path, 'w')
+        archive.add = archive.write
     else:
-        print "Unknown archive type (%s)" % env["ARCHIVE_TYPE"]
-        print "Known types are: 'tgz', 'bz2' and 'zip'"
+        print "Unknown archive type (%s)" % type
         return
 
     src = [str(s) for s in source if str(s) != path]
     for s in src:
         archive.add (s, os.path.join (os.path.basename (str(target[0])), s))
     archive.close()
-    print 'Done !'
 
 # _________________________________________________________________ArchiveString
 def ArchiveString (target, source, env):
     """ Information string for Archive """
-
-    if not env.has_key ('ARCHIVE_TYPE'):
-        env["ARCHIVE_TYPE"] = 'tgz'
-    path = os.path.basename (str (target[0]))
-    if env["ARCHIVE_TYPE"] == 'tgz':
-        return 'Making archive %s.tar.gz' % path
-    elif env["ARCHIVE_TYPE"] == 'bz2':
-        return 'Making archive %s.tar.bz2' % path
-    elif env["ARCHIVE_TYPE"] == 'zip':
-        return 'Making archive %s.tar.zip' % path
-    else:
-        return 'Making archive %s' % path
-
+    return 'Making archive %s' % os.path.basename (str (target[0]))
 
 archive_builder = Builder (action = SCons.Action.Action(Archive, ArchiveString))
 

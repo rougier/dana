@@ -24,19 +24,20 @@ from tools.package import package_builder
 
 # _________________________________________________________________________setup
 PACKAGE_NAME    = 'dana.core'
-PACKAGE_VERSION = 'svn'
+PACKAGE_VERSION = '1.0'
 PACKAGE_FULLNAME= '%s-%s' % (PACKAGE_NAME, PACKAGE_VERSION)
 AUTHOR          = 'Nicolas P. Rougier'
+MAINTAINER      = 'Nicolas P. Rougier'
 COPYRIGHT       = 'Copyright 2006,2007 Nicolas P. Rougier'
-DESCRIPTION     = 'Distributed Asynchronous Numerical Adaptive computations\n'\
+DESCRIPTION     = 'Distributed Asynchronous Numerical Adaptive computations, '\
                   'Core package'
-CACHEDIR        = './.cache'
-CONFIG_FILENAME = os.path.join (CACHEDIR, 'config')
+DEPENDENCIES    = 'libboost_python, libxml-2.0, python2.5'
 ARCHIVE_INCLUDE = ['*']
 ARCHIVE_EXCLUDE = ['.*', '*.os', '*.pyc', '*.o', '*~',
                    '*.pdf', '*.ps', '*.so', '*.a',
                    '*.zip', '*.tgz', '*.gz', '*.bz2',
                    'manual', '.cache', 'dist', '.libs']
+
 MODULES = [ ['dana', []],
             ['dana/core', []],
             ['dana/tests', []],
@@ -52,7 +53,8 @@ MODULES = [ ['dana', []],
 
 # _____________________________________________________________environment setup
 
-# Read configuration file
+CACHEDIR        = './.cache'
+CONFIG_FILENAME = os.path.join (CACHEDIR, 'config')
 options = Options (CONFIG_FILENAME)
 for o in ['CPPPATH', 'LIBS',
           'PREFIX', 'LIBDIR', 'INCLUDEDIR', 'PYTHONDIR',
@@ -60,7 +62,15 @@ for o in ['CPPPATH', 'LIBS',
     options.Add (o)
 
 # Create environment
-env = Environment (CACHEDIR=CACHEDIR, options = options)
+env = Environment (CACHEDIR=CACHEDIR, options = options,
+                   PACKAGE_NAME = PACKAGE_NAME,
+                   PACKAGE_VERSION = PACKAGE_VERSION,
+                   PACKAGE_FULLNAME = PACKAGE_FULLNAME,
+                   AUTHOR = AUTHOR,
+                   MAINTAINER = MAINTAINER,
+                   COPYRIGHT = COPYRIGHT,
+                   DESCRIPTION = DESCRIPTION,
+                   DEPENDENCIES = DEPENDENCIES)
 
 # Setup default arch
 options.Add ('ARCH', '', os.uname()[-1])
@@ -114,22 +124,19 @@ elif 'test' in COMMAND_LINE_TARGETS:
 # ______________________________________________________________________dist-zip
 elif 'dist-zip' in COMMAND_LINE_TARGETS:
     archive = env.Archive ('%s.zip' % PACKAGE_FULLNAME,
-                           Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE),
-                           ARCHIVE_TYPE = 'zip')
+                           Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE))
     env.Alias ('dist-zip', archive)
 
 # ______________________________________________________________________dist-tgz
 elif 'dist-tgz' in COMMAND_LINE_TARGETS:
     archive = env.Archive ('%s.tgz' % PACKAGE_FULLNAME,
-                           Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE),
-                           ARCHIVE_TYPE = 'tgz')
+                           Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE))
     env.Alias ('dist-tgz', archive)
 
 # ______________________________________________________________________dist-bz2
 elif 'dist-bz2' in COMMAND_LINE_TARGETS:
     archive = env.Archive ('%s.bz2' % PACKAGE_FULLNAME,
-                           Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE),
-                           ARCHIVE_TYPE = 'bz2')
+                           Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE))
     env.Alias ('dist-bz2', archive)
 
 

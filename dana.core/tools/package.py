@@ -28,12 +28,6 @@ env.Append (BUILDERS = {'Package' : package_builder})
 
 ...
 
-if 'dist-deb' in COMMAND_LINE_TARGETS:
-    package = env.Package ('archive',
-                           Files ('.', include=['*'], exclude=['*~', '.*', '*.o']),
-                           PACKAGE_TYPE = 'deb',
-                           PACKAGE_ARCH = 'x86_64')
-    env.Alias ('dist-deb', package)
 
 """
 
@@ -44,17 +38,10 @@ import shutil
 def Package (target, source, env):
     """ Make a package from sources """
 
-    if not env.has_key ('PACKAGE_TYPE'):
-        env["PACKAGE_TYPE"] = 'deb'
-
     name        = str(target[0])
     path        = name + '.tmp'
-    version     = '1.0'
-    maintainer  = 'Nicolas Rougier [Nicolas.Rougier@loria.fr]'
-    arch        = env["ARCH"]
-    depends     = 'libboost_python, python2.5'
-    description = 'Distributed Asycnhronous Numerical Adaptive Library'
 
+    # Remove build tree if it exists
     shutil.rmtree (path, ignore_errors=True)
 
     files = []
@@ -66,7 +53,7 @@ def Package (target, source, env):
     package_size = 0
     for f in files:
         dest = os.path.join(path, 'usr', f[0])
-        subdirs = dest.split('/')
+        subdirs = os.path.dirname(dest).split('/')
         dir = ''
         for d in subdirs:
             dir = os.path.join (dir, d)
@@ -75,7 +62,33 @@ def Package (target, source, env):
         shutil.copy (f[1], dest)
         package_size += os.path.getsize (f[1])
 
-    print package_size
+    CONTROL_TEMPLATE = """
+Package: %s
+Priority: extra
+Section: misc
+Installed-Size: %s
+Maintainer: %s
+Architecture: %s
+Version: %s
+Depends: %s
+Description: %s
+"""
+    control_info = CONTROL_TEMPLATE % (
+        env['PACKAGE_NAME'],
+        package_size,
+        env['MAINTAINER'],
+        env['ARCH'],
+        env['PACKAGE_VERSION'],
+        env['DEPENDENCIES'],
+        env['DESCRIPTION'])
+    os.mkdir (os.path.join (path, 'DEBIAN'))
+    f = open (os.path.join (path, 'DEBIAN', 'control'), 'w')
+    f.write (control_info)
+    f.close()
+
+    os.system ("dpkg-deb -b %s %s" % ("%s" % path, name))
+
+
 
 # _________________________________________________________________PackageString
 def PackageString (target, source, env):
