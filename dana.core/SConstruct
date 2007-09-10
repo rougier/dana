@@ -18,9 +18,10 @@ import glob
 import os, os.path
 import distutils.sysconfig
 from tools.configure import configure
-from tools.module import Modules
+from tools.module import Modules, Module
 from tools.archive import archive_builder, Files
 from tools.package import package_builder
+from tools.extension import extension_builder
 
 # _________________________________________________________________________setup
 PACKAGE_NAME    = 'dana.core'
@@ -79,7 +80,7 @@ options.Update(env)
 # Setup BUILDIR and LIBDIR for specific arch
 env["BUILDDIR"] = './.build/%s' % env['ARCH']
 env["BUILDLIBDIR"] = '%s/.libs' % env['BUILDDIR']
-env.BuildDir (env["BUILDDIR"], '.', duplicate=0)
+env.BuildDir (env["BUILDDIR"], '.', duplicate=1)
 
 # Tell scons to put signatures within CACHEDIR
 SConsignFile ('%s/scons-signatures' % env['CACHEDIR'])
@@ -93,8 +94,9 @@ if not os.path.exists (CONFIG_FILENAME):
 conf = Configure (env, conf_dir=env['CACHEDIR'],
                   log_file=env['CACHEDIR']+'/config.log')
 
-env.Append (BUILDERS = {'Archive' : archive_builder})
-env.Append (BUILDERS = {'Package' : package_builder})
+env.Append (BUILDERS = {'Archive'  : archive_builder})
+env.Append (BUILDERS = {'Package'  : package_builder})
+env.Append (BUILDERS = {'Extension': extension_builder})
 
 
 # _____________________________________________________________________verbosity
@@ -163,3 +165,61 @@ if 'dist-deb' in COMMAND_LINE_TARGETS:
 # ___________________________________________________________________________all
 elif 'build' in COMMAND_LINE_TARGETS:
     env.Alias ('build', modules)
+
+
+files = Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE)
+if 'dist-bz2' in COMMAND_LINE_TARGETS:
+    env.Alias ('dist-bz2', env.Archive ('%s.bz2' % PACKAGE_FULLNAME, files))
+elif 'dist-tgz' in COMMAND_LINE_TARGETS:
+    env.Alias ('dist-tgz', env.Archive ('%s.tgz' % PACKAGE_FULLNAME, files))
+elif 'dist-zip' in COMMAND_LINE_TARGETS:
+    env.Alias ('dist-zip', env.Archive ('%s.zip' % PACKAGE_FULLNAME, files))
+
+
+
+# ____________________________________________________________________Extensions
+def ExtensionSource (path):
+    return glob.glob (os.path.join (path, '*.cc'))
+
+def ExtensionTarget (path):
+    return '%s/%s' % (env["BUILDDIR"], path.replace ('/', '_'))
+
+def ExtensionBuild (path, libs=[]):
+    return env.Extension (ExtensionTarget(path), ExtensionSource(path),
+                   LIBS = env["LIBS"] + libs)
+
+def ExtensionInstall (extension_path):
+    p = env.Install (os.path.join (env["PYTHONDIR"], extension_path),
+                     glob.glob (os.path.join(extension_path, '*.py')))
+    h = env.Install (os.path.join (env["INCLUDEDIR"], extension_path),
+                     glob.glob (os.path.join(extension_path, '*.h')))
+    env.Alias ('install', p+h)
+    return p + h
+
+    
+#ExtensionBuild ('dana/core')
+#ExtensionInstall ('dana/core')
+
+#env.Extension (ExtensionTarget('dana/projection/profile'),
+#               ExtensionSource('dana/projection/profile'),
+#               LIBS = env["LIBS"] + ['dana_core'])
+
+#env.Extension (ExtensionTarget('dana/projection/density'),
+#               ExtensionSource('dana/projection/density'),
+#               LIBS = env["LIBS"] + ['dana_core'])
+
+#env.Extension (ExtensionTarget('dana/projection/shape'),
+#               ExtensionSource('dana/projection/shape'),
+#               LIBS = env["LIBS"] + ['dana_core'])
+
+#env.Extension (ExtensionTarget('dana/projection/distance'),
+#               ExtensionSource('dana/projection/distance'),
+#               LIBS = env["LIBS"] + ['dana_core'])
+
+#env.Extension (ExtensionTarget ('dana/projection'),
+#               ExtensionSource ('dana/projection'),
+#               LIBS = env["LIBS"] + ['dana_core',
+#                                     'dana_projection_density',
+#                                     'dana_projection_shape',
+#                                     'dana_projection_profile',
+#                                     'dana_projection_distance'])

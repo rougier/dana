@@ -75,11 +75,5 @@ def Module (env, path, libs=[]):
     env.Alias ('install', os.path.join (env['PYTHONDIR'], path))
     env.Alias ('install', env['INCLUDEDIR'])
 
-#    print
-#    for i in install:
-#        print i
-#        for s in i.sources:
-#            print "  ",s
-
     return module, install
 

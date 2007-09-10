@@ -50,20 +50,22 @@ def Files (path, include = ['*'],  exclude= []):
     for filename in os.listdir (path):
         included = False
         excluded = False
-        for pattern in include:
-            if fnmatch.fnmatch (filename, pattern):
-                included = True
-                for pattern in exclude:
-                    if fnmatch.fnmatch (filename, pattern):
-                        excluded = True
-                        break
+        fullname = os.path.join (path, filename)
+
+        if not os.path.isdir (fullname):
+            for pattern in include:
+                if fnmatch.fnmatch (filename, pattern):
+                    included = True
+                    for pattern in exclude:                    
+                        if fnmatch.fnmatch (filename, pattern):
+                            excluded = True
+                            break
                 break
-        if included and not excluded:
-            fullname = os.path.join (path, filename)
-            if os.path.isdir (fullname):
-                files.extend (Files (fullname, include, exclude))
-            else:
+            if included and not excluded:
                 files.append (fullname)
+        else:
+            files.extend (Files (fullname, include, exclude))
+
     return files
 
 # _______________________________________________________________________Archive

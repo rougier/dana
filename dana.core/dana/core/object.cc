@@ -40,7 +40,6 @@ dana::core::read_attribute (xmlTextReaderPtr reader,
 // _______________________________________________________________________Object
 Object::Object (void)
 {
-    //    id = id_counter++;
 }
 
 // ______________________________________________________________________~Object
