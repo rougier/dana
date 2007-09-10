@@ -16,7 +16,6 @@
 import sys
 import glob
 import os, os.path
-import distutils.sysconfig
 from tools.configure import configure
 from tools.extension import Extension
 from tools.archive import archive_builder, Files
@@ -66,8 +65,7 @@ options.Update(env)
 
 # Setup BUILDIR and LIBDIR for specific arch
 env["BUILDDIR"] = './.build/%s' % env['ARCH']
-env["BUILDLIBDIR"] = '%s/.libs' % env['BUILDDIR']
-env.BuildDir (env["BUILDDIR"], '.', duplicate=1)
+env.BuildDir (env["BUILDDIR"], '.', duplicate=0)
 
 # Tell scons to put signatures within CACHEDIR
 SConsignFile ('%s/scons-signatures' % env['CACHEDIR'])
@@ -83,7 +81,7 @@ conf = Configure (env, conf_dir=env['CACHEDIR'],
 
 env.Append (BUILDERS = {'Archive'  : archive_builder})
 env.Append (BUILDERS = {'Package'  : package_builder})
-
+Default(None)
 
 # _____________________________________________________________________configure
 if 'configure' in COMMAND_LINE_TARGETS:
@@ -91,46 +89,15 @@ if 'configure' in COMMAND_LINE_TARGETS:
     configure (env, conf, options, CONFIG_FILENAME)
     sys.exit(0)
 
-# ___________________________________________________________________________doc
-elif 'doc' in COMMAND_LINE_TARGETS:
-    pass
-
-# __________________________________________________________________________test
-elif 'test' in COMMAND_LINE_TARGETS:
-    env.Alias ('test', None)
-
-# ______________________________________________________________________dist-zip
-elif 'dist-zip' in COMMAND_LINE_TARGETS:
-    archive = env.Archive ('%s.zip' % PACKAGE_FULLNAME,
-                           Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE))
-    env.Alias ('dist-zip', archive)
-
-# ______________________________________________________________________dist-tgz
-elif 'dist-tgz' in COMMAND_LINE_TARGETS:
-    archive = env.Archive ('%s.tgz' % PACKAGE_FULLNAME,
-                           Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE))
-    env.Alias ('dist-tgz', archive)
-
-# ______________________________________________________________________dist-bz2
-elif 'dist-bz2' in COMMAND_LINE_TARGETS:
-    archive = env.Archive ('%s.bz2' % PACKAGE_FULLNAME,
-                           Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE))
-    env.Alias ('dist-bz2', archive)
-
-
-
-# ___________________________________________________________________________all
-elif 'build' in COMMAND_LINE_TARGETS:
-    env.Alias ('build', None)
 
 
 files = Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE)
-if 'dist-bz2' in COMMAND_LINE_TARGETS:
-    env.Alias ('dist-bz2', env.Archive ('%s.bz2' % PACKAGE_FULLNAME, files))
-elif 'dist-tgz' in COMMAND_LINE_TARGETS:
-    env.Alias ('dist-tgz', env.Archive ('%s.tgz' % PACKAGE_FULLNAME, files))
-elif 'dist-zip' in COMMAND_LINE_TARGETS:
-    env.Alias ('dist-zip', env.Archive ('%s.zip' % PACKAGE_FULLNAME, files))
+#if 'dist-bz2' in COMMAND_LINE_TARGETS:
+env.Alias ('dist-bz2', env.Archive ('%s.bz2' % PACKAGE_FULLNAME, files))
+#elif 'dist-tgz' in COMMAND_LINE_TARGETS:
+env.Alias ('dist-tgz', env.Archive ('%s.tgz' % PACKAGE_FULLNAME, files))
+#elif 'dist-zip' in COMMAND_LINE_TARGETS:
+env.Alias ('dist-zip', env.Archive ('%s.zip' % PACKAGE_FULLNAME, files))
 
 
 # ____________________________________________________________________Extensions
@@ -146,6 +113,7 @@ ext_projection = Extension (env, 'dana/projection', ['dana_core',
                                                      'dana_projection_profile',
                                                      'dana_projection_distance'])
 
+# ext represents couples of target/source files to be installed
 ext = ext_core+ext_tests+ext_profile+ext_density+ext_shape+ext_distance+ext_projection
 
 

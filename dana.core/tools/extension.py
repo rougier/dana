@@ -45,7 +45,7 @@ def ExtensionBuild (env, path, libs=[]):
                                     LIBPATH= env['BUILDDIR'],
                                     LIBS = env['LIBS'] + [library_name])
         env.Depends (module, library)
-#        env.Alias ('build', module)
+        env.Alias ('build', module)
     else:
         module = None
     return library, module
