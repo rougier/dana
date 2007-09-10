@@ -21,17 +21,10 @@ from tools.extension import Extension
 from tools.archive import archive_builder, Files
 from tools.package import package_builder
 
-
 # _________________________________________________________________________setup
 PACKAGE_NAME    = 'dana.core'
 PACKAGE_VERSION = '1.0'
 PACKAGE_FULLNAME= '%s-%s' % (PACKAGE_NAME, PACKAGE_VERSION)
-AUTHOR          = 'Nicolas P. Rougier'
-MAINTAINER      = 'Nicolas P. Rougier'
-COPYRIGHT       = 'Copyright 2006,2007 Nicolas P. Rougier'
-DESCRIPTION     = 'Distributed Asynchronous Numerical Adaptive computations, '\
-                  'Core package'
-DEPENDENCIES    = 'libboost_python, libxml-2.0, python2.5'
 ARCHIVE_INCLUDE = ['*']
 ARCHIVE_EXCLUDE = ['.*', '*.os', '*.pyc', '*.o', '*~',
                    '*.pdf', '*.ps', '*.so', '*.a',
@@ -39,93 +32,80 @@ ARCHIVE_EXCLUDE = ['.*', '*.os', '*.pyc', '*.o', '*~',
                    'manual', '.cache', 'dist', '.libs']
 
 # _____________________________________________________________environment setup
-
 CACHEDIR        = './.cache'
 CONFIG_FILENAME = os.path.join (CACHEDIR, 'config')
-options = Options (CONFIG_FILENAME)
-for o in ['CPPPATH', 'LIBS',
-          'PREFIX', 'LIBDIR', 'INCLUDEDIR', 'PYTHONDIR',
-          'ARCH']:
-    options.Add (o)
-
-# Create environment
-env = Environment (CACHEDIR=CACHEDIR, options = options,
-                   PACKAGE_NAME = PACKAGE_NAME,
-                   PACKAGE_VERSION = PACKAGE_VERSION,
-                   PACKAGE_FULLNAME = PACKAGE_FULLNAME,
-                   AUTHOR = AUTHOR,
-                   MAINTAINER = MAINTAINER,
-                   COPYRIGHT = COPYRIGHT,
-                   DESCRIPTION = DESCRIPTION,
-                   DEPENDENCIES = DEPENDENCIES)
-
-# Setup default arch
-options.Add ('ARCH', '', os.uname()[-1])
-options.Update(env)
-
-# Setup BUILDIR and LIBDIR for specific arch
-env["BUILDDIR"] = './.build/%s' % env['ARCH']
-env.BuildDir (env["BUILDDIR"], '.', duplicate=0)
-
-# Tell scons to put signatures within CACHEDIR
-SConsignFile ('%s/scons-signatures' % env['CACHEDIR'])
-
-#_Check configure stage 
 if not os.path.exists (CONFIG_FILENAME):
     print CONFIG_FILENAME
     print "Please run './configure' before going any further"
     sys.exit (0)
 
-conf = Configure (env, conf_dir=env['CACHEDIR'],
-                  log_file=env['CACHEDIR']+'/config.log')
-
+options = Options (CONFIG_FILENAME)
+for o in ['CPPPATH','LIBS','PREFIX','LIBDIR','INCLUDEDIR','PYTHONDIR','ARCH']:
+    options.Add (o)
+env = Environment (CACHEDIR=CACHEDIR, options = options)
+options.Add ('ARCH', '', os.uname()[-1])
+options.Update(env)
+env["BUILDDIR"] = './.build/%s' % env['ARCH']
+env.BuildDir (env["BUILDDIR"], '.', duplicate=0)
 env.Append (BUILDERS = {'Archive'  : archive_builder})
 env.Append (BUILDERS = {'Package'  : package_builder})
-Default(None)
+SConsignFile ('%s/scons-signatures' % env['CACHEDIR'])
+conf = Configure (env, conf_dir=env['CACHEDIR'],
+                  log_file=env['CACHEDIR']+'/config.log')
+#conf.env.Append (CCFLAGS = '-march=%s' % env['ARCH'])
+Default ()
 
-# _____________________________________________________________________configure
+# ____________________________________________________________________Extensions
+extensions = [
+    Extension (env, 'dana/core'),
+    Extension (env, 'dana/tests'),
+    Extension (env, 'dana/projection/profile', ['dana_core']),
+    Extension (env, 'dana/projection/density', ['dana_core']),
+    Extension (env, 'dana/projection/shape', ['dana_core']),
+    Extension (env, 'dana/projection/distance', ['dana_core']),
+    Extension (env, 'dana/projection', ['dana_core',
+                                        'dana_projection_density',
+                                        'dana_projection_shape',
+                                        'dana_projection_profile',
+                                        'dana_projection_distance'])
+]
+
 if 'configure' in COMMAND_LINE_TARGETS:
     Alias ('configure', None)
     configure (env, conf, options, CONFIG_FILENAME)
     sys.exit(0)
 
+elif 'dist-bz2' in COMMAND_LINE_TARGETS:
+    files = Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE)
+    env.Alias ('dist-bz2', env.Archive ('%s.bz2' % PACKAGE_FULLNAME, files))
 
+elif 'dist-tgz' in COMMAND_LINE_TARGETS:
+    files = Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE)
+    env.Alias ('dist-tgz', env.Archive ('%s.tgz' % PACKAGE_FULLNAME, files))
 
-files = Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE)
-#if 'dist-bz2' in COMMAND_LINE_TARGETS:
-env.Alias ('dist-bz2', env.Archive ('%s.bz2' % PACKAGE_FULLNAME, files))
-#elif 'dist-tgz' in COMMAND_LINE_TARGETS:
-env.Alias ('dist-tgz', env.Archive ('%s.tgz' % PACKAGE_FULLNAME, files))
-#elif 'dist-zip' in COMMAND_LINE_TARGETS:
-env.Alias ('dist-zip', env.Archive ('%s.zip' % PACKAGE_FULLNAME, files))
+elif 'dist-zip' in COMMAND_LINE_TARGETS:
+    files = Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE)
+    env.Alias ('dist-zip', env.Archive ('%s.zip' % PACKAGE_FULLNAME, files))
 
-
-# ____________________________________________________________________Extensions
-ext_core       = Extension (env, 'dana/core')
-ext_tests      = Extension (env, 'dana/tests')
-ext_profile    = Extension (env, 'dana/projection/profile', ['dana_core'])
-ext_density    = Extension (env, 'dana/projection/density', ['dana_core'])
-ext_shape      = Extension (env, 'dana/projection/shape', ['dana_core'])
-ext_distance   = Extension (env, 'dana/projection/distance', ['dana_core'])
-ext_projection = Extension (env, 'dana/projection', ['dana_core',
-                                                     'dana_projection_density',
-                                                     'dana_projection_shape',
-                                                     'dana_projection_profile',
-                                                     'dana_projection_distance'])
-
-# ext represents couples of target/source files to be installed
-ext = ext_core+ext_tests+ext_profile+ext_density+ext_shape+ext_distance+ext_projection
-
-
-# ______________________________________________________________________dist-deb
-if 'dist-deb' in COMMAND_LINE_TARGETS:
-
+elif 'dist-deb' in COMMAND_LINE_TARGETS:
+    modules = []
     files = []
-    for i in installs:
-        for s in i.sources:
-            files.append (str(s))
-
-    env["INSTALLS"] = installs
-    package = env.Package ('%s-%s.deb' % (PACKAGE_FULLNAME, env["ARCH"]),
-                           files, ARCHIVE_TYPE = 'deb')
-    env.Alias('dist-deb', package)
+    for ext in extensions:
+        if ext[1]:
+            for m in ext[1]: modules.append (m)
+        for f in ext[0]: files.append (f)
+    sources = [f[1] for f in files]
+    pkg = env.Package('%s-%s.deb' % (PACKAGE_FULLNAME, env['ARCH']), sources,
+                      PKG_FILES = files,
+                      PKG_PREFIX = 'usr',
+                      PKG_INFO = {'Package': PACKAGE_NAME,
+                                  'Priority': 'extra',
+                                  'Section': 'misc',
+                                  'Maintainer': 'Nicolas P. Rougier',
+                                  'Architecture': env['ARCH'],
+                                  'Version': PACKAGE_VERSION,
+                                  'Depends': 'libboost_python, python2.5, libxml-2.0',
+                                  'Description': 'DANA'})
+    for m in modules:
+        env.Depends (pkg, m)
+    env.Alias('dist-deb', pkg)

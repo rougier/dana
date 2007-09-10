@@ -67,19 +67,18 @@ def ExtensionInstall (env, path, library, module):
     m = env.Install (os.path.join (env['LIBDIR'], path), module)
     env.Alias ('install', os.path.join (env['LIBDIR'], path))
 
-    return p + h + l + m
+    return p + h + l + m, module
 
 # _____________________________________________________________________Extension
 def Extension (env, path, libs=[]):
     """ Build and install a python extension module from a given path"""
 
     l,m = ExtensionBuild (env, path, libs)
-    targets = ExtensionInstall (env, path, l, m)
-
+    targets, module = ExtensionInstall (env, path, l, m)
     files = []
     for target in targets:
         files.append ( [str(target), str(target.sources[0])] )
-    return files
+    return files, module
 
 
     

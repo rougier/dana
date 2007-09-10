@@ -40,16 +40,11 @@ def Package (target, source, env):
 
     name        = str(target[0])
     path        = name + '.tmp'
-
-    # Remove build tree if it exists
     shutil.rmtree (path, ignore_errors=True)
-
     files = []
-    installs = env["INSTALLS"]
-    for i in installs:
-        files.append ( [str(i).replace (env["PREFIX"]+'/', ''),
-                        str(i.sources[0])])
-
+    for file in env["PKG_FILES"]:
+        files.append ( [ file[0].replace (env['PREFIX'], env['PKG_PREFIX']),
+                         file[1]])
     package_size = 0
     for f in files:
         dest = os.path.join(path, 'usr', f[0])
@@ -64,8 +59,8 @@ def Package (target, source, env):
 
     CONTROL_TEMPLATE = """
 Package: %s
-Priority: extra
-Section: misc
+Priority: %s
+Section: %s
 Installed-Size: %s
 Maintainer: %s
 Architecture: %s
@@ -74,20 +69,22 @@ Depends: %s
 Description: %s
 """
     control_info = CONTROL_TEMPLATE % (
-        env['PACKAGE_NAME'],
+        env['PKG_INFO']['Package'],
+        env['PKG_INFO']['Priority'],
+        env['PKG_INFO']['Section'],
         package_size,
-        env['MAINTAINER'],
-        env['ARCH'],
-        env['PACKAGE_VERSION'],
-        env['DEPENDENCIES'],
-        env['DESCRIPTION'])
+        env['PKG_INFO']['Maintainer'],
+        env['PKG_INFO']['Architecture'],
+        env['PKG_INFO']['Version'],
+        env['PKG_INFO']['Depends'],
+        env['PKG_INFO']['Description'])
+
     os.mkdir (os.path.join (path, 'DEBIAN'))
     f = open (os.path.join (path, 'DEBIAN', 'control'), 'w')
     f.write (control_info)
     f.close()
-
     os.system ("dpkg-deb -b %s %s" % ("%s" % path, name))
-
+    shutil.rmtree (path, ignore_errors=True)
 
 
 # _________________________________________________________________PackageString
