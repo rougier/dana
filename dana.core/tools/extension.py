@@ -45,6 +45,7 @@ def ExtensionBuild (env, path, libs=[]):
                                     LIBPATH= env['BUILDDIR'],
                                     LIBS = env['LIBS'] + [library_name])
         env.Depends (module, library)
+#        env.Alias ('build', module)
     else:
         module = None
     return library, module
@@ -73,6 +74,13 @@ def Extension (env, path, libs=[]):
     """ Build and install a python extension module from a given path"""
 
     l,m = ExtensionBuild (env, path, libs)
-    return ExtensionInstall (env, path, l, m)
+    targets = ExtensionInstall (env, path, l, m)
+
+    files = []
+    for target in targets:
+        files.append ( [str(target), str(target.sources[0])] )
+    return files
+
+
     
 

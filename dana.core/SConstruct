@@ -85,16 +85,6 @@ env.Append (BUILDERS = {'Archive'  : archive_builder})
 env.Append (BUILDERS = {'Package'  : package_builder})
 
 
-# _____________________________________________________________________verbosity
-class filtered_output:
-    def write (self, s):
-        """ Suppress all 'scons: ' output """
-        if s[:7] != 'scons: ':
-            sys.__stdout__.write (s)
-#sys.stdout = filtered_output()
-#sys.stderr = filtered_output()
-
-
 # _____________________________________________________________________configure
 if 'configure' in COMMAND_LINE_TARGETS:
     Alias ('configure', None)
@@ -128,9 +118,36 @@ elif 'dist-bz2' in COMMAND_LINE_TARGETS:
     env.Alias ('dist-bz2', archive)
 
 
-# ______________________________________________________________________dist-rpm
-if 'dist-rpm' in COMMAND_LINE_TARGETS:
-    env.Alias('dist-rpm', None)
+
+# ___________________________________________________________________________all
+elif 'build' in COMMAND_LINE_TARGETS:
+    env.Alias ('build', None)
+
+
+files = Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE)
+if 'dist-bz2' in COMMAND_LINE_TARGETS:
+    env.Alias ('dist-bz2', env.Archive ('%s.bz2' % PACKAGE_FULLNAME, files))
+elif 'dist-tgz' in COMMAND_LINE_TARGETS:
+    env.Alias ('dist-tgz', env.Archive ('%s.tgz' % PACKAGE_FULLNAME, files))
+elif 'dist-zip' in COMMAND_LINE_TARGETS:
+    env.Alias ('dist-zip', env.Archive ('%s.zip' % PACKAGE_FULLNAME, files))
+
+
+# ____________________________________________________________________Extensions
+ext_core       = Extension (env, 'dana/core')
+ext_tests      = Extension (env, 'dana/tests')
+ext_profile    = Extension (env, 'dana/projection/profile', ['dana_core'])
+ext_density    = Extension (env, 'dana/projection/density', ['dana_core'])
+ext_shape      = Extension (env, 'dana/projection/shape', ['dana_core'])
+ext_distance   = Extension (env, 'dana/projection/distance', ['dana_core'])
+ext_projection = Extension (env, 'dana/projection', ['dana_core',
+                                                     'dana_projection_density',
+                                                     'dana_projection_shape',
+                                                     'dana_projection_profile',
+                                                     'dana_projection_distance'])
+
+ext = ext_core+ext_tests+ext_profile+ext_density+ext_shape+ext_distance+ext_projection
+
 
 # ______________________________________________________________________dist-deb
 if 'dist-deb' in COMMAND_LINE_TARGETS:
@@ -144,29 +161,3 @@ if 'dist-deb' in COMMAND_LINE_TARGETS:
     package = env.Package ('%s-%s.deb' % (PACKAGE_FULLNAME, env["ARCH"]),
                            files, ARCHIVE_TYPE = 'deb')
     env.Alias('dist-deb', package)
-
-# ___________________________________________________________________________all
-elif 'build' in COMMAND_LINE_TARGETS:
-    env.Alias ('build', modules)
-
-
-files = Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE)
-if 'dist-bz2' in COMMAND_LINE_TARGETS:
-    env.Alias ('dist-bz2', env.Archive ('%s.bz2' % PACKAGE_FULLNAME, files))
-elif 'dist-tgz' in COMMAND_LINE_TARGETS:
-    env.Alias ('dist-tgz', env.Archive ('%s.tgz' % PACKAGE_FULLNAME, files))
-elif 'dist-zip' in COMMAND_LINE_TARGETS:
-    env.Alias ('dist-zip', env.Archive ('%s.zip' % PACKAGE_FULLNAME, files))
-
-
-# ____________________________________________________________________Extensions
-Extension (env, 'dana/core')
-Extension (env, 'dana/projection/profile', ['dana_core'])
-Extension (env, 'dana/projection/density', ['dana_core'])
-Extension (env, 'dana/projection/shape',   ['dana_core'])
-Extension (env, 'dana/projection/distance',['dana_core'])
-Extension (env, 'dana/projection',         ['dana_core',
-                                            'dana_projection_density',
-                                            'dana_projection_shape',
-                                            'dana_projection_profile',
-                                            'dana_projection_distance'])
