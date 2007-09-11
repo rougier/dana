@@ -25,11 +25,15 @@ from tools.package import package_builder
 PACKAGE_NAME    = 'dana.core'
 version = os.popen('svnversion .').read()[:-1]
 version = version.split(':')[-1]
-print version
-PACKAGE_VERSION = 'svn-r%s' % version 
+PACKAGE_VERSION = 'svn%s' % version 
 PACKAGE_FULLNAME= '%s-%s' % (PACKAGE_NAME, PACKAGE_VERSION)
 PACKAGE_DEPS = 'libboost-python-dev, python2.5-dev, libxml2-dev'
-PACKAGE_DESC = "Distributed Aysnchronous Numerical Adaptive computational library"
+PACKAGE_DESC = """Distributed Aysnchronous Numerical Adaptive computational library
+ DANA is a multi-platform C++/Python library for distributed asynchronous
+ numerical and adaptive computation. The computational paradigm supporting
+ the library is grounded on the notion of a unit that is essentially a potential
+ that can vary along time under the influence of other units and learning.
+"""
 ARCHIVE_INCLUDE = ['*']
 ARCHIVE_EXCLUDE = ['.*', '*.os', '*.pyc', '*.o', '*~',
                    '*.pdf', '*.ps', '*.so', '*.a',
