@@ -40,12 +40,12 @@ opts.Add('INCLUDEDIR',
 opts.Add('PYTHONDIR',
          'python files', '%s/lib/python%s/site-packages' % (default_prefix,
                                                             pyversion))
-opts.Add('LDFLAGS',
-         'linker flags', '')
+opts.Add('LIBPATH',
+         'linker library path', os.getenv('LIBPATH', ''))
 opts.Add('CPPFLAGS',
-         'C/C++/Objective C preprocessor flags', '')
+         'C/C++/Objective C preprocessor flags', os.getenv('CPPFLAGS', ''))
 opts.Add('CFLAGS',
-         'C compiler flags', '-O3 -Wall')
+         'C compiler flags', os.getenv('CPPFLAGS', '-O3 -Wall'))
                                                  
 env = Environment(CACHEDIR='.cache', options = opts)
 SConsignFile ('%s/scons-signatures' % env['CACHEDIR'])
@@ -78,7 +78,7 @@ except:
     failed
 else:
     if verbose: print 'yes'
-conf.env.Append (CPPPATH = numpy.get_include())
+    conf.env.Append (CPPPATH = numpy.get_include())
 env = conf.Finish()
 
 
