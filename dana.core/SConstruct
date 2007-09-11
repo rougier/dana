@@ -69,8 +69,10 @@ if not conf.CheckLibWithHeader ('boost_thread-mt', 'boost/thread.hpp', 'c++'):
     sys.exit (1)
 conf.env.Append (LIBS = 'boost_python-mt')
 
-CheckLibrary (env, ['libxml-2.0'])
-CheckModule (env, ['numpy'])
+libs = CheckLibrary (env, ['libxml-2.0'])
+mods = CheckModule (env, ['numpy'])
+if not (libs and mods):
+    sys.exit(1)
 import numpy
 conf.env.Append (CPPPATH = numpy.get_include())
 env = conf.Finish()
