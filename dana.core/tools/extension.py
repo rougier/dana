@@ -31,7 +31,7 @@ def ExtensionBuild (env, path, libs=[]):
         library = env.SharedLibrary (fullname, 
                                      src,
                                      LIBPATH= env['BUILDDIR'],
-                                     LIBS=env['LIBS'])
+                                     LIBS=env['LIBS'] + libs)
     else:
         library = None
 
