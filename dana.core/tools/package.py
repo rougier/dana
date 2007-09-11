@@ -72,7 +72,7 @@ Description: %s
         env['PKG_INFO']['Package'],
         env['PKG_INFO']['Priority'],
         env['PKG_INFO']['Section'],
-        package_size,
+        package_size/1024,
         env['PKG_INFO']['Maintainer'],
         env['PKG_INFO']['Architecture'],
         env['PKG_INFO']['Version'],
@@ -85,7 +85,6 @@ Description: %s
     f.close()
     os.system ("dpkg-deb -b %s %s" % ("%s" % path, name))
     shutil.rmtree (path, ignore_errors=True)
-
 
 # _________________________________________________________________PackageString
 def PackageString (target, source, env):

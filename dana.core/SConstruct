@@ -23,8 +23,13 @@ from tools.package import package_builder
 
 # _________________________________________________________________________setup
 PACKAGE_NAME    = 'dana.core'
-PACKAGE_VERSION = '1.0'
+version = os.popen('svnversion .').read()[:-1]
+version = version.split(':')[-1]
+print version
+PACKAGE_VERSION = 'svn-r%s' % version 
 PACKAGE_FULLNAME= '%s-%s' % (PACKAGE_NAME, PACKAGE_VERSION)
+PACKAGE_DEPS = 'libboost-python-dev, python2.5-dev, libxml2-dev'
+PACKAGE_DESC = "Distributed Aysnchronous Numerical Adaptive computational library"
 ARCHIVE_INCLUDE = ['*']
 ARCHIVE_EXCLUDE = ['.*', '*.os', '*.pyc', '*.o', '*~',
                    '*.pdf', '*.ps', '*.so', '*.a',
@@ -38,7 +43,6 @@ if not os.path.exists (CONFIG_FILENAME):
     print CONFIG_FILENAME
     print "Please run './configure' before going any further"
     sys.exit (0)
-
 options = Options (CONFIG_FILENAME)
 for o in ['CPPPATH','LIBS','PREFIX','LIBDIR','INCLUDEDIR','PYTHONDIR','ARCH']:
     options.Add (o)
@@ -52,8 +56,13 @@ env.Append (BUILDERS = {'Package'  : package_builder})
 SConsignFile ('%s/scons-signatures' % env['CACHEDIR'])
 conf = Configure (env, conf_dir=env['CACHEDIR'],
                   log_file=env['CACHEDIR']+'/config.log')
-#conf.env.Append (CCFLAGS = '-march=%s' % env['ARCH'])
+conf.env.Append (CCFLAGS = '-march=%s' % env['ARCH'])
 Default ()
+
+if 'configure' in COMMAND_LINE_TARGETS:
+    Alias ('configure', None)
+    configure (env, conf, options, CONFIG_FILENAME)
+    sys.exit(0)
 
 # ____________________________________________________________________Extensions
 extensions = [
@@ -70,12 +79,8 @@ extensions = [
                                         'dana_projection_distance'])
 ]
 
-if 'configure' in COMMAND_LINE_TARGETS:
-    Alias ('configure', None)
-    configure (env, conf, options, CONFIG_FILENAME)
-    sys.exit(0)
 
-elif 'dist-bz2' in COMMAND_LINE_TARGETS:
+if 'dist-bz2' in COMMAND_LINE_TARGETS:
     files = Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE)
     env.Alias ('dist-bz2', env.Archive ('%s.bz2' % PACKAGE_FULLNAME, files))
 
@@ -104,8 +109,8 @@ elif 'dist-deb' in COMMAND_LINE_TARGETS:
                                   'Maintainer': 'Nicolas P. Rougier',
                                   'Architecture': env['ARCH'],
                                   'Version': PACKAGE_VERSION,
-                                  'Depends': 'libboost_python, python2.5, libxml-2.0',
-                                  'Description': 'DANA'})
+                                  'Depends': PACKAGE_DEPS,
+                                  'Description': PACKAGE_DESC})
     for m in modules:
         env.Depends (pkg, m)
     env.Alias('dist-deb', pkg)
