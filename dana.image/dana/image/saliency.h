@@ -35,9 +35,9 @@
 #include <vector>
 #include <map>
 
-#include "core/layer.h"
-#include "core/map.h"
-#include "core/unit.h"
+#include "dana/core/layer.h"
+#include "dana/core/map.h"
+#include "dana/core/unit.h"
 
 using namespace boost::python;
 
@@ -86,7 +86,7 @@ namespace dana {
                 bool comp_orientation,comp_save,comp_color,comp_sal,verbose;
 
                 ///// For the dana part
-                std::map< core::LayerPtr, int> channel_maps;
+                std::map< dana::core::LayerPtr, int> channel_maps;
                 
                 void init_images(void);
                 
