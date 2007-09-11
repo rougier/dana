@@ -15,6 +15,7 @@
 
 import os, sys
 import distutils.sysconfig
+from tools import *
 from tools.extension import Extension
 from tools.archive import archive_builder, Files
 from tools.package import package_builder
@@ -48,6 +49,7 @@ opts.Add('CFLAGS',
          'C compiler flags', os.getenv('CPPFLAGS', '-O3 -Wall'))
                                                  
 env = Environment(CACHEDIR='.cache', options = opts)
+env['VERBOSE'] = verbose
 SConsignFile ('%s/scons-signatures' % env['CACHEDIR'])
 Help (opts.GenerateHelpText (env))
 opts.Update(env)
@@ -71,26 +73,34 @@ conf.env.Append (LIBS = 'boost_python')
 if not conf.CheckLibWithHeader ('boost_thread', 'boost/python.hpp', 'c++'):
     failed()
 conf.env.Append (LIBS = 'boost_thread')
-if not conf.CheckLib ('xml2'):
-    sys.exit(0)
-env.ParseConfig('pkg-config --cflags --libs libxml-2.0')
-try:
-    if verbose: print 'Checking for Python package numpy... ',
-    import numpy
-except:
-    failed
-else:
-    if verbose: print 'yes'
-    conf.env.Append (CPPPATH = numpy.get_include())
-try:
-    if verbose: print 'Checking for C++ Mirage library... ',
-    env.ParseConfig('pkg-config --cflags --libs mirago')
-except:
-    print "You can get the mirage library at http://www.metz.supelec.fr/~ersidp/Software/Mirage/Root.html"
-    #sys.exit(0)
-    failed
-else:
-    if verbose: print 'yes'
+
+CheckLibrary (env, ['libxml-2.0','mirage'])
+CheckModule (env, ['numpy'])
+import numpy
+conf.env.Append (CPPPATH = numpy.get_include())
+
+
+
+## if not conf.CheckLib ('xml2'):
+##     sys.exit(0)
+## env.ParseConfig('pkg-config --cflags --libs libxml-2.0')
+## try:
+##     if verbose: print 'Checking for Python package numpy... ',
+##     import numpy
+## except:
+##     failed
+## else:
+##     if verbose: print 'yes'
+##     conf.env.Append (CPPPATH = numpy.get_include())
+## try:
+##     if verbose: print 'Checking for C++ Mirage library... ',
+##     env.ParseConfig('pkg-config --cflags --libs mirago')
+## except:
+##     print "You can get the mirage library at http://www.metz.supelec.fr/~ersidp/Software/Mirage/Root.html"
+##     #sys.exit(0)
+##     failed
+## else:
+##     if verbose: print 'yes'
     
 env = conf.Finish()
 
