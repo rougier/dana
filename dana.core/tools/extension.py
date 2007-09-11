@@ -65,7 +65,7 @@ def ExtensionInstall (env, path, library, module):
     env.Alias ('install', env['LIBDIR'])
 
     m = env.Install (os.path.join (env['PYTHONDIR'], path), module)
-    env.Alias ('install', os.path.join (env['LIBDIR'], path))
+    env.Alias ('install', os.path.join (env['PYTHONDIR'], path))
 
     return p + h + l + m, module
 

@@ -70,6 +70,7 @@ if 'configure' in COMMAND_LINE_TARGETS:
 
 # ____________________________________________________________________Extensions
 extensions = [
+    Extension (env, 'dana'),
     Extension (env, 'dana/core'),
     Extension (env, 'dana/tests'),
     Extension (env, 'dana/projection/profile', ['dana_core']),
@@ -83,7 +84,7 @@ extensions = [
                                         'dana_projection_distance'])
 ]
 
-
+# _______________________________________________________________________Targets
 if 'dist-bz2' in COMMAND_LINE_TARGETS:
     files = Files ('.', ARCHIVE_INCLUDE, ARCHIVE_EXCLUDE)
     env.Alias ('dist-bz2', env.Archive ('%s.bz2' % PACKAGE_FULLNAME, files))
