@@ -15,6 +15,7 @@
 
 import os, sys
 import distutils.sysconfig
+from tools import *
 from tools.extension import Extension
 from tools.archive import archive_builder, Files
 from tools.package import package_builder
@@ -48,6 +49,7 @@ opts.Add('CFLAGS',
          'C compiler flags', os.getenv('CPPFLAGS', '-O3 -Wall'))
                                                  
 env = Environment(CACHEDIR='.cache', options = opts)
+env['VERBOSE'] = verbose
 SConsignFile ('%s/scons-signatures' % env['CACHEDIR'])
 Help (opts.GenerateHelpText (env))
 opts.Update(env)
@@ -56,29 +58,19 @@ opts.Save (opts_filename, env)
 
 # _________________________________________________________________Configuration
 
-def failed ():
-    print "Configuration stage failed"
-    sys.exit (0)
-
 conf = Configure(env, conf_dir=env['CACHEDIR'],
                  log_file=env['CACHEDIR']+'/config.log')
 conf.env.Append (CPPPATH = [distutils.sysconfig.get_python_inc()])
 if not conf.CheckLibWithHeader ('python' + pyversion, 'Python.h', 'c'):
-    failed()
+    sys.exit (1)
 if not conf.CheckLibWithHeader ('boost_python-mt', 'boost/python.hpp', 'c++'):
-    failed()
+    sys.exit (1)
 conf.env.Append (LIBS = 'boost_python-mt')
-if not conf.CheckLib ('xml2'):
-    sys.exit(0)
-env.ParseConfig('pkg-config --cflags --libs libxml-2.0')
-try:
-    if verbose: print 'Checking for Python package numpy... ',
-    import numpy
-except:
-    failed
-else:
-    if verbose: print 'yes'
-    conf.env.Append (CPPPATH = numpy.get_include())
+
+CheckLibrary (env, ['libxml-2.0'])
+CheckModule (env, ['numpy'])
+import numpy
+conf.env.Append (CPPPATH = numpy.get_include())
 env = conf.Finish()
 
 
