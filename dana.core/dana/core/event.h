@@ -26,7 +26,7 @@ typedef boost::shared_ptr<class EventDW> EventDWPtr;
 class Event : public Object {
 public:
     std::string name;
-    Event (std::string name = "Event") : name(name), Object() {};
+    Event (std::string name = "Event") : Object(), name(name)  {};
     static void python_export (void);
 };
 

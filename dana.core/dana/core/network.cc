@@ -312,9 +312,9 @@ Network::python_export (void)
                        &Network::get_spec, &Network::set_spec,
                        "Parameters of the network")
         
-        .add_property ("spec",
-                       &Network::get_spec, &Network::set_spec,
-                       "Parameters of the network")
+        .add_property ("shape",
+                       &Network::get_shape,
+                       "Shape of the network")
 
         // Attributes
 
