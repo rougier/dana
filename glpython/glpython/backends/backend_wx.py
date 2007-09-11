@@ -27,7 +27,13 @@ class Window (base.Window):
         self.app = wx.App(False)
         self.frame = wx.Frame (None,-1,title, wx.DefaultPosition,wx.Size(w, h))
         self.frame.CenterOnScreen()
-        self.canvas = glcanvas.GLCanvas (self.frame)
+        attribList = [wx.glcanvas.WX_GL_RGBA,
+                      wx.glcanvas.WX_GL_MIN_RED, 1,
+                      wx.glcanvas.WX_GL_MIN_GREEN, 1,
+                      wx.glcanvas.WX_GL_MIN_BLUE, 1,
+                      wx.glcanvas.WX_GL_DEPTH_SIZE, 1,
+                      wx.glcanvas.WX_GL_DOUBLEBUFFER]
+        self.canvas = glcanvas.GLCanvas (self.frame, attribList=attribList)
         self.frame.Bind  (wx.EVT_CLOSE, self.close_event)
         self.canvas.Bind (wx.EVT_KEY_DOWN, self.key_press_event)
         self.canvas.Bind (wx.EVT_SIZE, self.resize_event)
