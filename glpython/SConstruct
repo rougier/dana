@@ -69,8 +69,11 @@ if not conf.CheckLibWithHeader ('python' + pyversion, 'Python.h', 'c'):
 if not conf.CheckLibWithHeader ('boost_python-mt', 'boost/python.hpp', 'c++'):
     sys.exit(1)
 conf.env.Append (LIBS = 'boost_python-mt')
-CheckLibrary (env, ['freetype2', 'fontconfig', 'ftgl'])
-CheckModule (env, ['numpy', 'OpenGL', 'Image', 'IPython'])
+libs = CheckLibrary (env, ['freetype2', 'fontconfig', 'ftgl'])
+mods = CheckModule (env, ['numpy', 'OpenGL', 'Image', 'IPython'])
+if not (libs and mods):
+    sys.exit(1)
+
 import numpy
 conf.env.Append (CPPPATH = numpy.get_include())
 env = conf.Finish()
