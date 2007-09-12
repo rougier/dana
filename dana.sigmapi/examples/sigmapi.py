@@ -61,7 +61,7 @@ net.append(Input2)
 
 Output = core.Map((width,height), (1,1))
 Output.append(core.Layer())
-Output[0].fill(sigmapi.Unit)
+Output[0].fill(sigmapi.core.Unit)
 Output.name='Output'
 Output.spec = cnft.Spec();
 net.append(Output)
@@ -70,18 +70,18 @@ Output.spec.alpha = 7.0
 
 ## Define the connections
 
-p          = projection.projection()
-p.self     = True
-p.distance = distance.euclidean(False)
-p.density  = density.full(1)
-p.shape    = shape.point()
-p.profile  = profile.constant(1)
+p          = projection.Projection()
+p.self_connect     = True
+p.distance = distance.Euclidean(False)
+p.density  = density.Full(1)
+p.shape    = shape.Point()
+p.profile  = profile.Constant(1)
 p.src      = Input[0]
 p.dst      = Output[0]
 p.connect()
 
 
-p1 = proj.projection()
+p1 = proj.Projection()
 p1.combination = combine.linear(1,1,1,1,1,1,width/2.0,height/2.0,0.2)
 p1.src1= Input[0]
 p1.src2 = Input2[0]

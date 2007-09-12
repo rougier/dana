@@ -117,7 +117,7 @@ if 'info' in COMMAND_LINE_TARGETS:
 exts = [['dana/sigmapi', []],
         ['dana/sigmapi/core', ['dana_core','dana_cnft']],
         ['dana/sigmapi/projection', ['dana_core','dana_sigmapi_core']],
-        ['dana/sigmapi/projection/combination', ['dana_projection']]]
+        ['dana/sigmapi/projection/combination', ['dana_sigmapi_core','dana_projection']]]
 
 ext_files = []
 ext_modules = []
