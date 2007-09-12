@@ -100,48 +100,48 @@ p1 = svd.projection()
 # p1.separable = 1 : svd::Link the links are shared and contained by the layer
 # p1.separable = 2 : svd::Link computed with Singular Value Decomposition
 
-p1.self = True
+p1.self_connect = True
 p1.separable = 0
-p1.distance = proj.distance.euclidean(True)
-p1.profile = proj.profile.constant(1.0)
-p1.density = proj.density.full(1)
-p1.shape = proj.shape.point()
+p1.distance = proj.distance.Euclidean(True)
+p1.profile = proj.profile.Constant(1.0)
+p1.density = proj.density.Full(1)
+p1.shape = proj.shape.Point()
 p1.src = Noise[0]
 p1.dst = Focus[0]
 p1.connect()
 
 p1.separable = 2
-p1.distance = proj.distance.euclidean (True)
-p1.profile = proj.profile.gaussian(0.5,0.05)
-p1.density = proj.density.full(1)
-p1.shape = proj.shape.disc(1)
+p1.distance = proj.distance.Euclidean (True)
+p1.profile = proj.profile.Gaussian(0.5,0.05)
+p1.density = proj.density.Full(1)
+p1.shape = proj.shape.Disc(1)
 p1.src = Input[0]
 p1.dst = Focus[0]
 p1.connect()
 
 p1.separable = 2
-p1.distance = proj.distance.euclidean (True)
-p1.profile = proj.profile.gaussian(0.5,0.05)
-p1.density = proj.density.full(1)
-p1.shape = proj.shape.disc(1)
+p1.distance = proj.distance.Euclidean (True)
+p1.profile = proj.profile.Gaussian(0.5,0.05)
+p1.density = proj.density.Full(1)
+p1.shape = proj.shape.Disc(1)
 p1.src = Focus[0]
 p1.dst = Inhib[0]
 p1.connect()
 
 p1.separable = 2
-p1.distance = proj.distance.euclidean (True)
-p1.profile = proj.profile.gaussian(-0.6,0.05)
-p1.density = proj.density.full(1)
-p1.shape = proj.shape.disc(1)
+p1.distance = proj.distance.Euclidean (True)
+p1.profile = proj.profile.Gaussian(-0.6,0.05)
+p1.density = proj.density.Full(1)
+p1.shape = proj.shape.Disc(1)
 p1.src = Inhib[0]
 p1.dst = Focus[0]
 p1.connect()
 
 p1.separable = 2
-p1.distance = proj.distance.euclidean (True)
-p1.profile =  proj.profile.dog(0.8,0.1,0.6,1.4)
-p1.density = proj.density.full(1)
-p1.shape = proj.shape.box(1,1)
+p1.distance = proj.distance.Euclidean (True)
+p1.profile =  proj.profile.DoG(0.8,0.1,0.6,1.4)
+p1.density = proj.density.Full(1)
+p1.shape = proj.shape.Box(1,1)
 p1.src = Focus[0]
 p1.dst = Focus[0]
 p1.connect()
