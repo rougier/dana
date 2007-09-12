@@ -145,6 +145,7 @@ class Model (_core.Model):
 
         _core.Model.__init__ (self)
         self.block = block
+        self.thread = None
 
 
     def start (self, n=0):
@@ -169,7 +170,6 @@ class Model (_core.Model):
             self.thread.start()
         else:
             print "Model is already running"
-        self.thread = None
 
         
     def stop (self):
@@ -183,6 +183,6 @@ class Model (_core.Model):
         stop () 
 
         """
-        if hasattr (self, 'thread') and self.thread:
+        if self.thread:
             self.thread.stop = True
             self.thread.join()
