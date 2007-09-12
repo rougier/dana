@@ -276,6 +276,15 @@ Layer::set_spec (const SpecPtr spec)
     this->spec = SpecPtr(spec);
 }
 
+py::object
+Layer::get_shape (void) 
+{
+    if (map)
+        return map->get_shape();
+    py::object shape = py::make_tuple (0,0);
+    return shape;
+}
+
 // ============================================================================
 //  Get all potentials as a numpy::array
 // ============================================================================
@@ -386,11 +395,6 @@ Layer::python_export (void)
     "part of a map, it does not possess any shape (and therefore, cannot.\n"
     "be filled.\n"
     "\n"
-    "Attributes:\n"
-    "-----------\n"
-    "   spec: specification for the layer\n"
-    "   map:  owning map (if any)\n"
-    "\n"
     "======================================================================\n",
         init<>(
         "__init__() -- initializes layer\n")
@@ -404,6 +408,10 @@ Layer::python_export (void)
         .add_property ("potentials",
                        &Layer::get_potentials, &Layer::set_potentials,
                        "Layer potentials (as a numpy array)")
+
+        .add_property ("shape",
+                       &Layer::get_shape,
+                       "Layer shape (inherited from owning map)")
 
 //        .add_property("map", 
 //          make_function (&Layer::get_map,

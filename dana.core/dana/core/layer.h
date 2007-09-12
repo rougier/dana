@@ -57,6 +57,7 @@ namespace dana { namespace core {
         virtual void         set_map (class Map *map);
         virtual SpecPtr      get_spec (void) const;
         virtual void         set_spec (const SpecPtr spec);
+        virtual py::object   get_shape (void);
         virtual py::object   get_potentials (void);
         virtual void         set_potentials (numeric::array a);
 
