@@ -42,7 +42,7 @@ opts.Add('PYTHONDIR',
          'python files', '%s/lib/python%s/site-packages' % (default_prefix,
                                                             pyversion))
 opts.Add('LIBPATH',
-         'linker library path', os.getenv('LIBPATH', ''))
+         'linker library path', os.getenv('LIBPATH', '').split(':'))
 opts.Add('CPPFLAGS',
          'C/C++/Objective C preprocessor flags', os.getenv('CPPFLAGS', ''))
 opts.Add('CFLAGS',
@@ -99,7 +99,7 @@ if 'info' in COMMAND_LINE_TARGETS:
     print '  CXX:        %s' % env['CXX']
     print '  CPPLAGS:    %s' % env['CPPFLAGS']
     print '  CFLAGS:     %s' % env['CFLAGS']
-    print '  LDFLAGS:    %s' % env['LDFLAGS']
+    print '  LIBPATH:    %s' % env['LIBPATH']
     print '  LIBS:       %s' % env['LIBS']
     print '  BUILDDIR:   %s' % env['BUILDDIR']
     print
