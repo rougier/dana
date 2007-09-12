@@ -21,6 +21,8 @@ made of a set of several units. Each unit can be linked to any other unit
 (included itself) using a weighted link.
 """
 
+import time
+import threading
 import sys, os.path
 from _core import *
 import random
@@ -58,3 +60,129 @@ def __write (self, filename):
     self.__write (filename,  os.path.abspath(co.co_filename), script)
 Object.write = __write
 
+
+# ___________________________________________________________________ModelThread
+class ModelThread (threading.Thread):
+    """
+    Model Thread class
+    """
+
+    def __init__ (self, model, n, block):
+        """
+
+        Create a new model thread
+        
+        Function signature
+        ------------------
+        
+        __init__ (n=0, block=10) 
+
+        Function arguments
+        ------------------        
+
+        n -- Number of evaluations to perform
+
+        block -- Number of consecutive evalutations to perform        
+
+        """
+
+        threading.Thread.__init__ (self)
+        self.model = model
+        self.n = n
+        self.block = block
+        self.stop = False
+
+    def run (self):
+        """
+
+        Start thread
+        
+        Function signature
+        ------------------
+        
+        run ()
+
+        """
+
+        if self.n:
+            i = 0
+            while (i < self.n) and not self.stop:
+                if (i+self.block) < self.n:
+                    self.model.evaluate (self.block)
+                    i += self.block
+                else:
+                    self.model.evaluate (self.n-i)
+                    i = self.n
+                time.sleep (.0001)
+        else:
+            while not self.stop:
+                self.model.evaluate (self.block)
+                time.sleep (.0001)
+
+
+# _________________________________________________________________________Model
+class Model (_core.Model):
+    """
+    Threaded Model class
+    """
+
+    def __init__ (self, block = 1):
+        """
+
+        Create a new model
+        
+        Function signature
+        ------------------
+        
+        __init__ (block=10) 
+
+        Function arguments
+        ------------------        
+        
+        block -- Number of consecutive evalutations to perform
+        
+        """
+
+        _core.Model.__init__ (self)
+        self.block = block
+
+
+    def start (self, n=0):
+        """
+
+        Start model evaluation in a new thread
+
+        Function signature
+        ------------------
+        
+        start (n=0) 
+
+        Function arguments
+        ------------------        
+        
+        n -- Number of evaluations to perform
+
+        """
+
+        self.thread = ModelThread (self, n, self.block)
+        if not self.thread.isAlive():
+            self.thread.start()
+        else:
+            print "Model is already running"
+        self.thread = None
+
+        
+    def stop (self):
+        """
+
+        Stop model evaluation
+
+        Function signature
+        ------------------
+        
+        stop () 
+
+        """
+        if hasattr (self, 'thread'):
+            self.thread.stop = True
+            self.thread.join()
