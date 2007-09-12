@@ -147,28 +147,28 @@ learner = learn.Learner()
 
 ################### Learning Rule ##########################
 # Hebb's rule : dw/dt = lrate * vi * vj
-#learner.set_source(number[0])
-#learner.set_destination(evenodd[0])
-#learner.add_one([1,1,[1.0]])
-#learner.connect()
+learner.set_source(number[0])
+learner.set_destination(evenodd[0])
+learner.add_one([1,1,[1.0]])
+learner.connect()
 
 # Oja's rule : dw/dt = lrate*(vi*vj - wij * (vi**2))
 #                    = lrate*vi*vj - lrate*wij*(vi**2)
-learner.set_source(number[0])
-learner.set_destination(evenodd[0])
-learner.add_one([1,1,[1]])
-learner.add_one([2,0,[0,-1]])
-learner.connect()
+## learner.set_source(number[0])
+## learner.set_destination(evenodd[0])
+## learner.add_one([1,1,[1]])
+## learner.add_one([2,0,[0,-1]])
+## learner.connect()
 
 # Custom rule : dw/dt = lrate * (vi - wij) * (vj - wij)
 #                     = lrate * (wij**2) - lrate*vi*wij - lrate*vj*wij + lrate*vi*vj
-#learner.set_source(number[0])
-#learner.set_destination(evenodd[0])
-#learner.add_one([0,0,[0,0,1.0]])
-#learner.add_one([1,0,[0,-1.0]])
-#learner.add_one([0,1,[0,-1.0]])
-#learner.add_one([1,1,[1.0]])
-#learner.connect()
+## learner.set_source(number[0])
+## learner.set_destination(evenodd[0])
+## learner.add_one([0,0,[0,0,1.0]])
+## learner.add_one([1,0,[0,-1.0]])
+## learner.add_one([0,1,[0,-1.0]])
+## learner.add_one([1,1,[1.0]])
+## learner.connect()
 ############################################################
 
 ## Show network
