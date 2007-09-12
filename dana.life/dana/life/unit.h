@@ -12,7 +12,7 @@
 #define __DANA_LIFE_UNIT_H__
 
 #include <boost/python.hpp>
-#include "core/unit.h"
+#include "dana/core/unit.h"
 
 using namespace boost::python;
 
