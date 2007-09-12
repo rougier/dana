@@ -9,10 +9,10 @@
 // $Id$
 
 #include <algorithm>
-#include "core/map.h"
-#include "core/layer.h"
+#include "dana/core/map.h"
+#include "dana/core/layer.h"
 #include "layer.h"
-#include "core/unit.h"
+#include "dana/core/unit.h"
 
 using namespace dana::svd;
 
@@ -311,7 +311,7 @@ Layer::boost (void)
 {
     //register_ptr_to_python< boost::shared_ptr<Layer> >();
     import_array();
-    numeric::array::set_module_and_type("numpy", "ndarray");  
+    boost::python::numeric::array::set_module_and_type("numpy", "ndarray");  
 
  
     class_<Layer, bases<core::Layer> >("Layer",

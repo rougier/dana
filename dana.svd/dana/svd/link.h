@@ -12,11 +12,11 @@
 #define __DANA_CORE_LINK_SVD_H__
 
 #include <boost/python.hpp>
-#include "core/object.h"
-#include "core/unit.h"
-#include "core/link.h"
-#include "core/layer.h"
-#include "core/map.h"
+#include "dana/core/object.h"
+#include "dana/core/unit.h"
+#include "dana/core/link.h"
+#include "dana/core/layer.h"
+#include "dana/core/map.h"
 
 // To perform the Singular Value Decomposition for the optimized convolution
 #include <gsl/gsl_matrix.h>

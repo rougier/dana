@@ -10,7 +10,7 @@
 #define __DANA_SVD_UNIT_H__
 
 #include <boost/python.hpp>
-#include "cnft/unit.h"
+#include "dana/cnft/unit.h"
 
 using namespace boost::python;
 

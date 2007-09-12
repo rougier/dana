@@ -8,9 +8,9 @@
 
 #include <iostream>
 #include <math.h>
-#include "core/map.h"
-#include "core/unit.h"
-#include "core/link.h"
+#include "dana/core/map.h"
+#include "dana/core/unit.h"
+#include "dana/core/link.h"
 #include "link.h"
 #include "layer.h"
 #include "projection.h"
@@ -181,12 +181,12 @@ dana::svd::Projection::svd_simple_connect()
 // =============================================================================
 //
 // =============================================================================
-void
-dana::svd::Projection::static_connect (void)
-{
-    if (current)
-        current->connect();
-}
+// void
+// dana::svd::Projection::static_connect (void)
+// {
+//     if (current)
+//         current->connect();
+// }
 
 
 

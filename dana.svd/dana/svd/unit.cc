@@ -6,10 +6,10 @@
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
 
-#include "core/map.h"
-#include "core/layer.h"
-#include "core/link.h"
-#include "cnft/spec.h"
+#include "dana/core/map.h"
+#include "dana/core/layer.h"
+#include "dana/core/link.h"
+#include "dana/cnft/spec.h"
 #include "layer.h"
 #include "link.h"
 #include "unit.h"
@@ -114,7 +114,7 @@ Unit::get_weights (const core::LayerPtr layer)
                         data[unit->y*width+unit->x] += wts->at(i)->weight;
             }
         }
-    return extract<numeric::array>(obj);  
+    return extract<boost::python::numeric::array>(obj);  
 }
 
 
@@ -128,7 +128,7 @@ Unit::boost (void) {
     register_ptr_to_python< boost::shared_ptr<Unit> >();
 
     import_array();
-    numeric::array::set_module_and_type("numpy", "ndarray");  
+    boost::python::numeric::array::set_module_and_type("numpy", "ndarray");  
     
     class_<Unit, bases<cnft::Unit> >("Unit",
                                      "======================================================================\n"

@@ -15,7 +15,7 @@
 #include <numpy/arrayobject.h>
 #include <vector>
 #include <map>
-#include "object.h"
+#include "dana/core/object.h"
 #include <iostream>
 
 // To perform the Singular Value Decomposition for the optimized convolution

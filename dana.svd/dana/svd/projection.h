@@ -11,12 +11,12 @@
 #define __DANA_SVD_PROJECTION_H__
 
 #include <boost/python.hpp>
-#include "core/layer.h"
-#include "projection/projection.h"
-#include "projection/density/density.h"
-#include "projection/profile/profile.h"
-#include "projection/distance/distance.h"
-#include "projection/shape/shape.h"
+#include "dana/core/layer.h"
+#include "dana/projection/projection.h"
+#include "dana/projection/density/density.h"
+#include "dana/projection/profile/profile.h"
+#include "dana/projection/distance/distance.h"
+#include "dana/projection/shape/shape.h"
 
 // To perform the Singular Value Decomposition for the optimized convolution
 #include <gsl/gsl_matrix.h>
@@ -45,7 +45,7 @@ namespace dana { namespace svd {
         Projection ();
         virtual ~Projection ();                
         void connect (object data=object());
-        static void static_connect (void);
+        //static void static_connect (void);
 
 
     public:

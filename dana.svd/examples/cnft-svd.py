@@ -78,12 +78,12 @@ p1 = svd.projection()
 # p1.separable = 2 : svd::Link computed with Singular Value Decomposition
 
 ## Tests avec deux fois les memes connexions
-p1.self = True
+p1.self_connect = True
 p1.separable = 2
-p1.distance = proj.distance.euclidean (True)
-p1.profile = proj.profile.gaussian(0.5,0.05)
-p1.density = proj.density.full(1)
-p1.shape = proj.shape.disc(1)
+p1.distance = proj.distance.Euclidean (True)
+p1.profile = proj.profile.Gaussian(0.5,0.05)
+p1.density = proj.density.Full(1)
+p1.shape = proj.shape.Disc(1)
 p1.src = Input[0]
 p1.dst = Focus[0]
 p1.connect()
@@ -97,10 +97,10 @@ elif(p1.separable == 2):
     print "    [Optimized SVD::links]"
 
 p1.separable = 2
-p1.distance = proj.distance.euclidean (True)
-p1.profile =  proj.profile.dog(0.8,0.1,0.6,1.4)
-p1.density = proj.density.full(1)
-p1.shape = proj.shape.box(1,1)
+p1.distance = proj.distance.Euclidean (True)
+p1.profile =  proj.profile.DoG(0.8,0.1,0.6,1.4)
+p1.density = proj.density.Full(1)
+p1.shape = proj.shape.Box(1,1)
 p1.src = Focus[0]
 p1.dst = Focus[0]
 p1.connect()
@@ -137,7 +137,7 @@ def evaluate(nb_steps):
 # Show network
 fig = Figure()
 
-win,fig = window (figure=fig)
+win,fig = window (figure=fig,has_terminal=True,namespace=locals())
 # If you want to perform some benchmarks, using the evaluate function
 # comment the previous line and uncomment the following
 #win,fig = window (figure=fig,has_terminal=True,namespace=locals())
