@@ -82,7 +82,7 @@ p.connect()
 
 
 p1 = proj.Projection()
-p1.combination = combine.linear(1,1,1,1,1,1,width/2.0,height/2.0,0.2)
+p1.combination = combine.Linear(1,1,1,1,1,1,width/2.0,height/2.0,0.2)
 p1.src1= Input[0]
 p1.src2 = Input2[0]
 p1.dst = Output[0]
@@ -118,7 +118,7 @@ def step_init(nb):
 		y0 = random.randint(0,height)
 		clamp(Input,x0,y0,4)
 	
-def step(radius,is_threaded):
+def step(radius):
 	global is_init
 	if(is_init==0):
 		print "Don't forget to run step_init before running step"
@@ -128,13 +128,13 @@ def step(radius,is_threaded):
 	y1 = height/2.0+radius*math.sin(theta)
 	clear(Input2)
 	clamp(Input2,x1,y1,4)
-	net.evaluate(epochs,is_threaded)
+	model.evaluate(epochs)
 	
 def net_init(widget,data=None):
 	step_init(4)	
 	
 def net_step(widget,data=None):
-	step(width/4.0,False)
+	step(width/4.0)
 
 window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 window.set_border_width(12)
