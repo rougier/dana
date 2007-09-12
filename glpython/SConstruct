@@ -43,8 +43,8 @@ opts.Add('INCLUDEDIR',
 opts.Add('PYTHONDIR',
          'python files', '%s/lib/python%s/site-packages' % (default_prefix,
                                                             pyversion))
-opts.Add('DATADIR', 
-         'read-only architecture-independent data ', '%s/share' % default_prefix)
+opts.Add('CPPPATH',
+         'compiler include path', os.getenv('CPPPATH', '').split(':'))
 opts.Add('LIBPATH',
          'linker library path', os.getenv('LIBPATH', ''))
 opts.Add('CPPFLAGS',
@@ -100,6 +100,7 @@ if 'info' in COMMAND_LINE_TARGETS:
     print '  CXX:        %s' % env['CXX']
     print '  CPPLAGS:    %s' % env['CPPFLAGS']
     print '  CFLAGS:     %s' % env['CFLAGS']
+    print '  CPPPATH:    %s' % env['CPPPATH']
     print '  LIBPATH:    %s' % env['LIBPATH']
     print '  LIBS:       %s' % env['LIBS']
     print '  BUILDDIR:   %s' % env['BUILDDIR']
