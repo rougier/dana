@@ -57,7 +57,7 @@ for i in xrange(Input.shape[0]):
 
 
 fig = Figure()
-win,fig = window (figure=fig, fps=0, has_terminal=True, namespace = locals())
+win,fig = window (figure=fig, has_terminal=True, namespace = locals())
 fig.network (net, style = 'smooth', title='A simple network')
 
 win.show()
