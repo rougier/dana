@@ -148,9 +148,7 @@ env.Alias ('dist-zip', env.Archive ('%s.zip' % fullname, archive_files))
 
 # _______________________________________________________________________Package
 
-desc = """Sigma Pi Neurons
-
-The SigmaPi library implements Sigma-Pi type Neurons
+desc = """Sigma Pi Neurons : The SigmaPi library implements Sigma-Pi type Neurons
 """
 
 pkg = env.Package(
