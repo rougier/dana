@@ -113,13 +113,13 @@ ext_modules = []
 for ext in exts:
     f, m = Extension (env, ext[0], ext[1])
     ext_files.extend (f)
-    if m:
-        ext_modules.extend (m)
-        Default (m)
+for files in ext_files:
+    Default (files[0])
+
 
 # ______________________________________________________________________Archives
 
-name = 'dana.core'
+name = 'dana.visualization'
 version = os.popen('svnversion .').read()[:-1]
 version = 'svn' + version.split(':')[-1]
 fullname = '%s-%s' % (name, version)
