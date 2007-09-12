@@ -6,12 +6,12 @@
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
 
-#include "core/map.h"
-#include "core/layer.h"
-#include "core/link.h"
+#include "dana/core/map.h"
+#include "dana/core/layer.h"
+#include "dana/core/link.h"
 #include "sunit.h"
-#include "cnft/spec.h"
-#include "core/spec.h"
+#include "dana/cnft/spec.h"
+#include "dana/core/spec.h"
 #include <math.h>
 
 using namespace boost::python::numeric;

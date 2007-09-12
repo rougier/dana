@@ -10,9 +10,9 @@
 #define __DANA_LEARN_UNIT_H__
 
 #include <boost/python.hpp>
-#include "cnft/unit.h"
-#include "core/layer.h"
-#include "core/object.h"
+#include "dana/cnft/unit.h"
+#include "dana/core/layer.h"
+#include "dana/core/object.h"
 
 using namespace boost::python;
 

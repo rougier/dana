@@ -11,8 +11,8 @@
 
 #include <boost/python.hpp>
 #include "unit.h"
-#include "core/layer.h"
-#include "core/object.h"
+#include "dana/core/layer.h"
+#include "dana/core/object.h"
 
 using namespace boost::python;
 
