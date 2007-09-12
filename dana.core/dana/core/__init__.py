@@ -183,6 +183,6 @@ class Model (_core.Model):
         stop () 
 
         """
-        if hasattr (self, 'thread'):
+        if hasattr (self, 'thread') and self.thread:
             self.thread.stop = True
             self.thread.join()
