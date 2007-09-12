@@ -126,7 +126,7 @@ for ext in exts:
 
 # ______________________________________________________________________Archives
 
-name = 'dana.core'
+name = 'dana.learn'
 version = os.popen('svnversion .').read()[:-1]
 version = 'svn' + version.split(':')[-1]
 fullname = '%s-%s' % (name, version)
