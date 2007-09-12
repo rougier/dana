@@ -12,6 +12,7 @@
 #include "map.h"
 #include "layer.h"
 #include "unit.h"
+#include "event.h"
 #include <numpy/arrayobject.h>
 
 using namespace dana::core;
@@ -20,7 +21,7 @@ using namespace dana::core;
 // ============================================================================
 //  constructor
 // ============================================================================
-Layer::Layer (void) : Object()
+Layer::Layer (void) : Object(), Observable ()
 {
     units.clear();
     map = 0;
@@ -163,14 +164,17 @@ Layer::compute_dp (void)
 {
     // Speed problem with random_shuffle and threads
     //random_shuffle (permuted.begin(), permuted.end());
-    
+
+    EventDPPtr event (new EventDP());
+       
     float d = 0.0;
     int index = 0;
     for (unsigned int i = 0; i< units.size(); i++) {
         index = map->shuffles[map->shuffle_index][i];
         d += units[index]->compute_dp();
         //        EventDP::notify(units[index]);
-    }
+    } 
+    notify (event);
     return d;
 }
 
@@ -182,7 +186,8 @@ Layer::compute_dw (void)
 {
     // Speed problem with random_shuffle and threads
     //random_shuffle (permuted.begin(), permuted.end());
-    
+
+    EventDWPtr event (new EventDW());
     float d = 0.0;
     int index = 0;
     for (unsigned int i = 0; i< units.size(); i++) {
@@ -190,6 +195,7 @@ Layer::compute_dw (void)
         d += units[index]->compute_dw();
         //        EventDW::notify(units[index]);
     }
+    notify (event);    
     return d;
 }
 
@@ -386,7 +392,7 @@ Layer::python_export (void)
     UnitPtr    (Layer::*get_xy)(int, int) const = &Layer::get;
  
 
-    class_<Layer, bases <Object> >("Layer",
+    class_<Layer, bases <Object,Observable> >("Layer",
     "======================================================================\n"
     "\n"
     "A layer is a shaped set of homogeneous units that are evaluated\n"

@@ -19,24 +19,15 @@ Those units are organized into layers, maps and network: a network is made
 of one to several map, a map is made of one to several layer and a layer is
 made of a set of several units. Each unit can be linked to any other unit
 (included itself) using a weighted link.
-
-  Unit
-  Link
-  Layer
-  Map
-  Network
-  Spec
-  Environment
-  Model
-  Event
-  Observer
-  
-
 """
 
 import sys, os.path
 from _core import *
 import random
+
+__all__ = ['Model','Network', 'Environment', 'Map', 'Layer', 'Unit', 
+           'Link', 'Event', 'EventDP', 'EventDW', 'EventEvaluate',
+           'Observer', 'Observable']
 
 _random = Random()
 

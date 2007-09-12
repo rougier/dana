@@ -34,8 +34,7 @@ public:
     virtual ~Observable (void);
 
     // _____________________________________________________________________main
-    void attach (ObserverPtr observer,
-                 EventPtr    event);
+    void attach (ObserverPtr observer, EventPtr event);
     void detach (ObserverPtr observer);
     void notify (EventPtr event);
         

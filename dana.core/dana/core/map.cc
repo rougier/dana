@@ -13,6 +13,7 @@
 #include "map.h"
 #include "layer.h"
 #include "unit.h"
+#include "event.h"
 
 using namespace dana::core;
 
@@ -20,7 +21,7 @@ using namespace dana::core;
 // ============================================================================
 //  constructor
 // ============================================================================
-Map::Map (py::object shape, py::object position) : Object()
+Map::Map (py::object shape, py::object position) : Object(), Observable()
 {
     layers.clear();
     network = 0;
@@ -125,10 +126,12 @@ Map::clear (void)
 void
 Map::compute_dp (void)
 {
+    EventDPPtr event (new EventDP());
     for (int i=0; i< size(); i++) {
         shuffle_index = int ( (rand()/float(RAND_MAX)) * shuffles.size() );
         layers[i]->compute_dp ();
     }
+    notify (event);
 }
 
 // ============================================================================
@@ -137,10 +140,12 @@ Map::compute_dp (void)
 void
 Map::compute_dw (void)
 {
+    EventDWPtr event (new EventDW());
     for (int i=0; i< size(); i++) {
         shuffle_index = int ( (rand()/float(RAND_MAX)) * shuffles.size() );
         layers[i]->compute_dw ();
     }
+    notify (event);
 }
 
 // ________________________________________________________________________write
@@ -353,7 +358,7 @@ Map::python_export (void) {
     void       (Map::*set_shape_object)( object) = &Map::set_shape;
     void       (Map::*set_position_object)( object) = &Map::set_position;
     
-    class_<Map, bases <Object> >("Map",
+    class_<Map, bases <Object,Observable> >("Map",
     "======================================================================\n"
     "\n"
     "A map is a set of layers that are evaluated synchronously.\n"

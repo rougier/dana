@@ -16,6 +16,7 @@
 #include "unit.h"
 #include "link.h"
 #include "spec.h"
+#include "observable.h"
 
 
 namespace dana { namespace core {
@@ -24,7 +25,7 @@ namespace dana { namespace core {
     typedef boost::shared_ptr<class Layer> LayerPtr;
 
     // ______________________________________________________________class Layer
-    class Layer : public Object {
+class Layer : public Object, public Observable {
     public:
         // ___________________________________________________________attributes
         class Map *          map; 
