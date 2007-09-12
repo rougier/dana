@@ -38,6 +38,11 @@ Viewport::Viewport (tuple size, tuple position, bool has_border,
     obs->allow_movement = true;
 
     button_pressed = false;
+
+    // Handle fixed size viewport
+    fixed_size = false;
+    width = 10;
+    height = 10;
 }
 
 //____________________________________________________________________~Viewport
@@ -291,6 +296,20 @@ Viewport::button_release_event (int button, int x, int y)
     button_pressed = false;
 }
 
+void
+Viewport::resize_event (int x, int y, int w, int h)
+{
+    if(fixed_size)
+        {
+            glpython::core::Viewport::resize_event(x,y,width,height);
+        }
+    else
+        {
+            glpython::core::Viewport::resize_event(x,y,w,h);
+        }
+}
+
+
 //________________________________________________________________python_export
 void
 Viewport::python_export (void) {
@@ -319,11 +338,17 @@ Viewport::python_export (void) {
         
         .def ("button_release_event", &Viewport::button_release_event,
               "button_release_event (button,x,y)")
-        
-        
+
         .def ("pointer_motion_event", &Viewport::pointer_motion_event,
               "pointer_motion_event (x,y)\n")
         
+        .def ("resize_event", &Viewport::resize_event,
+              "resize_event (x,y,w,h)")
+
+        .def_readwrite("width", &Viewport::width)
+        .def_readwrite("height", &Viewport::height)
+        .def_readwrite("fixed_size", &Viewport::fixed_size)
+
         .def("save",&Viewport::save,"save(filename) : save a snapshot of the viewport in filename\n")
         ;       
 }

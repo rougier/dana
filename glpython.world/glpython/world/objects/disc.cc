@@ -65,7 +65,7 @@ Disc::disc ()
     glRotatef (-phi, 0, 1, 0);
     glRotatef (theta, 1, 0, 0);
 
-    gluDisk(params,0,radius,32,1);
+    gluDisk(params,inner_radius,radius,32,1);
     glPopMatrix ();
 
     gluDeleteQuadric(params);
@@ -87,6 +87,7 @@ Disc::python_export (void) {
         .def_readwrite ("theta", &Disc::theta)
         .def_readwrite ("phi",     &Disc::phi)
         .def_readwrite ("radius", &Disc::radius)
+	.def_readwrite ("inner_radius",&Disc::inner_radius)
         .def_readwrite ("color",     &Disc::color)
     ;       
 }

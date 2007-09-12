@@ -151,7 +151,7 @@ win,fig = window (figure=fig,has_terminal=True,namespace=locals())
 win.__class__.key_press = key_press_perso
 
 fig1 = Figure(position = (0,0), size = (.5,.5))
-fnet = fig1.network (net, title='Dana.image sample script',show_colorbar=False,show_label=False)
+fnet = fig1.network (net, title='glpython.world sample script',show_colorbar=False,show_label=False)
 
 # Set the view of the robot
 roger.view.position = (-1,-1)

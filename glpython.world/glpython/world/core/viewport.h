@@ -33,6 +33,8 @@ namespace glpython { namespace world { namespace core {
     class Viewport : public glpython::core::Viewport {
     private:
         bool button_pressed;
+        bool fixed_size;
+        int width,height;
         double dx;
         double dy;
         
@@ -57,6 +59,8 @@ namespace glpython { namespace world { namespace core {
             virtual void   button_press_event (int button, int x, int y);
             virtual void   button_release_event (int button, int x, int y);
 
+            // Overloaded to consider fixed size viewport
+            virtual void resize_event (int x, int y, int w, int h);
 
             static void    python_export (void);
     };

@@ -1,0 +1,169 @@
+#! /usr/bin/env python
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import os, sys
+import distutils.sysconfig
+from tools import *
+from tools.extension import Extension
+from tools.archive import archive_builder, Files
+from tools.package import package_builder
+
+# _______________________________________________________________________Default
+
+pyversion = distutils.sysconfig.get_python_version()
+default_prefix= os.getenv('LOCAL', sys.prefix)
+opts_filename = '.options'
+verbose = True
+for a in sys.argv:
+    if a in ['-Q', '-s', '--silent', '--quiet']:
+        verbose = False
+
+# _______________________________________________________________________Options
+opts = Options(opts_filename)
+opts.Add('PREFIX', 
+         'architecture-independent files', default_prefix)
+opts.Add('LIBDIR', 
+         'object code libraries', '%s/lib' % default_prefix)
+opts.Add('INCLUDEDIR',
+         'C/C++ header files', '%s/include' % default_prefix)
+opts.Add('PYTHONDIR',
+         'python files', '%s/lib/python%s/site-packages' % (default_prefix,
+                                                            pyversion))
+opts.Add('LIBPATH',
+         'linker library path', os.getenv('LIBPATH', '').split(':'))
+opts.Add('CPPFLAGS',
+         'C/C++/Objective C preprocessor flags', os.getenv('CPPFLAGS', ''))
+opts.Add('CFLAGS',
+         'C compiler flags', os.getenv('CPPFLAGS', '-O3 -Wall'))
+                                                 
+env = Environment(CACHEDIR='.cache', options = opts)
+env['VERBOSE'] = verbose
+SConsignFile ('%s/scons-signatures' % env['CACHEDIR'])
+Help (opts.GenerateHelpText (env))
+opts.Update(env)
+opts.Save (opts_filename, env)
+
+
+# _________________________________________________________________Configuration
+
+conf = Configure(env, conf_dir=env['CACHEDIR'],
+                 log_file=env['CACHEDIR']+'/config.log')
+conf.env.Append (CPPPATH = [distutils.sysconfig.get_python_inc()])
+if not conf.CheckLibWithHeader ('python' + pyversion, 'Python.h', 'c'):
+    sys.exit (1)
+if not conf.CheckLibWithHeader ('boost_python', 'boost/python.hpp', 'c++'):
+    sys.exit (1)
+conf.env.Append (LIBS = 'boost_python')
+if not conf.CheckLibWithHeader ('boost_thread', 'boost/python.hpp', 'c++'):
+    failed()
+conf.env.Append (LIBS = 'boost_thread')
+
+
+libs = CheckLibrary (env, ['libxml-2.0'])
+mods = CheckModule (env, ['numpy'])
+if not (libs and mods):
+    sys.exit(1)
+import numpy
+conf.env.Append (CPPPATH = numpy.get_include())
+env = conf.Finish()
+
+
+# _________________________________________________________________________Setup
+
+env.Append (BUILDERS = {'Archive'  : archive_builder})
+env.Append (BUILDERS = {'Package'  : package_builder})
+env["CFLAGS"] = '-O3 -Wall'
+env["ARCH"] = os.uname()[-1]
+env["BUILDDIR"] = '.build/%s'% env["ARCH"]
+env.BuildDir (env["BUILDDIR"], '.', duplicate=0)
+
+
+# ___________________________________________________________________Information
+if 'info' in COMMAND_LINE_TARGETS:
+    Alias ('info', None)
+    print
+    print '--------------------------------------------------------------------'
+    print ' Building environment'
+    print
+    print '  CC:         %s' % env['CC']
+    print '  CXX:        %s' % env['CXX']
+    print '  CPPLAGS:    %s' % env['CPPFLAGS']
+    print '  CFLAGS:     %s' % env['CFLAGS']
+    print '  LIBPATH:    %s' % env['LIBPATH']
+    print '  LIBS:       %s' % env['LIBS']
+    print '  BUILDDIR:   %s' % env['BUILDDIR']
+    print
+    print '  PREFIX:     %s' % env['PREFIX']
+    print '  LIBDIR:     %s' % env['LIBDIR']
+    print '  INCLUDEDIR: %s' % env['INCLUDEDIR']
+    print '  PYTHONDIR:  %s' % env['PYTHONDIR']
+    print '--------------------------------------------------------------------'
+    print
+
+
+# _______________________________________________________________________Targets
+
+exts = [['glpython/world', []],
+        ['glpython/world/core',['glpython_core']],
+        ['glpython/world/objects',['glpython_objects']]]
+
+ext_files = []
+ext_modules = []
+for ext in exts:
+    f, m = Extension (env, ext[0], ext[1])
+    ext_files.extend (f)
+    if m:
+        ext_modules.extend (m)
+        Default (m)
+
+# ______________________________________________________________________Archives
+
+name = 'glpython.world'
+version = os.popen('svnversion .').read()[:-1]
+version = 'svn' + version.split(':')[-1]
+fullname = '%s-%s' % (name, version)
+
+archive_include = ['*']
+archive_exclude = ['.*', '*.os', '*.pyc', '*.o', '*~',
+                   '*.pdf', '*.ps', '*.so', '*.a',
+                   '*.zip', '*.tgz', '*.gz', '*.bz2',
+                   'manual', '.cache', 'dist', '.libs']
+archive_files = Files ('.', archive_include, archive_exclude)
+env.Alias ('dist-bz2', env.Archive ('%s.bz2' % fullname, archive_files))
+env.Alias ('dist-tgz', env.Archive ('%s.tgz' % fullname, archive_files))
+env.Alias ('dist-zip', env.Archive ('%s.zip' % fullname, archive_files))
+
+
+# _______________________________________________________________________Package
+
+desc = """glpython world : 3D virtual environnement for simulation
+"""
+
+pkg = env.Package(
+    '%s_%s.deb' % (fullname, env['ARCH']), ext_modules,
+    PKG_FILES = ext_files,
+    PKG_PREFIX = 'usr',
+    PKG_INFO = {'Package': name,
+                'Priority': 'extra',
+                'Section': 'misc',
+                'Maintainer': 'Nicolas P. Rougier',
+                'Architecture': env['ARCH'],
+                'Version': version,
+                'Depends': 'libboost-python-dev, python2.5-dev, libxml2-dev, gsl',
+                'Description': desc}
+    )
+for module in ext_modules:
+    env.Depends (pkg, module)
+env.Alias('dist-deb', pkg)

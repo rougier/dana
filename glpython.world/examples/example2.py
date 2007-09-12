@@ -97,7 +97,7 @@ def init():
 def read():
     global sal
     roger.grab("source.ppm")
-    sal.read("source.ppm",1)
+    sal.read("source.ppm",'ppm')
     clamp()
 
 def clamp():
@@ -149,7 +149,7 @@ control = ControlPanel (model)
 fig = Figure()
 win,fig = window (figure=fig,has_terminal=True,namespace=locals())
 win.__class__.key_press = key_press_perso
-fnet = fig.network (net, title='Dana.image sample script',show_colorbar=False)
+fnet = fig.network (net, title='glpython.world sample script',show_colorbar=False, show_label = False)
 
 # Define the view at third person
 fig1 = Viewport(position=(-1,-1),size = (.25,.25))

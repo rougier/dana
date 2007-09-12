@@ -31,6 +31,7 @@ namespace glpython { namespace world { namespace objects {
         float theta,phi;
         float x,y,z;
         float radius;
+	float inner_radius;
         boost::python::list color;
 
         public:
