@@ -28,15 +28,8 @@ m1.append( core.Layer() )
 m1[0].fill(core.Unit)
 m1.name = 'm1: linear'
 net.append(m1)
-p          = proj.projection()
-p.self     = True
-p.distance = proj.distance.euclidean(False)
-p.density  = proj.density.full(1)
-p.shape    = proj.shape.box(1,1)
-p.profile  = proj.profile.gaussian(1,.25)
-p.src      = m0[0]
-p.dst      = m1[0]
-p.connect()
+
+proj.gaussian (m0[0], m1[0], 1, .25, True).connect()
 
 cmap = CM_IceAndFire
 cmap.scale (-1,1)

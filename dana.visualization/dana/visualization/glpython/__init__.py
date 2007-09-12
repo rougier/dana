@@ -24,6 +24,7 @@ class Figure (glpython.Figure):
    
     def __init__ (self, **kwargs):
         """
+
         Create a new empty figure
         
         Function signature
@@ -39,6 +40,7 @@ class Figure (glpython.Figure):
         position -- Relative or absolute position
         
         has_border -- Whether figure has border or not
+
         """
 
         glpython.Figure.__init__ (self, **kwargs)
@@ -48,7 +50,7 @@ class Figure (glpython.Figure):
                  cmap = glpython.CM_Default, style = 'flat', title = None,
                  show_colorbar = True, show_label = True):
         """
-        
+
         Create a view for a DANA network
         
         Function signature
@@ -56,7 +58,7 @@ class Figure (glpython.Figure):
         
         network (net, figure, ...) 
 
-        Function signature
+        Function arguments
         ------------------
 
         net -- A DANA network
@@ -73,7 +75,7 @@ class Figure (glpython.Figure):
         show_colorbar -- Whether to display colorbar
         
         show_labels -- Wheter to display map names
-        
+
         """
         
         net = Network (net, self, cmap=cmap, style = style, title=title,
@@ -94,7 +96,7 @@ class Figure (glpython.Figure):
         
         network (net, src, dst, ...) 
 
-        Function signature
+        Function arguments
         ------------------
 
         net -- A DANA network

@@ -20,7 +20,7 @@ class Weights (Object):
     """ Show weights as several arrays """
     
     def __init__(self, src, dst, figure, cmap = CM_Default, style = 'flat',
-                 title = None, show_colorbar = True, has_borde=True,
+                 title = None, show_colorbar = True, has_border=True,
                  show_label = True):
 
         Object.__init__(self)
@@ -32,8 +32,8 @@ class Weights (Object):
         self.maps = []
 
         # Overall size  
-        w = dst.map.shape[0] * (src.map.shape[0]+1)+1
-        h = dst.map.shape[1] * (src.map.shape[1]+1)+1
+        w = dst.shape[0] * (src.shape[0]+1)+1
+        h = dst.shape[1] * (src.shape[1]+1)+1
 
         self.sx = 1
         self.sy = 1
@@ -44,10 +44,10 @@ class Weights (Object):
 
         for unit in dst:
             frame = (
-                (unit.position[0] * (src.map.shape[0]+1)+1)/float(w),
-                (unit.position[1] * (src.map.shape[1]+1)+1)/float(h),
-                (src.map.shape[0])/float(w),
-                (src.map.shape[1])/float(h))
+                (unit.position[0] * (src.shape[0]+1)+1)/float(w),
+                (unit.position[1] * (src.shape[1]+1)+1)/float(h),
+                (src.shape[0])/float(w),
+                (src.shape[1])/float(h))
             if style == 'flat':
                 array = FlatSurface (unit.weights(src), frame=frame)
             else:

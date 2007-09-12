@@ -12,6 +12,8 @@
 #------------------------------------------------------------------------------
 
 import math, random
+import threading
+import time
 import dana.core as core
 import dana.projection as proj
 from glpython import window
@@ -19,7 +21,9 @@ from dana.visualization.glpython import Figure
 
 
 # Create a new network
+model = core.Model()
 net = core.Network ()
+model.append (net)
 width  = 40
 height = width
 
@@ -37,22 +41,8 @@ Focus[0].fill(core.Unit)
 Focus.name = 'Focus'
 net.append(Focus)
 
-p = proj.projection()
-p.distance = proj.distance.euclidean (True)
-p.density = proj.density.full(1)
-p.profile = proj.profile.constant(1.0)
-p.shape = proj.shape.point()
-p.src = Input[0]
-p.dst = Focus[0]
-p.connect()
-
-p.self = False
-p.profile = proj.profile.dog (2.20, 3.0/width, 0.65, 11.0/width)
-
-p.shape = proj.shape.box(1,1)
-p.src = Focus[0]
-p.dst = Focus[0]
-p.connect()
+proj.one_to_one (Input[0], Focus[0]).connect()
+proj.dog (Focus[0], Focus[0],2.20, 3.0/width, 0.65, 11.0/width).connect()
 
 for u in Input[0]:
     u.potential = random.uniform(0.0, 1.0)
@@ -67,7 +57,8 @@ for i in xrange(Input.shape[0]):
 
 
 fig = Figure()
-win,fig = window (figure=fig, has_terminal=True)
+win,fig = window (figure=fig, fps=0, has_terminal=True, namespace = locals())
 fig.network (net, style = 'smooth', title='A simple network')
+
 win.show()
 

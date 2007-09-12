@@ -44,10 +44,10 @@ class Network (Object):
 
         for m in network:
             if style == 'flat':
-                array = FlatSurface (m[0].potentials(),
+                array = FlatSurface (m[0].potentials,
                                      cmap=cmap, frame = m.frame)
             else:
-                array = SmoothSurface (m[0].potentials(),
+                array = SmoothSurface (m[0].potentials,
                                        cmap=cmap, frame = m.frame)            
             array.connect ('select_event', self.on_select, m)
             self.maps.append ((m, array))
@@ -127,5 +127,5 @@ class Network (Object):
                 array.data = self.unit.weights(m[0])
         else:
             for m,array in self.maps:
-                array.data = m[0].potentials()
+                array.data = m[0].potentials
 
