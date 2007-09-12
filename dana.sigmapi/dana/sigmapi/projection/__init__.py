@@ -19,8 +19,7 @@ It can be precisely defined using :
 			     the links to each destination's neuron
 """
 
-from dana.sigmapi._sigmapi import *
+from dana.sigmapi.core._core import *
 from _projection import *
-#import combination
 
 __all__ = ['Projection','combination']

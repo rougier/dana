@@ -13,11 +13,10 @@
 
 #include <boost/python.hpp>
 #include <vector>
-#include "core/link.h"
-#include "core/layer.h"
-#include "core/map.h"
-#include "../../link.h"
-//#include "core/object.h"
+#include "dana/core/link.h"
+#include "dana/core/layer.h"
+#include "dana/core/map.h"
+#include "../../core/link.h"
 
 using namespace boost::python;
 
@@ -42,7 +41,7 @@ class Combination
 public:
     Combination (void);
     virtual ~Combination ();
-    virtual std::vector<core::LinkPtr> combine (core::UnitPtr dst,core::LayerPtr src1,core::LayerPtr src2);
+    virtual std::vector<dana::core::LinkPtr> combine (dana::core::UnitPtr dst,dana::core::LayerPtr src1,dana::core::LayerPtr src2);
 };
 
 class Linear : public Combination
@@ -61,7 +60,7 @@ public:
     Linear(float fac1_x,float fac2_x,float fac3_x,
            float fac1_y,float fac2_y,float fac3_y,
            float offset_x,float offset_y,float weight);
-    std::vector<core::LinkPtr> combine (core::UnitPtr dst,core::LayerPtr src1,core::LayerPtr src2);
+    std::vector<dana::core::LinkPtr> combine (dana::core::UnitPtr dst,dana::core::LayerPtr src1,dana::core::LayerPtr src2);
 };
 }
 }

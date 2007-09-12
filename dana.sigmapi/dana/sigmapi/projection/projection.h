@@ -11,15 +11,17 @@
 #ifndef __DANA_SIGMAPI_PROJECTION_H__
 #define __DANA_SIGMAPI_PROJECTION_H__
 
-#include <boost/python.hpp>
-#include <numpy/arrayobject.h>
-#include "core/layer.h"
-#include "core/object.h"
-#include "../unit.h"
-#include "../link.h"
+
+#include "dana/core/layer.h"
+#include "dana/core/object.h"
+#include "../core/unit.h"
+#include "../core/link.h"
 #include "combination/combination.h"
 
-using namespace boost::python;
+#include <boost/python.hpp>
+#include <numpy/arrayobject.h>
+
+//using namespace boost::python;
 
 
 namespace dana
@@ -29,7 +31,7 @@ namespace sigmapi
 namespace projection
 {
 
-class Projection : public core::Object
+class Projection : public dana::core::Object
 {
 public:
     static Projection *current;
@@ -45,18 +47,15 @@ public:
     void connect_max_one_to_one(boost::python::list layers, float weight);
     void connect_point_mod_one(float weight);
     void connect_dog_mod_one(float A,float a,float B,float b);
-    float dog(core::UnitPtr src,core::UnitPtr dst,float A,float a,float B,float b);
+    float dog(dana::core::UnitPtr src,dana::core::UnitPtr dst,float A,float a,float B,float b);
 
     static void static_connect (void);
 
 public:
-    core::LayerPtr          src1;
-    core::LayerPtr          src2;
-    core::LayerPtr		dst;
+    dana::core::LayerPtr          src1;
+    dana::core::LayerPtr          src2;
+    dana::core::LayerPtr		dst;
     bool                    self;
-
-public:
-    static void boost (void);
 };
 
 }

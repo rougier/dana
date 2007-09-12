@@ -8,13 +8,12 @@
 // $Id$
 
 #include <iostream>
-#include "projection.h"
-#include "core/map.h"
 #include <math.h>
+#include "projection.h"
+#include "dana/core/map.h"
 #include <boost/python/detail/api_placeholder.hpp>
 
 using namespace dana::sigmapi::projection;
-//using namespace dana::sigmapi;
 
 Projection *Projection::current = 0;
 
@@ -28,33 +27,33 @@ Projection::~Projection (void)
 
 void Projection::connect (void)
 {
-    std::vector<core::LinkPtr> vlinkptr;
+    std::vector<dana::core::LinkPtr> vlinkptr;
     for(int i = 0 ; i < dst->size() ; i++)
         {
             vlinkptr = combination->combine(dst->get(i),src1,src2);
             for(int j = 0 ; j < vlinkptr.size(); j++)
-                ((dana::sigmapi::Unit*)(((core::UnitPtr)(dst->get(i))).get()))->connect(vlinkptr[j]);
+                ((dana::sigmapi::core::Unit*)(((dana::core::UnitPtr)(dst->get(i))).get()))->connect(vlinkptr[j]);
         }
 }
 
 void Projection::connect_all_to_one(float weight)
 {
-    core::LinkPtr linkptr;
-    sigmapi::Link * link;
-    linkptr = core::LinkPtr (new sigmapi::Link (LinkType(SIGMAPI_MAX)));
-    link = (dana::sigmapi::Link*) (linkptr.get());
+    dana::core::LinkPtr linkptr;
+    dana::sigmapi::core::Link * link;
+    linkptr = dana::core::LinkPtr (new dana::sigmapi::core::Link (dana::sigmapi::core::LinkType(dana::sigmapi::core::SIGMAPI_MAX)));
+    link = (dana::sigmapi::core::Link*) (linkptr.get());
     for(int i = 0 ; i < src1->size();i++)
         {
             link->add_source(src1->get(i));
         }
     link->set_weight(weight);
-    ((dana::sigmapi::Unit*)(((core::UnitPtr)(dst->get(0))).get()))->connect(linkptr);
+    ((dana::sigmapi::core::Unit*)(((dana::core::UnitPtr)(dst->get(0))).get()))->connect(linkptr);
 }
 
 void Projection::connect_as_mod_cos(float scale_pos,float scale_neg)
 {
-	core::LinkPtr linkptr;
-	sigmapi::Link * link;
+	dana::core::LinkPtr linkptr;
+	dana::sigmapi::core::Link * link;
     int width = src1->get_map()->width;
     float weight;
     if(src2 ->size()  == src1 -> size())
@@ -62,8 +61,8 @@ void Projection::connect_as_mod_cos(float scale_pos,float scale_neg)
             {
                 for(int j = 0 ; j < src1->size() ; j++)
                     {
-                        linkptr = core::LinkPtr (new sigmapi::Link (LinkType(SIGMAPI_PROD)));
-                        link = (dana::sigmapi::Link*) (linkptr.get());
+                        linkptr = dana::core::LinkPtr (new dana::sigmapi::core::Link (dana::sigmapi::core::LinkType(dana::sigmapi::core::SIGMAPI_PROD)));
+                        link = (dana::sigmapi::core::Link*) (linkptr.get());
                         link->add_source(src1->get(j));
                         link->add_source(src2->get(j));
                         weight = cos(2.0*M_PI*float(i-j)/width);
@@ -72,7 +71,7 @@ void Projection::connect_as_mod_cos(float scale_pos,float scale_neg)
                         else
                             weight = scale_pos * weight;
                         link->set_weight(weight);
-                        ((dana::sigmapi::Unit*)(((core::UnitPtr)(dst->get(i))).get()))->connect(linkptr);
+                        ((dana::sigmapi::core::Unit*)(((dana::core::UnitPtr)(dst->get(i))).get()))->connect(linkptr);
                     }
             }    
     else if(src2->size() == 1)
@@ -118,19 +117,19 @@ void Projection::connect_max_one_to_one(boost::python::list layers, float weight
 	}
 
 	int size = boost::python::len(layers);
-	core::LinkPtr linkptr;
-	sigmapi::Link * link;
+	dana::core::LinkPtr linkptr;
+	dana::sigmapi::core::Link * link;
 
 	for(int i = 0 ; i < dst->size();i++)
         {
-            linkptr = core::LinkPtr (new sigmapi::Link (LinkType(SIGMAPI_MAX)));
-            link = (dana::sigmapi::Link*) (linkptr.get());
+            linkptr = dana::core::LinkPtr (new dana::sigmapi::core::Link (dana::sigmapi::core::LinkType(dana::sigmapi::core::SIGMAPI_MAX)));
+            link = (dana::sigmapi::core::Link*) (linkptr.get());
             for(int j = 0 ; j < size ; j++)
                 {
-                    link->add_source(((core::LayerPtr)(extract<core::LayerPtr>(layers[j])))->get(i));
+                    link->add_source(((dana::core::LayerPtr)(extract<dana::core::LayerPtr>(layers[j])))->get(i));
                 }
             link->set_weight(weight);
-            ((dana::sigmapi::Unit*)(((core::UnitPtr)(dst->get(i))).get()))->connect(linkptr);		
+            ((dana::sigmapi::core::Unit*)(((dana::core::UnitPtr)(dst->get(i))).get()))->connect(linkptr);		
         }
 }
 
@@ -143,16 +142,16 @@ void Projection::connect_point_mod_one(float weight)
         }
     if(src2->size() == 1)
         {
-            core::LinkPtr linkptr;
-            sigmapi::Link * link;
+            dana::core::LinkPtr linkptr;
+            dana::sigmapi::core::Link * link;
             for(int i = 0 ; i < src1->size();i++)
                 {
-                    linkptr = core::LinkPtr (new sigmapi::Link (LinkType(SIGMAPI_PROD)));
-                    link = (dana::sigmapi::Link*) (linkptr.get());
+                    linkptr = dana::core::LinkPtr (new dana::sigmapi::core::Link (dana::sigmapi::core::LinkType(dana::sigmapi::core::SIGMAPI_PROD)));
+                    link = (dana::sigmapi::core::Link*) (linkptr.get());
                     link->add_source(src1->get(i));
                     link->add_source(src2->get(0));
                     link->set_weight(weight);
-                    ((dana::sigmapi::Unit*)(((core::UnitPtr)(dst->get(i))).get()))->connect(linkptr);
+                    ((dana::sigmapi::core::Unit*)(((dana::core::UnitPtr)(dst->get(i))).get()))->connect(linkptr);
                 }
         }
     else
@@ -162,24 +161,24 @@ void Projection::connect_point_mod_one(float weight)
                     printf("Cannot call connect_point_mod_one with size(src1)!=size(src2)");
                     return;
                 }
-            core::LinkPtr linkptr;
-            sigmapi::Link * link;
+            dana::core::LinkPtr linkptr;
+            dana::sigmapi::core::Link * link;
             for(int i = 0 ; i < src1->size();i++)
                 {
-                    linkptr = core::LinkPtr (new sigmapi::Link (LinkType(SIGMAPI_PROD)));
-                    link = (dana::sigmapi::Link*) (linkptr.get());
+                    linkptr = dana::core::LinkPtr (new dana::sigmapi::core::Link (dana::sigmapi::core::LinkType(dana::sigmapi::core::SIGMAPI_PROD)));
+                    link = (dana::sigmapi::core::Link*) (linkptr.get());
                     link->add_source(src1->get(i));
                     link->add_source(src2->get(i));
                     link->set_weight(weight);
-                    ((dana::sigmapi::Unit*)(((core::UnitPtr)(dst->get(i))).get()))->connect(linkptr);
+                    ((dana::sigmapi::core::Unit*)(((dana::core::UnitPtr)(dst->get(i))).get()))->connect(linkptr);
                 }
         }
 }
 
 void Projection::connect_dog_mod_one(float A,float a,float B,float b)
 {
-    core::LinkPtr linkptr;
-    sigmapi::Link * link;
+    dana::core::LinkPtr linkptr;
+    dana::sigmapi::core::Link * link;
     if(src2->size() != 1 || src1->size() != dst->size())
         {
             printf("Cannot call connect_dog_mod_one with size(src1)!=size(dst) && size(src2)!=1");
@@ -187,8 +186,8 @@ void Projection::connect_dog_mod_one(float A,float a,float B,float b)
         }
     for(int i = 0 ; i < dst->size();i++)
         {
-            linkptr = core::LinkPtr (new sigmapi::Link (LinkType(SIGMAPI_PROD)));
-            link = (dana::sigmapi::Link*) (linkptr.get());
+            linkptr = dana::core::LinkPtr (new dana::sigmapi::core::Link (dana::sigmapi::core::LinkType(dana::sigmapi::core::SIGMAPI_PROD)));
+            link = (dana::sigmapi::core::Link*) (linkptr.get());
             for(int j = 0 ; j < src1->size() ; j++)
                 {
                     link->add_source(src1->get(j));
@@ -197,13 +196,13 @@ void Projection::connect_dog_mod_one(float A,float a,float B,float b)
                     if(!(fabs(weight) <= 0.001f))
                         {
                             link->set_weight(weight);
-                            ((dana::sigmapi::Unit*)(((core::UnitPtr)(dst->get(i))).get()))->connect(linkptr);
+                            ((dana::sigmapi::core::Unit*)(((dana::core::UnitPtr)(dst->get(i))).get()))->connect(linkptr);
                         }
                 }
         }
 }
 
-float Projection::dog(core::UnitPtr src,core::UnitPtr dst,float A,float a,float B,float b)
+float Projection::dog(dana::core::UnitPtr src,dana::core::UnitPtr dst,float A,float a,float B,float b)
 {
     int dst_x = dst->get_x();
     int dst_y = dst->get_y();
@@ -212,61 +211,4 @@ float Projection::dog(core::UnitPtr src,core::UnitPtr dst,float A,float a,float 
     float distance = (src_x-dst_x)*(src_x-dst_x) + (src_y-dst_y)*(src_y-dst_y);
     return A * exp (-distance/(a*a)) - B * exp (-distance/(b*b));
 
-}
-
-// =============================================================================
-//
-// =============================================================================
-void Projection::static_connect (void)
-{
-    if (current)
-        current->connect();
-}
-
-// =============================================================================
-//    Boost wrapping code
-// =============================================================================
-void Projection::boost (void)
-{
-    using namespace boost::python;
-    import_array(); // Important ! Sinon c'est seg fault
-    class_<Projection>("projection",
-                       "======================================================================\n"
-                       "\n"
-                       "A projection is the specification of a pattern of connection between\n"
-                       "three layers. It can be precisely defined using :\n"
-                       "\n"
-                       "- a combination function : it defines how to combine the inputs to define\n"
-                       "                          the links to each destination's neuron\n"
-                       "\n"
-                       "Attributes:\n"
-                       "-----------\n"
-                       " self:     whether self connections are to be made\n"
-                       " src1:     First source layer\n"
-                       " src2:     Second source layer\n"
-                       " dst:      destination layer\n"
-                       "\n"
-                       "======================================================================\n",
-                       init<> ("init() -- initializes the projection\n"))
-        .def_readwrite ("self", &Projection::self)
-        .def_readwrite ("src1", &Projection::src1)
-        .def_readwrite ("src2", &Projection::src2)
-        .def_readwrite ("dst", &Projection::dst)
-        .def_readwrite ("combination", &Projection::combination)
-        .def ("connect", &Projection::connect,"connect() -- instantiates the connection\n")
-        .def("connect_as_mod_cos",&Projection::connect_as_mod_cos)
-        .def("connect_all_to_one", &Projection::connect_all_to_one)
-        .def("connect_max_one_to_one",&Projection::connect_max_one_to_one)
-        .def("connect_point_mod_one", &Projection::connect_point_mod_one)
-        .def("connect_dog_mod_one",&Projection::connect_dog_mod_one)
-        ;
-}
-
-// ===================================================================
-//  Boost module
-// ===================================================================
-BOOST_PYTHON_MODULE(_projection)
-{
-    using namespace boost::python;
-    Projection::boost();
 }

@@ -16,7 +16,5 @@
 The SigmaPi library implements Sigma-Pi type Neurons
 """
 
-from dana.core import *
-from _sigmapi import *
-
-__all__ = ['Link','Unit']
+from dana.sigmapi.core._core import *
+from dana.sigmapi.projection._projection import *
