@@ -28,9 +28,9 @@ def ExtensionBuild (env, path, libs=[]):
     src = ['%s/%s' % (env["BUILDDIR"], s) for s in all if '_export' not in s]
     if len(src):
         fullname = os.path.join (env["BUILDDIR"], library_name)
-                
         library = env.SharedLibrary (fullname, 
                                      src,
+                                     CPPPATH= env['CPPPATH'],
                                      LIBPATH= [env['BUILDDIR']] + env['LIBPATH'],
                                      LIBS=env['LIBS'] + libs)
     else:
@@ -43,6 +43,7 @@ def ExtensionBuild (env, path, libs=[]):
         module = env.SharedLibrary (fullname,
                                     srcs,
                                     SHLIBPREFIX='',
+                                    CPPPATH= env['CPPPATH'],
                                     LIBPATH= [env['BUILDDIR']] + env['LIBPATH'],
                                     LIBS = env['LIBS'] + [library_name])
         env.Depends (module, library)
