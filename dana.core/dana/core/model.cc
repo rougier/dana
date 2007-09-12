@@ -9,7 +9,6 @@
 // $Id: model.cc 241 2007-07-19 08:52:13Z rougier $
 
 #include <algorithm>
-#include <boost/thread/thread.hpp>
 #include "model.h"
 #include "network.h"
 #include "environment.h"
@@ -17,15 +16,9 @@
 using namespace boost;
 using namespace dana::core;
 
-// ________________________________________________________________current_model
-Model *Model::current_model = 0;
-
 // ________________________________________________________________________Model
-Model::Model (void) : Object()
-{
-    running = false;
-    age = 0;
-}
+Model::Model (void) : Object(), Observable (), age(0)
+{}
 
 // _______________________________________________________________________~Model
 Model::~Model (void)
@@ -65,57 +58,52 @@ Model::clear (void)
     environments.clear();
 }
 
-// ________________________________________________________________________start
-bool
-Model::start (unsigned long n)
-{
-    if (running)
-        return false;
-
-	if (n > 0) {
-		start_time = time;
-		stop_time  = time + n;
-	} else {
-		start_time = 0;
-		stop_time  = 0;
-	}
-
-	current_model = this;
-	boost::thread T(&Model::entry_point);
-	return true;
-}
-
-// __________________________________________________________________entry_point
+// ___________________________________________________________________compute_dp
 void
-Model::entry_point (void)
+Model::compute_dp (void)
 {
-    Model *model = Model::current_model;
-
-    model->running = true;
-    bool go = true;
-    
-    while (go) {
-        for (unsigned int i = 0; i < model->environments.size(); i++)
-            model->environments[i]->evaluate ();
-        for (unsigned int i = 0; i < model->networks.size(); i++) {
-            model->networks[i]->compute_dp ();
-            model->networks[i]->compute_dw ();
-        }
-        model->time += 1;
-        model->age++;
-
-        if (((model->stop_time > 0) && (model->time >= model->stop_time)) ||
-            (!model->running))
-            go = false;
+    using namespace std;
+    vector<NetworkPtr>::const_iterator net;
+    for(net=networks.begin(); net != networks.end(); net++){
+        (*net)->compute_dp();
     }
-    model->running = false;
 }
 
-// _________________________________________________________________________stop
+// ___________________________________________________________________compute_dw
 void
-Model::stop (void)
+Model::compute_dw (void)
 {
-    current_model->running = false;
+    using namespace std;
+    vector<NetworkPtr>::const_iterator net;
+    for(net=networks.begin(); net != networks.end(); net++){
+        (*net)->compute_dw();
+    }
+}
+
+// _____________________________________________________________________evaluate
+void
+Model::evaluate (unsigned long n)
+{
+    using namespace std;
+    vector<EnvironmentPtr>::const_iterator env;
+    EventEvaluatePtr event (new EventEvaluate());
+
+    unsigned long i;
+    for (i=0; i<n; i++){
+        age++;
+        for(env = environments.begin(); env != environments.end(); env++)
+            (*env)->evaluate();        
+        compute_dp();
+        compute_dw();
+        notify (event);
+    }
+}
+
+// ______________________________________________________________________get_age
+unsigned long int
+Model::get_age (void)
+{
+    return age;
 }
 
 // _____________________________________________________________________get_spec
@@ -144,15 +132,12 @@ Model::python_export (void)
     void (Model::*append_net)(NetworkPtr)     = &Model::append;
     void (Model::*append_env)(EnvironmentPtr) = &Model::append;
  
-    class_<Model, bases <Object> >(
+    class_<Model, bases <Object,Observable> >(
         "Model",
         "====================================================================\n"
         "\n"
         "A model gathers one to several networks and environments. Evaluation\n"
         "done first on environments then on networks."
-        "\n"
-        "Attributes:\n"
-        "-----------\n"
         "\n"
         "===================================================================\n",
         init<>("__init__()\n"))
@@ -161,6 +146,10 @@ Model::python_export (void)
                        &Model::get_spec, &Model::set_spec,
                        "Parameters of the model")
 
+        .add_property ("age",
+                       &Model::get_age,
+                       "Age of the model")
+
         .def ("append", append_net)
         .def ("append", append_env,
               "append(net) -- append a network to the model\n",        
@@ -168,13 +157,19 @@ Model::python_export (void)
 
         .def ("clear", &Model::clear,
               "clear() -- remove all networks and environments\n")
+
+        .def ("compute_dp",
+              &Model::compute_dp,
+              "compute_dp() -- calls compute_dp for each network\n")
         
-        .def ("start", &Model::start, start_overloads (
-                args("epochs"), "start(epochs = 0) -- start simulation\n"))
-        .def ("stop",     &Model::stop,
-              "stop() -- stop simulation\n")
-        .def_readonly ("running", &Model::running)
-        .def_readonly ("age", &Model::age)
+        .def ("compute_dw",
+              &Model::compute_dw,
+              "compute_dw() -- calls compute_dw for each network\n")
+
+        .def ("evaluate",
+              &Model::evaluate,
+              "evaluate(n) -- evaluates environments, compute_dp() and\n"
+              "compute_dw() n times\n")
         ;
 }
 

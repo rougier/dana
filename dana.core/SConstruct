@@ -65,8 +65,6 @@ if not conf.CheckLibWithHeader ('python' + pyversion, 'Python.h', 'c'):
     sys.exit (1)
 if not conf.CheckLibWithHeader ('boost_python-mt', 'boost/python.hpp', 'c++'):
     sys.exit (1)
-if not conf.CheckLibWithHeader ('boost_thread-mt', 'boost/thread.hpp', 'c++'):
-    sys.exit (1)
 conf.env.Append (LIBS = 'boost_python-mt')
 
 libs = CheckLibrary (env, ['libxml-2.0'])

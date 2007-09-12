@@ -21,6 +21,7 @@ namespace dana { namespace core {
 typedef boost::shared_ptr<class Event> EventPtr;
 typedef boost::shared_ptr<class EventDP> EventDPPtr;
 typedef boost::shared_ptr<class EventDW> EventDWPtr;
+typedef boost::shared_ptr<class EventEvaluate> EventEvaluatePtr;
 
 // __________________________________________________________________class Event
 class Event : public Object {
@@ -41,6 +42,13 @@ public:
 class EventDW : public Event {
 public:
     EventDW (void) : Event("EventDW") { };    
+    static void python_export (void);
+};
+
+// ________________________________________________________________class EventDW
+class EventEvaluate : public Event {
+public:
+    EventEvaluate (void) : Event("EventEvaluate") { };    
     static void python_export (void);
 };
 

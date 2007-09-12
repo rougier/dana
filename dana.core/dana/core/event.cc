@@ -23,6 +23,7 @@ Event::python_export (void)
     register_ptr_to_python< boost::shared_ptr<Event> >();
     register_ptr_to_python< boost::shared_ptr<EventDP> >();
     register_ptr_to_python< boost::shared_ptr<EventDW> >();
+    register_ptr_to_python< boost::shared_ptr<EventEvaluate> >();
  
     class_<Event, bases <Object> >(
         "Event",
@@ -43,6 +44,14 @@ Event::python_export (void)
 
     class_<EventDW, bases <Event> >(
         "EventDW",
+        "______________________________________________________________________\n"
+        "                                                                      \n"
+        "______________________________________________________________________\n",
+        init<>("__init__()"))
+        ;
+
+    class_<EventEvaluate, bases <Event> >(
+        "EventEvaluate",
         "______________________________________________________________________\n"
         "                                                                      \n"
         "______________________________________________________________________\n",

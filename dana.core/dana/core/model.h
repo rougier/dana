@@ -11,49 +11,48 @@
 #ifndef __DANA_CORE_MODEL_H__
 #define __DANA_CORE_MODEL_H__
 
-#include <boost/thread/barrier.hpp>
 #include <vector>
 #include "object.h"
 #include "network.h"
 #include "environment.h"
+#include "observable.h"
+#include "event.h"
 
 namespace dana { namespace core {
 
-    typedef boost::shared_ptr<class Model> ModelPtr;
+typedef boost::shared_ptr<class Model> ModelPtr;
 
-    // ____________________________________________________________class Object
-    class Model : public Object {
+// _________________________________________________________________class Object
+class Model : public Object, public Observable {
 
-        // ___________________________________________________________attributes
-    public:
-        std::vector<NetworkPtr>     networks;
-        std::vector<EnvironmentPtr> environments;
-        SpecPtr                     spec;
-        bool                        running;
-        boost::barrier *            barrier;
-        unsigned long               age;
-        unsigned long               time, start_time, stop_time;
-        static Model *              current_model;
+    // _______________________________________________________________attributes
+public:
+    std::vector<NetworkPtr>     networks;
+    std::vector<EnvironmentPtr> environments;
+    SpecPtr                     spec;
+    unsigned long int           age;
+
         
-    public:
-        // _________________________________________________________________life
-        Model (void);
-        virtual ~Model (void);
+public:
+    // _____________________________________________________________________life
+    Model (void);
+    virtual ~Model (void);
 
-        // _________________________________________________________________main
-        virtual void        append (NetworkPtr net);
-        virtual void        append (EnvironmentPtr env);
-        virtual void        clear (void);
-        virtual bool        start (unsigned long n=0);
-        virtual void        stop (void);
-        static void         entry_point (void);
-
-        // ______________________________________________________________get/set
-        virtual SpecPtr       get_spec (void);
-        virtual void          set_spec (SpecPtr spec);  
+    // _____________________________________________________________________main
+    virtual void        append (NetworkPtr net);
+    virtual void        append (EnvironmentPtr env);
+    virtual void        compute_dp (void);
+    virtual void        compute_dw (void);
+    virtual void        evaluate (unsigned long n=1);
+    virtual void        clear (void);
+    
+    // __________________________________________________________________get/set
+    virtual unsigned long int get_age (void);
+    virtual SpecPtr           get_spec (void);
+    virtual void              set_spec (SpecPtr spec);  
         
-        // _______________________________________________________________export
-        static void         python_export (void);
+    // ___________________________________________________________________export
+    static void         python_export (void);
     };
 }}
 
