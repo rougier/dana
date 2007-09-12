@@ -100,7 +100,7 @@ if 'info' in COMMAND_LINE_TARGETS:
     print '  CXX:        %s' % env['CXX']
     print '  CPPLAGS:    %s' % env['CPPFLAGS']
     print '  CFLAGS:     %s' % env['CFLAGS']
-    print '  LDFLAGS:    %s' % env['LDFLAGS']
+    print '  LIBPATH:    %s' % env['LIBPATH']
     print '  LIBS:       %s' % env['LIBS']
     print '  BUILDDIR:   %s' % env['BUILDDIR']
     print
