@@ -147,10 +147,6 @@ env.Alias ('dist-zip', env.Archive ('%s.zip' % fullname, archive_files))
 # _______________________________________________________________________Package
 
 desc = """Singular Value Decomposition
-
-Packages used to optimize the computations performed in the links
-This optimisation is based on Singular Value Decomposition 
-Ref : http://en.wikipedia.org/wiki/Singular_value_decomposition 
 """
 
 pkg = env.Package(
