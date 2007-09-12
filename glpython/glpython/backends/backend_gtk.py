@@ -21,10 +21,10 @@ import backend_base as base
 class Window (base.Window):
     """ GTK window with an OpenGL context """
     
-    def __init__(self, w=800, h=600, title='GTK OpenGL window', fps=30):
+    def __init__(self, w=800, h=600, title='GTK OpenGL window'):
         """ Window creation centered on screen. """
         
-        base.Window.__init__(self, w, h, title, fps)
+        base.Window.__init__(self, w, h, title)
         self.window = gtk.Window()
         self.window.set_position (gtk.WIN_POS_CENTER)
         self.window.set_title (title)
@@ -49,7 +49,6 @@ class Window (base.Window):
                                 | gtk.gdk.POINTER_MOTION_HINT_MASK)
         self.window.add (self.glarea)
         self.width, self.height = w,h
-        self.timeout_id = 0
         self.window.realize()
 
 
@@ -173,13 +172,6 @@ class Window (base.Window):
         return True
 
 
-    def timeout_event (self):
-        """ Timeout function """
-        
-        self.paint ()
-        return True
-
-
     def set_title (self, title):    
         """ Set window title """
 
@@ -229,9 +221,6 @@ class Window (base.Window):
     def show (self):
         """ Show window and run event loop """
         
-        if self.timeout_id:
-            gobject.source_remove (self.timeout_id)
-        self.timeout_id = gobject.timeout_add (self.delay, self.timeout_event)
         self.window.show_all()
         self.resize_event ()
         
@@ -248,9 +237,6 @@ class Window (base.Window):
     def hide (self):
         """ Hide window """
 
-        if self.timeout_id:
-            gobject.source_remove (self.timeout_id)
-            self.timeout_id = 0
         base.Window.hide(self)
         self.window.hide()
 
@@ -287,7 +273,7 @@ if __name__ == '__main__':
         glVertex3f (0.25, 0.75, 0.0)
         glEnd()
 
-    window = Window (512,256, fps=1.0)
+    window = Window (512,256)
     Window.init = init
     Window.render = render
     Window.resize = resize

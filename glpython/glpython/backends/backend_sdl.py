@@ -21,10 +21,10 @@ import backend_base as base
 class Window (base.Window):
     """ SDL window with an OpenGL context """
     
-    def __init__(self, w=800, h=600, title='SDL OpenGL window', fps=30):
+    def __init__(self, w=800, h=600, title='SDL OpenGL window'):
         """ Window creation at given size, centered on screen. """
         
-        base.Window.__init__(self, w, h, title, fps)
+        base.Window.__init__(self, w, h, title)
         os.environ['SDL_VIDEO_CENTERED'] = '1'
         pygame.init()
         pygame.key.set_repeat (500, 50)
@@ -166,9 +166,8 @@ class Window (base.Window):
                     self.mouse_motion_event (event)
                 elif event.type == QUIT:
                     self.done = True
-
             elapsed = time.time() - t
-            if elapsed > self.delay/1000.0 or first_pass:
+            if elapsed > 100.0/1000.0 or first_pass:
                 self.paint()
                 first_pass = False
             t = time.time()
@@ -209,7 +208,7 @@ if __name__ == '__main__':
         glVertex3f (0.25, 0.75, 0.0)
         glEnd()
 
-    window = Window (512,256, fps = 1.0)
+    window = Window (512,256)
     Window.init = init
     Window.render = render
     Window.resize = resize

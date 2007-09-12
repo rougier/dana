@@ -20,10 +20,10 @@ import backend_base as base
 class Window (base.Window):
     """ WX backend """
     
-    def __init__(self, w=800, h=600, title='WX OpenGL window', fps=30):
+    def __init__(self, w=800, h=600, title='WX OpenGL window'):
         """ Window creation at given size, centered on screen. """
         
-        base.Window.__init__ (self, w, h, title, fps)
+        base.Window.__init__ (self, w, h, title)
         self.app = wx.App(False)
         self.frame = wx.Frame (None,-1,title, wx.DefaultPosition,wx.Size(w, h))
         self.frame.CenterOnScreen()
@@ -153,13 +153,6 @@ class Window (base.Window):
             self.resize (size.width, size.height)
             self.paint()
 
-    def timeout_event (self):
-        """ Timeout function """
-        
-        self.paint ()
-        self.timer.Restart (self.delay)
-
-
     def set_title (self, title):    
         """ Set window title """
 
@@ -203,7 +196,6 @@ class Window (base.Window):
 
         self.frame.Show ()
         self.canvas.SetFocus()
-        self.timer = wx.CallLater (self.delay, self.timeout_event)
         self.resize_event ()
         
         if self.external_event_loop:
@@ -219,7 +211,6 @@ class Window (base.Window):
     def hide (self):
         """ Hide window """
 
-        self.timer.Stop()
         base.Window.hide(self)
         self.frame.Hide ()
 
@@ -256,7 +247,7 @@ if __name__ == '__main__':
         glVertex3f (0.25, 0.75, 0.0)
         glEnd()
 
-    window = Window (512,256, fps=1.0)
+    window = Window (512,256)
     Window.init = init
     Window.render = render
     Window.resize = resize

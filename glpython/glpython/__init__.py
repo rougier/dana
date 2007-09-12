@@ -547,10 +547,10 @@ def window (size=(800,640), fps = 30.0, has_terminal = False, backend = 'wx',
         """
         """
 
-        def __init__ (self, w=800, h=640, title=None, fps=30.0, figure=None):
+        def __init__ (self, w=800, h=640, title=None, figure=None):
             """
             """
-            base.__init__ (self,w,h,title,fps)
+            base.__init__ (self,w,h,title)
             self.initialized = False
             self.outer_mainloop = False
             if not isinstance (figure, Figure):
@@ -692,7 +692,7 @@ def window (size=(800,640), fps = 30.0, has_terminal = False, backend = 'wx',
     if not title:
         title = "Figure %d" % window_number
     window_number += 1
-    win = Window (w, h, title, fps, figure)
+    win = Window (w, h, title, figure)
     if has_terminal:
         namespace['window'] = win
         namespace['figure'] = win.figure
