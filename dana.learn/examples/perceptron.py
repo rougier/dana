@@ -15,7 +15,6 @@ import matplotlib.pylab as pylab
 import matplotlib.colors as colors
 
 import dana.core as core
-import dana.projection as proj
 import dana.projection as projection
 import dana.projection.distance as distance
 import dana.projection.density as density
@@ -133,12 +132,12 @@ evenodd.spec.max_act  = 1.0
 
 net.append(evenodd)
 
-proj          = projection.projection()
-proj.self     = True
-proj.distance = distance.euclidean(False)
-proj.density  = density.full(1)
-proj.shape    = shape.box(1,1)
-proj.profile  = profile.uniform(0,0)
+proj          = projection.Projection()
+proj.self_connect     = True
+proj.distance = distance.Euclidean(False)
+proj.density  = density.Full(1)
+proj.shape    = shape.Box(1,1)
+proj.profile  = profile.Uniform(0,0)
 proj.src      = number[0]
 proj.dst      = evenodd[0]
 proj.connect()
@@ -188,7 +187,7 @@ def learn(nb_steps,lrate):
 			# Set the input
 			clamp_ex(i)
 			# Make some steps
-			net.evaluate(4,False)
+			model.evaluate(4,False)
 			# Update the output value to take into account the desired output
 			clamp_res(i)
 			# Learn
