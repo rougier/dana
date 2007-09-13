@@ -13,12 +13,12 @@
 #!/usr/bin/env python
 
 import random
+import time
 import dana.core as core
 import dana.projection as proj
 import dana.life as life
 from glpython import window
 from dana.visualization.glpython import Figure
-import dana.gui.gtk as gui
 
 # Create a new model
 model = core.Model()
@@ -35,12 +35,12 @@ Map[0].fill(life.Unit)
 net.append(Map)
 
 # Create input to focus connections
-p = proj.projection()
-p.self = False
-p.distance = proj.distance.euclidean (False)
-p.density = proj.density.full(1)
-p.profile = proj.profile.constant(1.0)
-p.shape = proj.shape.box(1.0/size, 1.0/(size))
+p = proj.Projection()
+p.self_connect = False
+p.distance = proj.Euclidean (False)
+p.density = proj.Full(1)
+p.profile = proj.Constant(1.0)
+p.shape = proj.Box(1.0/size, 1.0/(size))
 p.src = Map[0]
 p.dst = Map[0]
 p.connect()
@@ -49,10 +49,9 @@ for u in Map[0]:
     u.potential = random.randint (0, 1)
 
 fig = Figure()
-win,fig = window (backend='gtk', figure=fig)
+win,fig = window (backend='gtk', figure=fig, has_terminal=True, namespace=locals())
 fig.network (net, style='flat', show_colorbar=False)
 fig.text (size=.1, position = (.5, -.05), text="Asynchronouys Game Of Life demo")
 fig.text (size=.05, position = (.5, -.08), text="Nicolas Rougier, 07/2007")
-panel = gui.ControlPanel (model)
 win.show()
 
