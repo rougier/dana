@@ -48,7 +48,8 @@ opts.Add('LIBPATH',
 opts.Add('CPPFLAGS',
          'C/C++/Objective C preprocessor flags', os.getenv('CPPFLAGS', ''))
 opts.Add('CFLAGS',
-         'C compiler flags', os.getenv('CFLAGS', '-O3 -Wall'))
+         'C compiler flags', os.getenv('CPPFLAGS', '-O3 -Wall'))
+opts.Add('LIBS', 'linker libraries', '')
                                                  
 env = Environment(CACHEDIR='.cache', options = opts)
 env['VERBOSE'] = verbose
@@ -65,17 +66,14 @@ conf = Configure(env, conf_dir=env['CACHEDIR'],
 conf.env.Append (CPPPATH = [distutils.sysconfig.get_python_inc()])
 if not conf.CheckLibWithHeader ('python' + pyversion, 'Python.h', 'c'):
     sys.exit (1)
-if not conf.CheckLibWithHeader ('boost_python', 'boost/python.hpp', 'c++'):
+if not conf.CheckLibWithHeader ('boost_python-mt', 'boost/python.hpp', 'c++'):
     sys.exit (1)
-conf.env.Append (LIBS = 'boost_python')
+conf.env.Append (LIBS = 'boost_python-mt')
 
 libs = CheckLibrary (env, ['libxml-2.0'])
 mods = CheckModule (env, ['numpy', 'dana.core'])
 if not (libs and mods):
     sys.exit(1)
-if not conf.CheckLibWithHeader ('dana_core', 'dana/core/unit.h', 'c++'):
-    sys.exit (1)
-
 import numpy
 conf.env.Append (CPPPATH = numpy.get_include())
 env = conf.Finish()
@@ -118,7 +116,6 @@ if 'info' in COMMAND_LINE_TARGETS:
 # _______________________________________________________________________Targets
 
 exts = [['dana/cnft', ['dana_core']]]
-
 ext_files = []
 ext_modules = []
 for ext in exts:
@@ -130,7 +127,7 @@ for ext in exts:
 
 # ______________________________________________________________________Archives
 
-name = 'dana.cnft'
+name = 'dana.core'
 version = os.popen('svnversion .').read()[:-1]
 version = 'svn' + version.split(':')[-1]
 fullname = '%s-%s' % (name, version)
@@ -148,9 +145,12 @@ env.Alias ('dist-zip', env.Archive ('%s.zip' % fullname, archive_files))
 
 # _______________________________________________________________________Package
 
-desc = """ Continuum Neural Field Theory
-
-The CNFT library implements the Continuum Neural Field Theory.
+desc = """Distributed Aysnchronous Numerical Adaptive computational library
+ DANA is a multi-platform C++/Python library for distributed asynchronous
+ numerical and adaptive computation. The computational paradigm supporting
+ the library is grounded on the notion of a unit that is essentially a
+ potential that can vary along time under the influence of other units and
+ learning.
 """
 
 pkg = env.Package(
@@ -163,7 +163,7 @@ pkg = env.Package(
                 'Maintainer': 'Nicolas P. Rougier',
                 'Architecture': env['ARCH'],
                 'Version': version,
-                'Depends': 'libboost-python-dev, python2.5-dev, libxml2-dev',
+                'Depends': 'libboost-python-dev, python2.5-dev, libxml2-dev, dana.core',
                 'Description': desc}
     )
 for module in ext_modules:
