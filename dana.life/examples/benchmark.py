@@ -43,6 +43,21 @@ class Unit (core.Unit):
         self.potential = self._potential
         return 0.0
 
+class MixedUnit (core.Unit):
+    """ Mixed Game of Life unit """
+
+    def compute_dp (self):
+        n = self.compute_lateral_input()
+        if n in [3,4]:
+            self._potential = 1.0
+        else:
+            self._potential = 0.0
+        return self._potential - self.potential
+
+    def compute_dw (self):
+        self.potential = self._potential
+        return 0.0
+
 
 # Create a new network
 size  = 10
@@ -52,12 +67,16 @@ pynet.append (core.Map ( (size,size), (0,0) ) )
 pynet[0].append (core.Layer())
 pynet[0][0].fill (Unit)
 
+cpynet = core.Network ()
+cpynet.append (core.Map ( (size,size), (0,0) ) )
+cpynet[0].append (core.Layer())
+cpynet[0][0].fill (MixedUnit)
+
 cnet = core.Network ()
 cnet.append (core.Map ( (size,size), (0,0) ) )
 cnet[0].append (core.Layer())
 cnet[0][0].fill (life.Unit)
 
-# Connection to neighbours
 p = proj.Projection()
 p.self_connect = False
 p.distance = proj.distance.Euclidean (False)
@@ -69,17 +88,30 @@ p.src = pynet[0][0]
 p.dst = pynet[0][0]
 p.connect()
 
+p.src = cpynet[0][0]
+p.dst = cpynet[0][0]
+p.connect()
+
 p.src = cnet[0][0]
 p.dst = cnet[0][0]
 p.connect()
 
 
 epochs = 5000
+
 print 'Running network with python units for %d epochs' % epochs
 start = time.time()
 for i in range(epochs):
     pynet.compute_dp()
     pynet.compute_dw()
+print 'Elapsed time: %f seconds' % (time.time() - start)
+
+print
+print 'Running network with mixed C/python units for %d epochs' % epochs
+start = time.time()
+for i in range(epochs):
+    cpynet.compute_dp()
+    cpynet.compute_dw()
 print 'Elapsed time: %f seconds' % (time.time() - start)
 
 print
