@@ -383,7 +383,7 @@ class Terminal (StringTerminal):
         image = Image.new ("RGB", (self.tex_w, self.tex_h), (0, 0, 0))
         bits = image.tostring("raw", "RGBX", 0, -1)
 
-        self.framebuffer = GL_EXT.glGenFramebuffersEXT (1) #[0]
+        self.framebuffer = int(GL_EXT.glGenFramebuffersEXT (1)) #[0]
         self.tex_id = GL.glGenTextures (1)
         GL.glBindTexture (GL.GL_TEXTURE_2D, self.tex_id)
         GL.glTexParameteri (GL.GL_TEXTURE_2D,
