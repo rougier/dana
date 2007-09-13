@@ -71,7 +71,7 @@ if not conf.CheckLibWithHeader ('boost_python-mt', 'boost/python.hpp', 'c++'):
 conf.env.Append (LIBS = 'boost_python-mt')
 
 libs = CheckLibrary (env, ['libxml-2.0'])
-mods = CheckModule (env, ['numpy, dana.core'])
+mods = CheckModule (env, ['numpy', 'dana.core'])
 if not (libs and mods):
     sys.exit(1)
 import numpy
