@@ -48,9 +48,9 @@ opts.Add('CPPPATH',
 opts.Add('LIBPATH',
          'linker library path', os.getenv('LIBPATH', ''))
 opts.Add('CPPFLAGS',
-         'C/C++/Objective C preprocessor flags', os.getenv('CPPFLAGS', ''))
-opts.Add('CFLAGS',
-         'C compiler flags', os.getenv('CPPFLAGS', '-O3 -Wall'))
+         'C/C++/Objective C preprocessor flags', os.getenv('CFLAGS', ''))
+opts.Add('CXXFLAGS',
+         'C++ compiler flags', os.getenv('CXXFLAGS', '-O3 -Wall'))
 opts.Add('LIBS', 'linker libraries', '')
                           
 env = Environment(CACHEDIR='.cache', options = opts)
@@ -101,6 +101,7 @@ if 'info' in COMMAND_LINE_TARGETS:
     print '  CXX:        %s' % env['CXX']
     print '  CPPLAGS:    %s' % env['CPPFLAGS']
     print '  CFLAGS:     %s' % env['CFLAGS']
+    print '  CXXFLAGS:   %s' % env['CXXFLAGS']
     print '  CPPPATH:    %s' % env['CPPPATH']
     print '  LIBPATH:    %s' % env['LIBPATH']
     print '  LIBS:       %s' % env['LIBS']
