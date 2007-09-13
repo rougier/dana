@@ -51,7 +51,8 @@ opts.Add('CPPFLAGS',
          'C/C++/Objective C preprocessor flags', os.getenv('CPPFLAGS', ''))
 opts.Add('CFLAGS',
          'C compiler flags', os.getenv('CPPFLAGS', '-O3 -Wall'))
-                                                 
+opts.Add('LIBS', 'linker libraries', '')
+                          
 env = Environment(CACHEDIR='.cache', options = opts)
 env['VERBOSE'] = verbose
 SConsignFile ('%s/scons-signatures' % env['CACHEDIR'])
