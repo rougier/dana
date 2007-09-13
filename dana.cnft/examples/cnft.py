@@ -16,7 +16,7 @@ import dana.projection as proj
 import dana.cnft as cnft
 from glpython import window
 from dana.visualization.glpython import Figure
-import dana.gui.gtk as gui
+#import dana.gui.gtk as gui
 
 model = core.Model()
 net = core.Network ()
@@ -69,7 +69,7 @@ win,fig = window (backend='gtk', figure=fig, has_terminal=True, namespace=locals
 fig.network (net, style='flat', show_colorbar=False)
 fig.text (size=.1, position = (.5, -.05), text="Emergence of Attention within a Neural Population")
 fig.text (size=.05, position = (.5, -.085), text="Neural Networks, 19, 5, pp 573-581, June 2006")
-panel = gui.ControlPanel (model)
+#panel = gui.ControlPanel (model)
 win.show()
 
 
