@@ -111,7 +111,6 @@ if 'info' in COMMAND_LINE_TARGETS:
     print '  BINDIR:     %s' % env['BINDIR']
     print '  LIBDIR:     %s' % env['LIBDIR']
     print '  INCLUDEDIR: %s' % env['INCLUDEDIR']
-    print '  DATADIR:    %s' % env['DATADIR']
     print '  PYTHONDIR:  %s' % env['PYTHONDIR']
     print '--------------------------------------------------------------------'
     print
