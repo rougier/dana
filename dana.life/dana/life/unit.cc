@@ -8,9 +8,9 @@
 //
 // $Id$
 
-#include "core/map.h"
-#include "core/layer.h"
-#include "core/link.h"
+#include "dana/core/map.h"
+#include "dana/core/layer.h"
+#include "dana/core/link.h"
 #include "unit.h"
 
 using namespace boost::python::numeric;
