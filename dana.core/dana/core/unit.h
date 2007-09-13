@@ -45,6 +45,8 @@ namespace dana { namespace core {
         // _________________________________________________________________main
         virtual float compute_dp (void);
         virtual float compute_dw (void);
+        virtual float compute_afferent_input (void);
+        virtual float compute_lateral_input  (void);
         virtual void  connect    (UnitPtr source, float weight, py::object data);
         virtual void  connect    (UnitPtr source, float weight);
         virtual void  connect    (LinkPtr link);

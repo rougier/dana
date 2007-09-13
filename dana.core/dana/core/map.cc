@@ -128,7 +128,7 @@ Map::compute_dp (void)
 {
     EventDPPtr event (new EventDP());
     for (int i=0; i< size(); i++) {
-        shuffle_index = int ( (rand()/float(RAND_MAX)) * shuffles.size() );
+        shuffle_index = int ( (rand()/float(RAND_MAX)) * (shuffles.size()-1) );
         layers[i]->compute_dp ();
     }
     notify (event);
@@ -142,7 +142,7 @@ Map::compute_dw (void)
 {
     EventDWPtr event (new EventDW());
     for (int i=0; i< size(); i++) {
-        shuffle_index = int ( (rand()/float(RAND_MAX)) * shuffles.size() );
+        shuffle_index = int ( (rand()/float(RAND_MAX)) * (shuffles.size()-1) );
         layers[i]->compute_dw ();
     }
     notify (event);

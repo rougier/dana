@@ -372,6 +372,26 @@ Unit::compute_dw (void)
     return 0.0f;
 }
 
+// ________________________________________________________compute_afferent_input
+float
+Unit::compute_afferent_input (void)
+{
+    float sum = 0.0f;
+	for (unsigned int i=0; i<afferents.size(); i++)
+		sum += afferents[i]->weight * afferents[i]->source->potential;
+    return sum;
+}
+
+// ________________________________________________________compute_lateral_input
+float
+Unit::compute_lateral_input (void)
+{
+    float sum = 0.0f;
+	for (unsigned int i=0; i<laterals.size(); i++)
+		sum += laterals[i]->weight * laterals[i]->source->potential;
+    return sum;
+}
+
 //______________________________________________________________________connect
 void
 Unit::connect (UnitPtr source, float weight, py::object data)
@@ -565,7 +585,15 @@ Unit::python_export (void) {
         .def ("compute_dw", &Unit::compute_dw,  &UnitWrapper::default_compute_dw,
               "compute_dw() -> float\n"
               "computes weights and returns dw")
-    
+
+        .def ("compute_lateral_input", &Unit::compute_lateral_input,  
+              "compute_lateral_input() -> float\n"
+              "return weighted lateral input")
+
+        .def ("compute_afferent_input", &Unit::compute_afferent_input,  
+              "compute_afferent_input() -> float\n"
+              "return weighted afferent input")
+
         .def ("connect", connect_src)
         .def ("connect", connect_src_data)
         .def ("connect", connect_link,
