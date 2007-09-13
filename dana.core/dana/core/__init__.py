@@ -113,11 +113,11 @@ class ModelThread (threading.Thread):
                 else:
                     self.model.evaluate (self.n-i)
                     i = self.n
-                time.sleep (.0001)
+                time.sleep (.001)
         else:
             while not self.stop:
                 self.model.evaluate (self.block)
-                time.sleep (.0001)
+                time.sleep (.001)
 
 
 # _________________________________________________________________________Model
