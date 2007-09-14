@@ -60,12 +60,12 @@ namespace glpython { namespace world { namespace core {
                                                  // dz : up/down
         void rotate(float dtheta, float dphi); // Rotate the robot and the camera
         void rotateCamera(float dtheta, float dphi); // Rotate the camera only
-
+        void centerCamera();
         // Tools 
         void VectorsFromAngles(void);
         
         // Output methods
-        void grab(char * filename);
+        //void grab(char * filename);
         void append (glpython::core::ObjectPtr o);
 
         // Python export

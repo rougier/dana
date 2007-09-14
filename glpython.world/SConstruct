@@ -84,7 +84,7 @@ env = conf.Finish()
 
 env.Append (BUILDERS = {'Archive'  : archive_builder})
 env.Append (BUILDERS = {'Package'  : package_builder})
-env["CFLAGS"] = '-O3 -Wall'
+env["CXXFLAGS"] = '-O3 -Wall'
 env["ARCH"] = os.uname()[-1]
 env["BUILDDIR"] = '.build/%s'% env["ARCH"]
 env.BuildDir (env["BUILDDIR"], '.', duplicate=0)

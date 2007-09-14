@@ -13,9 +13,6 @@
 
 
 # Import
-import matplotlib.pylab as pylab
-import matplotlib.colors as colors
-
 import dana.core as core
 
 import dana.projection as projection

@@ -30,40 +30,63 @@ using namespace boost::python;
 
 namespace glpython { namespace world { namespace core {
 
-    class Viewport : public glpython::core::Viewport {
-    private:
-        bool button_pressed;
-        bool fixed_size;
-        int width,height;
-        double dx;
-        double dy;
+class Viewport : public glpython::core::Viewport {
+private:
+    bool button_pressed;
+    double dx;
+    double dy;
         
-        public:
-            Viewport (tuple size = make_tuple (1.0f, 1.0f),
-                      tuple position = make_tuple(0.0f, 0.0f),
-                      bool has_border = true,
-                      bool is_ortho = false,
-                      std::string name = "Viewport");
+public:
+    Viewport (tuple size = make_tuple (1.0f, 1.0f),
+              tuple position = make_tuple(0.0f, 0.0f),
+              bool has_border = true,
+              bool is_ortho = false,
+              std::string name = "Viewport");
 
-            virtual ~Viewport (void);
+    virtual ~Viewport (void);
 
-            // Save
-            void save(char * filename);
+    // Save
+    virtual void save(char * filename, int width, int height);
             
-            // Events methods
-            virtual void   key_press_event (std::string key);
-            virtual void   pointer_motion_event (int x, int y);
+    // Events methods
+    virtual void   key_press_event (std::string key);
+    virtual void   pointer_motion_event (int x, int y);
 
-            // Overload for test
-            virtual void render();
-            virtual void   button_press_event (int button, int x, int y);
-            virtual void   button_release_event (int button, int x, int y);
+    // Overload for test
+    virtual void render();
+    virtual void   button_press_event (int button, int x, int y);
+    virtual void   button_release_event (int button, int x, int y);
 
-            // Overloaded to consider fixed size viewport
-            virtual void resize_event (int x, int y, int w, int h);
+    static void    python_export (void);
+};
 
-            static void    python_export (void);
-    };
+// ______________________________________________________________ViewportWrapper
+
+class ViewportWrapper:  public Viewport, public boost::python::wrapper<Viewport> {
+public:
+    
+    ViewportWrapper (tuple size=make_tuple (1.0f,1.0f),
+                     tuple position= make_tuple (0.0f,0.0f),
+                     bool has_border= true,
+                     bool is_ortho= false,
+                     std::string name= "Viewport") : Viewport(size,position,has_border,is_ortho,name) {};
+    
+    void save (char * filename, int width, int height)
+    {
+        if (boost::python::override save = this->get_override("save")) {
+            save (filename, width, height);
+            return;
+        }
+        Viewport::save(filename, width, height);
+    }
+    void default_save (char * filename, int width, int height)
+    {
+        this->Viewport::save(filename, width, height);
+    }
+};   
+
+
+
 }}}
 
 

@@ -34,7 +34,7 @@ Robot::Robot (std::string name) : glpython::core::Object (name)
 
     VectorsFromAngles();
 
-    view = glpython::core::ViewportPtr (new Viewport());
+    view = glpython::core::ViewportPtr (new ViewportWrapper());
     Observer * obs = dynamic_cast< world::core::Observer *>((view->observer).get());
     
     obs->allow_movement = false;
@@ -174,6 +174,13 @@ Robot::rotateCamera (float dtheta, float dphi) {
     obs->rotate(dtheta,dphi);
 }
 
+//________________________________________________________________________rotate
+void
+Robot::centerCamera () {
+    Observer * obs = dynamic_cast< world::core::Observer *>((view->observer).get());
+    obs->center();
+}
+
 //_____________________________________________________________VectorsFromAngles
 void
 Robot::VectorsFromAngles(void) {
@@ -197,12 +204,12 @@ Robot::VectorsFromAngles(void) {
 }
 
 //__________________________________________________________________________grab
-void
-Robot::grab (char * filename)
-{
-    Viewport * vport = dynamic_cast< world::core::Viewport *>(view.get());
-    vport->save(filename);
-}
+// void
+// Robot::grab (char * filename)
+// {
+//     Viewport * vport = dynamic_cast< world::core::Viewport *>(view.get());
+//     vport->save(filename);
+// }
 
 //________________________________________________________________________append
 void
@@ -224,7 +231,8 @@ Robot::python_export (void) {
         .def("move",&Robot::move,"move(forward/backaward ,left/rigth ,up/down) : \n")
         .def("rotate",&Robot::rotate,"rotate(pan,tilt) : Rotate the robot and the camera\n")
         .def("rotateCamera",&Robot::rotateCamera,"rotateCamera(pan,tilt) : rotate the camera only\n")
+        .def("centerCamera",&Robot::centerCamera,"Center the camera at the original position \n")
         .def("append",&Robot::append,"Append(obj) append an object to the viewport\n")
-        .def("grab",&Robot::grab,"Grab(filename) grab an image and save it to filename\n")
+        //.def("grab",&Robot::grab,"Grab(filename) grab an image and save it to filename\n")
         ;       
 }

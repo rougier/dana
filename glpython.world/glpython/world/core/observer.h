@@ -54,6 +54,7 @@ namespace glpython { namespace world { namespace core {
         
         // Input Control commands
         void rotate(float dtheta, float dphi);
+        void center();
         void VectorsFromAngles(void);
 
         virtual void pointer_motion_event (float x, float y);

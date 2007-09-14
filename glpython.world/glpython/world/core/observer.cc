@@ -199,6 +199,15 @@ Observer::rotate (float dtheta, float dphi) {
     VectorsFromAngles();
 }
 
+//________________________________________________________________________center
+void
+Observer::center () {
+    theta = 180;
+    phi = 0;
+    
+    VectorsFromAngles();
+}
+
 //_____________________________________________________________VectorsFromAngles
 void
 Observer::VectorsFromAngles(void) {
