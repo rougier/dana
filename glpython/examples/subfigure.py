@@ -29,7 +29,6 @@ fig1.smooth_surface (Z, cmap=CM_Hot)
 fig1.colorbar (position = (.1,.1), cmap=CM_Hot)
 fig1.text (text='main figure', position = (.5,.1))
 
-
 BG_cmap = Colormap()
 BG_cmap.append (0, (1,1,1,1))
 BG_cmap.append (1, (0,0,0,1))

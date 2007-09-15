@@ -11,6 +11,7 @@
 
 from glpython import *
 win, fig = window (size = (657,410), has_terminal=True)
+fig.has_border = True
 win.show()
 
 
