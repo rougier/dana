@@ -139,6 +139,7 @@ bindir  = env["BINDIR"]
 env.Install (datadir, 'glpython/data/sans.ttf')
 env.Install (datadir, 'glpython/data/bold.ttf')
 env.Install (datadir, 'glpython/data/italic.ttf')
+
 env.Install (bindir, 'bin/glpython')
 env.Alias ('install', bindir)
 
@@ -148,8 +149,27 @@ ext_files.append ([os.path.join (datadir, 'bold.ttf'),
                    'glpython/data/bold.ttf'])
 ext_files.append ([os.path.join (datadir, 'italic.ttf'),
                    'glpython/data/italic.ttf'])
+
+ext_files.append ([os.path.join (datadir, 'sans.ttf'),
+                   'glpython/data/sans.ttf'])
+
 ext_files.append ([os.path.join (bindir, 'glpython'),
                    'bin/glpython'])
+
+datadir = os.path.join (env["PYTHONDIR"], 'glpython/objects')
+env.Install (datadir, 'glpython/objects/python-logo.obj')
+env.Install (datadir, 'glpython/objects/python-logo-outer-line.obj')
+env.Install (datadir, 'glpython/objects/python-logo-inner-line.obj')
+env.Install (datadir, 'glpython/objects/python-logo-border-line.obj')
+ext_files.append ([os.path.join (datadir, 'python-logo.obj'),
+                   'glpython/objects/python-logo.obj'])
+ext_files.append ([os.path.join (datadir, 'python-logo-outer-line.obj'),
+                   'glpython/objects/python-logo-outer-line.obj'])
+ext_files.append ([os.path.join (datadir, 'python-logo-inner-line.obj'),
+                   'glpython/objects/python-logo-inner-line.obj'])
+ext_files.append ([os.path.join (datadir, 'python-logo-border-line.obj'),
+                   'glpython/objects/python-logo-border-line.obj'])
+
 
 
 # ______________________________________________________________________Archives
