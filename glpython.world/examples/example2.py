@@ -170,7 +170,7 @@ fig1.append(roger)
 # pointing toward the robot
 d = Disc()
 d.phi = 90
-d.radius = 0.1
+d.radius = 0.3
 d.z = 1.0
 d.color[0] = 1
 d.color[1] = 1
