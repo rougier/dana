@@ -71,7 +71,9 @@ class Figure (Viewport):
         
         has_border -- Whether figure has border or not
         """
-        Viewport.__init__(self,**kwargs)
+
+        Viewport.__init__(self, **kwargs)
+
 
     def set_view (self, theta, phi, zoom):
         """
@@ -512,7 +514,7 @@ class Figure (Viewport):
 
 
 
-def window (size=(800,640), fps = 30.0, has_terminal = False, backend = 'wx',
+def window (size=(800,640), fps = 0, has_terminal = False, backend = 'wx',
             title = 'Figure', figure = None, namespace = {}, layout = 4):
     """
     Create a new window and return a handle to it as well as the
@@ -552,10 +554,10 @@ def window (size=(800,640), fps = 30.0, has_terminal = False, backend = 'wx',
         """
         """
 
-        def __init__ (self, w=800, h=640, title=None, figure=None):
+        def __init__ (self, w=800, h=640, title=None, figure=None, fps=0):
             """
             """
-            base.__init__ (self,w,h,title)
+            base.__init__ (self,w,h,title,fps)
             self.initialized = False
             self.outer_mainloop = False
             if not isinstance (figure, Figure):
@@ -697,7 +699,7 @@ def window (size=(800,640), fps = 30.0, has_terminal = False, backend = 'wx',
     if not title:
         title = "Figure %d" % window_number
     window_number += 1
-    win = Window (w, h, title, figure)
+    win = Window (w, h, title, figure, fps)
     if has_terminal:
         namespace['window'] = win
         namespace['figure'] = win.figure

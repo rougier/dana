@@ -170,10 +170,10 @@ Viewport::render (void)
 
     glViewport (geometry[0], geometry[1], geometry[2], geometry[3]);
     glEnable (GL_SCISSOR_TEST);
-    //    if (!has_border)
-    glScissor (geometry[0], geometry[1], geometry[2], geometry[3]);
-    //    else
-    //        glScissor (geometry[0]+1, geometry[1]+1, geometry[2]-2, geometry[3]-2);    
+    if (!has_border)
+        glScissor (geometry[0], geometry[1], geometry[2], geometry[3]);
+    else
+        glScissor (geometry[0]+1, geometry[1]+1, geometry[2]-1, geometry[3]-1);    
     glClear (GL_DEPTH_BUFFER_BIT);
     glEnable (GL_DEPTH_TEST);
 
@@ -236,24 +236,26 @@ Viewport::render (void)
 
     glDisable (GL_LIGHTING);
     glDisable (GL_DEPTH_TEST);
+    /*
     if ((has_focus) && (!child_has_focus)) {
         glEnable (GL_LINE_STIPPLE);
         glLineStipple (1, 0xF0F0);
     } else {
         glDisable (GL_LINE_STIPPLE);
     }
+    */
     glColor4f (0,0,0,1);
     glBegin (GL_LINE_LOOP);
-    glVertex2i (1, 1);
-    glVertex2i (geometry[2], 1);
-    glVertex2i (geometry[2], geometry[3]);
-    glVertex2i (1, geometry[3]);        
+    glVertex2i (0, 0);
+    glVertex2i (geometry[2]-1, 0);
+    glVertex2i (geometry[2]-1, geometry[3]-1);
+    glVertex2i (0, geometry[3]-1);        
     glEnd();
     // HACK: Missing pixel on upper right corner for some unknown reason
     if (!has_focus) {
         glBegin (GL_LINES);
-        glVertex2i (geometry[2], geometry[3]);
-        glVertex2i (0, geometry[3]);
+        glVertex2i (geometry[2]-1, geometry[3]-1);
+        glVertex2i (0, geometry[3]-1);
         glEnd();
     }
 
