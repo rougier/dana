@@ -165,9 +165,7 @@ Viewport::render (void)
     GLint mode;
     glGetIntegerv (GL_RENDER_MODE, &mode);
 
-
     glPushAttrib (GL_ENABLE_BIT | GL_VIEWPORT_BIT);
-
     glViewport (geometry[0], geometry[1], geometry[2], geometry[3]);
     glEnable (GL_SCISSOR_TEST);
     if (!has_border)
@@ -177,6 +175,7 @@ Viewport::render (void)
     glClear (GL_DEPTH_BUFFER_BIT);
     glEnable (GL_DEPTH_TEST);
 
+        
     // Regular objects
     observer->push();
     for (unsigned int i=0; i<objects.size(); i++) {

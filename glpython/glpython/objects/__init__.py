@@ -80,9 +80,10 @@ class Logo (glpython.core.Object):
         self.dlist = GL.glGenLists (1)
         GL.glNewList (self.dlist, GL.GL_COMPILE)
         
-        GL.glLineWidth (2.0)
+        GL.glLineWidth (1.0)
         GL.glPushMatrix()
 
+        GL.glDisable(GL.GL_BLEND)
         GL.glTranslatef (-2,0,-2)
         GL.glPolygonOffset (1,1)
         GL.glEnable (GL.GL_POLYGON_OFFSET_FILL)
