@@ -439,6 +439,7 @@ class Figure (Viewport):
         viewport = GL.glGetIntegerv (GL.GL_VIEWPORT)
 
         _x,_y,_w,_h = self.geometry
+
         size = (int(self.geometry[2]*zoom), int(self.geometry[3]*zoom))
         w,h = size[0], size[1]
         size = (w,h)
@@ -484,9 +485,13 @@ class Figure (Viewport):
         GL.glViewport (0, 0, w,h)
         GL.glClearColor (1,1,1,1)
         GL.glClear (GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
-        self.resize_event (0,0, w,h)
-        GL.glViewport (0, 0, w,h)
+
+        saved_size = self.size
+        self.size = (w,h)
+        #self.resize_event (0,0, w,h)
+        GL.glViewport (0, 0, w, h)
         self.render ()
+        self.size = saved_size
         
         data = GL.glReadPixels (0, 0, w, h, GL.GL_RGB,  GL.GL_UNSIGNED_BYTE)
         image.fromstring (data)
