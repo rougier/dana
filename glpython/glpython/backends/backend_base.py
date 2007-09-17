@@ -23,7 +23,7 @@ import time
 class Window:
     """ Abstraction of a window with a double buffer RGBA OpenGL context"""
     
-    def __init__(self, w=800, h=600, title='OpenGL window'):
+    def __init__(self, w=800, h=600, title='OpenGL window', fps=0.0):
         """ Window creation centered on screen. """
         
         self.fullscreened = False
@@ -32,6 +32,11 @@ class Window:
         self.title = title
         self.frames = 0
         self.t_start = 0
+        self.fps = fps
+        if fps:
+            self.delay = int(1000.0/float(self.fps))
+        else:
+            self.delay = 0
 
     def key_press (self, key):
         """ Key press accepts only one parameter describing the complete
@@ -107,7 +112,7 @@ class Window:
         """ Flush OpenGL context """
         return True
 
-    def paint (self):
+    def paint (self, *args, **kwargs):
         """ Paint window """
 
         if not self.context_on ():
@@ -124,6 +129,8 @@ class Window:
         if not self.initialized:
             self.init()
             self.initialized = True
+            self.context_off ()
+            return
         self.render ()
         self.context_off ()
         

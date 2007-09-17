@@ -20,10 +20,10 @@ import backend_base as base
 class Window (base.Window):
     """ WX backend """
     
-    def __init__(self, w=800, h=600, title='WX OpenGL window'):
+    def __init__(self, w=800, h=600, title='WX OpenGL window', fps=0):
         """ Window creation at given size, centered on screen. """
         
-        base.Window.__init__ (self, w, h, title)
+        base.Window.__init__ (self, w, h, title, fps)
         self.app = wx.App(False)
         self.frame = wx.Frame (None,-1,title, wx.DefaultPosition,wx.Size(w, h))
         self.frame.CenterOnScreen()
@@ -45,7 +45,9 @@ class Window (base.Window):
         self.canvas.Bind (wx.EVT_RIGHT_UP, self.button_release_event)
         self.canvas.Bind (wx.EVT_MOTION, self.mouse_motion_event)
         self.canvas.Bind (wx.EVT_MOUSEWHEEL, self.mouse_wheel_event)
+        self.canvas.Bind (wx.EVT_PAINT, self.paint)
         self.width, self.height = w,h
+        self.timer = None
 
 
     def close_event (self, event):
@@ -153,6 +155,13 @@ class Window (base.Window):
             self.resize (size.width, size.height)
             self.paint()
 
+    def timeout_event (self):
+        """ Timeout function """
+        
+        self.paint ()
+        if self.delay and self.timer:
+            self.timer.Restart (self.delay)
+
     def set_title (self, title):    
         """ Set window title """
 
@@ -196,6 +205,8 @@ class Window (base.Window):
 
         self.frame.Show ()
         self.canvas.SetFocus()
+        if self.delay:
+            self.timer = wx.CallLater (self.delay, self.timeout_event)
         self.resize_event ()
         
         if self.external_event_loop:
@@ -211,6 +222,8 @@ class Window (base.Window):
     def hide (self):
         """ Hide window """
 
+        if self.timer:
+            self.timer.Stop()
         base.Window.hide(self)
         self.frame.Hide ()
 

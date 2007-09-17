@@ -21,10 +21,10 @@ import backend_base as base
 class Window (base.Window):
     """ GTK window with an OpenGL context """
     
-    def __init__(self, w=800, h=600, title='GTK OpenGL window'):
+    def __init__(self, w=800, h=600, title='GTK OpenGL window', fps=0):
         """ Window creation centered on screen. """
         
-        base.Window.__init__(self, w, h, title)
+        base.Window.__init__(self, w, h, title,fps)
         self.window = gtk.Window()
         self.window.set_position (gtk.WIN_POS_CENTER)
         self.window.set_title (title)
@@ -36,6 +36,7 @@ class Window (base.Window):
         glconfig = gtk.gdkgl.Config (attrib_list)
         self.glarea = gtk.gtkgl.DrawingArea (glconfig)
         self.glarea.connect ('configure_event', self.resize_event)
+        self.window.connect ('expose_event', self.expose_event)
         self.glarea.connect ('motion_notify_event', self.mouse_motion_event)
         self.glarea.connect ('scroll_event', self.scroll_event)        
         self.glarea.connect ('button_press_event', self.button_press_event)
@@ -49,6 +50,7 @@ class Window (base.Window):
                                 | gtk.gdk.POINTER_MOTION_HINT_MASK)
         self.window.add (self.glarea)
         self.width, self.height = w,h
+        self.timeout_id = 0
         self.window.realize()
 
 
@@ -171,6 +173,14 @@ class Window (base.Window):
         self.paint()
         return True
 
+    def timeout_event (self):
+        """ Timeout function """
+        
+        self.paint ()
+        if self.delay:
+            return True
+        return False
+
 
     def set_title (self, title):    
         """ Set window title """
@@ -221,6 +231,11 @@ class Window (base.Window):
     def show (self):
         """ Show window and run event loop """
         
+        if self.timeout_id:
+            gobject.source_remove (self.timeout_id)
+        if self.delay:
+            self.timeout_id = gobject.timeout_add (self.delay,
+                                                   self.timeout_event)
         self.window.show_all()
         self.resize_event ()
         
@@ -236,7 +251,9 @@ class Window (base.Window):
 
     def hide (self):
         """ Hide window """
-
+        if self.timeout_id:
+            gobject.source_remove (self.timeout_id)
+            self.timeout_id = 0
         base.Window.hide(self)
         self.window.hide()
 

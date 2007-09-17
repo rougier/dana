@@ -21,10 +21,10 @@ import backend_base as base
 class Window (base.Window):
     """ SDL window with an OpenGL context """
     
-    def __init__(self, w=800, h=600, title='SDL OpenGL window'):
+    def __init__(self, w=800, h=600, title='SDL OpenGL window', fps=0):
         """ Window creation at given size, centered on screen. """
         
-        base.Window.__init__(self, w, h, title)
+        base.Window.__init__(self, w, h, title, fps)
         os.environ['SDL_VIDEO_CENTERED'] = '1'
         pygame.init()
         pygame.key.set_repeat (500, 50)
@@ -153,7 +153,10 @@ class Window (base.Window):
         first_pass = True
         while not self.done:
             while 1:
-                event = pygame.event.poll()
+                if self.delay:
+                    event = pygame.event.poll()
+                else:
+                    event = pygame.event.wait()
                 if event.type == NOEVENT:
                     break
                 elif event.type == KEYDOWN:
@@ -166,11 +169,15 @@ class Window (base.Window):
                     self.mouse_motion_event (event)
                 elif event.type == QUIT:
                     self.done = True
-            elapsed = time.time() - t
-            if elapsed > 100.0/1000.0 or first_pass:
+            if self.delay:
+                elapsed = time.time() - t
+                if elapsed > self.delay/1000.0 or first_pass:
+                    self.paint()
+                    first_pass = False
+                t = time.time()
+            else:
                 self.paint()
                 first_pass = False
-            t = time.time()
 
 
     def hide (self):
