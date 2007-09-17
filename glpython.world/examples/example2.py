@@ -96,7 +96,7 @@ def init():
 
 def read():
     global sal
-    roger.grab("source.ppm")
+    roger.grab("source.ppm",320,240)
     sal.read("source.ppm",'ppm')
     clamp()
 
