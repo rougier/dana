@@ -41,12 +41,17 @@ opts.Add('INCLUDEDIR',
 opts.Add('PYTHONDIR',
          'python files', '%s/lib/python%s/site-packages' % (default_prefix,
                                                             pyversion))
+opts.Add('CPPPATH',
+         'compiler include path', os.getenv('CPPPATH', '').split(':'))
 opts.Add('LIBPATH',
-         'linker library path', os.getenv('LIBPATH', ''))
+         'linker library path', os.getenv('LIBPATH', '').split(':'))
 opts.Add('CPPFLAGS',
          'C/C++/Objective C preprocessor flags', os.getenv('CPPFLAGS', ''))
 opts.Add('CFLAGS',
-         'C compiler flags', os.getenv('CPPFLAGS', '-O3 -Wall'))
+         'C compiler flags', os.getenv('CFLAGS', '-O3 -Wall'))
+opts.Add('CXXFLAGS',
+         'C++ compiler flags', os.getenv('CXXFLAGS', '-O3 -Wall'))
+opts.Add('LIBS', 'linker libraries', '')
                                                  
 env = Environment(CACHEDIR='.cache', options = opts)
 env['VERBOSE'] = verbose
@@ -58,24 +63,23 @@ opts.Save (opts_filename, env)
 
 # _________________________________________________________________Configuration
 
-def failed ():
-    print "Configuration stage failed"
-    sys.exit (-1)
-
 conf = Configure(env, conf_dir=env['CACHEDIR'],
                  log_file=env['CACHEDIR']+'/config.log')
 conf.env.Append (CPPPATH = [distutils.sysconfig.get_python_inc()])
 if not conf.CheckLibWithHeader ('python' + pyversion, 'Python.h', 'c'):
-    failed()
+    sys.exit (1)
 if not conf.CheckLibWithHeader ('boost_python', 'boost/python.hpp', 'c++'):
-    failed()
+    sys.exit (1)
 conf.env.Append (LIBS = 'boost_python')
-if not conf.CheckLibWithHeader ('boost_thread', 'boost/python.hpp', 'c++'):
-    failed()
-conf.env.Append (LIBS = 'boost_thread')
+#if not conf.CheckLibWithHeader ('boost_thread', 'boost/python.hpp', 'c++'):
+#    failed()
+#conf.env.Append (LIBS = 'boost_thread')
 
-CheckLibrary (env, ['libxml-2.0','mirage'])
-CheckModule (env, ['numpy'])
+
+libs = CheckLibrary (env, ['libxml-2.0','mirage'])
+mods = CheckModule (env, ['numpy'])
+if not (libs and mods):
+    sys.exit(1)
 import numpy
 conf.env.Append (CPPPATH = numpy.get_include())
 env = conf.Finish()
@@ -85,7 +89,7 @@ env = conf.Finish()
 
 env.Append (BUILDERS = {'Archive'  : archive_builder})
 env.Append (BUILDERS = {'Package'  : package_builder})
-env["CFLAGS"] = '-O3 -Wall'
+env["CXXFLAGS"] = '-O3 -Wall'
 env["ARCH"] = os.uname()[-1]
 env["BUILDDIR"] = '.build/%s'% env["ARCH"]
 env.BuildDir (env["BUILDDIR"], '.', duplicate=0)
@@ -100,8 +104,9 @@ if 'info' in COMMAND_LINE_TARGETS:
     print
     print '  CC:         %s' % env['CC']
     print '  CXX:        %s' % env['CXX']
-    print '  CPPLAGS:    %s' % env['CPPFLAGS']
     print '  CFLAGS:     %s' % env['CFLAGS']
+    print '  CXXFLAGS:   %s' % env['CXXFLAGS']
+    print '  CPPPATH:    %s' % env['CPPPATH']
     print '  LIBPATH:    %s' % env['LIBPATH']
     print '  LIBS:       %s' % env['LIBS']
     print '  BUILDDIR:   %s' % env['BUILDDIR']
@@ -129,7 +134,7 @@ for ext in exts:
 
 # ______________________________________________________________________Archives
 
-name = 'dana.core'
+name = 'dana.image'
 version = os.popen('svnversion .').read()[:-1]
 version = 'svn' + version.split(':')[-1]
 fullname = '%s-%s' % (name, version)
@@ -147,7 +152,12 @@ env.Alias ('dist-zip', env.Archive ('%s.zip' % fullname, archive_files))
 
 # _______________________________________________________________________Package
 
-desc = """Dana.image description
+desc = """Distributed Aysnchronous Numerical Adaptive computational library
+ DANA is a multi-platform C++/Python library for distributed asynchronous
+ numerical and adaptive computation. The computational paradigm supporting
+ the library is grounded on the notion of a unit that is essentially a
+ potential that can vary along time under the influence of other units and
+ learning.
 """
 
 pkg = env.Package(
@@ -160,7 +170,7 @@ pkg = env.Package(
                 'Maintainer': 'Nicolas P. Rougier',
                 'Architecture': env['ARCH'],
                 'Version': version,
-                'Depends': 'libboost-python-dev, python2.5-dev, libxml2-dev, mirage',
+                'Depends': 'libboost-python-dev, python2.5-dev, libxml2-dev',
                 'Description': desc}
     )
 for module in ext_modules:

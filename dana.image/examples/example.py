@@ -23,9 +23,6 @@
 
 
 # Import
-import matplotlib.pylab as pylab
-import matplotlib.colors as colors
-
 import dana.core as core
 
 import dana.projection as projection
@@ -38,13 +35,9 @@ from glpython.core import *
 from glpython import window
 from glpython.objects import *
 from dana.visualization.glpython import Figure
-from dana.gui.gtk import ControlPanel
 
 import time, random, math
 import gobject, gtk
-
-#from glpython.window import window as glwindow
-#from dana.gl.network import View
 
 from dana.image import *
 
@@ -114,7 +107,6 @@ def clear(m):
     for u in m[0]:
         u.potential = 0.0
 
-control = ControlPanel (model)
 fig = Figure()
 win,fig = window (figure=fig,has_terminal=True,namespace=locals())
 fnet = fig.network (net, title='Dana.image sample script',show_label=False)

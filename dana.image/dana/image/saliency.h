@@ -22,6 +22,7 @@
 #define __DANA_IMAGE_SALIENCY_H__
 
 #include <boost/python.hpp>
+#include <boost/tuple/tuple.hpp>
 #include "mirage.h"
 
 
@@ -52,6 +53,10 @@ namespace dana {
                 // Is the image buffer loaded ?
                 bool image_loaded;
 
+                // Size of the source image
+                int width;
+                int height;
+                
                 ///// For the image processing part
                 // Private fields
                 ImageRGB24 source;

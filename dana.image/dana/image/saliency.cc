@@ -54,6 +54,8 @@ Saliency::Saliency()
 	verbose = false;
     comp_save = false;
     image_loaded = false;
+    height = 0;
+    width = 0;
 }
 
 Saliency::Saliency(bool color, bool orientation, bool save=false,bool verb=false)
@@ -66,6 +68,8 @@ Saliency::Saliency(bool color, bool orientation, bool save=false,bool verb=false
     verbose = verb;
 	comp_sal = true;
     image_loaded = false;
+    height = 0;
+    width = 0;
 }
 
 Saliency::~Saliency(void)
@@ -173,8 +177,9 @@ void Saliency::read(char * img_filename, char * type)
             printf("Unrecognized file type, valid types are \"jpg\" and \"ppm\" \n");
             return;
         }
-    
     image_loaded = true;
+    width = source._dimension[0];
+    height = source._dimension[1];
 }
 
 void Saliency::process_color(void)
@@ -874,7 +879,7 @@ void Saliency::clamp(void)
  
             // The saliency maps are scaled when they are computed 
             // TODO: but when the tmp_image is rescaled, the values can exceed from the range [0; 1.0] ?
-            // Scale<ImageDouble, ImageDouble>(tmp_image,tmp_image,1.0);
+            //Scale<ImageDouble, ImageDouble>(tmp_image,tmp_image,1.0);
 
             // And clamp the result in the layer
             ImageDouble::pixel_type sal_pxl,sal_pxl_end;
@@ -922,5 +927,7 @@ Saliency::boost (void) {
              "Associates a layer to a channel. Use print_channels to display the possible channels\n")
         .def("clamp",&Saliency::clamp,
              "Clamp the results of the image processing in the previously specified maps\n")
+        .def_readonly("width",&Saliency::width,"Width of the source image\n")
+        .def_readonly("height",&Saliency::height,"Height of the source image\n")
         ;
 }

@@ -61,8 +61,8 @@ public:
 	inline void operator()(typename SOURCE::value_type& rgb,
                            typename RESULT::value_type& gray)
     {
-        //gray = (typename RESULT::value_type) (0.33*rgb._red+0.33*rgb._green+0.33*rgb._blue);
-        gray = (typename RESULT::value_type) (0.212671*rgb._red+0.715160*rgb._green+0.072169*rgb._blue);
+        gray = (typename RESULT::value_type) (0.33*rgb._red+0.33*rgb._green+0.33*rgb._blue);
+        //gray = (typename RESULT::value_type) (0.212671*rgb._red+0.715160*rgb._green+0.072169*rgb._blue);
     }    
 };
 
