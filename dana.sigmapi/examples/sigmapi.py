@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-import matplotlib.pylab as pylab
-import matplotlib.colors as colors
-
 import dana.core as core
 import dana.cnft as cnft
 import dana.sigmapi as sigmapi
@@ -20,11 +17,7 @@ from glpython import window as glwindow
 from glpython.core import CM_Fire
 from dana.visualization.glpython import Figure
 
-import time, random, math
-import gobject, gtk
-
-gobject.threads_init()
-
+import math, random
 
 print "------------------------------------------------------------------------"
 print "Sigmapi Test : Computation of the convolution product between two inputs"
@@ -32,7 +25,7 @@ print ""
 print "Author:    Jeremy Fix"
 print "Date:      13-12-2006"
 print "------------------------------------------------------------------------"
-print ""
+print "Init the input with step_init(nb_stim) and evaluate it with step(radius)"
 
 
 # Create a new network
@@ -90,18 +83,14 @@ p1.connect();
 
 # Tools
 
-def updatefig(*args):
-    view.update()
-    return True
-
 def clamp(map,x0,y0,r):
     for u in map[0]:
 	u.potential = u.potential +math.exp(-float((u.position[0]-x0)*(u.position[0]-x0)+(u.position[1]-y0)*(u.position[1]-y0))/float(r*r))
     return True
 
 def clear(map):
-	for u in map[0]:
-		u.potential = 0
+    for u in map[0]:
+        u.potential = 0
 
 is_run = 0
 dtheta = math.pi/10.0
@@ -110,48 +99,25 @@ epochs = 20
 is_init = 0
 
 def step_init(nb):
-	global is_init
-	clear(Input)
-	is_init = 1
-	for i in range(nb):
-		x0 = random.randint(0,width)
-		y0 = random.randint(0,height)
-		clamp(Input,x0,y0,4)
-	
+    global is_init
+    clear(Input)
+    is_init = 1
+    for i in range(nb):
+        x0 = random.randint(0,width)
+        y0 = random.randint(0,height)
+        clamp(Input,x0,y0,4)
+            
 def step(radius):
-	global is_init
-	if(is_init==0):
-		print "Don't forget to run step_init before running step"
-	global dtheta,theta,epochs
-	theta+= dtheta
-	x1 = width/2.0+radius*math.cos(theta)
-	y1 = height/2.0+radius*math.sin(theta)
-	clear(Input2)
-	clamp(Input2,x1,y1,4)
-	model.evaluate(epochs)
-	
-def net_init(widget,data=None):
-	step_init(4)	
-	
-def net_step(widget,data=None):
-	step(width/4.0)
-
-window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-window.set_border_width(12)
-vbox = gtk.VBox(True, 6)
-
-init_button = gtk.Button("Init")
-init_button.connect("clicked",net_init)
-vbox.add(init_button)
-
-step_button = gtk.Button("Step")
-step_button.connect("clicked",net_step)
-vbox.add(step_button)
-
-window.add (vbox)
-window.show_all()	
-
-
+    global is_init,dtheta,theta,epochs
+    if(is_init==0):
+        print "Don't forget to run step_init before running step"
+    theta+= dtheta
+    x1 = width/2.0+radius*math.cos(theta)
+    y1 = height/2.0+radius*math.sin(theta)
+    clear(Input2)
+    clamp(Input2,x1,y1,4)
+    model.evaluate(epochs)
+    
 # Show network
 fig = Figure()
 win,fig = glwindow (size=(800,600), title = "Sigmapi sample",has_terminal=True,namespace=locals(),figure=fig)

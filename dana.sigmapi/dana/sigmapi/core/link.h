@@ -58,7 +58,7 @@ LinkType;
 class Link : public dana::core::Link
 {
 public:
-    std::vector<dana::core::UnitPtr> source;
+    std::vector<dana::core::UnitPtr> sources;
     LinkType type;
 
 public:

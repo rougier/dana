@@ -31,7 +31,7 @@ Link::~Link (void)
 dana::core::UnitPtr
 Link::get_source (const int i) const
 {
-    return source[i];
+    return sources[i];
 }
 
 //
@@ -39,7 +39,7 @@ Link::get_source (const int i) const
 void
 Link::add_source (dana::core::UnitPtr src)
 {
-    source.push_back(src);
+    sources.push_back(src);
 }
 
 //
@@ -52,18 +52,18 @@ Link::compute(void)
     {
     case SIGMAPI_MAX:
         {
-            for(int i = 0 ; i < source.size() ; i ++)
+            for(int i = 0 ; i < sources.size() ; i ++)
             {
-                value = MAX(value, source[i]->potential);
+                value = MAX(value, sources[i]->potential);
             }
             break;
         }
     case SIGMAPI_PROD:
         {
             value = 1.0;
-            for(int i = 0 ; i < source.size(); i++)
+            for(int i = 0 ; i < sources.size(); i++)
             {
-                value *= source[i]->potential;
+                value *= sources[i]->potential;
             }
             value*= weight;
             break;

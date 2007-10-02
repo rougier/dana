@@ -22,6 +22,7 @@ namespace sigmapi
 {
 namespace core
 {
+
 // Unit class
 class Unit : public dana::core::Unit
 {
@@ -46,7 +47,7 @@ public:
     // Get the computed input of the neuron (lateral + afferent)
     float get_input(void) { return input;};
     //virtual int count_connections(void);
-    
+    virtual std::map<std::string, double> writeGraph(std::ofstream& file);
     // convenient methods
     // =================================================================
     virtual object      get_weights  (const dana::core::LayerPtr layer); 
