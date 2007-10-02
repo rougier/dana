@@ -65,21 +65,21 @@ int
 Layer::is_source(core::LayerPtr src_layer, int &type)
 {
     for(unsigned int i = 0 ; i < sources_shared.size() ; i++)
+    {
+        if(sources_shared[i] == src_layer)
         {
-            if(sources_shared[i] == src_layer)
-                {
-                    type = SVD_SHARED_LINKS;
-                    return i;
-                }
-        }    
+            type = SVD_SHARED_LINKS;
+            return i;
+        }
+    }    
     for(unsigned int i = 0 ; i < sources_svd.size() ; i++)
+    {
+        if(sources_svd[i] == src_layer)
         {
-            if(sources_svd[i] == src_layer)
-                {
-                    type = SVD_SVD_LINKS;
-                    return i;
-                }   
-        }       
+            type = SVD_SVD_LINKS;
+            return i;
+        }   
+    }       
     type = SVD_CORE_LINKS;
     return -1;
 }
@@ -117,25 +117,25 @@ gsl_matrix *
 Layer::get_kernel(int index_src, int type)
 {
     switch(type)
+    {
+    case SVD_CORE_LINKS:
         {
-        case SVD_CORE_LINKS:
-            {
-                printf("[ERROR] Layer::get_kernel :  Cannot access to kernel for linktype SVD_CORE_LINKS\n");
-            }
-            break;
-        case SVD_SHARED_LINKS:
-            {
-                return kernels_shared[index_src];
-            }
-            break;
-        case SVD_SVD_LINKS:
-            {
-                return kernels_svd[index_src];
-            }
-            break;
-        default:
-            printf("[ERROR] Layer::get_kernel : Unrecognized link type  \n");
+            printf("[ERROR] Layer::get_kernel :  Cannot access to kernel for linktype SVD_CORE_LINKS\n");
         }
+        break;
+    case SVD_SHARED_LINKS:
+        {
+            return kernels_shared[index_src];
+        }
+        break;
+    case SVD_SVD_LINKS:
+        {
+            return kernels_svd[index_src];
+        }
+        break;
+    default:
+        printf("[ERROR] Layer::get_kernel : Unrecognized link type  \n");
+    }
     return 0;
 }
 
@@ -158,37 +158,35 @@ Layer::compute_dp (void)
     // First pass, performed only for svd links
 
     for(unsigned int i = 0 ; i < sources_svd.size() ; i ++)
-        {
-            core::LayerPtr src = sources_svd[i];
-            U = vU[i];
-            S = vS[i];
-            V = vV[i];
+    {
+        core::LayerPtr src = sources_svd[i];
+        U = vU[i];
+        S = vS[i];
+        V = vV[i];
             
-            h_src = src->get_map()->height;
-            w_src = src->get_map()->width;
-            h_filt = U->size1;
+        h_src = src->get_map()->height;
+        w_src = src->get_map()->width;
+        h_filt = U->size1;
             
-            conv_horiz = gsl_vector_alloc(U->size1); 
-            for(int r = 0 ; r < int((v_tmp_svd[i])->size()) ; r++)
-                {
-                    dst_1D_tmp = (*(v_tmp_svd[i]))[r];
-                    gsl_matrix_set_zero(dst_1D_tmp);
-                    gsl_matrix_get_col(conv_horiz,U,r);
-                    eigen_value = gsl_vector_get(S,r);
+        conv_horiz = gsl_vector_alloc(U->size1); 
+        for(int r = 0 ; r < int((v_tmp_svd[i])->size()) ; r++)  {
+            dst_1D_tmp = (*(v_tmp_svd[i]))[r];
+            gsl_matrix_set_zero(dst_1D_tmp);
+            gsl_matrix_get_col(conv_horiz,U,r);
+            eigen_value = gsl_vector_get(S,r);
                     
-                    for (int j = 0 ; j < h_src ; j++)
-                        for (int k = 0 ; k  < w_src ; k++)
-                            {
-                                temp = 0.0;
-                                int l_min = max(int(h_filt/2.0 - j) , 0);
-                                int l_max = min(h_filt,int(h_src - j + h_filt/2.0));
-                                for(int l = l_min ; l < l_max ; l++)
-                                    temp += src->get(k,int(j+l-h_filt/2.0))->potential * gsl_vector_get(conv_horiz,l);
-                                gsl_matrix_set(dst_1D_tmp,j,k,eigen_value * temp);
-                            }
+            for (int j = 0 ; j < h_src ; j++)
+                for (int k = 0 ; k  < w_src ; k++) {
+                    temp = 0.0;
+                    int l_min = max(int(h_filt/2.0 - j) , 0);
+                    int l_max = min(h_filt,int(h_src - j + h_filt/2.0));
+                    for(int l = l_min ; l < l_max ; l++)
+                        temp += src->get(k,int(j+l-h_filt/2.0))->potential * gsl_vector_get(conv_horiz,l);
+                    gsl_matrix_set(dst_1D_tmp,j,k,eigen_value * temp);
                 }
-            gsl_vector_free(conv_horiz);
         }
+        gsl_vector_free(conv_horiz);
+    }
 
     // Second pass
     for (unsigned int m = 0; m< units.size(); m++) {
@@ -197,35 +195,33 @@ Layer::compute_dp (void)
         int ux = units[index]->get_x();
         int uy = units[index]->get_y();
         for(unsigned int i = 0 ; i < sources_svd.size() ; i++)
-            {
-                // We determine which links are lateral
-                if(sources_svd[i].get() == this)
-                    {
-                        // We then update the matrix of the first pass
-                        U = vU[i];
-                        S = vS[i];
-                        conv_horiz = gsl_vector_alloc(U->size1);
-                        h_src = (sources_svd[i])->get_map()->height;
-                        h_filt = U->size1;
-                        for(int r = 0 ; r < int((v_tmp_svd[i])->size()) ; r++)
-                            {
-                                dst_1D_tmp = (*(v_tmp_svd[i]))[r];
-                                gsl_matrix_get_col(conv_horiz,U,r);
-                                eigen_value = gsl_vector_get(S,r); 
-                                int j_min = max(0, int(uy - h_filt/2.0));
-                                int j_max = min(h_src, int(uy + h_filt/2.0));
-                                for(int j = j_min ; j < j_max ; j++)
-                                    {
-                                        //int l = j + h_filt/2 - uy;
-                                        int l = int(uy + h_filt/2.0 - j);
-                                        float delta = eigen_value * du * gsl_vector_get(conv_horiz,l);
-                                        float old_value = gsl_matrix_get(dst_1D_tmp,j, ux);
-                                        gsl_matrix_set(dst_1D_tmp,j,ux,old_value - delta);
-                                    }                                    
-                            }
-                        gsl_vector_free(conv_horiz);
-                    }
+        {
+            // We determine which links are lateral
+            if(sources_svd[i].get() == this)  {
+                // We then update the matrix of the first pass
+                U = vU[i];
+                S = vS[i];
+                conv_horiz = gsl_vector_alloc(U->size1);
+                h_src = (sources_svd[i])->get_map()->height;
+                h_filt = U->size1;
+                for(int r = 0 ; r < int((v_tmp_svd[i])->size()) ; r++)
+                {
+                    dst_1D_tmp = (*(v_tmp_svd[i]))[r];
+                    gsl_matrix_get_col(conv_horiz,U,r);
+                    eigen_value = gsl_vector_get(S,r); 
+                    int j_min = max(0, int(uy - h_filt/2.0));
+                    int j_max = min(h_src, int(uy + h_filt/2.0));
+                    for(int j = j_min ; j < j_max ; j++) {
+                        //int l = j + h_filt/2 - uy;
+                        int l = int(uy + h_filt/2.0 - j);
+                        float delta = eigen_value * du * gsl_vector_get(conv_horiz,l);
+                        float old_value = gsl_matrix_get(dst_1D_tmp,j, ux);
+                        gsl_matrix_set(dst_1D_tmp,j,ux,old_value - delta);
+                    }                                    
+                }
+                gsl_vector_free(conv_horiz);
             }
+        }
         d += du;
     }
     
@@ -264,9 +260,9 @@ Layer::connect(int rank, gsl_matrix * U, gsl_vector * S, gsl_matrix * V, core::L
     std::vector< gsl_matrix * > * vec_tmp = new std::vector< gsl_matrix *>();
     
     for(int i = 0 ; i < rank ; i++)
-        {
-            vec_tmp->push_back(gsl_matrix_alloc(src->get_map()->height,src->get_map()->width));
-        }
+    {
+        vec_tmp->push_back(gsl_matrix_alloc(src->get_map()->height,src->get_map()->width));
+    }
     
     v_tmp_svd.push_back(vec_tmp);
 
@@ -274,10 +270,10 @@ Layer::connect(int rank, gsl_matrix * U, gsl_vector * S, gsl_matrix * V, core::L
     gsl_vector * temp = gsl_vector_alloc(U->size1);
     vU.push_back(gsl_matrix_alloc(U->size1,rank));
     for(int i = 0 ; i < rank ; i++)
-        {
-            gsl_matrix_get_col(temp,U,i);
-            gsl_matrix_set_col(vU.back(),i,temp);
-        }
+    {
+        gsl_matrix_get_col(temp,U,i);
+        gsl_matrix_set_col(vU.back(),i,temp);
+    }
     
     // Vector S
     vS.push_back(gsl_vector_alloc(S->size));
@@ -287,10 +283,10 @@ Layer::connect(int rank, gsl_matrix * U, gsl_vector * S, gsl_matrix * V, core::L
     temp = gsl_vector_alloc(V->size1);
     vV.push_back(gsl_matrix_alloc(V->size1,rank));
     for(int i = 0 ; i < rank ; i++)
-        {
-            gsl_matrix_get_col(temp,V,i);
-            gsl_matrix_set_col(vV.back(),i,temp);
-        }
+    {
+        gsl_matrix_get_col(temp,V,i);
+        gsl_matrix_set_col(vV.back(),i,temp);
+    }
 
     kernels_svd.push_back(gsl_matrix_alloc(kernel->size1,kernel->size2));
     gsl_matrix_memcpy(kernels_svd.back(),kernel);
@@ -329,7 +325,7 @@ Layer::boost (void)
                                        " Ref : http://en.wikipedia.org/wiki/Singular_value_decomposition      \n"
                                        "======================================================================\n",
                                        init<>(
-                                              "__init__() -- initializes layer\n")
+                                           "__init__() -- initializes layer\n")
                                        )
         .def("clear",&Layer::clear, "clear() : reset the activity of the units in the layer \n")
         //.def ("compute_dp", &Layer::compute_dp,

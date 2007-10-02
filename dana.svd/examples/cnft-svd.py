@@ -19,7 +19,6 @@ import dana.cnft as cnft
 from glpython.core import CM_Fire
 from glpython import window
 from dana.visualization.glpython import Figure
-from dana.gui.gtk import ControlPanel
 
 import dana.svd as svd
 
@@ -125,7 +124,7 @@ for i in xrange(Input.shape[0]):
         y0 = j/float(Input.shape[1])-.25
         x1 = i/float(Input.shape[0])-.75
         y1 = j/float(Input.shape[1])-.75 
-        Input[0].unit(i,j).potential =  + math.exp (-(x0*x0+y0*y0)/(radius*radius)) + math.exp (-(x1*x1+y1*y1)/(radius*radius)) + .15*random.uniform(0.0, 1.0)
+        Input[0].unit(i,j).potential =  + math.exp (-(x0*x0+y0*y0)/(radius*radius)) + math.exp (-(x1*x1+y1*y1)/(radius*radius))# + .15*random.uniform(0.0, 1.0)
         
 
 def evaluate(nb_steps):
@@ -144,6 +143,5 @@ win,fig = window (figure=fig,has_terminal=True,namespace=locals())
 
 fignet = fig.network (net, style = 'flat', title='CNFT Fully connected using SVD')
 fignet.colorbar.cmap = CM_Fire
-control = ControlPanel (model)
 win.show()
 

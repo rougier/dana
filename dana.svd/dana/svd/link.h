@@ -47,7 +47,7 @@ namespace dana { namespace svd {
         void set_kernel(int index,core::LayerPtr src, core::UnitPtr dst);    
         void set_svd(int index,int rank, int kernel_size,core::LayerPtr src,core::UnitPtr dst);
         
-        virtual float   compute ();
+        virtual float compute (void);
         float compute_shared();
         float compute_svd();
         

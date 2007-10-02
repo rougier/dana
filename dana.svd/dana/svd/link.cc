@@ -53,7 +53,6 @@ void Link::set_svd (int index, int rank, int kernel_size,core::LayerPtr src, cor
 float
 Link::compute()
 {
-
     switch(type)
         {
         case SVD_SHARED_LINKS:

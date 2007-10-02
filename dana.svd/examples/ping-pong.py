@@ -19,7 +19,6 @@ import dana.cnft as cnft
 from glpython.core import CM_Fire
 from glpython import window
 from dana.visualization.glpython import Figure
-from dana.gui.gtk import ControlPanel
 
 import dana.svd as svd
 
@@ -163,7 +162,7 @@ for i in xrange(Input.shape[0]):
 
 def evaluate(nb_steps):
     start = time.time()
-    net.evaluate(nb_steps, False)
+    model.evaluate(nb_steps)
     end = time.time()
     print 'Elapsed time : %f second(s)' % (end-start)    
 
@@ -172,5 +171,4 @@ fig = Figure()
 win,fig = window (figure=fig,has_terminal=True,namespace=locals())
 fignet = fig.network (net, style = 'flat', title='Ping pong')
 fignet.colorbar.cmap = CM_Fire
-control = ControlPanel (model)
 win.show()
