@@ -11,11 +11,14 @@
 # $Id$
 #------------------------------------------------------------------------------
 
+# You can navigate in the world freely with the top view (3rd personn view)
+# You can also move the robot in the world using roger.move, roger.rotate,
+# roger.rotateCamera ..
+# To initialize the filters, use init()
+# To grab and filter the image of the camera, use read()
+
 
 # Import
-import matplotlib.pylab as pylab
-import matplotlib.colors as colors
-
 import dana.core as core
 
 import dana.projection as projection
@@ -28,18 +31,11 @@ from glpython.core import *
 from glpython import window
 from glpython.objects import *
 from dana.visualization.glpython import Figure
-from dana.gui.gtk import ControlPanel
-
 import time, random, math
-import gobject, gtk
-
-#from glpython.window import window as glwindow
-#from dana.gl.network import View
 
 from dana.image import *
 
 import numpy
-#from glpython import *
 from glpython.world.core import *
 from glpython.world.objects import *
 
@@ -96,7 +92,7 @@ def init():
 
 def read():
     global sal
-    roger.grab("source.ppm",320,240)
+    roger.grab("source.ppm",640,480)
     sal.read("source.ppm",'ppm')
     clamp()
 
@@ -145,7 +141,6 @@ def key_press_perso (self,key):
         if win.terminal:
             win.terminal.key_press(key)
 
-control = ControlPanel (model)
 fig = Figure()
 win,fig = window (figure=fig,has_terminal=True,namespace=locals())
 win.__class__.key_press = key_press_perso

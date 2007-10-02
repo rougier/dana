@@ -38,9 +38,6 @@
 # If not, the object will only appear in one of the viewports
 
 
-
-
-import numpy
 from glpython import *
 from glpython.world.core import *
 from glpython.world.objects import *
