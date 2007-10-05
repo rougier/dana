@@ -49,7 +49,8 @@ for u in Map[0]:
     u.potential = random.randint (0, 1)
 
 fig = Figure()
-win,fig = window (backend='gtk', figure=fig, has_terminal=True, namespace=locals())
+win,fig = window (backend='gtk', figure=fig, fps = 50,
+                  has_terminal=True, namespace=locals())
 fig.network (net, style='flat', show_colorbar=False)
 fig.text (size=.1, position = (.5, -.05), text="Asynchronouys Game Of Life demo")
 fig.text (size=.05, position = (.5, -.08), text="Nicolas Rougier, 07/2007")
