@@ -21,7 +21,9 @@ BOOST_PYTHON_MODULE(_profile)
     register_ptr_to_python< boost::shared_ptr<Uniform> >();  
     register_ptr_to_python< boost::shared_ptr<Gaussian> >();
     register_ptr_to_python< boost::shared_ptr<DoG> >();
-    
+    docstring_options doc_options;
+    doc_options.disable_signatures();
+
     
     class_<Profile>("Profile",
     "======================================================================\n"

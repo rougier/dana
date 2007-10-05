@@ -23,6 +23,8 @@ BOOST_PYTHON_MODULE(_density)
     register_ptr_to_python< boost::shared_ptr<Full> >();
     register_ptr_to_python< boost::shared_ptr<Sparse> >();
     register_ptr_to_python< boost::shared_ptr<Sparser> >();    
+    docstring_options doc_options;
+    doc_options.disable_signatures();
 
     class_<Density>("Density",
     "======================================================================\n"

@@ -26,9 +26,11 @@
 BOOST_PYTHON_MODULE(_core) {
     using namespace dana::core;
 
+    docstring_options doc_options;
+    doc_options.disable_signatures();
+
     Object::python_export();
     Observable::python_export();
-
     Model::python_export();
     Spec::python_export();
     Environment::python_export();

@@ -23,6 +23,8 @@ BOOST_PYTHON_MODULE(_shape)
     register_ptr_to_python< boost::shared_ptr<Point> >();
     register_ptr_to_python< boost::shared_ptr<Box> >();
     register_ptr_to_python< boost::shared_ptr<Disc> >();    
+    docstring_options doc_options;
+    doc_options.disable_signatures();
 
     
     class_<Shape> ("Shape",

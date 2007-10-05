@@ -494,12 +494,12 @@ public:
     // _______________________________________________________________compute_dp
     float compute_dp (void)
     {
-        //        PyGILState_STATE gstate = PyGILState_Ensure();
+        PyGILState_STATE gstate = PyGILState_Ensure();
         if (py::override compute_dp = this->get_override("compute_dp")) {
-            //            PyGILState_Release(gstate);
+            PyGILState_Release(gstate);
             return compute_dp();
         }
-        //        PyGILState_Release(gstate);
+        PyGILState_Release(gstate);
         return Unit::compute_dp();
     }
     float default_compute_dp() { return this->Unit::compute_dp(); }
@@ -507,12 +507,12 @@ public:
     // _______________________________________________________________compute_dw
     float compute_dw (void)
     {
-        //        PyGILState_STATE gstate = PyGILState_Ensure();
+        PyGILState_STATE gstate = PyGILState_Ensure();
         if (py::override compute_dw = this->get_override("compute_dw")) {
-            //            PyGILState_Release(gstate);
+            PyGILState_Release(gstate);
             return compute_dw();
         }
-        //        PyGILState_Release(gstate);
+        PyGILState_Release(gstate);
         return Unit::compute_dw();
     }
     float default_compute_dw() { return this->Unit::compute_dw(); }

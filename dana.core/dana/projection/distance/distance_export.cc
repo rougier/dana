@@ -22,6 +22,8 @@ BOOST_PYTHON_MODULE(_distance)
     register_ptr_to_python< boost::shared_ptr<Euclidean> >();
     register_ptr_to_python< boost::shared_ptr<Manhattan> >();
     register_ptr_to_python< boost::shared_ptr<Max> >();
+    docstring_options doc_options;
+    doc_options.disable_signatures();
 
 
     class_<Distance> ("Distance",

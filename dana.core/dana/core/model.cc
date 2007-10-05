@@ -62,22 +62,26 @@ Model::clear (void)
 void
 Model::compute_dp (void)
 {
+    Py_BEGIN_ALLOW_THREADS
     using namespace std;
     vector<NetworkPtr>::const_iterator net;
-    for(net=networks.begin(); net != networks.end(); net++){
+    for(net=networks.begin(); net != networks.end(); net++) {
         (*net)->compute_dp();
     }
+    Py_END_ALLOW_THREADS
 }
 
 // ___________________________________________________________________compute_dw
 void
 Model::compute_dw (void)
 {
+    Py_BEGIN_ALLOW_THREADS
     using namespace std;
     vector<NetworkPtr>::const_iterator net;
     for(net=networks.begin(); net != networks.end(); net++){
         (*net)->compute_dw();
     }
+    Py_END_ALLOW_THREADS
 }
 
 // _____________________________________________________________________evaluate
@@ -131,7 +135,7 @@ Model::python_export (void)
     // member function pointers for overloading
     void (Model::*append_net)(NetworkPtr)     = &Model::append;
     void (Model::*append_env)(EnvironmentPtr) = &Model::append;
- 
+
     class_<Model, bases <Object,Observable> >(
         "Model",
         "====================================================================\n"

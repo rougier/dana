@@ -17,7 +17,9 @@ BOOST_PYTHON_MODULE(_projection) {
 
     using namespace boost::python;
     register_ptr_to_python< boost::shared_ptr<Projection> >();
-    
+    docstring_options doc_options;
+    doc_options.disable_signatures();
+
     class_<Projection, bases <core::Object> >
         ("Projection",
     "______________________________________________________________________\n"

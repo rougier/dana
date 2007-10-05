@@ -35,10 +35,13 @@ public:
     
     void notify (EventPtr event)
     {
+        PyGILState_STATE gstate = PyGILState_Ensure();
         if (py::override notify = this->get_override("notify")) {
+            PyGILState_Release(gstate);
             notify (event);
             return;
         }
+        PyGILState_Release(gstate);
         Observer::notify(event);
     }
     void default_notify (EventPtr event)
