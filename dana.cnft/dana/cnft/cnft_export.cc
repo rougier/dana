@@ -6,15 +6,15 @@
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
 
-#include "kunit.h"
 #include "unit.h"
 #include "spec.h"
 #include "environment.h"
 
 BOOST_PYTHON_MODULE(_cnft) {
     using namespace dana::cnft;
+    docstring_options doc_options;
+    doc_options.disable_signatures();
 
-    KUnit::boost();
     Unit::boost();
     Spec::boost();
     Environment::python_export();

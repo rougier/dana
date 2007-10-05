@@ -65,7 +65,7 @@ model.append (env)
 
 # Display the network
 fig = Figure()
-win,fig = window (backend='gtk', figure=fig, has_terminal=True, namespace=locals())
+win,fig = window (backend='gtk', figure=fig, has_terminal=True, namespace=locals(), fps=50)
 fig.network (net, style='flat', show_colorbar=False)
 fig.text (size=.1, position = (.5, -.05), text="Emergence of Attention within a Neural Population")
 fig.text (size=.05, position = (.5, -.085), text="Neural Networks, 19, 5, pp 573-581, June 2006")

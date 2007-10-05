@@ -13,21 +13,16 @@ print "------------------------------------------------------------------------"
 
 # Import
 import dana.core as core
-
 import dana.cnft as cnft
-
 import dana.projection as projection
 import dana.projection.distance as distance
 import dana.projection.density as density
 import dana.projection.shape as shape
 import dana.projection.profile as profile
-
 from glpython import window as glwindow
 from dana.visualization.glpython import Figure
-from dana.gui.gtk import ControlPanel
 
 import time, random, math
-import gobject, gtk
 import numpy
 
 # Create a new network
@@ -245,82 +240,11 @@ striatum_inhib.spec.baseline = -0.5
 
 gpi_inhib.spec.baseline = 1.0
 
-## Tools 
-
-pan2do = 0.0
-tilt2do = 0.0
-radius_stimulus = 4.0
-radius_position = width/4.0
-nb_stim = 0
-
-def clamp(map,x0,y0):
-    global radius
-    for u in map[0]:
-        u.potential = u.potential +math.exp(-float((u.position[0]-x0)*(u.position[0]-x0)+(u.position[1]-y0)*(u.position[1]-y0))/float(radius_stimulus*radius_stimulus))
-
-def clear(map):
-    for u in map[0]:
-        u.potential = 0
-		
-def clear_all():
-    for m in net:
-        clear(m)
-
-## Simulation 
-
-def init(nb):
-    global radius_position
-    clear(visual)
-    for i in range(nb):
-        angle = random.random() * 2.0 * math.pi
-        x0 = width/2.0 + radius_position * math.cos(angle)
-        y0 = height/2.0 + radius_position * math.sin(angle)
-        clamp(visual,x0,y0)
-
-def switch():
-    for u in reward[0]:
-	u.potential = 1.0
-
-def net_init(widget,data=None):
-    init(3)
-
-def net_evaluate(widget,data=None):
-    model.evaluate(1)
-	
-def net_clear(widget,data=None):
-    clear_all()	
-	
-def net_switch(widget,data=None):
-    switch()
-
-window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-window.set_border_width(12)
-vbox = gtk.VBox(True, 6)
-
-init_button = gtk.Button("Init")
-init_button.connect("clicked",net_init)
-vbox.add(init_button)
-
-step_button = gtk.Button("Step")
-step_button.connect("clicked",net_evaluate)
-vbox.add(step_button)
-
-switch_button = gtk.Button("Switch")
-switch_button.connect("clicked",net_switch)
-vbox.add(switch_button)
-
-clear_button = gtk.Button("Clear all")
-clear_button.connect("clicked",net_clear)
-vbox.add(clear_button)
-
-window.add (vbox)
-window.show_all()
 
 # Show network
 fig = Figure()
-win,fig = glwindow (size=(800,600), title = "Selective Attention",has_terminal=True,namespace=locals(),figure=fig)
+win,fig = glwindow (size=(800,600), title = "Selective Attention",has_terminal=True,namespace=locals(),figure=fig, fps=50)
 fig.network (net, style='flat', show_colorbar=False, show_label=False)
 fig.text (size=.1, position = (.5, -.05), text="Using Neural Dynamics to Switch Attention")
 fig.text (size=.05, position = (.5, -.085), text="International Joint Conference on Neural Networks, 2005")
-control = ControlPanel (model)
 win.show()
