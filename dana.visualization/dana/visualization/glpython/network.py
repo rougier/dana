@@ -60,7 +60,7 @@ class Network (Object):
                            position = (m.frame[0]+m.frame[2]/2.0-.5,
                                        m.frame[1]+m.frame[3]/2.0-.5,
                                        0, .5),
-                           size = .075)
+                           size = .05)
             if not name or not show_label:
                 label.visible = False
             self.labels.append (label)
