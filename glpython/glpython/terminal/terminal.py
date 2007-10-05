@@ -434,6 +434,8 @@ class Terminal (StringTerminal):
         GL.glBlendFunc (GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
         GL.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE)
         
+        # Just for fun
+        # GL.glRotate (2.5,0,0,1)
 
         # Computes console position
         x, y = self.x, self.y

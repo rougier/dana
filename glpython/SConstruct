@@ -67,9 +67,9 @@ conf = Configure(env, conf_dir=env['CACHEDIR'],
 conf.env.Append (CPPPATH = [distutils.sysconfig.get_python_inc()])
 if not conf.CheckLibWithHeader ('python' + pyversion, 'Python.h', 'c'):
     sys.exit(1)
-if not conf.CheckLibWithHeader ('boost_python-mt', 'boost/python.hpp', 'c++'):
-    sys.exit(1)
-conf.env.Append (LIBS = 'boost_python-mt')
+if not conf.CheckLibWithHeader ('boost_python', 'boost/python.hpp', 'c++'):
+    sys.exit (1)
+conf.env.Append (LIBS = ['boost_python'])
 libs = CheckLibrary (env, ['freetype2', 'fontconfig', 'ftgl'])
 mods = CheckModule (env, ['numpy', 'OpenGL', 'Image', 'IPython'])
 if not (libs and mods):
