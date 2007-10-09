@@ -67,7 +67,7 @@ class ModelThread (threading.Thread):
     Model Thread class
     """
 
-    def __init__ (self, model, n, block):
+    def __init__ (self, model, n):
         """
 
         Create a new model thread
@@ -75,21 +75,18 @@ class ModelThread (threading.Thread):
         Function signature
         ------------------
         
-        __init__ (n=0, block=10) 
+        __init__ (n=0) 
 
         Function arguments
         ------------------        
 
         n -- Number of evaluations to perform
 
-        block -- Number of consecutive evalutations to perform        
-
         """
 
         threading.Thread.__init__ (self)
         self.model = model
         self.n = n
-        self.block = block
         self.stop = False
 
     def run (self):
@@ -107,17 +104,11 @@ class ModelThread (threading.Thread):
         if self.n:
             i = 0
             while (i < self.n) and not self.stop:
-                if (i+self.block) < self.n:
-                    self.model.evaluate (self.block)
-                    i += self.block
-                else:
-                    self.model.evaluate (self.n-i)
-                    i = self.n
-#                time.sleep (.001)
+                self.model.evaluate (1)
+                i += 1
         else:
             while not self.stop:
-                self.model.evaluate (self.block)
-#                time.sleep (.001)
+                self.model.evaluate (1) #self.block)
 
 
 # _________________________________________________________________________Model
@@ -126,7 +117,7 @@ class Model (_core.Model):
     Threaded Model class
     """
 
-    def __init__ (self, block = 1):
+    def __init__ (self):
         """
 
         Create a new model
@@ -134,17 +125,11 @@ class Model (_core.Model):
         Function signature
         ------------------
         
-        __init__ (block=10) 
-
-        Function arguments
-        ------------------        
-        
-        block -- Number of consecutive evalutations to perform
+        __init__ () 
         
         """
 
         _core.Model.__init__ (self)
-        self.block = block
         self.thread = None
 
 
@@ -165,8 +150,8 @@ class Model (_core.Model):
 
         """
 
-        self.thread = ModelThread (self, n, self.block)
-        if not self.thread.isAlive():
+        if not self.thread:
+            self.thread = ModelThread (self, n)
             self.thread.start()
         else:
             print "Model is already running"
@@ -186,3 +171,4 @@ class Model (_core.Model):
         if self.thread:
             self.thread.stop = True
             self.thread.join()
+            self.thread = None

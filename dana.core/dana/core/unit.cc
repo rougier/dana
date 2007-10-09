@@ -578,11 +578,11 @@ Unit::python_export (void) {
 
         .def ("__float__", &Unit::get_potential)
 
-        .def ("compute_dp", &Unit::compute_dp,  &UnitWrapper::default_compute_dp,
+        .def ("compute_dp", &Unit::compute_dp, &UnitWrapper::default_compute_dp,
               "compute_dp() -> float\n"
               "computes potential and return dp")
 
-        .def ("compute_dw", &Unit::compute_dw,  &UnitWrapper::default_compute_dw,
+        .def ("compute_dw", &Unit::compute_dw, &UnitWrapper::default_compute_dw,
               "compute_dw() -> float\n"
               "computes weights and returns dw")
 

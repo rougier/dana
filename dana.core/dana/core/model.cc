@@ -136,6 +136,8 @@ Model::python_export (void)
     void (Model::*append_net)(NetworkPtr)     = &Model::append;
     void (Model::*append_env)(EnvironmentPtr) = &Model::append;
 
+    //    PyEval_InitThread();
+    
     class_<Model, bases <Object,Observable> >(
         "Model",
         "====================================================================\n"
