@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import glob
+import sys
 import os.path
 
 # ________________________________________________________________ExtensionBuild
@@ -37,15 +38,20 @@ def ExtensionBuild (env, path, libs=[]):
         library = None
 
     # Make the module
+    env_mod = env.Copy()
+    if sys.platform == 'darwin':
+        env_mod['SHLINKFLAGS'] = '$LINKFLAGS -bundle -flat_namespace -undefined suppress'
+        env_mod['SHLIBSUFFIX'] = '.so'
+
     srcs = ['%s/%s' % (env["BUILDDIR"], s) for s in all if '_export' in s]
     if len(srcs):
         fullname = os.path.join (env["BUILDDIR"], path, module_name)
-        module = env.SharedLibrary (fullname,
-                                    srcs,
-                                    SHLIBPREFIX='',
-                                    CPPPATH= env['CPPPATH'],
-                                    LIBPATH= [env['BUILDDIR']] + env['LIBPATH'],
-                                    LIBS = env['LIBS'] + [library_name])
+        module = env_mod.SharedLibrary (fullname,
+                                        srcs,
+                                        SHLIBPREFIX='',
+                                        CPPPATH= env['CPPPATH'],
+                                        LIBPATH= [env['BUILDDIR']] + env['LIBPATH'],
+                                        LIBS = env['LIBS'] + [library_name])
         env.Depends (module, library)
         env.Alias ('build', module)
     else:
