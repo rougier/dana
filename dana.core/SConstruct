@@ -33,18 +33,18 @@ description = \
     "potential that can vary along time under the influence of other units and"\
     "learning."
 
-modules = [['dana',                     []],
-           ['dana/core',                []],
-           ['dana/tests',               []],
-           ['dana/projection/profile',  ['dana_core']],
-           ['dana/projection/density',  ['dana_core']],
-           ['dana/projection/shape',    ['dana_core']],
-           ['dana/projection/distance', ['dana_core']],
-           ['dana/projection',          ['dana_core',
-                                         'dana_projection_density',
-                                         'dana_projection_shape',
-                                         'dana_projection_profile',
-                                         'dana_projection_distance']]]
+exts = [['dana',                     []],
+        ['dana/core',                []],
+        ['dana/tests',               []],
+        ['dana/projection/profile',  ['dana_core']],
+        ['dana/projection/density',  ['dana_core']],
+        ['dana/projection/shape',    ['dana_core']],
+        ['dana/projection/distance', ['dana_core']],
+        ['dana/projection',          ['dana_core',
+                                      'dana_projection_density',
+                                      'dana_projection_shape',
+                                      'dana_projection_profile',
+                                      'dana_projection_distance']]]
 
 python_version = '%d.%d' % (sys.version_info[0], sys.version_info[1])
 libraries = [ ('python2.5', 'Python.h', 'c++'),
@@ -134,21 +134,7 @@ env.BuildDir (env["BUILDDIR"], '.', duplicate=0)
 
 
 
-
-# _______________________________________________________________________Targets
-
-exts = [['dana', []],
-        ['dana/core', []],
-        ['dana/tests', []],
-        ['dana/projection/profile', ['dana_core']],
-        ['dana/projection/density', ['dana_core']],
-        ['dana/projection/shape', ['dana_core']],
-        ['dana/projection/distance', ['dana_core']],
-        ['dana/projection', ['dana_core',
-                             'dana_projection_density',
-                             'dana_projection_shape',
-                             'dana_projection_profile',
-                             'dana_projection_distance']]]
+#------------------------------------------------------------------------------
 ext_files = []
 ext_modules = []
 for ext in exts:
@@ -158,13 +144,7 @@ for ext in exts:
         ext_modules.extend (m)
         Default (m)
 
-# ______________________________________________________________________Archives
-
-name = 'dana.core'
-version = os.popen('svnversion .').read()[:-1]
-version = 'svn' + version.split(':')[-1]
-fullname = '%s-%s' % (name, version)
-
+#------------------------------------------------------------------------------
 archive_include = ['*']
 archive_exclude = ['.*', '*.os', '*.pyc', '*.o', '*~',
                    '*.pdf', '*.ps', '*.so', '*.a',
@@ -173,19 +153,10 @@ archive_exclude = ['.*', '*.os', '*.pyc', '*.o', '*~',
 archive_files = Files ('.', archive_include, archive_exclude)
 env.Alias ('dist-bz2', env.Archive ('%s.bz2' % fullname, archive_files))
 env.Alias ('dist-tgz', env.Archive ('%s.tgz' % fullname, archive_files))
+env.Alias ('dist',     env.Archive ('%s.tgz' % fullname, archive_files))
 env.Alias ('dist-zip', env.Archive ('%s.zip' % fullname, archive_files))
 
-
-# _______________________________________________________________________Package
-
-desc = """Distributed Aysnchronous Numerical Adaptive computational library
- DANA is a multi-platform C++/Python library for distributed asynchronous
- numerical and adaptive computation. The computational paradigm supporting
- the library is grounded on the notion of a unit that is essentially a
- potential that can vary along time under the influence of other units and
- learning.
-"""
-
+#------------------------------------------------------------------------------
 pkg = env.Package(
     '%s_%s.deb' % (fullname, env['ARCH']), ext_modules,
     PKG_FILES = ext_files,
@@ -197,7 +168,7 @@ pkg = env.Package(
                 'Architecture': env['ARCH'],
                 'Version': version,
                 'Depends': 'libboost-python-dev, python2.5-dev, libxml2-dev',
-                'Description': desc}
+                'Description': description}
     )
 for module in ext_modules:
     env.Depends (pkg, module)
