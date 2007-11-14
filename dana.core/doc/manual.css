@@ -8,66 +8,139 @@
  * any later version.
  *****************************************************************************/
 
-
-/* ____________________________________________________________________ body */
-body {
-	margin: 24px auto 24px auto; 
-	width: 800px;
-	font-family: Arial, Helvetica, sans-serif;
-	color: #000;
-	font-size: 11pt;
+html {
+    background-color: white;
+    color: black;
+    font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
+    font-size: 0.9em;
+    line-height: 1.5em;
 }
+
+body {
+    margin: 0;
+    margin-top: 3em;
+    padding: 0;
+    width: 96%;
+    margin-left:2%;
+    margin-right:2%;
+    color: #000;
+}
+
+a                       { text-decoration: none;}
+a:hover                 { text-decoration: underline;}
+a:link:active           { color: #513ee7; }
+a:link:hover            { color: #513ee7; }
+a:visited:hover         { color: #513ee7; }
+a:visited               { color: #513ee7; }
+a:link                  { color: #513ee7; }
 
 h1, h2, h3, h4, h5, h6 {
-    font-weight:normal;
+//    font-size:     150%;
+    font-weight:   bold;
+    color:         #757575;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e8e8e8;
 }
-
-a {
+h1 a:hover {
     text-decoration: none;
 }
+h1 { font-size: 150%; }
+h2 { font-size: 125%; }
+h3,h4,h5,h6 { font-size: 100%; }
 
-a:hover {
-    text-decoration: underline;
+
+
+/* Header */
+table.header {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 1px solid #e8e8e8;
 }
 
-p {
-#    text-align: justify;
-    margin: 0pt;
+/* Footer */
+table.footer {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+    border: 1px solid #e8e8e8;
 }
+
+.titlepage p {
+    display: none;
+}
+
+
+.verbatim {
+    background-color: #fafaec;
+    border: 1px solid #e8e8e8;
+    margin-left: 2em;
+    margin-right: 1em;
+    padding-left: 2em;
+    font-size: 100%;
+    font-family: "lucida typewriter", lucidatypewriter, monospace;
+}
+
+.nav_right {
+    text-align: right;
+    padding: 0;
+    margin-top: 0em;
+    margin-bottom: 2em;
+}
+
 
 /* ____________________________________________________________________ page */
 .page {
-    padding: 8px;
-    border: 1px solid #999999;
-    background: #fffff0;
     color: #222;
-}
-.page .left {
-    text-align: left;
-    font-size: small;
-    color: #999999;
-}
-.page .center {
-    text-align: center;
-    font-size: small;
-}
-.page .right {
-    text-align: right;
-    font-size: small;
-    color: #999999;
 }
 
 li {
     list-style-type: none;
 }
 
+
+/* Table of Contents */
+ul.TofC {
+    padding: 10px;
+    background-color: #ececfa;
+    border: 1px solid #dadaf5; 
+}
+
+/* Section summary */
+hr.online-navigation {
+    display: None;
+}
+div.online-navigation {
+    padding: 10px;
+    background-color: #ececfa;
+    border: 1px solid #dadaf5;
+}
+div.online-navigation a:hover {
+    text-decoration: none;
+}
+div.online-navigation ul a:hover {
+    text-decoration: underline;
+}
+
+small { font-size: 95%; }
+
+
+
+
+
+
+
+
 /* ____________________________________________________________________ page */
 .content {
     text-align: justify;
-	padding: 24px;
-/*	min-height: 1000px; */
-	height: auto;
-	color: #333333;
+    color: #333333;
 }
 /* for Internet Explorer */
 /*\*/
@@ -99,7 +172,7 @@ height: 8em;
  */
 small.xtiny             { font-size : xx-small; }
 small.tiny              { font-size : x-small; }
-small.scriptsize        { font-size : smaller; }
+small.sdcriptsize        { font-size : smaller; }
 small.footnotesize      { font-size : small; }
 big.xlarge              { font-size : large; }
 big.xxlarge             { font-size : x-large; }
@@ -115,20 +188,7 @@ big.xhuge               { font-size : xx-large; }
  * the normal text size.
  */
 
-body                    { color: #000000;
-                          background-color: #ffffff; }
 
-a:link:active           { color: #ff0000; }
-a:link:hover            { background-color: #bbeeff; }
-a:visited:hover         { background-color: #bbeeff; }
-a:visited               { color: #551a8b; }
-a:link                  { color: #0000bb; }
-
-h1, h2, h3, h4, h5, h6  { font-family: avantgarde, sans-serif;
-                          font-weight: bold; }
-h1                      { font-size: 180%; }
-h2                      { font-size: 150%; }
-h3, h4                  { font-size: 120%; }
 
 /* These are section titles used in navigation links, so make sure we
  * match the section header font here, even it not the weight.
@@ -185,21 +245,6 @@ address                 { font-size: 80%; }
 
 .titlegraphic           { vertical-align: top; }
 
-.verbatim pre           { color: #00008b;
-                          font-family: "lucida typewriter", lucidatypewriter,
-                                       monospace;
-                          font-size: 90%; }
-.verbatim               {
-    margin-left: 2em;
-    background: white;
-    border: 1px dashed black;
-    padding-left: .5em;
-    padding-right: .5em;
-}
-.verbatim .footer       { padding: 0.05in;
-                          font-size: 85%;
-                          background-color: #99ccff;
-                          margin-right: 0.5in; }
 
 .grammar                { background-color: #99ccff;
                           margin-right: 0.5in;
