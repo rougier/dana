@@ -57,32 +57,59 @@ This document has been written in ReSTructured text format and processed with rs
 Sources:
 
 * `<dana.txt>`_ 
-* `<html4css1.css>`_
 * `<dana.css>`_
 
 
 Who should read this documentation
----------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This documentation is meant to be read by people who would like to produce
+their own models using DANA, knowing that they are supposed to have some
+backgrounds in both C and python languages.
 
 
 Introduction
-===============================================================================
+============
 .. contents:: :local:
 
 Overview
 --------
 
-DANA is a library that support distributed, asynchronous, numerical and adaptive computation which is closely related to both the notion of artificial neural networks and cellular automaton. However, there exist two major differences. The first difference lies in the distributed nature of computation that does not allow to implement "regular" neural networks which require non local functions. For example, perceptron, multi layer perceptron or Kohonen maps both requires at some point a global function and then, cannot be implemented using DANA. The second difference lies in the asynchronous nature of computations: units are evaluated in random order and updated immediately.
+DANA is a library that support distributed, asynchronous, numerical and
+adaptive computation which is closely related to both the notion of artificial
+neural networks and cellular automaton. However, there exist two major
+differences. The first difference lies in the distributed nature of computation
+that does not allow to implement "regular" neural networks which require non
+local functions. For example, perceptron, multi layer perceptron or Kohonen
+maps both requires at some point a global function and then, cannot be
+implemented using DANA. The second difference lies in the asynchronous nature
+of computations: units are evaluated in random order and updated immediately.
 
-From a conceptual point of view, the computational paradigm supporting the library is grounded on the notion of a unit that is essentially a potential that can vary along time under the influence of other units and learning. Those units are organized into layers, maps and network: a network is made of one to several map, a map is made of one to several layer and a layer is made of a set of several units. Each unit can be linked to any other unit (included itself) using a weighted link.
+From a conceptual point of view, the computational paradigm supporting the
+library is grounded on the notion of a unit that is essentially a potential
+that can vary along time under the influence of other units and learning. Those
+units are organized into layers, maps and network: a network is made of one to
+several map, a map is made of one to several layer and a layer is made of a set
+of several units. Each unit can be linked to any other unit (included itself)
+using a weighted link.
 
-DANA is a computing library that offer a set of core classes needed to design and run such networks. However, what is actually computed by a unit or what is learned is far beyond the scope of the library. User is in charge of implementing a unit derived class that actually does something useful for his own purposes.
+DANA is a computing library that offer a set of core classes needed to design
+and run such networks. However, what is actually computed by a unit or what is
+learned is far beyond the scope of the library. User is in charge of
+implementing a unit derived class that actually does something useful for his
+own purposes.
 
 
 Implementation
 --------------
 
-DANA is based on both C++ and Python languages. While C++ ensures some decent speed for simulation, python provides a powerful scripting language that can be used for model design, interaction and visualization. The challenge is to export C++ objects to python with minimal effort and this is precisely what the DANA library has been designed for. In the end, the user is able to build various models simply by importing the relevant libraries into python. Say differently by Dave Abrahams (talk summary from BoostCon 07):
+DANA is based on both C++ and Python languages. While C++ ensures some decent
+speed for simulation, python provides a powerful scripting language that can be
+used for model design, interaction and visualization. The challenge is to
+export C++ objects to python with minimal effort and this is precisely what the
+DANA library has been designed for. In the end, the user is able to build
+various models simply by importing the relevant libraries into python. Say
+differently by Dave Abrahams (talk summary from BoostCon 07):
 
 .. class:: citation
 
@@ -137,13 +164,29 @@ libraries and packages:
           names are standard.
 
 
-The build and install process are performed using the scons tool suite that is available at http://www.scons.org.
+The build and install process is performed using the **scons** tool suite that is
+available at http://www.scons.org.
 
-Note that DANA won't try very hard to find libraries it needs to compile properly. You're responsible to provide DANA with required paths configuration options or environment variables.
+Note that DANA won't try very hard to find libraries it needs to compile
+properly. You're responsible to provide DANA with required paths configuration
+options or environment variables. One solution is to have symbolic links to include
+files at ~/Include and ~/Library because DANA will try to use them during the
+build process. For example, here is a possible output of ~/Include:
+
+::
+
+    > ls -al ~/Include/
+      ... freetype -> /usr/include/freetype2/freetype
+      ... libxml -> /usr/include/libxml2/libxml
+      ... numpy -> /usr/lib/python2.5/site-packages/numpy/core/include/numpy
 
 
-Installation on linux
----------------------------------------
+
+Installation
+------------
+
+You can control the build process using a set of variables that can be set
+globally or on the scons command line. This variables are:
 
 ====================  ====================
 Environment variable  Value
@@ -163,17 +206,24 @@ LIBS                  linker libraries
 ::
 
     > cd dana
-    > scons install --prefix=/usr
+    > scons 
+    > scons install PREFIX=/usr 
 
+After installation, you should end up with the following structure:
+ 
+* C/C++ libraries in PREFIX/lib
+* C/C++ headers in PREFIX/include/dana
+* C/C++ python modules in PREFIX/lib/pythonX.Y/site-packages/dana
 
-Installation on MacOs
----------------------------------------
-*To be written.*
+Once DANA has been installed, you can test it as follows:
 
-Installation on Windows
----------------------------------------
-*To be written.*
+::
 
+    > python
+    >>> import dana
+    >>> dana.test()
+
+It should report no errors. If there is one, please send a bug report to DANA authors.
 
 
 

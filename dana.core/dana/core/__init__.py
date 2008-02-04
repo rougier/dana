@@ -1,24 +1,35 @@
 #!/usr/bin/env python
-#------------------------------------------------------------------------------
-# Copyright (c) 2006-2007 Nicolas Rougier.
-# All rights reserved.
 #
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
-# 
-# $Id: __init__.py 166 2007-05-18 07:54:33Z rougier $
-#------------------------------------------------------------------------------
-""" core component
+#  DANA - Distributed Asynchronous Numerical Adaptive computing library
+#  Copyright (c) 2006,2007,2008 Nicolas P. Rougier
+#
+#  This file is part of DANA.
+#
+#  DANA is free software: you can redistribute it and/or modify it under
+#  the terms of the GNU General Public License as published by the Free
+#  Software Foundation, either version 3 of the License, or (at your
+#  option) any later version.
+#
+#  DANA is distributed in the hope that it will be useful, but WITHOUT
+#  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#  for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with DANA. If not, see <http://www.gnu.org/licenses/>.
 
-From a conceptual point of view, the computational paradigm supporting the
-library is grounded on the notion of a unit that is essentially a potential
-that can vary along time under the influence of other units and learning.
-Those units are organized into layers, maps and network: a network is made
-of one to several map, a map is made of one to several layer and a layer is
-made of a set of several units. Each unit can be linked to any other unit
-(included itself) using a weighted link.
+""" core
+
+    The core package is a mandatory component of DANA that implements basic
+    concepts of distributed computing. It offers a minimal set of classes that
+    aims at representing the notion of units, layers, maps, networks and models
+    that are necessary to run a simulation. The computational paradigm
+    supporting the library is grounded on the notion of a unit that is seen as
+    a potential that can vary along time under the influence of other units and
+    learning. Those units are organized into layers, maps and network: a
+    network is made of one to several map, a map is made of one to several
+    layer and a layer is made of a set of several units. Each unit can be
+    linked to any other unit (included itself) using a weighted link.
 """
 
 import time
@@ -48,7 +59,11 @@ seed (12345)
 
 Object.__write = Object.write
 def __write (self, filename):
-    """ """
+    """ Overloading of the write function of core.Object
+
+        This function is able to access the current script in order to save a
+        copy within the xml file.
+    """
     co = sys._getframe(1).f_code
     script = "\n"
     f = file (co.co_filename, "r")
@@ -57,7 +72,7 @@ def __write (self, filename):
     f.close()
     if filename[-3:] != '.gz':
         filename += '.gz'
-    self.__write (filename,  os.path.abspath(co.co_filename), script)
+    self.__write (filename,  os.path.abspath (co.co_filename), script)
 Object.write = __write
 
 
