@@ -22,7 +22,7 @@ from tools import *
 
 
 name        = 'dana.core'
-version     = 'beta'
+version     = '1.0'
 fullname    = '%s-%s' % (name, version)
 
 description = \
