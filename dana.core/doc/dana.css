@@ -1,0 +1,246 @@
+/*
+
+:Author: Nicolas Rougier
+:Contact: Nicolas.Rougier@loria.fr
+:Copyright: This stylesheet has been placed in the public domain.
+ Stylesheet for use with Docutils inspired by the GNOME documentation project
+
+*/
+
+@import url(html4css1.css);
+
+
+/* ------------------------------------------------------------------------- */
+/*  Main                                                                     */
+/* ------------------------------------------------------------------------- */
+html {
+    background-color: white;
+    font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
+}
+body {
+    margin: 0;
+    margin-top: 2em;
+    margin-left:2%;
+    margin-right:2%;
+}
+a                       { text-decoration: none;}
+a:hover                 { text-decoration: underline;}
+a:link:active           { color: #513ee7; }
+a:link:hover            { color: #513ee7; }
+a:visited:hover         { color: #513ee7; }
+a:visited               { color: #513ee7; }
+a:link                  { color: #513ee7; }
+
+div.section h1, h2, h3, h4, h5, h6 {
+    color:         #757575;
+}
+div.section h1 a       {color: #757575; text-decoration: none;}
+div.section h1 a:hover {color: #757575; text-decoration: none;}
+div.section h2 a       {color: #757575; text-decoration: none;}
+div.section h2 a:hover {color: #757575; text-decoration: none;}
+div.section h3 a       {color: #757575; text-decoration: none;}
+div.section h3 a:hover {color: #757575; text-decoration: none;}
+div.section h1 {
+    margin-top: 1em;
+    border-bottom: solid 1px #e8e8e8;
+}
+div.section h2 {
+/*    margin-top: 1em;*/
+/*    border-bottom: solid 1px #e8e8e8; */
+}
+div.section p {
+    text-align: justify;
+}
+
+/* ------------------------------------------------------------------------- */
+/*  Reference                                                                */
+/* ------------------------------------------------------------------------- */
+
+
+/* ------------------------------------------------------------------------- */
+/*  Title                                                                    */
+/* ------------------------------------------------------------------------- */
+h1.title {
+    text-align: left;
+    color: #757575;
+}
+table.docinfo {
+  margin: 0;
+}
+
+/* ------------------------------------------------------------------------- */
+/*  Abstract                                                                 */
+/* ------------------------------------------------------------------------- */
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: left;
+}
+
+/* ------------------------------------------------------------------------- */
+/*  Citation                                                                 */
+/* ------------------------------------------------------------------------- */
+p.citation {
+    margin-left: 2em;
+    margin-right: 2em;
+    font-style: italic;
+}
+
+/* ------------------------------------------------------------------------- */
+/*  Table Of Contents                                                        */
+/* ------------------------------------------------------------------------- */
+div.contents {
+    display: table;
+    padding: 0.5em 1.5em 0.5em 1.5em;
+    background-color: #f0f9ff;
+    border: solid 1px #c0c9ff;
+}
+div.contents a               { text-decoration: none;}
+div.contents a:hover         { text-decoration: underline;}
+div.contents a:link:active   { color: #513ee7; }
+div.contents a:link:hover    { color: #513ee7; }
+div.contents a:visited:hover { color: #513ee7; }
+div.contents a:visited       { color: #513ee7; }
+div.contents a:link          { color: #513ee7; }
+
+
+/*div.contents p.topic-title {display: none;}*/
+div.contents ul    { margin: 0; padding: 0; margin-left: 0em;}
+div.contents ul ul { margin: 0; padding: 0; margin-left: 2em;}
+div.contents li    { list-style-type: none; margin: 0; }
+
+
+/* ------------------------------------------------------------------------- */
+/*  Admonitions                                                              */
+/* ------------------------------------------------------------------------- */
+div.admonition,
+div.attention,
+div.caution,
+div.danger,
+div.error,
+div.hint,
+div.important,
+div.note,
+div.tip,
+div.warning {
+    display: table;
+    padding: 0.5em 1em 0.5em 1em;
+    padding-left: 60px;
+    min-height: 48px;
+    border: solid 1px #e0e0df;
+    background-color: #fffff0;
+    background-position: 6px 0.5em;
+    background-repeat: no-repeat;
+}
+div.attention p.admonition-title,
+div.caution p.admonition-title,
+div.danger p.admonition-title,
+div.error p.admonition-title,
+div.warning p.admonition-title {
+    color: black;
+    font-weight: bold ;
+}
+div.error {
+  background-image: url("./icons/admon-bug.png");
+}
+div.warning {
+  background-image: url("./icons/admon-warning.png");
+}
+div.caution, div.attention, div.danger {
+  background-image: url("./icons/admon-caution.png");
+}
+div.important {
+  background-image: url("./icons/admon-important.png");
+}
+div.note {
+  background-image: url("./icons/admon-note.png");
+}
+div.note-bug {
+  background-image: url("./icons/admon-bug.png");
+}
+div.tip, div.hint {
+  background-image: url("./icons/admon-tip.png");
+}
+div.warning {
+  background-image: url("./icons/admon-warning.png");
+}
+
+/* ------------------------------------------------------------------------- */
+/*  Tables                                                                   */
+/* ------------------------------------------------------------------------- */
+table {
+    border: 0;
+    border-top: 2px solid black;
+    border-bottom: 1px solid black;
+    border-spacing: 0;
+    text-align: left;
+}
+th {
+    border: none;
+    border-bottom: 2px solid black;
+}
+td {
+    border: none;
+}
+
+
+/* ------------------------------------------------------------------------- */
+/*  Images                                                                   */
+/* ------------------------------------------------------------------------- */
+img {
+    margin-left: 2em;
+    margin-right: 2em;
+    background-color: #ffffff;
+    border: solid 1px #e0e0df;
+}
+
+/* ------------------------------------------------------------------------- */
+/*  Figures                                                                  */
+/* ------------------------------------------------------------------------- */
+div.figure {
+    display: table;
+    padding: 0.5em;
+    color: #3f3f3f;
+    background-color: #f9f9f6;
+    border: solid 1px #e0e0df;
+}
+div.figure img {
+    margin-left: 0em;
+    margin-right: 0em;
+}
+div.figure p {
+    margin: 0;
+    margin-top: 0.5em;
+}
+div.figure caption {
+    background-color: #ffffff;
+    border: solid 1px #e0e0df;
+}
+div.figure strong {
+    font-style: normal;
+}
+
+/* ------------------------------------------------------------------------- */
+/*  Literal blocks                                                           */
+/* ------------------------------------------------------------------------- */
+pre.literal-block {
+    display: table;
+    padding: 0.5em;
+    border: solid 1px #e0e0df;
+}
+
+/* ------------------------------------------------------------------------- */
+/*  Header                                                                   */
+/* ------------------------------------------------------------------------- */
+
+/* ------------------------------------------------------------------------- */
+/*  Footer                                                                   */
+/* ------------------------------------------------------------------------- */
+div.footer {
+    color: #757575;
+    padding-top: 2em;
+    padding-bottom: 1em;
+    text-align: right;
+}
+div.footer hr {
+    display:none;
+}

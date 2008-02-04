@@ -1,0 +1,183 @@
+====================
+DANA Developer Guide
+====================
+
+.. contents:: Table of Contents
+   :depth: 2
+
+
+Preface
+===============================================================================
+
+About this document
+---------------------------------------
+
+
+Author
+~~~~~~
+Nicolas P. Rougier
+
+Publisher
+~~~~~~~~~
+Nicolas P. Rougier
+
+Copyrights
+~~~~~~~~~~
+Copyright (c) 2007, Nicolas P. Rougier
+
+Legal Notice
+~~~~~~~~~~~~
+
+Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the section entitled "GNU Free Documentation License".
+
+Feedback
+~~~~~~~~
+To make a suggestion regarding this documentation, send an email to  <Nicolas.Rougier@loria.fr>.
+
+Revision history
+~~~~~~~~~~~~~~~~
+
+==============  ===============
+Date            Version
+==============  ===============
+November 2007   Initial release
+==============  ===============
+
+Sources 
+~~~~~~~
+
+This document has been written in ReSTructured text format and processed with rst2html using the following command:
+
+::
+
+    rst2html --cloak-email-addresses --stylesheet dana.css --link-stylesheet \
+             --date --source-link --section-numbering --tab-width 4 \
+             dana.txt dana.html
+
+Sources:
+
+* `<dana.txt>`_ 
+* `<html4css1.css>`_
+* `<dana.css>`_
+
+
+Who should read this documentation
+---------------------------------------
+
+
+Introduction
+===============================================================================
+.. contents:: :local:
+
+Overview
+--------
+
+DANA is a library that support distributed, asynchronous, numerical and adaptive computation which is closely related to both the notion of artificial neural networks and cellular automaton. However, there exist two major differences. The first difference lies in the distributed nature of computation that does not allow to implement "regular" neural networks which require non local functions. For example, perceptron, multi layer perceptron or Kohonen maps both requires at some point a global function and then, cannot be implemented using DANA. The second difference lies in the asynchronous nature of computations: units are evaluated in random order and updated immediately.
+
+From a conceptual point of view, the computational paradigm supporting the library is grounded on the notion of a unit that is essentially a potential that can vary along time under the influence of other units and learning. Those units are organized into layers, maps and network: a network is made of one to several map, a map is made of one to several layer and a layer is made of a set of several units. Each unit can be linked to any other unit (included itself) using a weighted link.
+
+DANA is a computing library that offer a set of core classes needed to design and run such networks. However, what is actually computed by a unit or what is learned is far beyond the scope of the library. User is in charge of implementing a unit derived class that actually does something useful for his own purposes.
+
+
+Implementation
+--------------
+
+DANA is based on both C++ and Python languages. While C++ ensures some decent speed for simulation, python provides a powerful scripting language that can be used for model design, interaction and visualization. The challenge is to export C++ objects to python with minimal effort and this is precisely what the DANA library has been designed for. In the end, the user is able to build various models simply by importing the relevant libraries into python. Say differently by Dave Abrahams (talk summary from BoostCon 07):
+
+.. class:: citation
+
+   Python and C++ are in many ways as different as two languages could be:
+   while C++ is usually compiled to machine-code, Python is
+   interpreted. Python's dynamic type system is often cited as the foundation
+   of its flexibility, while in C++ static typing is the cornerstone of its
+   efficiency. C++ has an intricate and difficult compile-time meta-language,
+   while in Python, practically everything happens at runtime.
+
+   Yet for many programmers, these very differences mean that Python and C++
+   complement one another perfectly. Performance bottlenecks in Python
+   programs can be rewritten in C++ for maximal speed, and authors of powerful
+   C++ libraries choose Python as a middleware language for its flexible
+   system integration capabilities.
+
+
+
+Installation
+===============================================================================
+
+.. contents:: :local:
+
+Requirements
+---------------------------------------
+
+DANA is based on a set of standard programs as well as a set of standard
+libraries and packages:
+
+* **Python**
+  Python programming language is available at http://www.python.org
+
+* **C++ Compiler**
+  GCC, the GNU Compiler Collection is available at http://gcc.gnu.org
+
+* **SCons**
+  SCons, a software construction tool available at http://www.scons.org
+
+* **Boost libraries**
+  Boost free peer-reviewed portable C++ source libraries are available at
+  http://boost.org
+
+* **XML Library**
+  The XML C parser and toolkit of Gnome available at http://www.xmlsoft.org
+
+* **NumPy python package**
+  Numpy is a scientific python package available at http://numpy.scipy.org
+
+
+.. Note:: When installing Boost python libraries, be careful to use the
+          --layout=system options such that resultsing boost librairies
+          names are standard.
+
+
+The build and install process are performed using the scons tool suite that is available at http://www.scons.org.
+
+Note that DANA won't try very hard to find libraries it needs to compile properly. You're responsible to provide DANA with required paths configuration options or environment variables.
+
+
+Installation on linux
+---------------------------------------
+
+====================  ====================
+Environment variable  Value
+====================  ====================
+PREFIX                installation prefix for architecture-independent files
+LIBDIR                installation directory for object code libraries
+INCLUDEDIR            installation directory for C/C++ header files
+PYTHONDIR             installation directory for python files
+CPPPATH               compiler include path
+LIBPATH               linker library path
+CPPFLAGS              C/C++/Objective C preprocessor flags
+CFLAGS                C compiler flags
+CXXFLAGS              C++ compiler flags
+LIBS                  linker libraries
+====================  ====================
+
+::
+
+    > cd dana
+    > scons install --prefix=/usr
+
+
+Installation on MacOs
+---------------------------------------
+*To be written.*
+
+Installation on Windows
+---------------------------------------
+*To be written.*
+
+
+
+
+GNU Free Documentation License
+==============================
+
+`GNU Free Documentation License Version 1.2, November 2002 <fdl.txt>`_
