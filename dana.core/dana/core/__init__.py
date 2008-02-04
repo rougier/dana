@@ -150,11 +150,18 @@ class Model (_core.Model):
 
         """
 
-        if not self.thread:
-            self.thread = ModelThread (self, n)
-            self.thread.start()
-        else:
-            print "Model is already running"
+        if self.thread:
+            if not self.thread.isAlive():
+                self.thread.stop = True
+                self.thread.join()
+                self.thread = None
+            else:
+                print "Model is already running"
+                return
+
+        self.thread = ModelThread (self, n)
+        self.thread.start()
+
 
         
     def stop (self):
