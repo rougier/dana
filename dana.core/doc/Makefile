@@ -9,4 +9,4 @@ all:	dana.txt
 	@echo "done"
 
 clean:
-	-rm -f dana.html
+	@rm -f dana.html
