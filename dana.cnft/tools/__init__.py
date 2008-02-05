@@ -15,6 +15,9 @@
 
 import commands
 import sys
+from package import *
+from extension import *
+from archive import *
 
 def CheckLibrary (env, libs = []):
     """ Check for libraries using pkg-config """

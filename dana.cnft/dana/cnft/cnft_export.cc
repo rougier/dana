@@ -6,7 +6,8 @@
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
 
-#include "unit.h"
+#include "synchronous_unit.h"
+#include "asynchronous_unit.h"
 #include "spec.h"
 #include "environment.h"
 
@@ -15,7 +16,8 @@ BOOST_PYTHON_MODULE(_cnft) {
     docstring_options doc_options;
     doc_options.disable_signatures();
 
-    Unit::boost();
+    SynchronousUnit::boost();
+    AsynchronousUnit::boost();
     Spec::boost();
     Environment::python_export();
 }
