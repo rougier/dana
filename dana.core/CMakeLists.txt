@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-PROJECT (DANA)
+PROJECT (DANA_CORE)
 SET (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 SET (CMAKE_INCLUDE_CURRENT_DIR TRUE)
 SET (CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
