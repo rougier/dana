@@ -3,6 +3,8 @@
 # DANA -- Distributed Asynchronous Numerical Adaptive computing library
 # Copyright (C) 2006,2007,2008  Nicolas P. Rougier
 #
+# This file is part of DANA.
+#
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
 # Foundation, either version 3 of the License, or (at your option) any later
@@ -54,10 +56,10 @@ libraries = [ ('python2.5', 'Python.h', 'c++'),
 #------------------------------------------------------------------------------
 opts = Options ('custom.py')
 env  = Environment (options = opts)
-opts.Add ('PREFIX', 
+opts.Add ('PREFIX',
           'installation prefix for architecture-independent files',
           os.getenv('LOCAL', '/usr'))
-opts.Add ('LIBDIR', 
+opts.Add ('LIBDIR',
           'installation directory for object code libraries',
           "${PREFIX}/lib")
 opts.Add ('INCLUDEDIR',
@@ -133,8 +135,6 @@ env.Append (BUILDERS = {'Package'  : package_builder})
 env["ARCH"] = os.uname()[-1]
 env["BUILDDIR"] = '.build/%s'% env["ARCH"]
 env.BuildDir (env["BUILDDIR"], '.', duplicate=0)
-
-
 
 #------------------------------------------------------------------------------
 ext_files = []
