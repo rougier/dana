@@ -21,7 +21,7 @@
 /* ========================================================================= */
 body {
     color: #000000;
-    background: #121933;
+    background: #ffffff;
     font-family: "Lucida Grande", "Verdana", "Arial", "Sans-Serif";
     font-size: 10pt;
     line-height: 1.35em;
@@ -31,28 +31,66 @@ body {
 }
 
 .document {
-    color: #ffffff;
-    padding-left: 40px;
-    padding-right: 40px;
+    color: #000000;
+    padding-left:   40px;
+    padding-right:  40px;
     padding-top:    20px;
     padding-bottom: 20px;
-/*    background: white;*/
-/*    margin-left:  10px;
-    margin-right: 10px;*/
 }
 
-h1, h2, h3, h4, h5, h6 {
-    color:#ffffff;
-    font-size: 1.25em;
-    font-weight: normal;
-/*    padding-top: 2em;*/
+
+/* ========================================================================= */
+/* -   Links                                                               - */
+/* ========================================================================= */
+a {
+    color: #516698;
+    text-decoration: none;
 }
+a:hover {
+    padding-bottom: 1px;
+    border-bottom: 1px solid #516698;
+}
+
+
+/* ========================================================================= */
+/* -   Bullets                                                             - */
+/* ========================================================================= */
+ul li {
+    display : list-item;
+    list-style-image : url("bullet_orange.gif");
+} 
+
+/* ========================================================================= */
+/* -   Headers                                                             - */
+/* ========================================================================= */
+h1, h2, h3, h4, h5, h6 {
+	color: #22476a;
+    font-family: Sans-Serif;
+    font-weight: normal;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted #e0e0e0;
+}
+h1 {
+    margin-top: 2em;
+    font-size: 150%;
+}
+h2 {
+    margin-top: 2em;
+    font-size: 125%;
+}
+
+h3 {
+    margin-top: 1em;
+    font-size: 100%;
+    font-weight: bold;
+}
+
 
 /* ========================================================================= */
 /* -   Banner                                                              - */
 /* ========================================================================= */
 #banner {
-    background: #121933;
+    background: #eeeeee;
     padding: 16px; /* top right bottom left */
 }
 #banner img {
@@ -66,18 +104,19 @@ h1, h2, h3, h4, h5, h6 {
 /* ========================================================================= */
 #menu {
 	color: #000;
-    font-size: 1.1em;
+    font-size: 1.0em;
 	margin: 0;
-    padding: 12px 40px 12px 40px; /* top right bottom left */
-/*
-    margin-left:  10px;
-    margin-right: 10px;
-*/
-    background-color: #ffd01c;
-    background-image: url("menu-bg.png");
-    background-repeat: repeat-x;
-    border-bottom: 1px solid #121933;
+    background-color: #dddddd;
 }
+
+table#menu {
+    width:         100%;
+    padding:       0;
+    margin:        0;
+    padding-left:  40px;
+    padding-right: 40px;
+}
+
 #menu ul {
 	margin: 0;
 	padding: 0;
@@ -95,4 +134,32 @@ h1, h2, h3, h4, h5, h6 {
 }
 #menu ul li a:hover {
     color: #ffffff;
+}
+
+
+/* ========================================================================= */
+/* -   Searchbox                                                           - */
+/* ========================================================================= */
+#searchbox {
+    text-align : right;
+    display: inline-block;
+}
+.td_right {
+    text-align : right;
+}
+
+
+/* ========================================================================= */
+/* -   Tables                                                              - */
+/* ========================================================================= */
+table {
+    border: None;
+    font-family: sans;
+}
+td, th {
+    border: None;
+}
+th.head {
+    text-align: left;
+    background-color: #dddddd;
 }

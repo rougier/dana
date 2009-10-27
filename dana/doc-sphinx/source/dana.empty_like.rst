@@ -1,0 +1,7 @@
+
+dana.empty_like                                                                
+===============================================================================
+
+.. currentmodule:: dana
+
+.. autofunction:: empty_like

@@ -88,18 +88,35 @@
 
 {% block relbar1 %}
     <div id="banner">
-      <img src="{{ pathto('_static/dana-banner.png',1) }}" alt="DANA"/>
+      <img src="{{ pathto('_static/dana-banner-black.png',1) }}" alt="DANA"/>
     </div>
-    <div id="menu">
-      <ul>
-        <li><a href="{{ pathto(master_doc) }}">Home</a></li>
-        <li><a href="{{ pathto('download.html',1) }}">Download</a></li>
-        <li><a href="{{ pathto('demo.html',1) }}">Demo</a></li>
-        <li><a href="{{ pathto('document.html',1) }}">Documentation</a></li>
-        <li><a href="{{ pathto('contribute.html',1) }}">Contribute</a></li>
-        <li><a href="{{ pathto('faq.html',1) }}">FAQ</a></li>
-      </ul>
-    </div>
+    <table id="menu"><tr>
+      <td>
+        <div id="menu">
+          <ul>
+            <li><a href="{{ pathto(master_doc) }}">Home</a></li>
+            <li><a href="{{ pathto('installation.html',1) }}">Installation</a></li>
+            <li><a href="{{ pathto('quick-tour.html',1) }}">Quick tour</a></li>
+            <li><a href="{{ pathto('concepts.html',1) }}">Concepts</a></li>
+            <li><a href="{{ pathto('examples.html',1) }}">Examples</a></li>
+            <li><a href="{{ pathto('api.html',1) }}">API</a></li>
+          </ul>
+        </div>
+      </td>
+      <td class="td_right">
+        {%- if pagename != "search" %}
+        <div id="searchbox" style="display: none">
+          <form class="search" action="{{ pathto('search') }}" method="get">
+            <input type="text" name="q" size="18" />
+            <input type="submit" value="{{ _('Search') }}" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+        </div>
+        <script type="text/javascript">$('#searchbox').show(0);</script>
+        {%- endif %}
+      </td>
+    </tr></table>
 {% endblock %}
 
 {%- block sidebar1 %}
