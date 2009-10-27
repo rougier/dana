@@ -1,0 +1,38 @@
+{% extends "!layout.html" %}
+
+{%- macro myrelbar() %}
+    <div class="related">
+      <ul>
+        {%- block rootrellink %}
+          <li><a href="{{ pathto(master_doc) }}">{{ shorttitle|e }}</a>{{ reldelim1 }}</li>
+        {%- endblock %}
+        {%- for parent in parents %}
+          <li><a href="{{ parent.link|e }}" {% if loop.last %}{{ accesskey("U") }}{% endif %}>{{ parent.title }}</a>{{ reldelim1 }}</li>
+        {%- endfor %}
+
+
+          <li>{{ title }}</li>
+
+
+      </ul>
+    </div>
+{%- endmacro %}
+
+{% block relbar1 %}
+    <div class="header">
+      <div class="title">dana</div>
+      <ul class="navigation">
+        <li><a href="{{ pathto(master_doc) }}">Home</a></li>
+        <li><a href="{{ pathto('download.html',1) }}">Download</a></li>
+        <li><a href="{{ pathto('documentation.html',1) }}">Documentation</a></li>
+        <li><a href="{{ pathto('contribute.html',1) }}">Contribute</a></li>
+      </ul>
+    </div>
+    {{ myrelbar() }}
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block relbar2 %}{% endblock %}
+{% block sidebar1 %}{% endblock %}
+{% block sidebar2 %}{% endblock %}

@@ -1,0 +1,6 @@
+dana.empty
+==========
+
+.. currentmodule:: dana
+
+.. autofunction:: empty

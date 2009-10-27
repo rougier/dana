@@ -1,0 +1,1 @@
+.. |date1| date:: %a, %B %d %Y
