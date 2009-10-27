@@ -1,2 +1,0 @@
-FILE(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/*.py")
-INSTALL(FILES ${files} DESTINATION ${SITE_PACKAGE}/figure/objects/cairo)
