@@ -1,6 +1,5 @@
 .. title:: Quick tour
 
-
 Quick tour                                                                     
 ===============================================================================
 
@@ -8,7 +7,7 @@ As   a   quick   tour   of   dana,   we'll  implement   the   `game   of   life
 <http://en.wikipedia.org/wiki/Conway's_Game_of_Life>`_  by  John  Conway.   The
 first thing to do is to create a group for holding our cells:
 
-.. code-block:: python
+.. code-block:: none
 
    >>> import numpy
    >>> import dana
@@ -19,7 +18,7 @@ value named *V* (this is the default name).  Each cell needs to be connected to
 its  immediate neighbours.  This can  be done  by first  creating  a connection
 kernel that will be used to connect *G* to itself:
 
-.. code-block:: python
+.. code-block:: none
 
    >>> K = numpy.array([[1, 1, 1],
    ...                  [1, 0, 1],
@@ -46,13 +45,13 @@ According to the game of life rules, we know that:
 
 We can now write the *V* equation for the group G:
 
-.. code-block:: python
+.. code-block:: none
 
    >>> G.dV = 'maximum(0,1.0-(N<1.5)-(N>3.5)-(N<2.5)*(1-V))'
 
 Last step, we randomly initialize the group and run some iterations.
 
-.. code-block:: python
+.. code-block:: none
 
    >>> G.V = numpy.random.randint(0,2,G.shape)
    >>> for i in range(50):
@@ -61,7 +60,7 @@ Last step, we randomly initialize the group and run some iterations.
 Using `matplotlib <http://matplotlib.sourceforge.net/>`_, we can finally
 visualize the result:
 
-.. code-block:: python
+.. code-block:: none
 
    >>> import pylab
    >>> pylab.imshow(G.V)
