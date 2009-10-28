@@ -117,6 +117,16 @@
         {%- endif %}
       </td>
     </tr></table>
+    
+    <div id="navigation">
+      <a href="{{ pathto(master_doc) }}">{{ shorttitle|e }}</a>{{ reldelim1 }}
+      {%- for parent in parents %}
+      <a href="{{ parent.link|e }}" {% if loop.last %}{{ accesskey("U") }}{%
+         endif %}>{{ parent.title }}</a>{{ reldelim1 }}
+      {%- endfor %}
+      {{ title }}
+    </div>
+
 {% endblock %}
 
 {%- block sidebar1 %}

@@ -5,17 +5,15 @@ API reference
 
 Basic creation routines                                                        
 -------------------------------------------------------------------------------
+.. toctree::
+   :maxdepth: 1
 
-    .. autosummary::
-       :toctree: api
-       :nosignatures:
-
-       dana.empty
-       dana.zeros
-       dana.ones
-       dana.empty_like
-       dana.zeros_like
-       dana.ones_like
+   dana.empty
+   dana.zeros
+   dana.ones
+   dana.empty_like
+   dana.zeros_like
+   dana.ones_like
 
 
 Objects                                                                        
@@ -26,7 +24,3 @@ Objects
 
    api-group
    api-link
-
-
-
-

@@ -27,19 +27,17 @@ from dana import __version__
 
 # ______________________________________________________________________________
 long_description = '''
-DANA  is  a   python  library  based  on  numpy   that  support  distributed,
-asynchronous, numerical and adaptive  computation which is closely related to
-both the notion of artificial  neural networks and cellular automaton. From a
-conceptual point  of view, the computational paradigm  supporting the library
-is grounded on  the notion of a  group that is a matrix  of several arbitrary
-named values that can vary along time under the influence of other groups and
-learning.'''
+The computational  paradigm supporting  the DANA framework  is grounded  on the
+notion of  a unit that is  a set of arbitrary  values that can  vary along time
+under the influence of other units and learning. Each unit can be linked to any
+other unit (including  itself) using a weighted link and  a group is structured
+set of homogeneous  units.'''
 
 # ______________________________________________________________________________
 setup(name="dana",
       version=__version__,
-      url='http://www.loria.fr/~rougier/dana/',
-      download_url='http://www.loria.fr/~rougier/dana/dist/',
+      url='http://dana.loria.fr/',
+#      download_url='http://dana.loria.fr/dist/',
       license='GPL',
       author='Nicolas Rougier',
       author_email='Nicolas.Rougier@loria.fr',

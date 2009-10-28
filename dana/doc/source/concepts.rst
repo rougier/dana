@@ -3,11 +3,12 @@
 
 Concepts                                                                       
 ===============================================================================
+
 The computational  paradigm supporting  the DANA framework  is grounded  on the
 notion of  a unit that is  a set of arbitrary  values that can  vary along time
 under the influence of other units and learning. Each unit can be linked to any
-other unit (including  itself) using a weighted link and  a group is structured
-set of homogeneous  units.
+other unit (including itself) using a weighted link and a group is a structured
+set of homogeneous units.
 
 .. list-table:: 
    :widths: 25 75

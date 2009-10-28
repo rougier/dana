@@ -32,11 +32,9 @@ include MANIFEST.in
 include README
 include examples/*.py
 include examples/*.png
-include doc/*.rst
-include doc/*.py
-include doc/_static
-include doc/_templates
-include doc/_ext
+include doc/Makefile
+include doc/make.bat
+include doc/source
 
 
 

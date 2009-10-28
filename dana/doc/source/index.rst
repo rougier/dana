@@ -45,3 +45,8 @@ API Reference
    :maxdepth: 3
 
    api
+
+.. toctree::
+   :hidden:
+
+   common
