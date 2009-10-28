@@ -1,9 +1,0 @@
-.. role:: title
-.. |date| date:: %a, %B %d %Y
-
-.. header:: :title:`dana`
-   
-   * `Home <index.html>`__
-   * `Download <download.html>`__
-   * `Documentation <documentation.html>`__
-   * `Contribute <contribute.html>`__
