@@ -32,6 +32,19 @@ models. However, what is actually computed by a unit and what is learned is the
 responsibility  of the  modeler who  is in  charge of  describing  the equation
 governing the behavior of units groups over time.
 
+
+.. .. list-table:: 
+..    :widths: 50 50
+..    :header-rows: 0
+
+..    * - * Considering a group A with three layers  (A₁, A₂ & A₃), a group B with
+..          two layers (B₁ & B₂) and a group  C with two layers (C₁ & C₂). Group B
+..          is  connected  to layer  A₂  from  group A  and  layer  C₁ from  group
+..          C. Updating of group B can be made based only on those links.
+
+..      - .. image:: _static/link.png
+
+
 Furthermore,  DANA is  based on  vectorized  computation, this  means that  the
 building block of  a model it not a  unit alone but a group  of similar neurons
 organized  topologically. Vectorized  computations  are carried  out using  the
