@@ -149,9 +149,8 @@ class group(object):
     def __setitem__(self, key, value):
         self._values[key][...] = value
 
-    def __len__(self):
-        return len(self.mask)
-
+    #def __len__(self):
+    #    return len(self._values['mask'])
 
     def _get_shape(self):
         return self._values[self._values.keys()[0]].shape

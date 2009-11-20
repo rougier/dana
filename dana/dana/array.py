@@ -237,6 +237,22 @@ class array(np.ndarray):
     parent = property(_get_parent, _set_parent,
                       doc = '''Parent array''')
 
+    def __setitem__(self, key, value):
+        np.ndarray.__setitem__(self,key,value)
+        if not hasattr(self, '_parent'):
+            return
+        parent = self._parent        
+        if (not parent or not hasattr(parent, '_values') 
+            or 'mask' not in parent._values.keys()):
+            return
+        if id(self) == id(parent['mask']):
+            for k in parent._values.keys():
+                if k != 'mask':
+                    v =  self._parent._values[k]
+                    v[...] = np.nan_to_num(v)
+                    self._parent._values[k] += np.where(parent.mask, 0, np.nan)
+        else:
+            self += np.where(parent.mask, 0, np.nan)
 
 #     def _get_shape(self):
 #         return self.ctypes.shape

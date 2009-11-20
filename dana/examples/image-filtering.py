@@ -22,7 +22,8 @@
 #           Campus Scientifique, BP 239
 #           54506 VANDOEUVRE-LES-NANCY CEDEX 
 #           FRANCE
-''' This example shows how to implement basic image filter using DANA. '''
+''' This example shows how to implement basic image filter using DANA.
+'''
 import dana
 import numpy as np
 from PIL import Image
@@ -80,7 +81,7 @@ B.dB = 'Gb'
 B.compute()
 
 # Show results
-plt.Figure(figsize=(15,5))
+plt.figure(figsize=(15,5))
 plt.subplot(1,3,1)
 plt.title('Original image')
 plt.xticks([])
