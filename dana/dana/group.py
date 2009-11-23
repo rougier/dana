@@ -150,13 +150,10 @@ class group(object):
             return self.asarray()[key]
 
     def __setitem__(self, key, value):
-        if type(key) is str:
-            self._values[key][...] = value
-        else:
-            self._values['mask'][key] = value
-
-    #def __len__(self):
-    #    return len(self._values['mask'])
+        #if type(key) is str:
+        self._values[key][...] = value
+        #else:
+        #    self._values['mask'][key] = value
 
     def _get_shape(self):
         return self._values[self._values.keys()[0]].shape

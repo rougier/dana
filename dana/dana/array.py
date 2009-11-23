@@ -248,9 +248,8 @@ class array(np.ndarray):
         if id(self) == id(parent['mask']):
             for k in parent._values.keys():
                 if k != 'mask':
-                    v =  self._parent._values[k]
-                    v[...] = np.nan_to_num(v)
-                    self._parent._values[k] += np.where(parent.mask, 0, np.nan)
+                    v = self._parent._values[k]
+                    v[...] = v+np.nan_to_num(v)
         else:
             self += np.where(parent.mask, 0, np.nan)
 
