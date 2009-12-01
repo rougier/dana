@@ -232,7 +232,7 @@ class link(object):
     def weighted_sum(self):
         ''' Return weighted sum of source and kernel. '''
 
-        src  = self.source
+        src  = np.nan_to_num(self.source)
         dst  = self.destination
 
         if len(src.shape) == len(dst.shape) == len(self.kernel.shape) == 1 and self.shared:
