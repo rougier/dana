@@ -124,7 +124,7 @@ class equation (unittest.TestCase):
         G.mask[0] = 0
         G.dV = '1'
         result = G.compute()
-        Z[0] = 0
+        Z[0] = np.nan
         self.assert_ (self.equal (G.V, Z))
 
 

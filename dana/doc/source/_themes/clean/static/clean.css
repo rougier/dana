@@ -97,7 +97,7 @@ h3 {
 /* -   Banner                                                              - */
 /* ========================================================================= */
 #banner {
-    background: #eeeeee;
+    background: #3d3d3d; /*eeeeee;*/
     padding: 16px; /* top right bottom left */
 }
 #banner img {
@@ -113,7 +113,7 @@ h3 {
 	color: #000;
     font-size: 1.0em;
 	margin: 0;
-    background-color: #dddddd;
+    background-color: #f2f2f2; /* #dddddd;*/
 }
 
 table#menu {

@@ -51,6 +51,11 @@ class group (unittest.TestCase):
         G = dana.group((2,2), dtype=int)
         self.assertEqual (G['V'].dtype, int)
 
+    def test_parent (self):
+        ''' Check group field parent '''
+        G = dana.group((2,2), dtype=int)
+        self.assertEqual (G.V.parent, G)
+
     def test_dtype_multisetting (self):
         ''' Check group dtype multisetting '''
         G = dana.group((2,2), dtype=[('V',float), ('U',int)])
@@ -71,7 +76,7 @@ class group (unittest.TestCase):
     def test_ones (self):
         ''' Check group basic creation routine 'ones' '''
         G = dana.ones((2,2))
-        self.assertEqual (np.all(G['V'] == np.ones((2,2))), True)
+        self.assertEqual (np.all(G.V == np.ones((2,2))), True)
 
     def test_empty (self):
         ''' Check group basic creation routine 'empty' '''
