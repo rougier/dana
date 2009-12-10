@@ -33,36 +33,29 @@ import numpy, dana, time, dana.pylab
 from random import choice
 
 N = 10
-source = dana.group((N,1), name='source')
-bcm    = dana.group((N,1), fields=['c','t'], name='bcm')
+source = dana.ones((N,1), name='source')
+bcm    = dana.ones((N,1), keys=['C','T'], name='bcm')
 
-K = numpy.random.random(bcm.shape + source.shape)
-bcm.connect(source['V'],'F',K,shared=False)
+K = numpy.random.random((bcm.size,source.size))
+bcm.connect(source.V, K, 'F',shared=False)
     
 
 stims = numpy.identity(N)
 
 
-TAU     = 1.0
-TAU_BAR = TAU * 0.1
-ETA     = TAU_BAR * 0.1
+tau = 1.0
+tau_bar = tau * 0.1
+eta = tau_bar * 0.1
 
 
 # Set BCM equations
 # ______________________________________________________________________________
-bcm.constant['tau']     = TAU
-bcm.constant['tau_bar'] = TAU_BAR
-bcm.constant['eta']     = ETA
-bcm.equation['c']       = "c + (F - c) * tau"
-bcm.equation['t']       = "t + (c**2 - t) * tau_bar"
-bcm.equation['F']       = "W + pre['V'] * post['c'] * (post['c'] - post['t']) * eta"
-bcm['c']                = 1
-bcm['t']                = 1
+bcm.dC = "C + (F - C)*tau"
+bcm.dT = "T + (C**2 - T) * tau_bar"
+bcm.dF = "W + pre['V'] * post['C'] * (post['C'] - post['T']) * eta"
 
 # Run some iterations
 # ______________________________________________________________________________
-
-
 n = 10000
 t = time.clock()
 for i in range(n):
@@ -73,5 +66,5 @@ print time.clock()-t
 
 # Display result using pylab
 # __________________________________________________________________________
-view = dana.pylab.view([source['V'], bcm['c']])
+view = dana.pylab.view([source.V, bcm.C])
 view.show()
