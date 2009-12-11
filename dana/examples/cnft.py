@@ -41,8 +41,8 @@ h       = 0.0
 
 # Build groups
 # ______________________________________________________________________________
-input = dana.group((n,n), name='input')
-focus = dana.group((n,n), name='focus')
+input = dana.zeros((n,n), name='input')
+focus = dana.zeros((n,n), name='focus')
 
 # Connections
 # ______________________________________________________________________________
