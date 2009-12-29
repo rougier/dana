@@ -126,6 +126,8 @@ class group(object):
             self._values[key][...] = value
         elif key[0]=='d' and key[1:] in self._values.keys():
             self._equations[key[1:]] = value
+        elif key[0]=='d' and key[1:] in self._links.keys():
+            self._equations[key[1:]] = value
         else:
             object.__setattr__(self, key, value)
 
@@ -164,6 +166,10 @@ class group(object):
     shape = property(_get_shape, _set_shape)
 
 
+    def reshape(self, shape):
+        for key in self._values.keys():
+            self._values[key].shape = shape
+        return self
 
     def _get_dtype(self):
         return self._dtype
@@ -234,7 +240,7 @@ class group(object):
 
 
 
-    def compute(self, dt=0.1, namespace=globals()):
+    def compute(self, dt=0.1):
         ''' Compute new values according to equations.
 
         **Parameters**
@@ -270,7 +276,7 @@ class group(object):
         return 0
 
 
-    def learn (self, dt=0.1):
+    def learn (self, dt=0.1, namespace=globals()):
         ''' Adapt group links according to equations
 
         **Parameters**
@@ -279,13 +285,18 @@ class group(object):
                 Time period to consider
         '''
 
+        # Get relevant namespaces
+        frame=inspect.stack()[1][0]
+        f_globals, f_locals = frame.f_globals,frame.f_locals        
+        f_globals['dt'] = dt
+
         links = {}
         for key in self._stored.keys():
             links[key] = self._stored[key]
         # Evaluate equations for each link
         for key in self._links.keys():
             if key in self._equations.keys():
-                self._links[key].learn(self._equations[key], links, dt)
+                self._links[key].learn(self._equations[key], links, dt, f_globals)
 
 
 

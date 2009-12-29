@@ -66,5 +66,6 @@ G.V[:,n-1] = -1
 
 # Display result using pylab
 # __________________________________________________________________________
-view = dana.pylab.view(G.V, vmin=-1, vmax=1, interpolation='bicubic')
+view = dana.pylab.view(G.V, vmin=-1, vmax=1,
+                       cmap=pylab.cm.hot, interpolation='bicubic')
 view.show()

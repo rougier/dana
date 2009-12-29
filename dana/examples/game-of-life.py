@@ -36,7 +36,7 @@ import dana, dana.pylab
 
 # Build groups
 # ______________________________________________________________________________
-n = 40
+n = 100
 G = dana.group((n,n), dtype=bool)
 
 # Connections
@@ -45,6 +45,8 @@ K = numpy.array([[1, 1, 1],
                  [1, 0, 1],
                  [1, 1, 1]])
 G.connect(G.V, K, 'N', sparse=True)
+
+
 
 # Set Dynamic Neural Field equation
 # ______________________________________________________________________________
@@ -56,12 +58,17 @@ G.V = numpy.random.randint(0,2,G.shape)
 
 # Run some iterations
 # ______________________________________________________________________________
+S = numpy.zeros(G.shape)
 for i in range(50):
     G.compute()
+    S += G.V
 
 # Display result using pylab
 # __________________________________________________________________________
-view = dana.pylab.view(G.V, cmap=pylab.cm.gray_r, vmin=0, vmax=1)
-pylab.xticks('')
-pylab.yticks('')
-view.show()
+pylab.imshow(S,  cmap=pylab.cm.hot, interpolation='bicubic')
+pylab.colorbar()
+#view = dana.pylab.view(S, cmap=pylab.cm.hot, vmin=0, vmax=1)
+#pylab.xticks([])
+#pylab.yticks([])
+#view.show()
+pylab.show()

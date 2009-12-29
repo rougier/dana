@@ -59,7 +59,7 @@ som.dI = "W+lrate*Le/n*(pre.V-W)"
 for i in range(2500):
     if (i%100) == 0: print i
     som.V = 0
-    input.V = numpy.random.randint(0,3)
+    input.V = numpy.random.randint(3)/2.0
     dV = 1
     while dV > epsilon:
         V = som.V.copy()

@@ -41,6 +41,7 @@ from functions import convolve1d, convolve2d, extract
 from scipy.ndimage.interpolation import zoom
 import scipy.linalg
 from array import csr_array, dot
+import inspect
 
 epsilon = 1.0e-30
 
@@ -242,9 +243,9 @@ class link(object):
             s = np.array(dst.shape).astype(float)/src.shape
             S = convolve2d(zoom(src,s,order=1), self.kernel, self.USV)
         elif sp.issparse(self.kernel):
-            S = dot(self.kernel,src.reshape(src.size,1)).reshape(dst.shape)
+            S = dot(self.kernel,src.reshape((src.size,1))).reshape(dst.shape)
         else:
-            S = np.dot(self.kernel,src.reshape(src.size,1)).reshape(dst.shape)
+            S = np.dot(self.kernel,src.reshape((src.size,1))).reshape(dst.shape)
         return np.multiply(S,dst.mask)
 
 
@@ -257,36 +258,35 @@ class link(object):
         dst = self.destination
 
         if sp.issparse(self.kernel):
-            result = np.abs(self.kernel - src.reshape(1,src.size))
+            result = np.abs(self.kernel - src.reshape((1,src.size)))
             return np.multiply((result.sum(axis=1).reshape(dst.shape)), dst.mask)
         else:
-            result = np.abs(self.kernel - src.reshape(1,src.size))*(1-self.mask)
+            result = np.abs(self.kernel - src.reshape((1,src.size)))*(1-self.mask)
             return np.multiply((result.sum(axis=1).reshape(dst.shape)), dst.mask)
 
 
-    def learn (self, equation, links, dt=0.1):
+    def learn(self, equation, links, dt=0.1, namespace=globals()):
         ''' Adapt link according to equation. '''
 
-        src = self.source_base
-        dst = self.destination_base
-        locals()['pre'] = src.reshape(1,src.size)
-        locals()['post'] = dst.reshape(dst.size,1)
-        locals()['W'] = self.kernel
+        src = self.source.parent
+        dst = self.destination
+        namespace['pre'] = src.reshape((1,src.size))
+        namespace['post'] = dst.reshape((dst.size,1))
+        namespace['W'] = self.kernel
+
         # Restore previously computed links
         for key in links.keys():
-            locals()[key] = links[key].reshape(dst.size,1) # + (1,1))
-        # Get constant from definition
-        for key in dst.constant.keys():
-            locals()[key] = dst.constant[key]
+            locals()[key] = links[key].reshape((dst.size,1)) # + (1,1))
+
         if sp.issparse(self.kernel):
-            R = eval(equation, globals(), locals())
+            R = eval(equation, namespace, locals())
             ij = self.kernel.mask
             R_ij = np.array(R[ij]).reshape(ij[0].size)
             K = sp.coo_matrix((R_ij,ij), self.kernel.shape)
             #self.kernel = sp.csr_matrix(K.tocsr())
             self.kernel = csr_array(K.tocsr())
         else:
-            self.kernel[...] = eval(equation, globals(), locals())
+            self.kernel[...] = eval(equation, namespace, locals())
 
 
     def __getitem__(self, key):
