@@ -28,26 +28,6 @@
 #      FRANCE
 # 
 """
--------------------------------------------------------------------------------
-  ____  _____ _____ _____ 
- |    \|  _  |   | |  _  |   DANA, Distributed Asynchronous Adaptive Numerical
- |  |  |     | | | |     |         Computing Framework
- |____/|__|__|_|___|__|__|         Copyright (C) 2009 INRIA  -  CORTEX Project
-                          
- This program is free software: you can redistribute it and/or modify it under
- the terms of the GNU General Public License as published by the Free Software
- Foundation, either  version 3 of the  License, or (at your  option) any later
- version.
-  
- DANA  is  a   python  library  based  on  numpy   that  support  distributed,
- asynchronous, numerical and adaptive  computation which is closely related to
- both the notion of artificial  neural networks and cellular automaton. From a
- conceptual point  of view, the computational paradigm  supporting the library
- is grounded on  the notion of a  group that is a matrix  of several arbitrary
- named values that can vary along time under the influence of other groups and
- learning.
-
--------------------------------------------------------------------------------
 """
 from functools import partial
 import numpy
