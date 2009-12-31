@@ -39,9 +39,9 @@ image.B = I[:,:,2]
 
 # Create groups for luminance conversion (G), sobel filter (S)
 #  and gaussian blur(B)
-G = dana.group(I.shape[:-1])
-S = dana.group(I.shape[:-1])
-B = dana.group(I.shape[:-1], keys=['R','G','B'])
+G = dana.zeros(I.shape[:-1])
+S = dana.zeros(I.shape[:-1])
+B = dana.zeros(I.shape[:-1], keys=['R','G','B'])
 
 # Connect luminance group to R,G,B channels
 G.connect(image.R, np.ones((1,1)), 'R', shared=True)
@@ -94,7 +94,7 @@ plt.xticks([])
 plt.yticks([])
 plt.subplot(1,3,3)
 plt.title('Gaussian blur')
-plt.imshow(B.asarray().view(np.float32).reshape(I.shape),
+plt.imshow(B.asarray().view(float).reshape(B.shape+(3,)),
            origin='upper', interpolation='bicubic', cmap=plt.cm.gray)
 plt.xticks([])
 plt.yticks([])
