@@ -50,21 +50,19 @@ class link (unittest.TestCase):
 
         G1 = dana.group(np.random.random((3,3)))
         G2 = dana.group(np.random.random((3,3)))
-        G1.connect(G2.V, np.ones((1,1)), 'I', sparse=True)
-        G1.connect(G2.V, np.ones((1,1)), 'J', shared=True)
-        G1.connect(G2.V, np.ones((1,1)), 'K', shared=False)
+        G1.connect(G2.V, np.ones((1,1)), 'I', sparse=True,  shared=False)
+        G1.connect(G2.V, np.ones((1,1)), 'J', sparse=False, shared=True)
+        G1.connect(G2.V, np.ones((1,1)), 'K', sparse=False, shared=False)
 
         G1.dV = 'I'
         G1.compute()
-        self.assert_ (self.equal(G1['V'],G2['V']))
-
+        self.assert_ (self.equal(G1.V,G2.V))
         G1.dV = 'J'
         G1.compute()
-        self.assert_ (self.equal(G1['V'],G2['V']))
-
+        self.assert_ (self.equal(G1.V,G2.V))
         G1.dV = 'K'
         G1.compute()
-        self.assert_ (self.equal(G1['V'],G2['V']))
+        self.assert_ (self.equal(G1.V,G2.V))
 
 
     def test_one_to_one_shared (self):
