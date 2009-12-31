@@ -37,7 +37,7 @@ import dana, dana.pylab
 # Build groups
 # ______________________________________________________________________________
 n = 100
-G = dana.group((n,n), dtype=bool)
+G = dana.group((n,n), dtype=int)
 
 # Connections
 # ______________________________________________________________________________
@@ -62,13 +62,15 @@ S = numpy.zeros(G.shape)
 for i in range(50):
     G.compute()
     S += G.V
+S /= 50.0
 
 # Display result using pylab
 # __________________________________________________________________________
-pylab.imshow(S,  cmap=pylab.cm.hot, interpolation='bicubic')
+pylab.imshow(numpy.maximum(S,G.V), cmap=pylab.cm.hot, interpolation='nearest')
 pylab.colorbar()
-#view = dana.pylab.view(S, cmap=pylab.cm.hot, vmin=0, vmax=1)
+pylab.show()
+#view = dana.pylab.view(numpy.maximum(S,G.V), cmap=pylab.cm.hot, vmin=0, vmax=1)
 #pylab.xticks([])
 #pylab.yticks([])
 #view.show()
-pylab.show()
+
