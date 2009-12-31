@@ -153,7 +153,9 @@ class link(object):
                             Ss = np.array(list(source.shape), dtype=int)//2
                             for i in range(K.shape[0]):
                                 index = np.array(list(np.unravel_index(i, destination.shape)))
-                                k = extract(kernel, source.shape, Ks+Ss - (index*scale).astype(int), 0).flatten()
+                                index = (index/np.array(destination.shape, dtype=float)*np.array(source.shape)).astype(int)
+                                k = extract(kernel, source.shape, Ks+Ss - index, 0).flatten()
+                                #k = extract(kernel, source.shape, Ks+Ss - (index*scale).astype(int), 0).flatten()
                                 J_ = k.nonzero()[0].tolist()
                                 I_ = [i,]*len(J_)
                                 V_ = k[J_].tolist()
@@ -172,7 +174,9 @@ class link(object):
                             scale = source.size/float(destination.size)
                             for i in range(K.shape[0]):
                                 index =  np.array(list(np.unravel_index(i, destination.shape)))
-                                K[i,:] = extract(kernel, source.shape, Ks+Ss-(index*scale).astype(int), np.NaN).flatten()
+                                index = (index/np.array(destination.shape, dtype=float)*np.array(source.shape)).astype(int)
+                                K[i,:] = extract(kernel, source.shape, Ks+Ss-index, np.NaN).flatten()
+                                #K[i,:] = extract(kernel, source.shape, Ks+Ss-(index*scale).astype(int), np.NaN).flatten()
                             kernel = K
                     else:
                         raise ValueError, \

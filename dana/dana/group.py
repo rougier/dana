@@ -100,7 +100,6 @@ class group(object):
             d = [(name,dtype[i]) for i, name in enumerate(dtype.names)]
             d += [('mask',np.bool)]
             dtype = d
-
         self._dtype = np.dtype(dtype)
         for i in range(len(self._dtype)):
             dtype, key = self._dtype[i], self._dtype.names[i]
@@ -167,9 +166,14 @@ class group(object):
 
 
     def reshape(self, shape):
+        G = group(shape)
+        G.name = self.name
+        G._links = self._links
+        G._equations = self._equations
+        G._dtype = self._dtype
         for key in self._values.keys():
-            self._values[key].shape = shape
-        return self
+            G._values[key] = self._values[key].reshape(shape)
+        return G
 
     def _get_dtype(self):
         return self._dtype
