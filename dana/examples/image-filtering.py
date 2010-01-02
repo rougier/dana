@@ -74,7 +74,7 @@ G.compute()
 S.dV = 'sqrt(Gx*Gx+Gy*Gy)'
 S.compute()
 
-# Compute Gaussian blue
+# Compute Gaussian blur
 B.dR = 'Gr'
 B.dG = 'Gg'
 B.dB = 'Gb'

@@ -195,6 +195,8 @@ class array(np.ndarray):
     and attributes of an array.
     '''
 
+    _shape = np.ndarray.shape
+
     def __new__(subtype, shape=(1,1), dtype=np.float32, buffer=None,
                 offset=None,strides=None, order=None, parent=None):
         ''' Create an array.
@@ -254,15 +256,29 @@ class array(np.ndarray):
         else:
             self += np.where(parent.mask, 0, np.nan)
 
+
+    def _force_shape(self, shape):
+        self._shape = shape
+    def _get_shape(self):
+        return self._shape
+    def _set_shape(self, shape):
+        if self.parent == None:
+            self._shape = shape
+        else:
+            raise AttributeError, \
+               '''Cannot reshape a child array (''parent'' is not None)'''
+    shape = property(_get_shape, _set_shape,
+                     doc='''Tuple of array dimensions.''')
+
 #     def _get_shape(self):
 #         return self.ctypes.shape
 
 #     def _set_shape(self, shape):
-#         if parent == None:
-#             self.ctypes.shape = shape
-#         else:
-#             raise AttributeError, \
-#                 '''Cannot reshape a child array (''parent'' is not None)'''
-
+#         pass
+# #        if parent == None:
+# #            self.ctypes.shape = shape
+# #        else:
+# #            raise AttributeError, \
+# #                '''Cannot reshape a child array (''parent'' is not None)'''
 #     shape = property(_get_shape, _set_shape, doc='''c-types shape''')
     

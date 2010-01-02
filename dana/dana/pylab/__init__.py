@@ -170,7 +170,8 @@ class view(object):
         else:
             Z,x,y = self.selection
             for axis,z in self.subplots:
-                W = Z.parent.get_weight(z,(y,x))
+                #W = Z.parent.get_weight(z,(y,x))
+                W = Z.parent.get_weight(z,(x,y))
                 if W is not None:
                     axis.set_data( W )
                 #else:

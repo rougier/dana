@@ -22,36 +22,27 @@
 #           Campus Scientifique, BP 239
 #           54506 VANDOEUVRE-LES-NANCY CEDEX 
 #           FRANCE
-import numpy, dana, time, dana.pylab
-from random import choice
+import numpy as np
+import scipy.sparse as sp
 
-N = 10
-source = dana.ones((N,1), name='source')
-bcm    = dana.ones((N,1), keys=['C','T'], name='bcm')
+def np_almost_equal(A, B, epsilon=1e-10):
+    ''' Assert two arrays are almost equal, even with NaN in them '''
 
-K = numpy.random.random((bcm.size,source.size))
-bcm.connect(source.V, K, 'F', shared=False)
-stims = numpy.identity(N)
+    if sp.issparse(A):
+        A = A.todense()
+    if sp.issparse(B):
+        B = B.todense()
+    A_nan = np.isnan(A)
+    B_nan = np.isnan(B)
+    A_num = np.nan_to_num(A)
+    B_num = np.nan_to_num(B)
+    return np.all(A_nan==B_nan) and (abs(A_num-B_num)).sum() <= epsilon
 
-tau = 1.0
-tau_bar = tau * 0.1
-eta = tau_bar * 0.1
+def np_equal(A, B):
+    ''' Assert two arrays are equal, even with NaN in them '''
 
-# Set BCM equations
-# ______________________________________________________________________________
-bcm.dC = "C + (F - C)*tau"
-bcm.dT = "T + (C**2 - T) * tau_bar"
-bcm.dF = "W + pre['V'] * post['C'] * (post['C'] - post['T']) * eta"
-
-# Run some iterations
-# ______________________________________________________________________________
-n = 10000
-for i in range(n):
-    source['V'] = choice(stims).reshape(source.shape)
-    bcm.compute()
-    bcm.learn()
-
-# Display result using pylab
-# __________________________________________________________________________
-view = dana.pylab.view([source.V, bcm.C])
-view.show()
+    if sp.issparse(A):
+        A = A.todense()
+    if sp.issparse(B):
+        B = B.todense()
+    return np_almost_equal(A,B,epsilon = 0)

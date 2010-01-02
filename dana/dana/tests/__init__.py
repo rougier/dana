@@ -22,21 +22,13 @@
 #           Campus Scientifique, BP 239
 #           54506 VANDOEUVRE-LES-NANCY CEDEX 
 #           FRANCE
-import sys
-import unittest
-import group
-import link
-import equation
-import array
 
+import nose
 
-def test(verbosity=2):
-    ''' Perform dana regression tests '''
-    
-    suite = unittest.TestSuite()
-    suite.addTest (group.suite)
-    suite.addTest (equation.suite)
-    suite.addTest (link.suite)
-    suite.addTest (array.suite)
-    runner = unittest.TextTestRunner(stream=sys.stdout, verbosity=verbosity)
-    result = runner.run(suite)
+def test(verbosity=1):
+    args = ['', '--verbosity=%d' % verbosity]
+    nose.runmodule(name='''dana.tests.test_group,
+                           dana.tests.test_array,
+                           dana.tests.test_equation,
+                           dana.tests.test_link''',
+                   argv=args, exit=False)

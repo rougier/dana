@@ -312,6 +312,8 @@ class link(object):
                 k = self.kernel[index]*np.where(self.mask[index], np.NaN, 1)
             return k.reshape(self.source.shape)
         else:
+            if type(key) == int:
+                key = (key,)
             s = np.array(list(self.source.shape))/np.array(list(self.destination.shape))
             c = (np.array(list(key))*s).astype(int).flatten()
             Ks = np.array(list(self.kernel.shape), dtype=int)//2

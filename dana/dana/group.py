@@ -52,7 +52,7 @@ class group(object):
     '''
 
 
-    def __init__(self, shape=(1,1), dtype=np.float32, keys=['V'],
+    def __init__(self, shape=(), dtype=np.float32, keys=['V'],
                  mask=True, name='', fill=None):
         ''' Create a group.
         
@@ -161,7 +161,9 @@ class group(object):
 
     def _set_shape(self, shape):
         for key in self._values.keys():
-            self._values[key].shape = shape
+            #self._values[key].shape = shape
+            self._values[key]._force_shape(shape)
+            #self._values[key].reshape(shape)
     shape = property(_get_shape, _set_shape)
 
 
@@ -257,6 +259,8 @@ class group(object):
         frame=inspect.stack()[1][0]
         f_globals, f_locals = frame.f_globals,frame.f_locals
         namespace = globals()
+        namespace.update(f_globals)
+        namespace.update(f_locals)
         namespace['dt'] = dt
 
         # Get activities from all fields
@@ -270,14 +274,14 @@ class group(object):
             self._stored[key] = namespace[key]
 
         # Evaluate equations for each field
-        #Z = self.copy()
-        #dV = 0
+        dV = []
         for key in self._values.keys():
             if key in self._equations.keys() and self._equations[key]:
+                C = self[key].copy().flatten()
                 result = eval(self._equations[key], f_globals, namespace)
                 self[key] = np.multiply(result,self['mask'])
-                #dV += abs(Z[key].flatten()-self[key].flatten()).sum()
-        return 0
+                dV.append(abs(C-self[key].flatten()).sum())
+        return dV
 
 
     def learn (self, dt=0.1, namespace=globals()):
@@ -291,8 +295,11 @@ class group(object):
 
         # Get relevant namespaces
         frame=inspect.stack()[1][0]
-        f_globals, f_locals = frame.f_globals,frame.f_locals        
-        f_globals['dt'] = dt
+        f_globals, f_locals = frame.f_globals,frame.f_locals
+        namespace = globals()
+        namespace.update(f_globals)
+        namespace.update(f_locals)
+        namespace['dt'] = dt
 
         links = {}
         for key in self._stored.keys():
@@ -300,7 +307,7 @@ class group(object):
         # Evaluate equations for each link
         for key in self._links.keys():
             if key in self._equations.keys():
-                self._links[key].learn(self._equations[key], links, dt, f_globals)
+                self._links[key].learn(self._equations[key], links, dt, namespace)
 
 
 
