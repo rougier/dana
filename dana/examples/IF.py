@@ -50,8 +50,8 @@ P.constant = {'mV'  : mV,  'ms'  : ms,
               'psp' : psp}
 W = (np.random.random((P.shape+P.shape)) < sparseness).astype(int)
 P.connect(P.S, W, 'I', shared=False)
-P.dV = 'np.where(V > Vt, Vr, V-dt*(V-El)/tau + I*0.5*mV)'
-P.dS = 'V > Vt' # Spikes
+P.dV = '-V+np.where(V > Vt, Vr, V-dt*(V-El)/tau + I*0.5*mV)'
+P.dS = '-S +(V > Vt)' # Spikes
 
 
 # Initialize membrane potential

@@ -55,8 +55,8 @@ V.constant = {'n':n,
               'tau':tau,
               'h':h,
               'alpha':alpha}
-V.dV = 'V+dt*(-V+(L*100.0/n+I+h)/alpha)/tau'
-V.dU = '1.0/(1.0+exp(2.0-3.0*V))'
+V.dV = 'dt*(-V+(L*100.0/n+I+h)/alpha)/tau'
+V.dU = '1.0/(1.0+exp(2.0-3.0*V))-U'
 
 # Run some iterations
 # ______________________________________________________________________________

@@ -54,7 +54,7 @@ V.constant = {'n':n,
               'h':h,
               'alpha':alpha,
               'minact':0.0}
-V.dV = 'maximum(0,V+dt*(-V+(L*100.0/n+I+h)/alpha)/tau)'
+V.dV = '-V+maximum(0,V+dt*(-V+(L*100.0/n+I+h)/alpha)/tau)'
 
 
 

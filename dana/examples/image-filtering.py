@@ -67,11 +67,11 @@ B.connect(image.G, K, 'Gg', shared=True)
 B.connect(image.B, K, 'Gb', shared=True)
 
 # Compute luminance
-G.dV = '0.212671*R + 0.715160*G + 0.072169*B'
+G.dV = '-V + 0.212671*R + 0.715160*G + 0.072169*B'
 G.compute()
 
 # Compute Sobel filters
-S.dV = 'sqrt(Gx*Gx+Gy*Gy)'
+S.dV = '-V + sqrt(Gx*Gx+Gy*Gy)'
 S.compute()
 
 # Compute Gaussian blur

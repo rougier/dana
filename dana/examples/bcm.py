@@ -39,9 +39,9 @@ eta = tau_bar * 0.1
 
 # Set BCM equations
 # ______________________________________________________________________________
-bcm.dC = "C + (F - C)*tau"
-bcm.dT = "T + (C**2 - T) * tau_bar"
-bcm.dF = "W + pre['V'] * post['C'] * (post['C'] - post['T']) * eta"
+bcm.dC = "(F - C)*tau"
+bcm.dT = "(C**2 - T) * tau_bar"
+bcm.dF = "pre['V'] * post['C'] * (post['C'] - post['T']) * eta"
 
 # Run some iterations
 # ______________________________________________________________________________
