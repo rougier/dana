@@ -126,6 +126,8 @@ class group(object):
         elif key[0]=='d' and key[1:] in self._values.keys():
             self._equations[key[1:]] = value
         elif key[0]=='d' and key[1:] in self._links.keys():
+            if self._links[key[1:]].shared:
+                raise ValueError, 'Shared link cannot be learned'
             self._equations[key[1:]] = value
         else:
             object.__setattr__(self, key, value)
@@ -277,10 +279,20 @@ class group(object):
         dV = []
         for key in self._values.keys():
             if key in self._equations.keys() and self._equations[key]:
-                C = self[key].copy().flatten()
+                #C = self[key].copy().flatten()
+                #result = eval(self._equations[key]+'+%s' % key, f_globals, namespace)
+                #self[key] = np.multiply(result,self['mask'])
                 result = eval(self._equations[key], f_globals, namespace)
-                self[key] = np.multiply(result,self['mask'])
-                dV.append(abs(C-self[key].flatten()).sum())
+                print self['mask'].shape
+                print self[key].shape
+                print np.multiply(result,self['mask']).shape
+                print (np.multiply(result,self['mask']).reshape(self[key].shape)).shape
+                self[key] += np.multiply(result,self['mask'])
+                #dV.append(abs(C-self[key].flatten()).sum())
+                if type(result) not in [float,int]:
+                    dV.append(result.flatten().sum())
+                else:
+                    dV.append(result)
         return dV
 
 

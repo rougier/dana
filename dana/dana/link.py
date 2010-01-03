@@ -134,7 +134,7 @@ class link(object):
             # Else, we expand kernel to the right size
             # ----------------------------------------
             else:
-                # Replace all 0 with epsilon
+                #Replace all 0 with epsilon
                 #kernel = np.where(kernel==0, epsilon, kernel)
                 if kernel.shape != (destination.size,source.size):
                     if len(kernel.shape) == len(source.shape):
@@ -144,17 +144,16 @@ class link(object):
                         if sparse: #or (density <= 0.25 and sparse is not False):
                             K = sp.lil_matrix((destination.size,source.size), dtype=dtype)
                             scale = source.size/float(destination.size)
-
                             I = []
                             J = []
                             V = []
-
                             Ks = np.array(list(kernel.shape), dtype=int)//2
                             Ss = np.array(list(source.shape), dtype=int)//2
                             for i in range(K.shape[0]):
                                 index = np.array(list(np.unravel_index(i, destination.shape)))
                                 index = (index/np.array(destination.shape, dtype=float)*np.array(source.shape)).astype(int)
                                 k = extract(kernel, source.shape, Ks+Ss - index, 0).flatten()
+                                #k = extract(kernel, source.shape, Ks+Ss - index, np.NaN).flatten()
                                 #k = extract(kernel, source.shape, Ks+Ss - (index*scale).astype(int), 0).flatten()
                                 J_ = k.nonzero()[0].tolist()
                                 I_ = [i,]*len(J_)
@@ -184,7 +183,6 @@ class link(object):
                 # The 0.25 threshold sparse/dense comes from benchmark-np.py
                 # You may have to change it according to benchmark results
                 # self.mask = np.isnan(kernel).astype(bool)
-
                 K = np.nan_to_num(kernel)
                 density = (K != 0).sum()/float(kernel.size)
                 if sparse or (density <= 0.25 and sparse is not False):
@@ -194,7 +192,6 @@ class link(object):
                 else:
                     self.mask = np.isnan(kernel)
                     self.kernel = np.array(K, dtype=dtype)
-
 
 
     def __str__(self):
@@ -277,20 +274,20 @@ class link(object):
         namespace['pre'] = src.reshape((1,src.size))
         namespace['post'] = dst.reshape((dst.size,1))
         namespace['W'] = self.kernel
-
+        
         # Restore previously computed links
         for key in links.keys():
             locals()[key] = links[key].reshape((dst.size,1)) # + (1,1))
 
         if sp.issparse(self.kernel):
-            R = eval(equation, namespace, locals())
+            R = eval(equation+'+W', namespace, locals())
             ij = self.kernel.mask
             R_ij = np.array(R[ij]).reshape(ij[0].size)
             K = sp.coo_matrix((R_ij,ij), self.kernel.shape)
             #self.kernel = sp.csr_matrix(K.tocsr())
             self.kernel = csr_array(K.tocsr())
         else:
-            self.kernel[...] = eval(equation, namespace, locals())
+            self.kernel[...] = eval(equation+'+W', namespace, locals())*(1-self.mask)
 
 
     def __getitem__(self, key):

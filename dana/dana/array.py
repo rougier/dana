@@ -196,6 +196,7 @@ class array(np.ndarray):
     '''
 
     _shape = np.ndarray.shape
+    _parent = None
 
     def __new__(subtype, shape=(1,1), dtype=np.float32, buffer=None,
                 offset=None,strides=None, order=None, parent=None):
@@ -212,7 +213,7 @@ class array(np.ndarray):
                 Offset of array data in buffer.
             ``strides`` : tuple of ints, optional
                 Strides of data in memory.
-            ``order`` : {‘C’, ‘F’}, optional
+            ``order`` : {'C', 'F'}, optional
                 Row-major or column-major order.
             ``parent`` : group
                 Parent group of this array
@@ -262,6 +263,8 @@ class array(np.ndarray):
     def _get_shape(self):
         return self._shape
     def _set_shape(self, shape):
+        if shape == self._shape:
+            return
         if self.parent == None:
             self._shape = shape
         else:

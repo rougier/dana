@@ -51,15 +51,15 @@ som.connect(som.V, 0.75*dana.gaussian(2*n+1, 1.0), 'Li*', shared=False)
 
 # Set Dynamic Neural Field equation
 # ______________________________________________________________________________
-som.dV = "maximum(0, V+dt*(-V+((Le-Li)*100.0/n+(1-I)+h)/alpha)/tau)"
-som.dI = "W+lrate*Le/n*(pre.V-W)"
+som.dV = "-V+maximum(0, V+dt*(-V+((Le-Li)*100.0/n+(1-I)+h)/alpha)/tau)"
+som.dI = "lrate*Le/n*(pre.V-W)"
 
 # Run some iterations
 # ______________________________________________________________________________
 for i in range(2500):
     if (i%100) == 0: print i
     som.V = 0
-    input.V = numpy.random.randint(3)/2.0
+    input.V = numpy.random.randint(2)/1.0
     dV = 1
     while dV > epsilon:
         V = som.V.copy()

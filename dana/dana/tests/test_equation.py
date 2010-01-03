@@ -43,7 +43,7 @@ def test_empty_equation():
 def test_constant_equation():
     ''' Check equation with numerical constant'''
     G = dana.zeros((10,10))
-    G.dV = '1.2345'
+    G.dV = '1.2345-V'
     result = G.compute()
     assert np_equal(G.V, np.ones((10,10))*1.2345)
 
@@ -51,7 +51,7 @@ def test_constant_access():
     ''' Check equation with symbolic constant'''
     G = dana.zeros((10,10))
     h = 1.2345
-    G.dV = 'h'
+    G.dV = 'h-V'
     result = G.compute()
     assert np_equal(G.V, np.ones((10,10))*h)
     assert_almost_equal(result[0], 10*10*h)
@@ -59,8 +59,8 @@ def test_constant_access():
 def test_value_access():
     ''' Check equation value access'''
     G = dana.ones((10,10), keys=['U','V'])
-    G.dU = 'V'
-    G.dV = 'V+U/2'
+    G.dU = '0'
+    G.dV = 'U/2'
     result = G.compute()
     assert np_equal(G.V, np.ones((10,10))*1.5)
     assert_almost_equal(result[0],10*10*0.0)
@@ -71,7 +71,7 @@ def test_cos_operator():
     Z = np.random.random((10,10))
     G = dana.zeros((10,10))
     G.V = Z
-    G.dV = 'cos(V)'
+    G.dV = 'cos(V)-V'
     result = G.compute()
     assert np_almost_equal(G.V,np.cos(Z))
 
@@ -80,7 +80,7 @@ def test_sin_operator():
     Z = np.random.random((10,10))
     G = dana.zeros((10,10))
     G.V = Z
-    G.dV = 'sin(V)'
+    G.dV = 'sin(V)-V'
     result = G.compute()
     assert np_almost_equal(G.V,np.sin(Z))
 
@@ -90,7 +90,7 @@ def test_exp_operator():
     Z = np.random.random((10,10))
     G = dana.zeros((10,10))
     G.V = Z
-    G.dV = 'exp(V)'
+    G.dV = 'exp(V)-V'
     result = G.compute()
     assert np_almost_equal(G.V,np.exp(Z))
 
@@ -99,7 +99,7 @@ def test_sqrt_operator():
     Z = np.random.random((10,10))
     G = dana.zeros((10,10))
     G.V = Z
-    G.dV = 'sqrt(V)'
+    G.dV = 'sqrt(V)-V'
     result = G.compute()
     assert np_almost_equal(G.V,np.sqrt(Z))
 
@@ -109,7 +109,7 @@ def test_equation_mask():
     Z = np.ones((10,10))
     G = dana.zeros((10,10))
     G.mask[0] = 0
-    G.dV = '1'
+    G.dV = '1-V'
     result = G.compute()
     Z[0] = np.nan
     assert np_equal(G.V, Z)

@@ -30,5 +30,6 @@ def test(verbosity=1):
     nose.runmodule(name='''dana.tests.test_group,
                            dana.tests.test_array,
                            dana.tests.test_equation,
-                           dana.tests.test_link''',
+                           dana.tests.test_link,
+                           dana.tests.test_learn''',
                    argv=args, exit=False)

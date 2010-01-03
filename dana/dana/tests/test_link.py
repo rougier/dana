@@ -34,7 +34,7 @@ def test_one_to_one_dense_1():
     G1 = dana.group(np.random.random((10,)))
     G2 = dana.group(np.random.random((10,)))
     G1.connect(G2.V, np.ones((1,)), 'I', sparse=False, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V,G2.V)
 
@@ -44,7 +44,7 @@ def test_one_to_one_dense_2():
     G1 = dana.group(np.random.random((10,10)))
     G2 = dana.group(np.random.random((10,10)))
     G1.connect(G2.V, np.ones((1,1)), 'I', sparse=False, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V,G2.V)
 
@@ -54,7 +54,7 @@ def test_one_to_one_dense_3():
     G1 = dana.group(np.random.random((5,5)))
     G2 = dana.group(np.random.random((10,10)))
     G1.connect(G2.V, np.ones((1,1)), 'I', sparse=False, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V,G2.V[::2,::2])
 
@@ -87,7 +87,7 @@ def test_one_to_one_dense_6():
     G2 = dana.group(np.random.random((10,)))
     G1.connect(G2.V, np.ones((1,)), 'I', sparse=False, shared=False)
     G1.mask[0] = False
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     G2.V[0] = np.NaN
     assert np_almost_equal(G1.V,G2.V)
@@ -99,7 +99,7 @@ def test_one_to_one_dense_7():
     G2 = dana.group(np.random.random((10,10)))
     G1.connect(G2.V, np.ones((1,1)), 'I', sparse=False, shared=False)
     G1.mask[0,0] = False
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     G2.V[0,0] = np.NaN
     assert np_almost_equal(G1.V,G2.V)
@@ -110,7 +110,7 @@ def test_one_to_one_shared_1():
     G1 = dana.group(np.random.random((10,)))
     G2 = dana.group(np.random.random((10,)))
     G1.connect(G2.V, np.ones((1,)), 'I', sparse=False, shared=True)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V,G2.V)
 
@@ -120,7 +120,7 @@ def test_one_to_one_shared_2():
     G1 = dana.group(np.random.random((10,10)))
     G2 = dana.group(np.random.random((10,10)))
     G1.connect(G2.V, np.ones((1,1)), 'I', sparse=False, shared=True)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V,G2.V)
 
@@ -130,7 +130,7 @@ def test_one_to_one_shared_3():
     G1 = dana.group(np.random.random((5,5)))
     G2 = dana.group(np.random.random((10,10)))
     G1.connect(G2.V, np.ones((1,1)), 'I', sparse=False, shared=True)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V,G2.V[::2,::2])
 
@@ -163,7 +163,7 @@ def test_one_to_one_shared_6():
     G2 = dana.group(np.random.random((10,)))
     G1.connect(G2.V, np.ones((1,)), 'I', sparse=False, shared=True)
     G1.mask[0] = False
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     G2.V[0] = np.NaN
     assert np_almost_equal(G1.V,G2.V)
@@ -175,11 +175,10 @@ def test_one_to_one_shared_7():
     G2 = dana.group(np.random.random((10,10)))
     G1.connect(G2.V, np.ones((1,1)), 'I', sparse=False, shared=True)
     G1.mask[0,0] = False
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     G2.V[0,0] = np.NaN
     assert np_almost_equal(G1.V,G2.V)
-
 
 def test_one_to_one_sparse_1():
     ''' Check link computation, one to one, dense '''
@@ -187,7 +186,7 @@ def test_one_to_one_sparse_1():
     G1 = dana.group(np.random.random((10,)))
     G2 = dana.group(np.random.random((10,)))
     G1.connect(G2.V, np.ones((1,)), 'I', sparse=True, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V,G2.V)
 
@@ -197,7 +196,7 @@ def test_one_to_one_sparse_2():
     G1 = dana.group(np.random.random((10,10)))
     G2 = dana.group(np.random.random((10,10)))
     G1.connect(G2.V, np.ones((1,1)), 'I', sparse=True, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V,G2.V)
 
@@ -207,10 +206,9 @@ def test_one_to_one_sparse_3():
     G1 = dana.group(np.random.random((5,5)))
     G2 = dana.group(np.random.random((10,10)))
     G1.connect(G2.V, np.ones((1,1)), 'I', sparse=True, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V,G2.V[::2,::2])
-
 
 def test_one_to_one_sparsed_4():
     ''' Check link, one to one, sparse '''
@@ -241,7 +239,7 @@ def test_one_to_one_sparse_6():
     G2 = dana.group(np.random.random((10,)))
     G1.connect(G2.V, np.ones((1,)), 'I', sparse=True, shared=False)
     G1.mask[0] = False
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     G2.V[0] = np.NaN
     assert np_almost_equal(G1.V,G2.V)
@@ -253,7 +251,7 @@ def test_one_to_one_sparse_7():
     G2 = dana.group(np.random.random((10,10)))
     G1.connect(G2.V, np.ones((1,1)), 'I', sparse=True, shared=False)
     G1.mask[0,0] = False
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     G2.V[0,0] = np.NaN
     assert np_almost_equal(G1.V,G2.V)
@@ -264,7 +262,7 @@ def test_weighted_sum_dense_1():
     G1 = dana.zeros((5,))
     G2 = dana.ones((5,))
     G1.connect(G2.V,np.ones((5,)), 'I', sparse=False, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V, np.array([3,4,5,4,3]))
 
@@ -274,7 +272,7 @@ def test_weighted_sum_dense_2():
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
     G1.connect(G2.V,np.ones((3,3)), 'I', sparse=False, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V, np.array([[4,6,4],
                                            [6,9,6],
@@ -286,7 +284,7 @@ def test_weighted_sum_dense_3():
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
     G1.connect(G2.V,np.ones((3,3)), 'I', sparse=False, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G2.mask[1,1] = False
     G1.compute()
     print G1.V
@@ -300,7 +298,7 @@ def test_weighted_sum_shared_1():
     G1 = dana.zeros((5,))
     G2 = dana.ones((5,))
     G1.connect(G2.V,np.ones((5,)), 'I', sparse=False, shared=True)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V, np.array([3,4,5,4,3]))
 
@@ -310,7 +308,7 @@ def test_weighted_sum_shared_2():
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
     G1.connect(G2.V,np.ones((3,3)), 'I', sparse=False, shared=True)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V, np.array([[4,6,4],
                                            [6,9,6],
@@ -322,7 +320,7 @@ def test_weighted_sum_shared_3():
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
     G1.connect(G2.V,np.ones((3,3)), 'I', sparse=False, shared=True)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G2.mask[1,1] = False
     G1.compute()
     assert np_almost_equal(G1.V, np.array([[3,5,3],
@@ -335,7 +333,7 @@ def test_weighted_sum_sparse_1():
     G1 = dana.zeros((5,))
     G2 = dana.ones((5,))
     G1.connect(G2.V,np.ones((5,)), 'I', sparse=True, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V, np.array([3,4,5,4,3]))
 
@@ -345,7 +343,7 @@ def test_weighted_sum_sparse_2():
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
     G1.connect(G2.V,np.ones((3,3)), 'I', sparse=True, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V, np.array([[4,6,4],
                                            [6,9,6],
@@ -357,13 +355,12 @@ def test_weighted_sum_sparse_3():
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
     G1.connect(G2.V,np.ones((3,3)), 'I', sparse=True, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G2.mask[1,1] = False
     G1.compute()
     assert np_almost_equal(G1.V, np.array([[3,5,3],
                                            [5,8,5],
                                            [3,5,3]]))
-
 
 def test_distance_dense_1():
     ''' Check link distance computation, dense '''
@@ -371,10 +368,9 @@ def test_distance_dense_1():
     G1 = dana.zeros((5,))
     G2 = dana.group(np.random.random((5,)))
     G1.connect(G2.V, np.ones((1,)), 'I-', sparse=False, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V,1-G2.V)
-
 
 def test_distance_dense_2():
     ''' Check link distance computation, dense '''
@@ -382,7 +378,7 @@ def test_distance_dense_2():
     G1 = dana.zeros((5,5))
     G2 = dana.group(np.random.random((5,5)))
     G1.connect(G2.V, np.ones((1,1)), 'I-', sparse=False, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V,1-G2.V)
 
@@ -393,7 +389,7 @@ def test_distance_shared_1():
     G1 = dana.zeros((5,))
     G2 = dana.group(np.random.random((5,)))
     G1.connect(G2.V, np.ones((1,)), 'I-', sparse=False, shared=True)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V,1-G2.V)
 
@@ -404,10 +400,9 @@ def test_distance_shared_2():
     G1 = dana.zeros((5,5))
     G2 = dana.group(np.random.random((5,5)))
     G1.connect(G2.V, np.ones((1,1)), 'I-', sparse=False, shared=True)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V,1-G2.V)
-
 
 def test_distance_sparse_1():
     ''' Check link distance computation, sparse '''
@@ -415,10 +410,9 @@ def test_distance_sparse_1():
     G1 = dana.zeros((5,))
     G2 = dana.group(np.random.random((5,)))
     G1.connect(G2.V, np.ones((1,)), 'I-', sparse=True, shared=False)
-    G1.dV = 'I'
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V,1-G2.V)
-
 
 def test_distance_sparse_2():
     ''' Check link distance computation, sparse '''
@@ -429,8 +423,6 @@ def test_distance_sparse_2():
     G1.dV = 'I'
     G1.compute()
     assert np_almost_equal(G1.V,1-G2.V)
-
-
 
 #     def test_distance_mask (self):
 #         ''' Check link distance computation with mask'''
