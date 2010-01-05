@@ -1,0 +1,34 @@
+@import url(default.css);
+
+body {}
+
+a em {
+    font-style: normal;
+}
+
+table.toc {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    border: 0px solid #ffffff;
+    border-collapse: collapse;
+    margin-bottom: 2.5em;
+}
+table.toc td {
+    border: 0px solid #ffffff;    
+}
+table.toc a {
+    font-size: 1.3em;
+}
+table.toc p {
+    padding: 0;
+    margin: 0;
+}
+table.toc p.first {
+    padding-bottom: 0.25em;
+}
+table.toc p.last {
+    padding-bottom: 1.5em;
+}
+
+
