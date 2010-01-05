@@ -174,13 +174,14 @@ table#menu {
 table {
     border: None;
     font-family: sans;
+    width:100%;
 }
 td, th {
     border: None;
 }
 th.head {
     text-align: left;
-    background-color: #dddddd;
+/*    background-color: #dddddd;*/
 }
 
 /* ========================================================================= */

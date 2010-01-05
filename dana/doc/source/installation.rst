@@ -1,7 +1,7 @@
 .. title:: Installation
 .. include:: common.rst
 
-Standard installation                                                          
+Installation                                                          
 ===============================================================================
 
 DANA  is a python  package that  may be  used without  installation and  be ran
@@ -56,13 +56,3 @@ example:
 .. code-block:: none
 
    sudo easy_install -U dana
-
-Subversion repository                                                          
-===============================================================================
-
-The subversion repository houses the source trunk, documentation and examples.
-You can browse the repository or check out a working copy using an SVN client:
-
-.. code-block:: none
-
-   svn checkout svn://scm.gforge.inria.fr/svn/dana/trunk/dana dana-svn
