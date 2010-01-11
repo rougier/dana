@@ -51,7 +51,6 @@ class group(object):
            [ 0.,  0.]])
     '''
 
-
     def __init__(self, shape=(), dtype=np.float32, keys=['V'],
                  mask=True, name='', fill=None):
         ''' Create a group.
@@ -166,7 +165,19 @@ class group(object):
             #self._values[key].shape = shape
             self._values[key]._force_shape(shape)
             #self._values[key].reshape(shape)
-    shape = property(_get_shape, _set_shape)
+    shape = property(_get_shape, _set_shape,
+                     doc = '''Tuple of group dimensions.\n
+                              **Examples**
+
+                              >>> x = dana.group((1,2))
+                              >>> x.shape
+                              (2,)
+                              >>> y = dana.zeros((4,5,6))
+                              >>> y.shape
+                              (4, 5, 6)
+                              >>> y.shape = (2, 5, 2, 3, 2)
+                              >>> y.shape
+                              (2, 5, 2, 3, 2)''')
 
 
     def reshape(self, shape):
@@ -181,22 +192,26 @@ class group(object):
 
     def _get_dtype(self):
         return self._dtype
-
-    def _set_size(self):
+    def _set_dtype(self):
         raise AttributeError, \
             '''attribute 'dtype' of 'group' objects is not writable'''
-
-    dtype = property(_get_dtype)
+    dtype = property(_get_dtype, _set_dtype,
+                     doc = 'Data-type for the group')
 
 
     def _get_size(self):
         return self._values[self._values.keys()[0]].size
-
     def _set_size(self):
         raise AttributeError, \
             '''attribute 'size' of 'group' objects is not writable'''
+    size = property(_get_size, _set_size,
+                     doc = '''Number of elements in the group.\n
+                              **Examples**
 
-    size = property(_get_size, _set_size)
+                              >>> x = dana.zeros((3,5,2), dtype=int)
+                              >>> x.size
+                              30''')
+
 
 
     def connect(self, source, kernel, name, dtype=np.float64, sparse=None, shared=False):
