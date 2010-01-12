@@ -80,7 +80,13 @@ class group(object):
         object.__setattr__(self,'_links', {})
         object.__setattr__(self,'_stored', {})
         
-        if type(shape) is np.ndarray:
+        if type(shape) is list:
+            Z = np.array(shape)
+            if fill is None:
+                fill = Z
+            dtype = [(f, Z.dtype) for f in keys]
+            shape = Z.shape
+        elif type(shape) is np.ndarray:
             if fill is None:
                 fill = shape
             dtype = [(f, shape.dtype) for f in keys]
@@ -143,7 +149,17 @@ class group(object):
             if key != 'mask':
                 R[key] = self[key]*self['mask']
         return R
-        
+
+    def __repr__(self):
+        ''' Return a string representation of group '''
+        dtype=[]
+        for key in self.dtype.names:
+            dtype.append( (key,self.dtype[key]))
+        dtype = np.dtype(dtype)
+        R = np.zeros(shape=self.shape, dtype=dtype)
+        for key in self._values.keys():
+            R[key] = self[key]*self['mask']
+        return repr(R).replace('array','group')
 
     def __getitem__(self, key):
         if type(key) is str:
@@ -297,7 +313,7 @@ class group(object):
                 result = eval(self._equations[key], f_globals, namespace)
                 if result.__class__.__name__ == 'matrix':
                     result = np.array(result).reshape(self[key].shape)
-                self[key] += np.multiply(result,self['mask'])
+                self[key] = self[key] + np.multiply(result,self['mask'])
                 if type(result) not in [float,int]:
                     dV.append(result.flatten().sum())
                 else:

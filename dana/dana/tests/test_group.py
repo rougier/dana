@@ -42,6 +42,16 @@ def test_group_3():
     G = dana.group((2,2,2))
     assert G.shape == (2,2,2)
 
+def test_group_4():
+    ''' Check group creation '''
+    G = dana.group([2,2,2])
+    assert np_equal(G.V, np.array([2,2,2]))
+
+def test_group_5():
+    ''' Check group creation '''
+    G = dana.group(np.array([2.0,2.0,2.0], dtype=int))
+    assert np_equal(G.V, np.array([2.0,2.0,2.0], dtype=int))
+
 def test_ones_1():
     ''' Check group basic creation routine 'ones' '''
     G = dana.ones((2,))

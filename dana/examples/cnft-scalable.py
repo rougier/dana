@@ -49,6 +49,9 @@ focus = dana.zeros((N,N), name='focus')
 Wi = numpy.ones((1,1))
 focus.connect(input.V, Wi, 'I', sparse=True)
 Wf = 1.25*dana.gaussian((2*N+1,2*N+1), 0.1) - 0.7*dana.gaussian((2*N+1,2*N+1), 1)
+
+print Wf.min(), Wf.max()
+
 focus.connect (focus.V, Wf, 'L', shared=True)
 
 # Set Dynamic Neural Field equation
