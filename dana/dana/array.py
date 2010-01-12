@@ -230,14 +230,14 @@ class array(np.ndarray):
 
     def _get_parent(self):
         return self._parent or self
-    def _set_parent(self, parent):
-        if self.size == parent.size:
-            self._parent = parent
-            self.reshape(parent.shape)
-        else:
-            raise ValueError, \
-                'shape mismatch: objects cannot be broadcast to a single shape'
-    parent = property(_get_parent, _set_parent,
+    # def _set_parent(self, parent):
+    #     if self.size == parent.size:
+    #         self._parent = parent
+    #         self.reshape(parent.shape)
+    #     else:
+    #         raise ValueError, \
+    #             'shape mismatch: objects cannot be broadcast to a single shape'
+    parent = property(_get_parent, #_set_parent,
                       doc = '''Parent array''')
 
     def __setitem__(self, key, value):
