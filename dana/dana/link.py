@@ -205,7 +205,7 @@ class link(object):
             ktype = 'sparse'
         else:
             ktype = 'dense'
-        src = self.source.parent.name
+        src = self.source.base.name
         dst = self.destination.name
         return '''<%s%sx%s %s link from group '%s' to group '%s'>''' % (
             shared, self.source.shape, self.destination.shape, ktype, src, dst)
@@ -247,6 +247,7 @@ class link(object):
             S = dot(self.kernel,src.reshape((src.size,1))).reshape(dst.shape)
         else:
             S = np.dot(self.kernel,src.reshape((src.size,1))).reshape(dst.shape)
+        return S
         return np.multiply(S,dst.mask)
 
 
@@ -269,7 +270,7 @@ class link(object):
     def learn(self, equation, links, dt=0.1, namespace=globals()):
         ''' Adapt link according to equation. '''
 
-        src = self.source.parent
+        src = self.source.base
         dst = self.destination
         namespace['pre'] = src.reshape((1,src.size))
         namespace['post'] = dst.reshape((dst.size,1))

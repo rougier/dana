@@ -196,10 +196,10 @@ class array(np.ndarray):
     '''
 
     _shape = np.ndarray.shape
-    _parent = None
+    _base = None
 
     def __new__(subtype, shape=(1,1), dtype=np.float32, buffer=None,
-                offset=None,strides=None, order=None, parent=None):
+                offset=None,strides=None, order=None, base=None):
         ''' Create an array.
         
         :Parameters:
@@ -215,8 +215,8 @@ class array(np.ndarray):
                 Strides of data in memory.
             ``order`` : {'C', 'F'}, optional
                 Row-major or column-major order.
-            ``parent`` : group
-                Parent group of this array
+            ``base`` : group
+                Base group of this array
 
         Returns
         -------
@@ -224,38 +224,28 @@ class array(np.ndarray):
            Array of given shape and type.
         '''
         obj = np.ndarray.__new__(subtype, shape=shape, dtype=dtype)
-        obj._parent = parent
+        obj._base = base
         return obj
 
-
-    def _get_parent(self):
-        return self._parent or self
-    # def _set_parent(self, parent):
-    #     if self.size == parent.size:
-    #         self._parent = parent
-    #         self.reshape(parent.shape)
-    #     else:
-    #         raise ValueError, \
-    #             'shape mismatch: objects cannot be broadcast to a single shape'
-    parent = property(_get_parent, #_set_parent,
-                      doc = '''Parent array''')
+    def _get_base(self):
+        return self._base or self
+    base = property(_get_base,
+                     doc = '''Base group this array belongs to.''')
 
     def __setitem__(self, key, value):
         np.ndarray.__setitem__(self,key,value)
-        if not hasattr(self, '_parent'):
+        base = self._base
+        if (not base or not hasattr(base, '_values') 
+            or 'mask' not in base._values.keys()):
             return
-        parent = self._parent        
-        if (not parent or not hasattr(parent, '_values') 
-            or 'mask' not in parent._values.keys()):
-            return
-        if id(self) == id(parent['mask']):
-            for k in parent._values.keys():
+        if id(self) == id(base['mask']):
+            for k in base._values.keys():
                 if k != 'mask':
-                    v = self._parent._values[k]
+                    v = self._base._values[k]
                     v[...] = np.nan_to_num(v)
-                    v += np.where(parent.mask, 0, np.nan)
+                    v += np.where(base.mask, 0, np.nan)
         else:
-            self += np.where(parent.mask, 0, np.nan)
+            self += np.where(base.mask, 0, np.nan)
 
 
     def _force_shape(self, shape):
@@ -265,23 +255,21 @@ class array(np.ndarray):
     def _set_shape(self, shape):
         if shape == self._shape:
             return
-        if self.parent == None:
+        if self.base == None:
             self._shape = shape
         else:
             raise AttributeError, \
-               '''Cannot reshape a child array (''parent'' is not None)'''
+               '''Cannot reshape a child array (''base'' is not None)'''
     shape = property(_get_shape, _set_shape,
-                     doc='''Tuple of array dimensions.''')
+                     doc = '''Tuple of array dimensions.\n
+                              **Examples**
 
-#     def _get_shape(self):
-#         return self.ctypes.shape
-
-#     def _set_shape(self, shape):
-#         pass
-# #        if parent == None:
-# #            self.ctypes.shape = shape
-# #        else:
-# #            raise AttributeError, \
-# #                '''Cannot reshape a child array (''parent'' is not None)'''
-#     shape = property(_get_shape, _set_shape, doc='''c-types shape''')
-    
+                              >>> x = dana.group((1,2))
+                              >>> x.shape
+                              (2,)
+                              >>> y = dana.zeros((4,5,6))
+                              >>> y.shape
+                              (4, 5, 6)
+                              >>> y.shape = (2, 5, 2, 3, 2)
+                              >>> y.shape
+                              (2, 5, 2, 3, 2)''')

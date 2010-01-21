@@ -208,10 +208,10 @@ def test_reshape_2():
     A = G.reshape((4,1))
     assert A.shape == (4,1)
 
-def test_parent():
-    ''' Check group parent '''
+def test_base():
+    ''' Check group base '''
     G = dana.zeros((2,2))
-    assert id(G.V.parent) == id(G)
+    assert id(G.V.base) == id(G)
 
 
 def test_mask_1():
