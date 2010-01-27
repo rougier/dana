@@ -108,7 +108,7 @@ class group(object):
         self._dtype = np.dtype(dtype)
         for i in range(len(self._dtype)):
             dtype, key = self._dtype[i], self._dtype.names[i]
-            self._values[key] = array(shape=shape, dtype=dtype, parent=self)
+            self._values[key] = array(shape=shape, dtype=dtype, base=self)
             if fill is not None and key != 'mask':
                 self._values[key][...] = fill
         self['mask'] = mask
@@ -366,11 +366,13 @@ class group(object):
         '''
 
         Z = np.ones(source.shape)*np.NaN
-        src = source.parent
+        src = source.base
         for k in self._links.keys():
             L = self._links[k]
-            lsrc = L.source.parent
+            lsrc = L.source.base
             if id(src) == id(lsrc):
                 Z = L[key]
                 break
         return Z
+
+
