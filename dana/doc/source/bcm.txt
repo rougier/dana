@@ -1,0 +1,107 @@
+=================
+BCM Learning Rule
+=================
+
+[BCM:1977]_ is a learning rule where each unit learns a specific pattern from
+the input without consideration for other units. A BCM unit tend to become
+selective to one precise stimulus of the input, that is, having a strong
+activity for a unique stimulus and a weak one for the rest.
+
+The state of a unit is described by two numerical values :
+
+    1. *c*, the instantaneous activity of the unit
+    2. *theta*, the long-term potentiation/long-term depression (LTP/LTD)
+       threshold.
+
+The basis of the BCM learning rule is to consider that the activity *c*
+relative to the threshold *theta* defines the sign of the weight change. If the
+activity is above the threshold, the learning operates as a potentiation and
+strengthens the weights. Otherwise, the learning operates as a depression and
+weakens the weights.
+
+Here is a simple example of BCM. A set of *n* BCM units learn to be selective
+to stimuli from a learning set.
+
+
+.. code-block:: python
+
+   n = 10
+   src = dana.zeros((n,1))
+   bcm = dana.zeros((n,1), keys=['C','T'])
+
+   K = numpy.random.random((bcm.size, src.size))
+   bcm.connect(src.V, K, 'F', shared=False)
+
+The set of stimuli is composed of *N* orthogonal stimuli. They are all
+normalized.
+
+
+.. code-block:: python
+
+   stims = numpy.identity(n)
+
+
+Three parameters are expressing variation speed of several variables of the
+model :
+
+    1. *tau* : variation speed of the instantaneous activity
+    2. *tau_* : variation speed of the *theta* threshold
+    3. *eta* : learning rate
+
+In this example, *tau = 1* which means that the activity is the instantaneous
+integration of the feedforward activity. However, we could use a smaller value
+for *tau*, but we would have to present each stimulus for more than one step so
+the unit have enough time to integrate the activity.
+
+.. code-block:: python
+
+   tau = 1.0
+   tau_ = tau * 0.1
+   eta = tau_ * 0.1
+
+
+We define the equations for the variations of the activity, the threshold and
+the weights.
+
+.. code-block:: python
+
+   bcm.dC = '(F - C)*tau'
+   bcm.dT = '(C**2 - T) * tau_'
+   bcm.dF = 'pre.V*post.C*(post.C - post.T)* eta'
+
+Finally, we run a simulation by presenting 10000 stimuli uniformly chosen from
+the training set, and we print results.
+
+.. code-block:: python
+
+   for i in range(10000):
+       src.V = choice(stims).reshape(src.shape)
+       bcm.compute()
+       bcm.learn()
+
+   print 'Learned prototypes'
+   for i in range(n):
+      print 'Unit %d: ' % i, (bcm.F.kernel[i] > 1e-3).astype(int)
+
+.. code-block:: python
+
+   Unit 0:  [0 1 0 0 0 0 0 0 0 0]
+   Unit 1:  [0 0 1 0 0 0 0 0 0 0]
+   Unit 2:  [0 1 0 0 0 0 0 0 0 0]
+   Unit 3:  [0 0 1 0 0 0 0 0 0 0]
+   Unit 4:  [0 0 0 0 0 0 0 0 1 0]
+   Unit 5:  [0 0 0 0 0 1 0 0 0 0]
+   Unit 6:  [0 0 0 0 0 0 0 0 0 1]
+   Unit 7:  [0 0 0 0 0 1 0 0 0 0]
+   Unit 8:  [0 0 0 0 0 0 0 0 1 0]
+   Unit 9:  [0 0 0 0 0 0 0 0 1 0]
+
+
+
+References
+==========
+
+.. [BCM:1977] E.L Bienenstock, L. Cooper and P. Munro. *Theory for the
+              development of neuron selectivity: orientation specificity and
+              binocular interaction in visual cortex*. The Journal of
+              Neuroscience 2 (1): 32–48, 1982.

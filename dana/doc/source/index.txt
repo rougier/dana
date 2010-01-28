@@ -1,0 +1,19 @@
+Welcome to Dana's documentation!
+================================
+
+`DANA <http://dana.loria.fr>`_ is a Python library for distributed numerical
+adaptive computing. If you are impatient and just want to know what is DANA,
+just have a look the :ref:`quick-tour`.
+
+This is the central page for all DANA's documentation.
+
+Contents:
+
+.. toctree::
+   :maxdepth: 2
+
+   install.txt
+   quicktour.txt
+   guide.txt
+   examples.txt
+   api.txt

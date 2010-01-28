@@ -1,0 +1,20 @@
+Link
+====
+
+.. currentmodule:: dana
+.. autoclass:: link
+
+Methods Details
+---------------
+
+.. automethod:: link.__init__
+.. automethod:: link.compute(dt, namespace)
+.. automethod:: link.learn(dt, namespace)
+
+
+Properties Details
+------------------
+
+.. autoattribute:: link.source
+.. autoattribute:: link.target
+.. autoattribute:: link.shared

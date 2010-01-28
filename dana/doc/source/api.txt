@@ -1,0 +1,30 @@
+.. _api-reference:
+
+=============
+API Reference
+=============
+
+.. _group-creation:
+
+Basic creation routines
+=======================
+
+.. toctree::
+   :maxdepth: 1
+
+   api-empty
+   api-zeros
+   api-ones
+   api-empty_like
+   api-zeros_like
+   api-ones_like
+
+
+Class
+=====
+
+.. toctree::
+   :maxdepth: 2
+
+   api-group
+   api-link

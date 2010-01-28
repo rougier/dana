@@ -1,0 +1,74 @@
+=================
+Diffusion process
+=================
+
+The heat equation describes the distribution of heat (or variation in
+temperature) in a given region over time. For a function u(x,y,t) of two
+spatial variables (x,y) and a time variable t, the heat equation is
+
+.. math::
+
+    \frac{\partial u}{\partial t} = k \nabla^2 u
+
+where k is a constant.
+
+The numerical solution can be approximated using various methods such as the
+explicit, implicit or Crank-Nicolson methods. In the following, we'll use the
+explicit method.
+
+
+Implementation
+==============
+
+We begin by setting simulation parameters 
+
+.. code-block:: python
+
+   n = 60
+   k = 1
+
+and we create a group representing the heated surface
+
+.. code-block:: python
+
+   G = dana.zeros((n,n))
+
+We connect each group cell to its 4 neighbours and we write the heat equation
+using the forward difference/ central difference (FCTS) equation.
+
+.. code-block:: python
+
+   K = numpy.array([[0, 1, 0],
+                    [1, 0, 1],
+                    [0, 1, 0]])
+   G.connect(G.V, K, 'N', shared=True)
+   G.dV = 'dt*k*(N/4-V)'
+
+We run 2500 iterations, keeping left, right and up border at temperature 1
+while bottom border is kept at temperature 0.
+
+.. code-block:: python
+
+   for i in range(2500):
+       G.compute(dt=1)
+       G.V[0,:] = 0 
+       G.V[:,n-1] = G.V[n-1,:] = G.V[:,0] = 1
+
+
+And finally, we visualize the result:
+
+.. code-block:: python
+
+   fig = plt.figure(figsize=(10,7.5))
+   plt.imshow(G.V, cmap=plt.cm.hot, origin='lower',
+              extent=[0,n,0,n],
+              interpolation='bicubic', vmin=0, vmax=1)
+   plt.colorbar()
+   CS = plt.contour(G.V, 5, colors='k')
+   plt.clabel(CS, inline=1, fontsize=16)
+   plt.grid()
+   plt.show()
+
+
+.. figure:: _static/diffusion.png
+

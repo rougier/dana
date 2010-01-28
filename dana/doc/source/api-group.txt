@@ -1,0 +1,23 @@
+Group
+=====
+
+.. currentmodule:: dana
+.. autoclass:: group
+
+Methods Details
+---------------
+
+.. automethod:: group.__init__
+.. automethod:: group.compute(dt, namespace)
+.. automethod:: group.learn(dt, namespace)
+.. automethod:: group.connect
+.. automethod:: group.disconnect
+.. automethod:: group.get_weight
+
+
+Properties Details
+------------------
+
+.. autoattribute:: group.dtype
+.. autoattribute:: group.shape
+.. autoattribute:: group.size
