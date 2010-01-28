@@ -1,3 +1,5 @@
+@import "pygments.css";
+
 body {
     padding: 0;
     margin: 0;
@@ -8,7 +10,9 @@ body {
     font-size: 11pt;
     font-family: serif;
     line-height: 1.25em;
-    background-color: #cccccc;
+    background-color: #dddddd;
+    background-color: #eee;
+	background-image: url(background.png);
 }
 
 .document {
@@ -89,16 +93,21 @@ td {
 }
 
 pre {
-    background-color: #dddddd;
+    background-color:#F0F0F0;
+    border-bottom:1px solid #CCCCCC;
+    border-top:1px solid #CCCCCC;
+    font-family:Bitstream Vera Sans Mono,monospace;
+    font-size:13px;
+    padding:5px;
 }
 
 .figure {
-    padding:        1.00em;
+    padding:        1em;
     padding-bottom: 0.25em;
     font-family: sans-serif;
     font-size: 80%;
     text-align: center;
-    background-color: #dddddd;
+    background-color: #e0e0ff;
 }
 
 hr {

@@ -1,6 +1,4 @@
-.. header::  * `Home <index.html>`_
-             * `Download <download.html>`_
-             * `Documentation <doc/>`_
+.. include:: header.incl
 
 ===============================================================================
 DANA                                                                           

@@ -1,6 +1,4 @@
-.. header::  * `Home <index.html>`_
-             * `Download <download.html>`_
-             * `Documentation <doc/>`_
+.. include:: header.incl
 
 ===============================================================================
 DANA                                                                           
@@ -29,8 +27,4 @@ and/or learning.
    layer is  a group.  A link is  a weighted  connection between a  source unit
    towards a  target unit.  Target groups own  their links.   * A group  can be
    linked to any other group value including itself.
-
-.. contents:: **Table of Contents**
-   :depth: 1
-
 
