@@ -29,7 +29,7 @@ method.
 import numpy, dana
 import matplotlib.pyplot as plt
 
-n = 50
+n = 60
 k = 1
 G = dana.group((n,n))
 K = numpy.array([[0, 1, 0],
@@ -38,16 +38,17 @@ K = numpy.array([[0, 1, 0],
 G.connect(G.V, K, 'N', shared=True)
 G.dV = 'dt*k*(N/4-V)'
 
-G.V = -numpy.random.ranf((n,n))
-for i in range(2000):
+for i in range(2500):
     G.compute(dt=1)
     G.V[0,:] = 0 
     G.V[:,n-1] = G.V[n-1,:] = G.V[:,0] = 1
 
-fig = plt.figure(figsize=(10,8))
+fig = plt.figure(figsize=(10,7.5))
 plt.imshow(G.V, cmap=plt.cm.hot, origin='lower',
            extent=[0,n,0,n],
            interpolation='bicubic', vmin=0, vmax=1)
-plt.grid()
 plt.colorbar()
+CS = plt.contour(G.V, 5, colors='k')
+plt.clabel(CS, inline=1, fontsize=16)
+plt.grid()
 plt.show()

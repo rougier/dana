@@ -53,8 +53,8 @@ class link(object):
                  dtype=np.float64, sparse=None, shared=False):
         ''' Construct a link between source and destination using given kernel.
         
-        Parameters
-        ----------
+        **Parameters**
+
         source : group
             Source group.
 

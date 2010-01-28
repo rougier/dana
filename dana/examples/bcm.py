@@ -25,33 +25,27 @@
 import numpy, dana, time, dana.pylab
 from random import choice
 
-N = 10
-source = dana.ones((N,1), name='source')
-bcm    = dana.ones((N,1), keys=['C','T'], name='bcm')
+n = 10
+src = dana.ones((n,1))
+bcm = dana.ones((n,1), keys=['C','T'])
 
-K = numpy.random.random((bcm.size,source.size))
-bcm.connect(source.V, K, 'F', shared=False)
-stims = numpy.identity(N)
+K = numpy.random.random((bcm.size, src.size))
+bcm.connect(src.V, K, 'F', shared=False)
+stims = numpy.identity(n)
 
 tau = 1.0
-tau_bar = tau * 0.1
-eta = tau_bar * 0.1
+tau_ = tau * 0.1
+eta = tau_ * 0.1
 
-# Set BCM equations
-# ______________________________________________________________________________
-bcm.dC = "(F - C)*tau"
-bcm.dT = "(C**2 - T) * tau_bar"
-bcm.dF = "pre['V'] * post['C'] * (post['C'] - post['T']) * eta"
+bcm.dC = '(F - C)*tau'
+bcm.dT = '(C**2 - T) * tau_'
+bcm.dF = 'pre.V*post.C*(post.C - post.T)* eta'
 
-# Run some iterations
-# ______________________________________________________________________________
-n = 10000
-for i in range(n):
-    source['V'] = choice(stims).reshape(source.shape)
+for i in range(10000):
+    src.V = choice(stims).reshape(src.shape)
     bcm.compute()
     bcm.learn()
 
-# Display result using pylab
-# __________________________________________________________________________
-view = dana.pylab.view([source.V, bcm.C])
-view.show()
+print 'Learned prototypes'
+for i in range(n):
+    print 'Unit %d: ' % i, (bcm.F.kernel[i] > 1e-3).astype(int)

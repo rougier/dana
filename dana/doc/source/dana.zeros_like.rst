@@ -1,7 +1,0 @@
-
-dana.zeros_like                                                                
-===============================================================================
-
-.. currentmodule:: dana
-
-.. autofunction:: zeros_like

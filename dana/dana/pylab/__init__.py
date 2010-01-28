@@ -1,32 +1,27 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#   ____  _____ _____ _____ 
-#  |    \|  _  |   | |  _  |   DANA, Distributed Asynchronous Adaptive Numerical
-#  |  |  |     | | | |     |         Computing Framework
-#  |____/|__|__|_|___|__|__|         Copyright (C) 2009 INRIA  -  CORTEX Project
-#                         
-#  This program is free software: you can redistribute it and/or modify it under
-#  the terms of the GNU General Public License as published by the Free Software
-#  Foundation, either  version 3 of the  License, or (at your  option) any later
-#  version.
+# DANA, Distributed Asynchronous Adaptive Numerical Computing Framework
+# Copyright (c) 2009 Nicolas Rougier - INRIA - CORTEX Project
+#
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation, either  version 3 of the  License, or (at your  option)
+# any later version.
 # 
-#  This program is  distributed in the hope that it will  be useful, but WITHOUT
-#  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-#  FOR  A  PARTICULAR PURPOSE.  See  the GNU  General  Public  License for  more
-#  details.
+# This program is  distributed in the hope that it will  be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR  A  PARTICULAR PURPOSE.  See  the GNU  General  Public 
+# License for  more details.
 # 
-#  You should have received a copy  of the GNU General Public License along with
-#  this program. If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy  of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
 # 
-#  Contact: 
-# 
-#      CORTEX Project - INRIA
-#      INRIA Lorraine, 
-#      Campus Scientifique, BP 239
-#      54506 VANDOEUVRE-LES-NANCY CEDEX 
-#      FRANCE
-# 
+# Contact:  CORTEX Project - INRIA
+#           INRIA Lorraine, 
+#           Campus Scientifique, BP 239
+#           54506 VANDOEUVRE-LES-NANCY CEDEX 
+#           FRANCE
 """
 """
 from functools import partial
@@ -171,7 +166,7 @@ class view(object):
             Z,x,y = self.selection
             for axis,z in self.subplots:
                 #W = Z.parent.get_weight(z,(y,x))
-                W = Z.parent.get_weight(z,(x,y))
+                W = Z.base.get_weight(z,(x,y))
                 if W is not None:
                     axis.set_data( W )
                 #else:
