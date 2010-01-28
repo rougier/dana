@@ -51,7 +51,7 @@ class group(object):
            [ 0.,  0.]])
     '''
 
-    def __init__(self, shape=(), dtype=np.float32, keys=['V'],
+    def __init__(self, shape=(), dtype=np.double, keys=['V'],
                  mask=True, name='', fill=None):
         ''' Create a group.
         
@@ -230,7 +230,7 @@ class group(object):
 
 
 
-    def connect(self, source, kernel, name, dtype=np.float64, sparse=None, shared=False):
+    def connect(self, source, kernel, name, dtype=np.double, sparse=None, shared=False):
         ''' Connect group to source group 'source' using 'kernel'.
 
         **Parameters**

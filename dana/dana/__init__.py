@@ -42,7 +42,7 @@ Contact:  CORTEX Project - INRIA
 __version__ = '1.0'
 __author__  = 'Nicolas Rougier'
 
-import numpy
+import numpy as np
 from group import group
 from link import link
 
@@ -51,7 +51,7 @@ from functions import convolve1d, convolve2d, extract
 from array import csr_array
 
 
-def empty(shape, dtype=numpy.double, keys=['V'], mask=True, name=''):
+def empty(shape, dtype=np.double, keys=['V'], mask=True, name=''):
     '''
     Return a new group of given shape and type, without initialising entries.
 
@@ -102,7 +102,7 @@ def empty(shape, dtype=numpy.double, keys=['V'], mask=True, name=''):
                  mask=mask,name=name,fill=None)
 
 
-def zeros(shape, dtype=numpy.double, keys=['V'], mask=True, name=''):
+def zeros(shape, dtype=np.double, keys=['V'], mask=True, name=''):
     '''
     Return a new group of given shape and type, filled with zeros.
 
@@ -147,7 +147,7 @@ def zeros(shape, dtype=numpy.double, keys=['V'], mask=True, name=''):
                  mask=mask,name=name,fill=0)
 
 
-def ones(shape, dtype=numpy.double, keys=['V'], mask=True, name=''):
+def ones(shape, dtype=np.double, keys=['V'], mask=True, name=''):
     '''
     Return a new group of given shape and type, filled with ones.
 
@@ -319,9 +319,9 @@ def gaussian(shape=(25,25), width=0.5, center=0.0):
     grid=[]
     for size in shape:
         grid.append (slice(0,size))
-    C = numpy.mgrid[tuple(grid)]
-    R = numpy.zeros(shape)
+    C = np.mgrid[tuple(grid)]
+    R = np.zeros(shape)
     for i,size in enumerate(shape):
         R += (((C[i]/float(size-1))*2 - 1 - center[i])/width[i])**2
-    return numpy.exp(-R/2)
+    return np.exp(-R/2)
 

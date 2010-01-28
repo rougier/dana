@@ -1,40 +1,35 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#   ____  _____ _____ _____ 
-#  |    \|  _  |   | |  _  |   DANA, Distributed Asynchronous Adaptive Numerical
-#  |  |  |     | | | |     |         Computing Framework
-#  |____/|__|__|_|___|__|__|         Copyright (C) 2009 INRIA  -  CORTEX Project
-#                         
-#  This program is free software: you can redistribute it and/or modify it under
-#  the terms of the GNU General Public License as published by the Free Software
-#  Foundation, either  version 3 of the  License, or (at your  option) any later
-#  version.
+# DANA, Distributed Asynchronous Adaptive Numerical Computing Framework
+# Copyright (c) 2009 Nicolas Rougier - INRIA - CORTEX Project
+#
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation, either  version 3 of the  License, or (at your  option)
+# any later version.
 # 
-#  This program is  distributed in the hope that it will  be useful, but WITHOUT
-#  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-#  FOR  A  PARTICULAR PURPOSE.  See  the GNU  General  Public  License for  more
-#  details.
+# This program is  distributed in the hope that it will  be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR  A  PARTICULAR PURPOSE.  See  the GNU  General  Public 
+# License for  more details.
 # 
-#  You should have received a copy  of the GNU General Public License along with
-#  this program. If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy  of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
 # 
-#  Contact: 
-# 
-#      CORTEX Project - INRIA
-#      INRIA Lorraine, 
-#      Campus Scientifique, BP 239
-#      54506 VANDOEUVRE-LES-NANCY CEDEX 
-#      FRANCE
-# 
+# Contact:  CORTEX Project - INRIA
+#           INRIA Lorraine, 
+#           Campus Scientifique, BP 239
+#           54506 VANDOEUVRE-LES-NANCY CEDEX 
+#           FRANCE
 import time, numpy
 import dana, dana.pylab
-
 
 # Simulation parameters
 # ______________________________________________________________________________
 n       = 40
 dt      = 0.5
+tau     = 1.0
 
 # Gaussian function
 # ______________________________________________________________________________
@@ -58,82 +53,130 @@ def gaussian(shape, width=(0.1,0.1), center=(0.0,0.0)):
 
 # Build groups
 # ______________________________________________________________________________
+
 visual = dana.group((n,n), name='visual')
 focus = dana.group((n,n), name='focus')
 wm = dana.group((n,n), name='wm')
 striatum_inhib = dana.group((n,n), name='striatum_inhib')
 reward = dana.group((1,1), name='reward')
 
-
 # Connections
 # ______________________________________________________________________________
 
 # Focus
 Wi = 0.25 * gaussian(2*n+1, 0.05 * n)
-focus.connect( visual['V'], 'I', Wi, shared=False)
+focus.connect( visual.V, Wi, 'I', shared=True)
 Wl = 1.7 * gaussian(2*n+1, 0.1*n) - 0.65 * gaussian(2*n+1, 1.0 * n)
-focus.connect( focus['V'], 'L', Wl, shared=False)
+focus.connect( focus.V, Wl, 'L', shared=True)
 Wstr = -0.2 * gaussian(2*n+1, 0.1 * n)
-focus.connect( striatum_inhib['V'], 'Istr', Wstr, shared=False)
+focus.connect( striatum_inhib.V, Wstr, 'Istr', shared=True)
 
 # Wm
-Wi = 0.25 * gaussian(2*n+1, 0.05*n)
-wm.connect( visual['V'], 'I', Wi, shared=False)
+Wi = 0.3 * gaussian(2*n+1, 0.05*n)   # 0.25
+wm.connect( visual.V, Wi, 'I', shared=True)
 Wf = 0.2* gaussian(2*n+1, 0.05*n)
-wm.connect( focus['V'], 'If', Wf, shared=False)
+wm.connect( focus.V, Wf, 'If', shared=True)
 Wl = 3.0 * gaussian(2*n+1, 0.05*n) - 0.5 * gaussian(2*n+1, 0.1*n)
-wm.connect( wm['V'], 'L', Wl, shared=False)
+wm.connect( wm.V, Wl, 'L', shared=True)
 
 # Striatum inhib
 Wi = 0.5 * gaussian(2*n+1, 0.0625*n)
-striatum_inhib.connect(wm['V'], 'I', Wi, shared=False)
-Wir = 8.0 * numpy.ones((2*n+1, 2*n+1))
-striatum_inhib.connect( reward['V'], 'Ir', Wi, shared=False)
+striatum_inhib.connect(wm.V, Wi, 'I', shared=True)
+Wir = 10.0 * numpy.ones((2*n+1, 2*n+1))
+striatum_inhib.connect( reward.V, Wi, 'Ir', shared=False)
 Wl = 2.5 * gaussian(2*n+1, 0.05*n) - 1.0*gaussian(2*n+1, 0.1*n)
-striatum_inhib.connect(striatum_inhib['V'], 'L', Wl, shared=False)
-
+striatum_inhib.connect(striatum_inhib.V, Wl, 'L', shared=True)
 
 # Set Dynamic Neural Field equation
 # ______________________________________________________________________________
-focus.constant['tau'] = 0.75
-focus.constant['alpha'] = 30.0
-focus.constant['h'] = -0.05
-focus.equation['V'] = 'maximum(V+dt/tau*(-V+(L+I+Istr)/alpha + h),0)'
+h_focus = -0.05
+alpha_focus = 30.0;
+focus.dV = '-V+maximum(V+dt/tau*(-V+(L+I+Istr)/alpha_focus + h_focus),0)'
 
-wm.constant['tau'] = 0.75
-wm.constant['alpha'] = 31.0
-wm.constant['h'] = -.2
-wm.equation['V'] = 'minimum(maximum(V+dt/tau*(-V+(L+If+I)/alpha + h),0),1.0)'
+alpha_wm = 31.0
+h_wm = -0.2
+wm.dV = '-V+minimum(maximum(V+dt/tau*(-V+(L+If+I)/alpha_wm + h_wm),0),1.0)'
 
-striatum_inhib.constant['tau'] = 0.75
-striatum_inhib.constant['alpha'] = 28.0
-striatum_inhib.constant['h'] = -0.3
-striatum_inhib.equation['V'] = 'maximum(V+dt/tau*(-V+(L+I+Ir)/alpha+h),0)'
+alpha_str = 28.0
+h_str = -0.3
+striatum_inhib.dV = '-V+maximum(V+dt/tau*(-V+(L+I+Ir)/alpha_str+h_str),0)'
 
-reward.constant['tau'] = 30.0
-reward.equation['V'] = 'maximum(V+dt/tau*(-V),0)'
+rew_tau = 10.0
+reward.dV = '-V+maximum(V+dt/rew_tau*(-V),0)'
 
 # Set input
 # ______________________________________________________________________________
-visual['V']  = gaussian(n, 0.1*n, ( -0.25, 0.25))
-visual['V'] += gaussian(n, 0.1*n, (-0.25,-0.25))
-visual['V'] += gaussian(n, 0.1*n, (0.25,0.0))
-visual['V'] += (2*numpy.random.random((n,n))-1)*.05
+r_stimuli = 0.30
+theta_stimuli = [0.0 , 2.0 * numpy.pi / 3.0 , - 2.0 * numpy.pi / 3.0]
 
+visual.V = numpy.zeros(visual.shape)
+for theta in theta_stimuli:
+    visual.V += gaussian(n, 0.1*n, (0.35 * numpy.cos(theta), r_stimuli * numpy.sin(theta)))
+visual.V += (2*numpy.random.random((n,n))-1)*.05
 
 # Display result using pylab
 # __________________________________________________________________________
-view = dana.pylab.view([ [visual['V'],focus['V']],
-                         [wm['V'], striatum_inhib['V'], reward['V']] ])
+view = dana.pylab.view([ [wm.V, striatum_inhib.V, reward.V],
+			 [visual.V,focus.V] ])
 view.show()
 
+# Some tool functions  (including the functions for the demos)
+# __________________________________________________________________________
+
+def reset():
+  visual.V = numpy.zeros(visual.shape)
+  focus.V = numpy.zeros(focus.shape)
+  wm.V = numpy.zeros(wm.shape)
+  striatum_inhib.V = numpy.zeros(striatum_inhib.shape)
+  reward.V = numpy.zeros(reward.shape)
+  view.update()
+
 def switch():
-    reward['V'] = 20.0
+  reward.V = 30.0
+
+# To see the effect of rotate on the input, just try  rotate(numpy.pi/100.0, 100)
+def rotate(angular_speed, t, update_view=True):
+  global theta_stimuli, r_stimuli
+  for i in range(t):
+    visual.V = numpy.zeros(visual.shape)
+    for j in range(len(theta_stimuli)):
+      theta_stimuli[j] = theta_stimuli[j] + angular_speed
+      visual.V += gaussian(n, 0.1*n, (0.35 * numpy.cos(theta_stimuli[j]), r_stimuli * numpy.sin(theta_stimuli[j])))
+      visual.V += (2*numpy.random.random((n,n))-1)*.05
+      if(update_view):
+	view.update()
 
 def run(t):
-    for i in range(t):
-        focus.compute(dt)
-	wm.compute(dt)
-	striatum_inhib.compute(dt)
-	reward.compute(dt)
-        view.update()
+  for i in range(t):
+    visual.V = numpy.zeros(visual.shape)
+    for theta in theta_stimuli:
+      visual.V += gaussian(n, 0.1*n, (0.35 * numpy.cos(theta), r_stimuli * numpy.sin(theta)))
+      visual.V += (2*numpy.random.random((n,n))-1)*.05
+    focus.compute(dt)
+    wm.compute(dt)
+    striatum_inhib.compute(dt)
+    reward.compute(dt)
+    view.update()
+
+def run_rotation(angular_speed, t):
+  for i in range(t):
+    rotate(angular_speed,1,False)
+    focus.compute(dt)
+    wm.compute(dt)
+    striatum_inhib.compute(dt)
+    reward.compute(dt)
+    view.update()  
+
+def demo():
+  reset()
+  run(100)
+  for i in range(2):
+      switch()
+      run(150)
+	
+def demo_rotation():
+  reset()
+  run(100)
+  for i in range(3):
+    switch()
+    run_rotation(numpy.pi/300.0,100)

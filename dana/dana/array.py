@@ -198,7 +198,7 @@ class array(np.ndarray):
     _shape = np.ndarray.shape
     _base = None
 
-    def __new__(subtype, shape=(1,1), dtype=np.float32, buffer=None,
+    def __new__(subtype, shape=(1,1), dtype=np.double, buffer=None,
                 offset=None,strides=None, order=None, base=None):
         ''' Create an array.
         

@@ -23,8 +23,15 @@
 #           54506 VANDOEUVRE-LES-NANCY CEDEX 
 #           FRANCE
 '''
-Heat equation simulation using forward difference / central difference (FTCS)
-method.
+
+Numerical simulation of the heat equation of the form:
+
+∂u    ⎛ ∂²u   ∂²u ⎞                      ∂u
+-- -α ⎜ --- + --- ⎟ = 0 or equivalently  -- = α∇²u
+∂t    ⎝ ∂x²   ∂y² ⎠                      ∂t
+
+For a function u(x,y,t) of two spatial variables (x,y) and the time variable t.
+
 '''
 import numpy, dana
 import matplotlib.pyplot as plt
