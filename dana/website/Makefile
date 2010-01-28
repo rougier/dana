@@ -2,7 +2,7 @@ STYLE = style.css
 FLAGS = --stylesheet=$(STYLE) --link-stylesheet --no-toc-backlinks          \
 	     --language=en --no-generator --no-source-link --no-datestamp       \
 	     --section-numbering --output-encoding=UTF-8 --input-encoding=UTF-8 \
-	     --footnote-references=superscript
+	     --footnote-references=superscript --template=template.tpl
 RST = ./rst2html-highlight
 RM = /bin/rm
 SOURCES= $(wildcard *.txt)

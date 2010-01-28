@@ -10,7 +10,7 @@ Distributed (Asynchronous) Numerical & Adaptive computing framework
 
 The Game of Life is a *game* designed by John Conway during the seventies. This
 *game* is  actually a zero-player game  and all its evolution  is determined by
-its  initial state.  One  can interact  with the  Game of  Life by  creating an
+the  initial state.  One  can interact  with the  Game of  Life by  creating an
 initial configuration and observing how it evolves.
 
 .. figure:: game-of-life.png
