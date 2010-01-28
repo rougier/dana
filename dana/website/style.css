@@ -137,3 +137,10 @@ hr {
 .header ul li a:hover {
 	border-bottom: 1px solid #00003d;
 }
+
+.footer {
+    font-family: sans;
+    font-size: 80%;
+    text-align: right;
+    color: #aaaaaa;
+}

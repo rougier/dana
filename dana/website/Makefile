@@ -10,7 +10,7 @@ TARGETS=$(patsubst %.txt,%.html, $(SOURCES))
 
 all: $(TARGETS)
 
-%.html: %.txt header.incl
+%.html: %.txt header.incl footer.incl
 	@echo "Generating $@"
 	@$(RST) $(FLAGS) $< $@
 
