@@ -7,6 +7,8 @@ just have a look the :ref:`quick-tour`.
 
 This is the central page for all DANA's documentation.
 
+.. note:: This documentation is not yet complete
+
 Contents:
 
 .. toctree::
