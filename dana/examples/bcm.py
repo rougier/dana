@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DANA, Distributed Asynchronous Adaptive Numerical Computing Framework
-# Copyright (c) 2009 Nicolas Rougier - INRIA - CORTEX Project
+# Copyright (c) 2009, 2010 Nicolas Rougier - INRIA - CORTEX Project
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -22,7 +22,16 @@
 #           Campus Scientifique, BP 239
 #           54506 VANDOEUVRE-LES-NANCY CEDEX 
 #           FRANCE
-import numpy, dana, time, dana.pylab
+'''
+Implementation of the BCM learning rule.
+
+References:
+-----------
+  E.L Bienenstock, L. Cooper, P. Munro. "Theory for the development of neuron
+  selectivity: orientation specificity and binocular interaction in visual
+  cortex". The Journal of Neuroscience 2 (1): 32—48, 1982.
+'''
+import numpy, dana
 from random import choice
 
 n = 10
@@ -37,9 +46,9 @@ tau = 1.0
 tau_ = tau * 0.1
 eta = tau_ * 0.1
 
-bcm.dC = '(F - C)*tau'
-bcm.dT = '(C**2 - T) * tau_'
-bcm.dF = 'pre.V*post.C*(post.C - post.T)* eta'
+bcm.dC = '(F-C)*tau'
+bcm.dT = '(C**2-T)*tau_'
+bcm.dF = 'pre.V*post.C*(post.C-post.T)*eta'
 
 for i in range(10000):
     src.V = choice(stims).reshape(src.shape)
