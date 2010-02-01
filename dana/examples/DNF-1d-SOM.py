@@ -45,7 +45,7 @@ som = dana.zeros(shape=(n,), name='V')
 
 # Connect them
 # ______________________________________________________________________________
-som.connect(input.V, numpy.random.rand(n,1), 'I-', shared=False)
+som.connect(input.V, numpy.random.rand(n,1), 'I-', shared=False, sparse=True)
 som.connect(som.V, 1.50*dana.gaussian(2*n+1, 0.1), 'Le*', shared=False)
 som.connect(som.V, 0.75*dana.gaussian(2*n+1, 1.0), 'Li*', shared=False)
 
