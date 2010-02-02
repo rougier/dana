@@ -60,7 +60,6 @@ V.connect(V, 1.50*dana.gaussian(2*n+1,.1)
           'L', shared=True)
 V.dV = '-V+maximum(0,V+dt*(-V+(L*100.0/n+I+h)/alpha)/tau)'
 
-<<<<<<< .mine
 I.V = .5
 for i in range(2500):
     V.compute(dt)

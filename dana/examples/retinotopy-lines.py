@@ -133,9 +133,9 @@ if __name__ == '__main__':
     # Connections
     # ______________________________________________________________________________
     Wi = np.ones((1,1))
-    colliculus.connect(V1.V, Wi, 'I', shared=True)
+    colliculus.connect(V1, Wi, 'I', shared=True)
     Wf = 1.25*dana.gaussian((2*N+1,2*N+1), 0.1) - 0.675*dana.gaussian((2*N+1,2*N+1), 1)
-    colliculus.connect (colliculus.V, Wf, 'L', shared=True)
+    colliculus.connect (colliculus, Wf, 'L', shared=True)
 
 
     # Set Dynamic Neural Field equation

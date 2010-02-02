@@ -32,22 +32,6 @@ of the form:
 - ------- = -U(x,t) + - ⎮   W(|x-y|)f(U(y,t)) dy + - I(x,t)
 α   ∂t                τ ⌡-∞                        τ
 
-<<<<<<< .mine
-where # U(x,t) is the potential of a neural population at position x and time t.
-      # W(x) is a neighborhood function
-      # f(x) is the firing rate of a single neuron.
-      # α is the temporal decay of the synapse.
-      # τ is a scaling term
-      # I(x,t) is the input at position x.
-
-References
-----------
-    _[1] http://www.scholarpedia.org/article/Neural_fields
-'''
-import numpy, dana
-import matplotlib.pyplot as plt
-
-=======
 where # U(x,t) is the potential of a neural population at position x and time t.
       # W(x) is a neighborhood function
       # f(x) is the firing rate of a single neuron.

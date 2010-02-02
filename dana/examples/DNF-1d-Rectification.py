@@ -53,8 +53,8 @@ tau     = 0.10
 h       = 0.0
 I = dana.zeros(shape=(n,), name='I')
 V = dana.zeros(shape=(n,), name='V')
-V.connect(I.V, numpy.ones((1,)), 'I', shared=True)
-V.connect(V.V, 1.5*dana.gaussian(2*n+1,.1)-0.75*dana.gaussian(2*n+1,1.0),
+V.connect(I, numpy.ones((1,)), 'I', shared=True)
+V.connect(V, 1.5*dana.gaussian(2*n+1,.1)-0.75*dana.gaussian(2*n+1,1.0),
                'L', shared=True)
 V.dV = '-V+maximum(0,V+dt*(-V+(L*100.0/n+I+h)/alpha)/tau)'
 
