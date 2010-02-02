@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DANA, Distributed Asynchronous Adaptive Numerical Computing Framework
-# Copyright (c) 2009 Nicolas Rougier - INRIA - CORTEX Project
+# Copyright (c) 2009, 2010 Nicolas Rougier - INRIA - CORTEX Project
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -22,64 +22,51 @@
 #           Campus Scientifique, BP 239
 #           54506 VANDOEUVRE-LES-NANCY CEDEX 
 #           FRANCE
-import numpy as np
-from array import array
-from numpy import minimum, maximum, sin, cos, exp, sqrt, multiply, dot
-from functions import extract, convolve1d, convolve2d
-import link
 import inspect
-
+import numpy as np
+from numpy import *
+from shared_link import shared_link
+from sparse_link import sparse_link
+from dense_link import dense_link
 
 class group(object):
-    ''' A group represents a vector of homogeneous elements.
-
-    Elements can have an arbitrary number of values whose name and type must be
-    described at group creation. These values can be later accessed using either
-    dictionary lookups such as ``group['x']`` and ``group['y']``.
-
-    **Examples**
-
-    Create a group with two values, ``x`` and ``y``:
-
-    >>> G = group((2,2), keys=['x','y'])
-    >>> G
-    group([[(0.0, 0.0, True), (0.0, 0.0, True)],
-           [(0.0, 0.0, True), (0.0, 0.0, True)]], 
-           dtype=[('x', '<f8'), ('y', '<f8'), ('mask', '|b1')])
-    >>> G['x']
-    group([[ 0.,  0.],
-           [ 0.,  0.]])
-    '''
 
     def __init__(self, shape=(), dtype=np.double, keys=['V'],
-                 mask=True, name='', fill=None):
-        ''' Create a group.
-        
-        **Parameters**
+                 mask=True, fill=None, name=''):
+        '''
+        A group object represents a multidimensional, homogeneous array of
+        fixed-size items. An associated data-type object describes the format
+        of each element in the group (its byte-order, how many bytes it
+        occupies in memory, whether it is an integer, a floating point number,
+        or something else, etc.)
+  
+        Groups should be generally constructed using `empty`, `zeros` or `ones`
+        (refer to the See Also section below). The parameters given here refer
+        to a low-level method (`group(...)`) for instantiating an array.
+      
+        Parameters
+        ----------
 
-            shape : tuple of integer or array-like object
-                Shape of output array or object to create group from.
-            dtype : data-type
-                Desired data-type.
-            keys : list of strings
-                Names of the different values
-            mask : boolean or boolean array
-                boolean mask indicating active and inactive elements
-            name : string
-                Group name
-            fill : scalar or scalar array
-                Fill value
+        shape : tuple of ints
+            Shape of created group.
+        dtype : data-type, optional
+            Any object that can be interpreted as a numpy data type.
+        keys : list of strings,  optional
+            A list of field to be included within group. This requires dtype to
+            be an atomic type.
+        mask: array_like, optional
+            Initial mask of the group indicating defective units.
+        fill: array_mask, optional
+            Initial fill value for all group fields.
 
-        **Returns**
-            out: group
-                Group of given shape and type.
+        See Also
+        --------
+        zeros : Create a group, each element of which is zero.
+        ones : Create a group, each element of which is one.
+        empty : Create a group, but leave its allocated memory unchanged (i.e.,
+                it contains "garbage").
         '''
 
-        object.__setattr__(self,'_values', {})
-        object.__setattr__(self,'_equations', {})
-        object.__setattr__(self,'_links', {})
-        object.__setattr__(self,'_stored', {})
-        
         if type(shape) is list:
             Z = np.array(shape)
             if fill is None:
@@ -96,283 +83,227 @@ class group(object):
         if not isinstance(dtype,np.dtype):
             if type(dtype) == list:
                 d = [(n,t) for n,t in dtype]
-                d += [('mask',np.bool)]
                 dtype = d
             else:
                 dtype = [(f, dtype) for f in keys]
-                dtype += [('mask',np.bool)]
         else:
             d = [(name,dtype[i]) for i, name in enumerate(dtype.names)]
-            d += [('mask',np.bool)]
             dtype = d
-        self._dtype = np.dtype(dtype)
-        for i in range(len(self._dtype)):
-            dtype, key = self._dtype[i], self._dtype.names[i]
-            self._values[key] = array(shape=shape, dtype=dtype, base=self)
-            if fill is not None and key != 'mask':
-                self._values[key][...] = fill
-        self['mask'] = mask
-        self.name = name
+
+        # Check if there is already a mask
+        mask_ = False
+        for item in dtype:
+            name, d = item
+            if name == 'mask':
+                mask_ = True
+        if not mask_:
+            dtype.append( ('mask', np.bool) )
+
+        object.__setattr__(self, '_dtype', np.dtype(dtype))
+        object.__setattr__(self, '_shape', shape)
+        object.__setattr__(self, '_name', name)
+        object.__setattr__(self, '_data', {})
+        for key in self._dtype.names:
+            self._data[key] = np.ndarray(shape=shape,
+                                         dtype=self._dtype[key])
+            if fill is not None:
+                self._data[key][...] = fill
+            object.__setattr__(self,'d'+key, '')
+        self.mask[...] = mask
+        object.__setattr__(self, '_link', {})
+        object.__setattr__(self, '_data_equation', {})
+        object.__setattr__(self, '_data_compiled', [])
+        object.__setattr__(self, '_link_compiled', [])
+        object.__setattr__(self, '_link_equation', {})
+        object.__setattr__(self, '_globals', {})
+
+
+    def reshape(self, shape, order='C'):
+        G = group(shape = shape, dtype=self.dtype)
+        for key in G._data.keys():
+            G._data[key] = self._data[key].reshape(shape)
+        G._link = self._link
+        G._data_equation = self._data_equation
+        G._link_equation = self._link_equation
+        G._globals = self._globals
+        return G
+    reshape.__doc__ = np.reshape.__doc__ 
 
 
     def __getattr__(self, key):
-        if key in self._values.keys():
-            return self._values[key]
-        elif key[0]=='d' and key[1:] in self._values.keys():
-            return self._equations[key[1:]]
-        elif key in self._links.keys():
-            return self._links[key]
+        if key in self._data.keys():
+            return self._data[key]
+        elif key in self._link.keys():
+            return self._link[key]
+        elif key[0]=='d' and key[1:] in self._data.keys():
+            return self._data_equation[key[1:]]
+        elif key[0]=='d' and key[1:] in self._link.keys():
+            return self._link_equation[key[1:]]
         else:
             return object.__getattribute__(self, key)
 
     def __setattr__(self, key, value):
-        if key in self._values.keys():
-            self._values[key][...] = value
-        elif key[0]=='d' and key[1:] in self._values.keys():
-            self._equations[key[1:]] = value
-        elif key[0]=='d' and key[1:] in self._links.keys():
-            if self._links[key[1:]].shared:
+        if key in self._data.keys():
+            self._data[key][...] = value
+        elif key[0]=='d' and key[1:] in self._data.keys():
+            self._data_equation[key[1:]] = value
+            self.compile()
+        elif key[0]=='d' and key[1:] in self._link.keys():
+            if isinstance(self._link[key[1:]], shared_link):
                 raise ValueError, 'Shared link cannot be learned'
-            self._equations[key[1:]] = value
+            self._link_equation[key[1:]] = value
+            self.compile()
         else:
             object.__setattr__(self, key, value)
 
+
+    def _get_shape(self):
+        return self._shape
+    def _set_shape(self, shape):
+        for key in self._dtype.names:            
+            self._data[key].shape = shape
+        self._shape = shape
+    shape = property(_get_shape, _set_shape,
+                     doc=np.ndarray.shape.__doc__)
+
+    def _get_size(self):
+        return self._data['mask'].size
+    size = property(_get_size,
+                    doc=np.ndarray.size.__doc__)
+
+    def _get_dtype(self):
+        return self._dtype
+    dtype = property(_get_dtype,
+                     doc=np.ndarray.dtype.__doc__)
+
+    def __getitem__(self, key):
+        ''' x.__getitem__(y) <==> x[y] '''
+        return self._data[key]
+
+    def __setitem__(self, key, value):
+        ''' x.__setitem__(i, y) <==> x[i]=y '''
+        self._data[key][...] = value
+
+
+    def connect(self, src, kernel, name, dtype=np.double,
+                sparse=False, shared=False):
+        
+        if name[-1] in ['*','-']:
+            lname = name[:-1]
+        else:
+            lname = name
+        if sparse:
+            self._link[lname] = sparse_link(src, self, kernel, name, dtype)
+        elif shared:
+            if name[-1] != '-':
+                self._link[lname] = shared_link(src, self, kernel, name, dtype)
+            else:
+                raise ValueError, 'Cannot compute distance for shared link'
+        else:
+            self._link[lname] = dense_link(src, self, kernel, name, dtype)
+
+
+    def compile(self):
+
+        self._globals = {}
+        self._globals['self'] = self
+        self._data_compiled = []
+        self._link_compiled = []
+        for key in self._data_equation.keys():
+            self._globals[key] = self[key]
+            eqn = self._data_equation.get(key, None)
+            if eqn:
+                expr = compile("%s += %s; %s *= self.mask" % (key, eqn,  key),
+                               "<string>", "exec")
+                self._data_compiled.append(expr)
+
+                # Get unknown constants (and only them) from upper frame
+                for i in range(1,len(inspect.stack())):
+                    frame = inspect.stack()[i][0]
+                    for name in expr.co_names:
+                        if (name in frame.f_globals.keys() and
+                            name not in self._globals      and
+                            name not in self._data_equation.keys()):
+                            self._globals[name] = frame.f_globals[name]
+
+
+        for key in self._link_equation.keys():
+            eqn = self._link_equation.get(key, None)
+            if eqn:
+                link = self._link[key]
+                src, dst = link._src, link._dst
+                _locals = {}
+                _locals['pre']  = src.reshape((1,src.size))
+                _locals['post'] = dst.reshape((dst.size,1))
+                _locals['W'] = link._kernel
+                if isinstance(link,dense_link):
+                    _locals['kernel'] = self._link[key]._kernel
+                    _locals['mask'] = self._link[key]._mask
+                    expr = compile("W += %s; kernel *= mask" % eqn,
+                                   "<string>", "exec")
+                    self._link_compiled.append((key, expr, _locals))
+                elif isinstance(link,sparse_link):
+                    expr = compile("W += %s" % eqn, "<string>", "exec")
+                    self._link_compiled.append((key, expr, _locals))
+
+                # Get unknown constants (and only them) from upper frame
+                for i in range(1,len(inspect.stack())):
+                    frame = inspect.stack()[i][0]
+                    for name in expr.co_names:
+                        if (name not in ['W', 'pre', 'post'] and
+                            name in frame.f_globals.keys() and
+                            name not in self._globals      and
+                            name not in self._data_equation.keys()):
+                            self._globals[name] = frame.f_globals[name]
+
+
+
+    def compute(self, dt=0.1):
+        self._globals['dt'] = dt
+        for key in self._link.keys():
+            self._globals[key] = self._link[key].compute()
+        for expr in self._data_compiled:
+            exec(expr, self._globals)
+        for key in self._link.keys():
+            dst = self._link[key]._dst
+            self._globals[key] = self._globals[key].reshape((dst.size,1))
+
+    def learn(self, dt=0.1):
+        self._globals['dt'] = dt
+        for item in self._link_compiled:
+            key, expr, _locals = item
+            exec(expr, self._globals, _locals)
+
+    def get_weight(self, src, key):
+        ''' Return the connection array from source to self[key] 
+        
+        **Parameters**
+        src : group
+            Source group to be considered
+        key: tuple of integers
+            Position within group to be considered
+
+        **Returns**
+        out: array
+            Connection array linking self[key] to source
+        '''
+
+        for link in self._link.values():
+            if id(src) == id(link._src):
+                return link[key]
+        return np.ones(src.shape)*np.NaN
+
+
     def asarray(self):
         ''' Return a copy of self as a regular numpy interleaved array without mask. '''
+
         dtype=[]
         for key in self.dtype.names:
             if key != 'mask':
                 dtype.append( (key,self.dtype[key]))
         dtype = np.dtype(dtype)
         R = np.zeros(shape=self.shape, dtype=dtype)
-        for key in self._values.keys():
+        for key in self._data.keys():
             if key != 'mask':
-                R[key] = self[key]*self['mask']
+                R[key] = self._data[key]*self.mask
         return R
-
-    def __repr__(self):
-        ''' Return a string representation of group '''
-        dtype=[]
-        for key in self.dtype.names:
-            dtype.append( (key,self.dtype[key]))
-        dtype = np.dtype(dtype)
-        R = np.zeros(shape=self.shape, dtype=dtype)
-        for key in self._values.keys():
-            R[key] = self[key]*self['mask']
-        return repr(R).replace('array','group')
-
-    def __getitem__(self, key):
-        if type(key) is str:
-            return self._values[key]
-        else:
-            return self.asarray()[key]
-
-    def __setitem__(self, key, value):
-        #if type(key) is str:
-        self._values[key][...] = value
-        #else:
-        #    self._values['mask'][key] = value
-
-    def _get_shape(self):
-        return self._values[self._values.keys()[0]].shape
-
-    def _set_shape(self, shape):
-        for key in self._values.keys():
-            #self._values[key].shape = shape
-            self._values[key]._force_shape(shape)
-            #self._values[key].reshape(shape)
-    shape = property(_get_shape, _set_shape,
-                     doc = '''Tuple of group dimensions.\n
-                              **Examples**
-
-                              >>> x = dana.group((1,2))
-                              >>> x.shape
-                              (2,)
-                              >>> y = dana.zeros((4,5,6))
-                              >>> y.shape
-                              (4, 5, 6)
-                              >>> y.shape = (2, 5, 2, 3, 2)
-                              >>> y.shape
-                              (2, 5, 2, 3, 2)''')
-
-
-    def reshape(self, shape):
-        G = group(shape)
-        G.name = self.name
-        G._links = self._links
-        G._equations = self._equations
-        G._dtype = self._dtype
-        for key in self._values.keys():
-            G._values[key] = self._values[key].reshape(shape)
-        return G
-
-    def _get_dtype(self):
-        return self._dtype
-    def _set_dtype(self):
-        raise AttributeError, \
-            '''attribute 'dtype' of 'group' objects is not writable'''
-    dtype = property(_get_dtype, _set_dtype,
-                     doc = 'Data-type for the group')
-
-
-    def _get_size(self):
-        return self._values[self._values.keys()[0]].size
-    def _set_size(self):
-        raise AttributeError, \
-            '''attribute 'size' of 'group' objects is not writable'''
-    size = property(_get_size, _set_size,
-                     doc = '''Number of elements in the group.\n
-                              **Examples**
-
-                              >>> x = dana.zeros((3,5,2), dtype=int)
-                              >>> x.size
-                              30''')
-
-
-
-    def connect(self, source, kernel, name, dtype=np.double, sparse=None, shared=False):
-        ''' Connect group to source group 'source' using 'kernel'.
-
-        **Parameters**
-
-            source : group
-                Source group.
-
-            kernel : array or sparse array
-                Kernel array to be used for linking source to group.
-
-            name : string
-                Name of the link to be made. 
-
-            dtype : data-type
-                The desired data-type.
-            
-            sparse: True | False | None
-                Indicate wheter internal storage should be sparse
-
-            shared: True or False
-                Whether the kernel is shared among elements composing the group.
-                (only available for one-dimensional and two-dimensional groups)
-        '''
-        
-        if name[-1] not in ['*','-']:
-            lname = name
-            name += '*'
-        else:
-            lname = name[:-1]
-        self._links[lname] = link.link(source=source, destination=self,
-                                       kernel=kernel, name=name, dtype=dtype,
-                                       sparse=sparse, shared=shared)
-
-
-    def disconnect(self, name):
-        ''' Disconnect a named link from source.
-        
-        **Parameters**
-
-            name : string
-                Name of the link to be removed.
-        '''
-
-        if name in self._links.keys():
-            del self._links[name]
-
-
-
-    def compute(self, dt=0.1):
-        ''' Compute new values according to equations.
-
-        **Parameters**
-
-            dt : float
-                Time period to consider
-        '''
-
-        # Get relevant namespaces
-        frame=inspect.stack()[1][0]
-        f_globals, f_locals = frame.f_globals,frame.f_locals
-        namespace = globals()
-        namespace.update(f_globals)
-        namespace.update(f_locals)
-        namespace['dt'] = dt
-
-        # Get activities from all fields
-        for key in self._values.keys():
-            namespace[key] = self[key]
-
-        # Compute links weighted sums
-        self._stored = {}
-        for key in self._links.keys():
-            namespace[key] = self._links[key].compute()
-            self._stored[key] = namespace[key]
-
-        # Evaluate equations for each field
-        dV = []
-        for key in self._values.keys():
-            if key in self._equations.keys() and self._equations[key]:
-                result = eval(self._equations[key], f_globals, namespace)
-                if result.__class__.__name__ == 'matrix':
-                    result = np.array(result).reshape(self[key].shape)
-                self[key] = self[key] + np.multiply(result,self['mask'])
-                if type(result) not in [float,int]:
-                    dV.append(result.flatten().sum())
-                else:
-                    dV.append(result)
-        return dV
-
-
-    def learn (self, dt=0.1, namespace=globals()):
-        ''' Adapt group links according to equations
-
-        **Parameters**
-
-            dt : float
-                Time period to consider
-        '''
-
-        # Get relevant namespaces
-        frame=inspect.stack()[1][0]
-        f_globals, f_locals = frame.f_globals,frame.f_locals
-        namespace = globals()
-        namespace.update(f_globals)
-        namespace.update(f_locals)
-        namespace['dt'] = dt
-
-        links = {}
-        for key in self._stored.keys():
-            links[key] = self._stored[key]
-        # Evaluate equations for each link
-        for key in self._links.keys():
-            if key in self._equations.keys():
-                self._links[key].learn(self._equations[key], links, dt, namespace)
-
-
-
-    def get_weight(self, source, key):
-        ''' Return the connection array from source to self[key] 
-        
-        **Parameters**
-
-            source : group
-                Source group to be considered
-
-            key: tuple of integers
-                Position within group to be considered
-
-        **Returns**
-
-            out: array
-                Connection array linking self[key] to source
-        '''
-
-        Z = np.ones(source.shape)*np.NaN
-        src = source.base
-        for k in self._links.keys():
-            L = self._links[k]
-            lsrc = L.source.base
-            if id(src) == id(lsrc):
-                Z = L[key]
-                break
-        return Z
-
-

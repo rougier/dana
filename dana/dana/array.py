@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DANA, Distributed Asynchronous Adaptive Numerical Computing Framework
-# Copyright (c) 2009 Nicolas Rougier - INRIA - CORTEX Project
+# Copyright (c) 2009, 2010 Nicolas Rougier - INRIA - CORTEX Project
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -180,96 +180,3 @@ def dot(A,B):
     #return (A._mul_sparse_matrix(B)).todense()
 
 
-
-class array(np.ndarray):
-    ''' An array object represents a multidimensional, homogeneous array of
-    fixed-size items. An associated data-type object describes the format of
-    each element in the array (its byte-order, how many bytes it occupies in
-    memory, whether it is an integer or a floating point number, etc.).
-
-    Arrays should be constructed using array, zeros or empty (refer to the See
-    Also section below). The parameters given here describe a low-level method
-    for instantiating an array (ndarray(...)).
-
-    For more information, refer to the numpy module and examine the the methods
-    and attributes of an array.
-    '''
-
-    _shape = np.ndarray.shape
-    _base = None
-
-    def __new__(subtype, shape=(1,1), dtype=np.double, buffer=None,
-                offset=None,strides=None, order=None, base=None):
-        ''' Create an array.
-        
-        :Parameters:
-            ``shape`` : tuple of ints
-                Shape of created array.
-            ``dtype`` : data type, optional
-                Any object that can be interpreted a numpy data type.
-            ``buffer`` : object exposing buffer interface, optional
-                Used to fill the array with data.
-            ``offset`` : int, optional
-                Offset of array data in buffer.
-            ``strides`` : tuple of ints, optional
-                Strides of data in memory.
-            ``order`` : {'C', 'F'}, optional
-                Row-major or column-major order.
-            ``base`` : group
-                Base group of this array
-
-        Returns
-        -------
-        out: array
-           Array of given shape and type.
-        '''
-        obj = np.ndarray.__new__(subtype, shape=shape, dtype=dtype)
-        obj._base = base
-        return obj
-
-    def _get_base(self):
-        return self._base or self
-    base = property(_get_base,
-                     doc = '''Base group this array belongs to.''')
-
-    def __setitem__(self, key, value):
-        np.ndarray.__setitem__(self,key,value)
-        base = self._base
-        if (not base or not hasattr(base, '_values') 
-            or 'mask' not in base._values.keys()):
-            return
-        if id(self) == id(base['mask']):
-            for k in base._values.keys():
-                if k != 'mask':
-                    v = self._base._values[k]
-                    v[...] = np.nan_to_num(v)
-                    v += np.where(base.mask, 0, np.nan)
-        else:
-            self += np.where(base.mask, 0, np.nan)
-
-
-    def _force_shape(self, shape):
-        self._shape = shape
-    def _get_shape(self):
-        return self._shape
-    def _set_shape(self, shape):
-        if shape == self._shape:
-            return
-        if self.base == None:
-            self._shape = shape
-        else:
-            raise AttributeError, \
-               '''Cannot reshape a child array (''base'' is not None)'''
-    shape = property(_get_shape, _set_shape,
-                     doc = '''Tuple of array dimensions.\n
-                              **Examples**
-
-                              >>> x = dana.group((1,2))
-                              >>> x.shape
-                              (2,)
-                              >>> y = dana.zeros((4,5,6))
-                              >>> y.shape
-                              (4, 5, 6)
-                              >>> y.shape = (2, 5, 2, 3, 2)
-                              >>> y.shape
-                              (2, 5, 2, 3, 2)''')
