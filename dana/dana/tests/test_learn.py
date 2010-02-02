@@ -33,56 +33,56 @@ def test_one_to_one_dense_1():
 
     G1 = dana.ones((10,))
     G2 = dana.ones((10,))
-    G1.connect(G2.V, np.ones((1,)), 'I', sparse=False, shared=False)
+    G1.connect(G2, np.ones((1,)), 'I', sparse=False, shared=False)
     G1.V *= 2.5
     G2.V *= 1.1
     G1.dI = 'pre.V-W'
     G1.learn()
-    assert np_almost_equal(G1.I.kernel,np.eye(10)*1.1)
+    assert np_almost_equal(G1.I._kernel,np.eye(10)*1.1)
 
 def test_one_to_one_dense_2():
     ''' Check learning, one to one, dense '''
 
     G1 = dana.ones((10,))
     G2 = dana.ones((10,))
-    G1.connect(G2.V, np.ones((1,)), 'I', sparse=False, shared=False)
+    G1.connect(G2, np.ones((1,)), 'I', sparse=False, shared=False)
     G1.V *= 2.5
     G2.V *= 1.1
     G1.dI = 'post.V-W'
     G1.learn()
-    assert np_almost_equal(G1.I.kernel,np.eye(10)*2.5)
+    assert np_almost_equal(G1.I._kernel,np.eye(10)*2.5)
 
 def test_one_to_one_dense_3():
     ''' Check learning, one to one, dense '''
 
     G1 = dana.ones((10,))
     G2 = dana.ones((10,))
-    G1.connect(G2.V, np.ones((1,)), 'I', sparse=False, shared=False)
+    G1.connect(G2, np.ones((1,)), 'I', sparse=False, shared=False)
     G1.V *= 2.5
     G2.V *= 1.1
     G1.dI = 'post.V*pre.V-W'
     G1.learn()
-    assert np_almost_equal(G1.I.kernel,np.eye(10)*2.75)
+    assert np_almost_equal(G1.I._kernel,np.eye(10)*2.75)
 
 def test_one_to_one_dense_4():
     ''' Check learning, one to one, dense '''
 
     G1 = dana.ones((10,))
     G2 = dana.ones((10,))
-    G1.connect(G2.V, np.ones((1,)), 'I', sparse=False, shared=False)
+    G1.connect(G2, np.ones((1,)), 'I', sparse=False, shared=False)
     G1.dI = '-W'
     G1.learn()
-    assert np_almost_equal(G1.I.kernel,np.zeros((10,)))
+    assert np_almost_equal(G1.I._kernel,np.zeros((10,)))
 
 def test_one_to_one_dense_5():
     ''' Check learning, one to one, dense '''
 
     G1 = dana.ones((10,))
     G2 = dana.ones((10,))
-    G1.connect(G2.V, np.ones((1,)), 'I', sparse=False, shared=False)
+    G1.connect(G2, np.ones((1,)), 'I', sparse=False, shared=False)
     G1.dI = '0'
     G1.learn()
-    assert np_almost_equal(G1.I.kernel,np.eye(10))
+    assert np_almost_equal(G1.I._kernel,np.eye(10))
 
 
 def test_one_to_one_sparse_1():
@@ -90,56 +90,56 @@ def test_one_to_one_sparse_1():
 
     G1 = dana.ones((10,))
     G2 = dana.ones((10,))
-    G1.connect(G2.V, np.ones((1,)), 'I', sparse=True, shared=False)
+    G1.connect(G2, np.ones((1,)), 'I', sparse=True, shared=False)
     G1.V *= 2.5
     G2.V *= 1.1
     G1.dI = '-W+pre.V'
     G1.learn()
-    assert np_almost_equal(G1.I.kernel,np.eye(10)*1.1)
+    assert np_almost_equal(G1.I._kernel,np.eye(10)*1.1)
 
 def test_one_to_one_sparse_2():
     ''' Check learning, one to one, sparse '''
 
     G1 = dana.ones((10,))
     G2 = dana.ones((10,))
-    G1.connect(G2.V, np.ones((1,)), 'I', sparse=True, shared=False)
+    G1.connect(G2, np.ones((1,)), 'I', sparse=True, shared=False)
     G1.V *= 2.5
     G2.V *= 1.1
     G1.dI = '-W+post.V'
     G1.learn()
-    assert np_almost_equal(G1.I.kernel,np.eye(10)*2.5)
+    assert np_almost_equal(G1.I._kernel,np.eye(10)*2.5)
 
 def test_one_to_one_sparse_3():
     ''' Check learning, one to one, sparse '''
 
     G1 = dana.ones((10,))
     G2 = dana.ones((10,))
-    G1.connect(G2.V, np.ones((1,)), 'I', sparse=True, shared=False)
+    G1.connect(G2, np.ones((1,)), 'I', sparse=True, shared=False)
     G1.V *= 2.5
     G2.V *= 1.1
     G1.dI = '-W+post.V*pre.V'
     G1.learn()
-    assert np_almost_equal(G1.I.kernel,np.eye(10)*2.75)
+    assert np_almost_equal(G1.I._kernel,np.eye(10)*2.75)
 
 def test_one_to_one_sparse_4():
     ''' Check learning, one to one, sparse '''
 
     G1 = dana.ones((10,))
     G2 = dana.ones((10,))
-    G1.connect(G2.V, np.ones((1,)), 'I', sparse=True, shared=False)
+    G1.connect(G2, np.ones((1,)), 'I', sparse=True, shared=False)
     G1.dI = '-W'
     G1.learn()
-    assert np_almost_equal(G1.I.kernel,np.zeros((10,10)))
+    assert np_almost_equal(G1.I._kernel,np.zeros((10,10)))
 
 def test_one_to_one_sparse_5():
     ''' Check learning, one to one, sparse '''
 
     G1 = dana.ones((10,))
     G2 = dana.ones((10,))
-    G1.connect(G2.V, np.ones((1,)), 'I', sparse=True, shared=False)
+    G1.connect(G2, np.ones((1,)), 'I', sparse=True, shared=False)
     G1.dI = '0'
     G1.learn()
-    assert np_almost_equal(G1.I.kernel,np.eye(10))
+    assert np_almost_equal(G1.I._kernel,np.eye(10))
 
 @raises(ValueError)
 def test_one_to_one_shared():
@@ -147,5 +147,5 @@ def test_one_to_one_shared():
 
     G1 = dana.ones((10,))
     G2 = dana.ones((10,))
-    G1.connect(G2.V, np.ones((1,)), 'I', sparse=False, shared=True)
+    G1.connect(G2, np.ones((1,)), 'I', sparse=False, shared=True)
     G1.dI = '0'

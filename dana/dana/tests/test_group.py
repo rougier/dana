@@ -189,13 +189,6 @@ def test_set_shape_2():
     G.shape = (2,2)
     assert G.shape == (2,2)
 
-@raises(AttributeError)
-def test_set_shape_3():
-    ''' Check group set shape '''
-    G = dana.zeros((2,2))
-    G.V.shape = (4,1)
-    assert G.V.shape == (4,1)
-
 def test_reshape_1():
     ''' Check group reshape '''
     G = dana.zeros((2,2))
@@ -208,25 +201,19 @@ def test_reshape_2():
     A = G.reshape((4,1))
     assert A.shape == (4,1)
 
-def test_base():
-    ''' Check group base '''
-    G = dana.zeros((2,2))
-    assert id(G.V.base) == id(G)
+# def test_mask_1():
+#     ''' Check group mask '''
+#     G = dana.zeros((2,2))
+#     G.mask = False
+#     assert np_equal(np.ones((2,2))*np.NaN,G.V)
 
-
-def test_mask_1():
-    ''' Check group mask '''
-    G = dana.zeros((2,2))
-    G.mask = False
-    assert np_equal(np.ones((2,2))*np.NaN,G.V)
-
-def test_mask_2():
-    ''' Check group mask '''
-    G = dana.zeros((2,2))
-    G.mask[0,0] = False
-    Z = np.zeros((2,2))
-    Z[0,0] = np.NaN
-    assert np_equal(Z,G.V)
+# def test_mask_2():
+#     ''' Check group mask '''
+#     G = dana.zeros((2,2))
+#     G.mask[0,0] = False
+#     Z = np.zeros((2,2))
+#     Z[0,0] = np.NaN
+#     assert np_equal(Z,G.V)
 
 def test_mask_3():
     ''' Check group mask '''

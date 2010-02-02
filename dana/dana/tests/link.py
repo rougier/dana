@@ -50,9 +50,9 @@ class link (unittest.TestCase):
 
         G1 = dana.group(np.random.random((3,3)))
         G2 = dana.group(np.random.random((3,3)))
-        G1.connect(G2.V, np.ones((1,1)), 'I', sparse=True,  shared=False)
-        G1.connect(G2.V, np.ones((1,1)), 'J', sparse=False, shared=True)
-        G1.connect(G2.V, np.ones((1,1)), 'K', sparse=False, shared=False)
+        G1.connect(G2, np.ones((1,1)), 'I', sparse=True,  shared=False)
+        G1.connect(G2, np.ones((1,1)), 'J', sparse=False, shared=True)
+        G1.connect(G2, np.ones((1,1)), 'K', sparse=False, shared=False)
 
         G1.dV = 'I'
         G1.compute()
@@ -72,7 +72,7 @@ class link (unittest.TestCase):
         G2 = dana.group(np.random.random((3,3)))
         R = np.ones((3,3))*np.NaN
         R[0,0] = 1
-        G1.connect(G2.V, np.ones((1,1)), 'I', shared=True)
+        G1.connect(G2, np.ones((1,1)), 'I', shared=True)
         self.assert_ (self.equal(G1.I[0,0],R))
 
 
@@ -83,7 +83,7 @@ class link (unittest.TestCase):
         G2 = dana.group(np.random.random((3,3)))
         R = np.ones((3,3))*np.NaN
         R[0,0] = 1
-        G1.connect(G2.V, np.ones((1,1)), 'I', sparse=True)
+        G1.connect(G2, np.ones((1,1)), 'I', sparse=True)
         self.assert_ (self.equal(G1.I[0,0],R))
 
 
@@ -94,7 +94,7 @@ class link (unittest.TestCase):
         G2 = dana.group(np.random.random((3,3)))
         R = np.ones((3,3))*np.NaN
         R[0,0] = 1
-        G1.connect(G2.V, np.ones((1,1)), 'I', shared=False,  sparse=False)
+        G1.connect(G2, np.ones((1,1)), 'I', shared=False,  sparse=False)
         self.assert_ (self.equal(G1.I[0,0],R))
 
 
@@ -103,7 +103,7 @@ class link (unittest.TestCase):
 
         G1 = dana.zeros((5,))
         G2 = dana.ones((5,))
-        G1.connect(G2.V,np.ones((5,)), 'I', sparse=False, shared=True)
+        G1.connect(G2, np.ones((5,)), 'I', sparse=False, shared=True)
         G1.dV = 'I'
         G1.compute()
         self.assert_ (self.equal (G1.V, np.array([3,4,5,4,3])))
@@ -114,7 +114,7 @@ class link (unittest.TestCase):
 
         G1 = dana.zeros((5,))
         G2 = dana.ones((5,))
-        G1.connect(G2.V,np.ones((5,)), 'I', sparse=False, shared=False)
+        G1.connect(G2,np.ones((5,)), 'I', sparse=False, shared=False)
         G1.dV = 'I'
         G1.compute()
         self.assert_ (self.equal (G1.V, np.array([3,4,5,4,3])))
@@ -125,7 +125,7 @@ class link (unittest.TestCase):
 
         G1 = dana.zeros((5,))
         G2 = dana.ones((5,))
-        G1.connect(G2.V,np.ones((5,)), 'I', sparse=True)
+        G1.connect(G2,np.ones((5,)), 'I', sparse=True)
         G1.dV = 'I'
         G1.compute()
         self.assert_ (self.almost_equal (G1.V, np.array([3,4,5,4,3])))
@@ -136,7 +136,7 @@ class link (unittest.TestCase):
 
         G1 = dana.zeros((5,))
         G2 = dana.group(np.random.random((5,)))
-        G1.connect(G2.V,np.ones((1,)), 'I-', sparse=False, shared=True)
+        G1.connect(G2,np.ones((1,)), 'I-', sparse=False, shared=True)
         G1.dV = 'I'
         self.assertRaises(ValueError, G1.compute)
 
@@ -146,7 +146,7 @@ class link (unittest.TestCase):
 
         G1 = dana.zeros((5,))
         G2 = dana.group(np.random.random((5,)))
-        G1.connect(G2.V,np.ones((1,)), 'I-', sparse=False, shared=False)
+        G1.connect(G2,np.ones((1,)), 'I-', sparse=False, shared=False)
         G1.dV = 'I'
         G1.compute()
         self.assert_ (self.almost_equal (G1.V, np.abs(1-G2['V'])))
@@ -157,7 +157,7 @@ class link (unittest.TestCase):
 
         G1 = dana.zeros((5,))
         G2 = dana.group(np.random.random((5,)))
-        G1.connect(G2.V,np.ones((1,)), 'I-', sparse=True)
+        G1.connect(G2,np.ones((1,)), 'I-', sparse=True)
         G1.dV = 'I'
         G1.compute()
         self.assert_ (self.almost_equal (G1.V, np.abs(1-G2['V'])))
@@ -167,7 +167,7 @@ class link (unittest.TestCase):
 
         G1 = dana.ones((5,))
         G2 = dana.zeros((5,))
-        G1.connect(G2.V,np.ones((1,)), 'I-')
+        G1.connect(G2,np.ones((1,)), 'I-')
         G1.dV = 'I'
         G1.compute()
         self.assert_ (self.almost_equal (G1.V, np.array([1,1,1,1,1])))

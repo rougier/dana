@@ -30,21 +30,22 @@ from nose.tools import *
 def test_no_equation():
     ''' Check equation when none '''
     G = dana.zeros((10,10))
-    result = G.compute()
-    assert result == []
+    G.compute()
+    assert np_equal(G.V, np.zeros((10,10)))
 
 def test_empty_equation():
     ''' Check equation when empty'''
     G = dana.zeros((10,10))
     G.dV = ''
-    result = G.compute()
-    assert result == []
+    G.compute()
+    assert np_equal(G.V, np.zeros((10,10)))
 
 def test_constant_equation():
     ''' Check equation with numerical constant'''
     G = dana.zeros((10,10))
     G.dV = '1.2345-V'
-    result = G.compute()
+    G.compute()
+    print G._data_equation['V']
     assert np_equal(G.V, np.ones((10,10))*1.2345)
 
 def test_constant_access():
@@ -52,19 +53,16 @@ def test_constant_access():
     G = dana.zeros((10,10))
     h = 1.2345
     G.dV = 'h-V'
-    result = G.compute()
+    G.compute()
     assert np_equal(G.V, np.ones((10,10))*h)
-    assert_almost_equal(result[0], 10*10*h)
 
 def test_value_access():
     ''' Check equation value access'''
     G = dana.ones((10,10), keys=['U','V'])
     G.dU = '0'
     G.dV = 'U/2'
-    result = G.compute()
+    G.compute()
     assert np_equal(G.V, np.ones((10,10))*1.5)
-    assert_almost_equal(result[0],10*10*0.0)
-    assert_almost_equal(result[1],10*10*0.5)
 
 def test_cos_operator():
     ''' Check equation cos operator '''
@@ -110,25 +108,7 @@ def test_equation_mask():
     G = dana.zeros((10,10))
     G.mask[0] = 0
     G.dV = '1-V'
-    result = G.compute()
-    Z[0] = np.nan
+    G.compute()
+    Z[0] = 0
     assert np_equal(G.V, Z)
 
-#     def test_equation_distance_computation (self):
-#         ''' Check equation distance computation '''
-
-#         n = 50
-#         Z = np.random.random((n,n))
-#         src = dana.group(Z)
-#         dst = dana.zeros((n,n))
-#         K = sp.identity(n*n, format='csr')
-#         dst.connect(src, K, 'I-')
-#         dst.dV = 'I'
-#         dst.compute()
-#         self.assert_ (self.almost_equal (dst.V, abs(Z-1)))
-
-
-# # Test suite
-# suite = unittest.TestLoader().loadTestsFromTestCase(equation)
-# if __name__ == "__main__":
-#     unittest.main()
