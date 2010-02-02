@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DANA, Distributed Asynchronous Adaptive Numerical Computing Framework
-# Copyright (c) 2009 Nicolas Rougier - INRIA - CORTEX Project
+# Copyright (c) 2009, 2010 Nicolas Rougier - INRIA - CORTEX Project
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free

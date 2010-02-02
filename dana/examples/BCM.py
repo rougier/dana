@@ -37,11 +37,9 @@ from random import choice
 n = 10
 src = dana.ones((n,1))
 bcm = dana.ones((n,1), keys=['C','T'])
-
 K = numpy.random.random((bcm.size, src.size))
-bcm.connect(src.V, K, 'F', shared=False)
+bcm.connect(src, K, 'F', shared=False)
 stims = numpy.identity(n)
-
 tau = 1.0
 tau_ = tau * 0.1
 eta = tau_ * 0.1
@@ -49,7 +47,6 @@ eta = tau_ * 0.1
 bcm.dC = '(F-C)*tau'
 bcm.dT = '(C**2-T)*tau_'
 bcm.dF = 'pre.V*post.C*(post.C-post.T)*eta'
-
 for i in range(10000):
     src.V = choice(stims).reshape(src.shape)
     bcm.compute()
@@ -57,4 +54,4 @@ for i in range(10000):
 
 print 'Learned prototypes'
 for i in range(n):
-    print 'Unit %d: ' % i, (bcm.F.kernel[i] > 1e-3).astype(int)
+    print 'Unit %d: ' % i, (bcm.F._kernel[i] > 1e-3).astype(int)

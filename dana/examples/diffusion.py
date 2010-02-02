@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DANA, Distributed Asynchronous Adaptive Numerical Computing Framework
-# Copyright (c) 2009 Nicolas Rougier - INRIA - CORTEX Project
+# Copyright (c) 2009, 2010 Nicolas Rougier - INRIA - CORTEX Project
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -42,7 +42,7 @@ G = dana.group((n,n))
 K = numpy.array([[0, 1, 0],
                  [1, 0, 1],
                  [0, 1, 0]])
-G.connect(G.V, K, 'N', shared=True)
+G.connect(G, K, 'N', sparse=True)
 G.dV = 'dt*k*(N/4-V)'
 
 for i in range(2500):
@@ -55,7 +55,7 @@ plt.imshow(G.V, cmap=plt.cm.hot, origin='lower',
            extent=[0,n,0,n],
            interpolation='bicubic', vmin=0, vmax=1)
 plt.colorbar()
-CS = plt.contour(G.V, 5, colors='k')
+CS = plt.contour(G.V, 10, colors='k')
 plt.clabel(CS, inline=1, fontsize=16)
 plt.grid()
 plt.show()

@@ -43,9 +43,8 @@ References
 ----------
     _[1] http://www.scholarpedia.org/article/Neural_fields
 '''
-import time
-import dana, numpy
-import dana.pylab
+import time, numpy
+import dana, dana.pylab
 
 
 N       = 60
@@ -55,22 +54,21 @@ tau     = 1.0
 h       = 0.0
 input = dana.zeros((N,N), name='input')
 focus = dana.zeros((N,N), name='focus')
-
 Wi = numpy.ones((1,1))
-focus.connect(input.V, Wi, 'I', sparse=True)
+focus.connect(input, Wi, 'I', sparse=True)
 Wf = 1.25*dana.gaussian((2*N+1,2*N+1), 0.1) \
-    -0.70*dana.gaussian((2*N+1,2*N+1), 1)
-
-focus.connect (focus.V, Wf, 'L', shared=True)
+   - 0.70*dana.gaussian((2*N+1,2*N+1), 1)
+focus.connect (focus, Wf, 'L', shared=True)
 focus.dV = '-V+maximum(V+dt/tau*(-V+(L/(N*N)*40*40+I+h)/alpha),0)'
-
 input.V  = dana.gaussian((N,N), 0.2, ( 0.5, 0.5))
 input.V += dana.gaussian((N,N), 0.2, (-0.5,-0.5))
 input.V += (2*numpy.random.random((N,N))-1)*.05
 
 n = 500
-t =time.clock()
+t = time.clock()
 for i in range(n):
     focus.compute(dt)
 print time.clock()-t
-dana.pylab.view([input.V, focus.V]).show()
+
+view = dana.pylab.view([input.V, focus.V])
+view.show()

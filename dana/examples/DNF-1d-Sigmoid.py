@@ -32,6 +32,22 @@ of the form:
 - ------- = -U(x,t) + - ⎮   W(|x-y|)f(U(y,t)) dy + - I(x,t)
 α   ∂t                τ ⌡-∞                        τ
 
+<<<<<<< .mine
+where # U(x,t) is the potential of a neural population at position x and time t.
+      # W(x) is a neighborhood function
+      # f(x) is the firing rate of a single neuron.
+      # α is the temporal decay of the synapse.
+      # τ is a scaling term
+      # I(x,t) is the input at position x.
+
+References
+----------
+    _[1] http://www.scholarpedia.org/article/Neural_fields
+'''
+import numpy, dana
+import matplotlib.pyplot as plt
+
+=======
 where # U(x,t) is the potential of a neural population at position x and time t.
       # W(x) is a neighborhood function
       # f(x) is the firing rate of a single neuron.
@@ -54,10 +70,11 @@ tau     = 0.10
 h       = 0.0
 I = dana.zeros(shape=(n,), name='I')
 V = dana.zeros(shape=(n,), keys=['U','V'], name='V')
-V.connect(I.V, numpy.ones((1,)), 'I', shared=True)
-V.connect(V.U,  3.00*dana.gaussian(2*n+1, 0.05)
-               -0.75*dana.gaussian(2*n+1, 0.20),
-               'L', shared=True)
+V.connect((I,'V'), numpy.ones((1,)), 'I', shared=True)
+V.connect((V,'U'),  3.00*dana.gaussian(2*n+1, 0.05)
+                   -0.75*dana.gaussian(2*n+1, 0.20),
+                   'L', shared=True)
+
 V.dV = 'dt*(-V+(L*100.0/n+I+h)/alpha)/tau'
 V.dU = '1.0/(1.0+exp(2.0-3.0*V))-U'
 
@@ -70,7 +87,6 @@ V_hist = numpy.zeros((100,n))
 for i in range(100):
     V.compute(dt)
     V_hist[i] = V.U
-
 plt.figure(figsize=(10,8))
 plt.axes([.1, .1, .8, .2])
 plt.xlabel('Espace',fontsize=16)

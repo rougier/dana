@@ -54,20 +54,20 @@ h       = 0.0
     
 I = dana.zeros(shape=(n,), name='I')
 V = dana.zeros(shape=(n,), name='V')
-V.connect(I.V, numpy.ones((1,)),'I', shared=True)
-V.connect(V.V, 1.50*dana.gaussian(2*n+1,.1)
-              -0.75*dana.gaussian(2*n+1,1.0),
+V.connect(I, numpy.ones((1,)),'I', shared=True)
+V.connect(V, 1.50*dana.gaussian(2*n+1,.1)
+            -0.75*dana.gaussian(2*n+1,1.0),
           'L', shared=True)
 V.dV = '-V+maximum(0,V+dt*(-V+(L*100.0/n+I+h)/alpha)/tau)'
 
-I['V'] = .5
+<<<<<<< .mine
+I.V = .5
 for i in range(2500):
     V.compute(dt)
 
 X = numpy.arange(0.0, 1.0, 1.0/n)
 plt.figure(figsize=(10,6))
-plt.plot(X,I['V'], linewidth=3, color=(.1,.1,1), linestyle='-', label='I(x)')
-plt.plot(X,V['V'], linewidth=3, color=(1,.1,.1), linestyle='-', label='V(x,t)')
+plt.plot(X,I.V, linewidth=3, color=(.1,.1,1), linestyle='-', label='I(x)')
+plt.plot(X,V.V, linewidth=3, color=(1,.1,.1), linestyle='-', label='V(x,t)')
 plt.axis([0,1, -0.1, 1.1])
 plt.show()
-
