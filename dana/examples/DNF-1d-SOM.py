@@ -45,14 +45,14 @@ som = dana.zeros(shape=(n,), name='V')
 
 # Connect them
 # ______________________________________________________________________________
-som.connect(input.V, numpy.random.rand(n,1), 'I-', shared=False, sparse=True)
-som.connect(som.V, 1.50*dana.gaussian(2*n+1, 0.1), 'Le*', shared=False)
-som.connect(som.V, 0.75*dana.gaussian(2*n+1, 1.0), 'Li*', shared=False)
+som.connect(input, numpy.random.rand(n,1), 'I-')
+som.connect(som, 1.50*dana.gaussian(2*n+1, 0.1), 'Le*')
+som.connect(som, 0.75*dana.gaussian(2*n+1, 1.0), 'Li*')
 
 # Set Dynamic Neural Field equation
 # ______________________________________________________________________________
 som.dV = "-V+maximum(0, V+dt*(-V+((Le-Li)*100.0/n+(1-I)+h)/alpha)/tau)"
-som.dI = "lrate*Le/n*(pre.V-W)"
+som.dI = "lrate*(Le/n)*(pre.V-W)"
 
 # Run some iterations
 # ______________________________________________________________________________
@@ -70,7 +70,7 @@ for i in range(2500):
 # Display result using pylab
 # ______________________________________________________________________________
 pylab.figure(figsize=(10,6))
-pylab.plot(som.I.kernel, linewidth=3, color=(1,.1,.1), linestyle='-', label='W')
+pylab.plot(som.I._kernel, linewidth=3, color=(1,.1,.1), linestyle='-', label='W')
 #pylab.plot(som.V, linewidth=3, color=(.1,.1,1), linestyle='-', label='som(x,t)')
 pylab.axis([0,n, -0.1, 1.1])
 pylab.show()

@@ -58,3 +58,6 @@ class link(object):
  
     def compute(self):
         raise NotImplemented
+
+    def compile(self):
+        pass

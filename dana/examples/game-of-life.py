@@ -26,8 +26,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import dana
 
-n = 100
-G = dana.group((n,n), dtype=int)
+n = 50
+G = dana.group((n,2*n), dtype=int)
 K = np.array([[1, 1, 1],
               [1, 0, 1],
               [1, 1, 1]])
@@ -36,7 +36,12 @@ G.dV = '-V+np.maximum(0,1.0-(N<1.5)-(N>3.5)-(N<2.5)*(1-V))'
 G.V = np.random.randint(0,2,G.shape)
 for i in range(50):
     G.compute()
-plt.imshow(G.V, cmap=plt.cm.gray_r, extent=[0,n,0,n],
+
+fig = plt.figure(figsize=(12,6))
+plt.imshow(G.V, cmap=plt.cm.gray_r, extent=[0,2*n,0,n],
            interpolation='nearest', origin='lower')
+plt.xticks(np.arange(10)*10)
+plt.yticks(np.arange(5)*10)
+plt.grid()
 plt.show()
 

@@ -67,25 +67,48 @@ class dense_link(link):
                 raise ValueError, \
                     'kernel shape is wrong relative to source and destination'
         else:
-            self._kernel = np.array(kernel, dtype=dtype)
+            self._kernel = kernel.astype(dtype)
             self._mask = 1-np.isnan(self._kernel).astype(bool)
 
+        self._name = name
         self.compute = self.compute_sum
         if name[-1] == '-':
             self.compute = self.compute_dst
 
 
-    def compute(self):
-        raise NotImplemented
+    def compile(self):
+        name = self._name
+        if self._src.mask.all():
+            self.compute = self.compute_sum_no_mask
+            if name[-1] == '-':
+                self.compute = self.compute_dst_no_mask
+        else:
+            self.compute = self.compute_sum
+            if name[-1] == '-':
+                self.compute = self.compute_dst_no
 
     def compute_sum(self):
-        src  = self._src_data*self._src.mask
-        dst  = self._dst
-        R = np.dot(self._kernel, src.reshape((src.size,1))).reshape(dst.shape)
-        return R
+        src = self._src_data * self._src.mask
+        dst = self._dst
+        src = src.reshape((src.size,))
+        R = np.dot(self._kernel,src)
+        return R.reshape(dst.shape)
+
+    def compute_sum_no_mask(self):
+        src = self._src_data
+        dst = self._dst
+        src = src.reshape((src.size,))
+        R = np.dot(self._kernel,src)
+        return R.reshape(dst.shape)
 
     def compute_dst(self):
-        src  = self._src_data*self._src.mask
+        src = self._src_data * self._src.mask
+        dst  = self._dst
+        result = np.abs(self._kernel - src.reshape((1,src.size)))*self._mask
+        return np.multiply((result.sum(axis=1).reshape(dst.shape)), dst.mask)
+
+    def compute_dst_no_mask(self):
+        src  = self._src_data
         dst  = self._dst
         result = np.abs(self._kernel - src.reshape((1,src.size)))*self._mask
         return np.multiply((result.sum(axis=1).reshape(dst.shape)), dst.mask)

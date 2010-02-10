@@ -284,8 +284,8 @@ def test_weighted_sum_dense_3():
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
     G1.connect(G2,np.ones((3,3)), 'I', sparse=False, shared=False)
-    G1.dV = 'I-V'
     G2.mask[1,1] = False
+    G1.dV = 'I-V'
     G1.compute()
     print G1.V
     assert np_almost_equal(G1.V, np.array([[3,5,3],
@@ -320,8 +320,8 @@ def test_weighted_sum_shared_3():
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
     G1.connect(G2,np.ones((3,3)), 'I', sparse=False, shared=True)
-    G1.dV = 'I-V'
     G2.mask[1,1] = False
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V, np.array([[3,5,3],
                                            [5,8,5],
@@ -355,8 +355,8 @@ def test_weighted_sum_sparse_3():
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
     G1.connect(G2,np.ones((3,3)), 'I', sparse=True, shared=False)
-    G1.dV = 'I-V'
     G2.mask[1,1] = False
+    G1.dV = 'I-V'
     G1.compute()
     assert np_almost_equal(G1.V, np.array([[3,5,3],
                                            [5,8,5],

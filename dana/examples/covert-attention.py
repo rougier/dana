@@ -65,27 +65,33 @@ reward = dana.group((1,1), name='reward')
 
 # Focus
 Wi = 0.25 * gaussian(2*n+1, 0.05 * n)
-focus.connect( visual.V, Wi, 'I', shared=True)
+focus.connect( visual, Wi, 'I', shared=True)
+
 Wl = 1.7 * gaussian(2*n+1, 0.1*n) - 0.65 * gaussian(2*n+1, 1.0 * n)
-focus.connect( focus.V, Wl, 'L', shared=True)
+focus.connect( focus, Wl, 'L', shared=True)
+
 Wstr = -0.2 * gaussian(2*n+1, 0.1 * n)
-focus.connect( striatum_inhib.V, Wstr, 'Istr', shared=True)
+focus.connect( striatum_inhib, Wstr, 'Istr', shared=True)
 
 # Wm
 Wi = 0.3 * gaussian(2*n+1, 0.05*n)   # 0.25
-wm.connect( visual.V, Wi, 'I', shared=True)
+wm.connect( visual, Wi, 'I', shared=True)
+
 Wf = 0.2* gaussian(2*n+1, 0.05*n)
-wm.connect( focus.V, Wf, 'If', shared=True)
+wm.connect( focus, Wf, 'If', shared=True)
+
 Wl = 3.0 * gaussian(2*n+1, 0.05*n) - 0.5 * gaussian(2*n+1, 0.1*n)
-wm.connect( wm.V, Wl, 'L', shared=True)
+wm.connect( wm, Wl, 'L', shared=True)
 
 # Striatum inhib
 Wi = 0.5 * gaussian(2*n+1, 0.0625*n)
-striatum_inhib.connect(wm.V, Wi, 'I', shared=True)
+striatum_inhib.connect(wm, Wi, 'I', shared=True)
+
 Wir = 10.0 * numpy.ones((2*n+1, 2*n+1))
-striatum_inhib.connect( reward.V, Wi, 'Ir', shared=False)
+striatum_inhib.connect( reward, Wi, 'Ir', shared=False)
+
 Wl = 2.5 * gaussian(2*n+1, 0.05*n) - 1.0*gaussian(2*n+1, 0.1*n)
-striatum_inhib.connect(striatum_inhib.V, Wl, 'L', shared=True)
+striatum_inhib.connect(striatum_inhib, Wl, 'L', shared=True)
 
 # Set Dynamic Neural Field equation
 # ______________________________________________________________________________

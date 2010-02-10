@@ -25,6 +25,7 @@
 import inspect
 import numpy as np
 from numpy import *
+import scipy.sparse as sp
 from shared_link import shared_link
 from sparse_link import sparse_link
 from dense_link import dense_link
@@ -97,7 +98,7 @@ class group(object):
             if name == 'mask':
                 mask_ = True
         if not mask_:
-            dtype.append( ('mask', np.bool) )
+            dtype.append( ('mask', np.bool8) )
 
         object.__setattr__(self, '_dtype', np.dtype(dtype))
         object.__setattr__(self, '_shape', shape)
@@ -192,7 +193,7 @@ class group(object):
             lname = name[:-1]
         else:
             lname = name
-        if sparse:
+        if sparse or sp.issparse(kernel):
             self._link[lname] = sparse_link(src, self, kernel, name, dtype)
         elif shared:
             if name[-1] != '-':
@@ -210,11 +211,15 @@ class group(object):
         self._data_compiled = []
         self._link_compiled = []
         for key in self._data_equation.keys():
-            self._globals[key] = self[key]
+            self._globals[key] = self[key] #.reshape((self[key].size(),1))
             eqn = self._data_equation.get(key, None)
             if eqn:
-                expr = compile("%s += %s; %s *= self.mask" % (key, eqn,  key),
-                               "<string>", "exec")
+                if self.mask.all():
+                    expr = compile("%s += %s" % (key, eqn),
+                                   "<string>", "exec")
+                else:
+                    expr = compile("%s += %s; %s *= self.mask" % (key, eqn, key),
+                                   "<string>", "exec")
                 self._data_compiled.append(expr)
 
                 # Get unknown constants (and only them) from upper frame
@@ -226,6 +231,9 @@ class group(object):
                             name not in self._data_equation.keys()):
                             self._globals[name] = frame.f_globals[name]
 
+        for key in self._link.keys():
+            link = self._link[key]
+            link.compile()
 
         for key in self._link_equation.keys():
             eqn = self._link_equation.get(key, None)
@@ -239,8 +247,12 @@ class group(object):
                 if isinstance(link,dense_link):
                     _locals['kernel'] = self._link[key]._kernel
                     _locals['mask'] = self._link[key]._mask
-                    expr = compile("W += %s; kernel *= mask" % eqn,
-                                   "<string>", "exec")
+                    if self._link[key]._mask.all():
+                        expr = compile("W += %s" % eqn,
+                                       "<string>", "exec")
+                    else:
+                        expr = compile("W += %s; kernel *= mask" % eqn,
+                                       "<string>", "exec")
                     self._link_compiled.append((key, expr, _locals))
                 elif isinstance(link,sparse_link):
                     expr = compile("W += %s" % eqn, "<string>", "exec")

@@ -31,26 +31,31 @@ References:
   selectivity: orientation specificity and binocular interaction in visual
   cortex". The Journal of Neuroscience 2 (1): 32—48, 1982.
 '''
+import time
 import numpy, dana
 from random import choice
 
 n = 10
-src = dana.ones((n,1))
-bcm = dana.ones((n,1), keys=['C','T'])
+src = dana.ones((n,))
+bcm = dana.ones((n,), keys=['C','T'])
 K = numpy.random.random((bcm.size, src.size))
-bcm.connect(src, K, 'F', shared=False)
+bcm.connect(src, K, 'F')
 stims = numpy.identity(n)
 tau = 1.0
 tau_ = tau * 0.1
 eta = tau_ * 0.1
 
-bcm.dC = '(F-C)*tau'
-bcm.dT = '(C**2-T)*tau_'
-bcm.dF = 'pre.V*post.C*(post.C-post.T)*eta'
-for i in range(10000):
-    src.V = choice(stims).reshape(src.shape)
+bcm.dC = '(F-C)*1.0'
+bcm.dT = '(C**2-T)*0.1'
+bcm.dF = 'pre.V*post.C*(post.C-post.T)*0.01'
+
+t = time.clock()
+V = src.V
+for i in xrange(10000):
+    V[:] = choice(stims).reshape(src.shape)
     bcm.compute()
     bcm.learn()
+print time.clock()-t
 
 print 'Learned prototypes'
 for i in range(n):

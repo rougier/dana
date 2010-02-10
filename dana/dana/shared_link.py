@@ -80,23 +80,47 @@ class shared_link(link):
             raise ValueError, \
                 '''Shared link requested but dimensions are too high (> 2).'''
  
-    def compute(self):
-        ''' '''
-        raise NotImplemented
+    def compile(self):
+        if self._src.mask.all():
+            if len(self._kernel.shape) == 1:
+                self.compute = self._compute_1_no_mask
+            elif len(self._kernel.shape) == 2:
+                self.compute = self._compute_2_no_mask
+        else:
+            if len(self._kernel.shape) == 1:
+                self.compute = self._compute_1
+            elif len(self._kernel.shape) == 2:
+                self.compute = self._compute_2
 
     def _compute_1(self):
         ''' One dimensional convolution '''
 
-        src = self._src_data*self._src.mask
+        src = self._src_data * self._src.mask
         dst = self._dst
         return convolve1d(zoom(src, self._scale,order=1), self._kernel)
 
     def _compute_2(self):
         ''' Two dimensional convolution '''
 
-        src = self._src_data*self._src.mask
+        src = self._src_data * self._src.mask
         dst = self._dst
         return convolve2d(zoom(src, self._scale,order=1), self._kernel, self._USV)
+
+
+    def _compute_1_no_mask(self):
+        ''' One dimensional convolution '''
+
+        src = self._src_data
+        dst = self._dst
+        return convolve1d(zoom(src, self._scale,order=1), self._kernel)
+
+    def _compute_2_no_mask(self):
+        ''' Two dimensional convolution '''
+
+        src = self._src_data
+        dst = self._dst
+        return convolve2d(zoom(src, self._scale,order=1), self._kernel, self._USV)
+
 
     def __getitem__(self, key):
         key = np.array(key) % self._dst.shape

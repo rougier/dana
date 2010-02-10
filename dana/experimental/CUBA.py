@@ -51,22 +51,19 @@ we   = 1.62*mV  # excitatory synaptic weight
 wi   = -9*mV    # inhibitory synaptic weight
 
 G = dana.zeros((4000,), keys=['V','S','ge','gi'])
-G.dV  = 'np.where(V>Vt, Vr, V+dt*(ge+gi-(V-El))/taum)'
-G.dS  = 'V > Vt'
+G.dV  = '-V + np.where(V>Vt, Vr, V+dt*(ge+gi-(V-El))/taum)'
+G.dS  = '-S+(V > Vt)'
 G.dge = 'Ie-dt*ge/taue'
 G.dgi = 'Ii-dt*gi/taui'
 
-# W = (sparse_random_matrix(len(G), len(G),    0, 3200, 0.02, we) + 
-#      sparse_random_matrix(len(G), len(G), 3200, 4000, 0.02, wi))
-# G.connect(G.S, W, 'I')
-W = sparse_random_matrix(G.size, G.size,    0, 3200, 0.02, we)
-G.connect(G.S, W, 'Ie')
+W = sparse_random_matrix(G.size, G.size, 0, 3200, 0.02, we)
+G.connect((G,'S'), W, 'Ie', sparse=True)
 W = sparse_random_matrix(G.size, G.size, 3200, 4000, 0.02, wi)
-G.connect(G.S, W, 'Ii')
+G.connect((G,'S'), W, 'Ii', sparse=True)
 
 G.V = -60*mV+10*mV*np.random.rand(G.size)
 
-t,dt = 500*ms, 0.1*ms
+t,dt = 250*ms, 0.1*ms
 R = np.zeros((t/dt, len(G.S)))
 t0 = time.clock()
 V = []
