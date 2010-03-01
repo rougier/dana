@@ -107,13 +107,13 @@ class csr_array(sp.csr_matrix):
         return self.copy().__imul__(other)
 
 
-    def __idiv__(self, other): # self -= other
+    def __idiv__(self, other): # self /= other
         return self.__binary_op__(other, '__idiv__')
 
-    def __div__(self, other):  # self - other
+    def __div__(self, other):  # self / other
         return self.copy().__idiv__(other)
 
-    def __rdiv__(self, other): # other - self
+    def __rdiv__(self, other): # other / self
         Z = self.copy()
         Z.data = 1.0/self.data
         return Z.__imul__(other)
