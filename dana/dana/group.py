@@ -30,6 +30,7 @@ from shared_link import shared_link
 from sparse_link import sparse_link
 from dense_link import dense_link
 
+
 class group(object):
 
     def __init__(self, shape=(), dtype=np.double, keys=['V'],
@@ -267,7 +268,6 @@ class group(object):
                             name not in self._globals      and
                             name not in self._data_equation.keys()):
                             self._globals[name] = frame.f_globals[name]
-
 
 
     def compute(self, dt=0.1):

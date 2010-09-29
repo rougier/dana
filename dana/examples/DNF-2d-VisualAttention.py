@@ -47,7 +47,7 @@ import time, numpy
 import dana, dana.pylab
 
 
-N       = 60
+N       = 40
 dt      = 0.1
 alpha   = 10.0
 tau     = 1.0
