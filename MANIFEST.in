@@ -10,7 +10,7 @@ include common.py
 include MANIFEST.in
 include README
 include examples/*.py
-include examples/*.png
+include examples/*.jpg
 include doc/Makefile
 include doc/make.bat
 include doc/source
