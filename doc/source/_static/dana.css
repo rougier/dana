@@ -1,0 +1,52 @@
+/* @import "haiku.css";   */
+/* @import "default.css"; */
+@import "scipy.css";
+
+table.docutils
+{
+    width: 100%;
+    border: 1px solid white;
+    border-collapse: collapse;
+    rules: rows;
+}
+table.docutils td, table.docutils th
+{
+    border: 0px solid black;
+    border-width: 0;
+    border-collapse: collapse;
+    padding: 0px;
+    padding-top:   10px;
+    padding-left: 30px;
+    #padding-right: 30px;
+}
+table.docutils a em
+{
+    font-size:1.35em;
+    font-weight: normal;
+    font-style: normal;
+}
+table.docutils em
+{
+    font-size:0.85em;
+}
+
+div.related ul {
+    background: url('./logo-small-white.png');
+    background-repeat: no-repeat;
+    background-position: 4px , 50%;
+    padding-left: 24px;
+}
+
+.highlight > pre {
+    padding-left: 10px;
+    background-color: #eeeeff;
+    border: 0;
+    border-left: 8px solid #ccccff;
+}
+
+.highlight-python > pre {
+    padding-left: 10px;
+    background-color: #eeeeff;
+    border: 0;
+    border-left: 8px solid #ccccff;
+}

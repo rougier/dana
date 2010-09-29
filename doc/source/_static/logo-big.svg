@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:export-ydpi="226.88"
+   inkscape:export-xdpi="226.88"
+   inkscape:export-filename="/users/cortex/rougier/Development/dana-2.1/doc/source/_static/logo-big.png"
+   width="71.404655"
+   height="69.481995"
+   id="svg11300"
+   sodipodi:version="0.32"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="logo-big.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   version="1.1">
+  <defs
+     id="defs3">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 24 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="48 : 24 : 1"
+       inkscape:persp3d-origin="24 : 16 : 1"
+       id="perspective33" />
+    <linearGradient
+       id="linearGradient5048">
+      <stop
+         style="stop-color:black;stop-opacity:0;"
+         offset="0"
+         id="stop5050" />
+      <stop
+         id="stop5056"
+         offset="0.5"
+         style="stop-color:black;stop-opacity:1;" />
+      <stop
+         style="stop-color:black;stop-opacity:0;"
+         offset="1"
+         id="stop5052" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient11520">
+      <stop
+         id="stop11522"
+         offset="0.0000000"
+         style="stop-color:#ffffff;stop-opacity:1.0000000;" />
+      <stop
+         id="stop11524"
+         offset="1.0000000"
+         style="stop-color:#dcdcdc;stop-opacity:1.0000000;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient11508"
+       inkscape:collect="always">
+      <stop
+         id="stop11510"
+         offset="0"
+         style="stop-color:#000000;stop-opacity:1;" />
+      <stop
+         id="stop11512"
+         offset="1"
+         style="stop-color:#000000;stop-opacity:0;" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient11508"
+       id="radialGradient1348"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,0.338462,0,29.48178)"
+       cx="30.203562"
+       cy="44.565483"
+       fx="30.203562"
+       fy="44.565483"
+       r="6.5659914" />
+    <inkscape:perspective
+       id="perspective3604"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3628"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <filter
+       inkscape:collect="always"
+       id="filter3646"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.80234375"
+         id="feGaussianBlur3648" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     stroke="#ef2929"
+     fill="#888a85"
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="0.25490196"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="10.185931"
+     inkscape:cx="31.775343"
+     inkscape:cy="38.667982"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:grid-bbox="true"
+     inkscape:document-units="px"
+     inkscape:showpageshadow="false"
+     inkscape:window-width="927"
+     inkscape:window-height="982"
+     inkscape:window-x="360"
+     inkscape:window-y="116"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata4">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Jakub Steiner</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:source>http://jimmac.musichall.cz</dc:source>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/2.0/" />
+        <dc:title></dc:title>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>emblem</rdf:li>
+            <rdf:li>symbolic</rdf:li>
+            <rdf:li>link</rdf:li>
+            <rdf:li>pointer</rdf:li>
+            <rdf:li>io</rdf:li>
+            <rdf:li>file</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/2.0/">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/Notice" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/Attribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     transform="translate(3.791383,44.887119)">
+    <path
+       sodipodi:type="inkscape:offset"
+       inkscape:radius="0.99905413"
+       inkscape:original="M 22.34375 8.1875 C 20.393589 8.1874999 18.815258 9.7766589 18.78125 11.71875 L 13.90625 12.4375 C 13.323104 11.257381 12.123393 10.4375 10.71875 10.4375 C 8.7473215 10.4375 7.156251 12.028572 7.15625 14 C 7.15625 15.971428 8.7473217 17.5625 10.71875 17.5625 C 12.572281 17.5625 14.074206 16.151382 14.25 14.34375 L 19.28125 13.59375 C 19.818842 14.486394 20.739956 15.151267 21.8125 15.3125 L 23.03125 23.8125 L 16.4375 23.5625 C 16.127735 21.90586 14.68357 20.625 12.9375 20.625 C 10.966072 20.625 9.375 22.247322 9.375 24.21875 C 9.3750004 26.190178 10.966071 27.78125 12.9375 27.78125 C 14.462567 27.78125 15.769487 26.814983 16.28125 25.46875 L 20.03125 25.59375 L 18.625 30.65625 C 16.653572 30.65625 15.0625 32.247321 15.0625 34.21875 C 15.0625 36.19018 16.653571 37.781251 18.625 37.78125 C 20.596428 37.781252 22.187499 36.190178 22.1875 34.21875 C 22.1875 32.922538 21.502919 31.782112 20.46875 31.15625 L 22 25.6875 L 24.125 25.75 L 24.75 25.78125 L 28.8125 28.40625 C 28.717455 28.727607 28.65625 29.054209 28.65625 29.40625 C 28.65625 31.377678 30.247324 33 32.21875 33 C 34.190178 33.000002 35.78125 31.377679 35.78125 29.40625 C 35.78125 27.434822 34.19018 25.843751 32.21875 25.84375 C 31.304678 25.84375 30.475661 26.215774 29.84375 26.78125 L 25 23.625 L 24.96875 23.6875 L 24.34375 19.40625 L 30.9375 18.75 C 31.507588 19.965245 32.757174 20.8125 34.1875 20.8125 C 36.158928 20.8125 37.749998 19.221429 37.75 17.25 C 37.75 15.278572 36.158929 13.6875 34.1875 13.6875 C 32.345241 13.6875 30.847249 15.083153 30.65625 16.875 L 24.0625 17.5 L 23.71875 15.0625 C 25.000446 14.520089 25.90625 13.259821 25.90625 11.78125 C 25.90625 9.8098218 24.315179 8.1875004 22.34375 8.1875 z "
+       xlink:href="#path2961"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.69340008;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible"
+       id="path2406"
+       d="m 22.34375,7.1875 c -2.181291,-1e-7 -3.924267,1.5775688 -4.375,3.625 L 14.25,11.375 c -0.830023,-1.107053 -2.042069,-1.9375 -3.53125,-1.9375 -2.5089633,0 -4.5624987,2.053538 -4.5625,4.5625 0,2.508963 2.0535369,4.5625 4.5625,4.5625 2.064008,0 3.726051,-1.42359 4.28125,-3.3125 l 3.96875,-0.59375 c 0.514757,0.603721 1.139,1.069488 1.90625,1.34375 l 0.96875,6.78125 -4.71875,-0.1875 C 16.46271,20.886847 14.875153,19.625 12.9375,19.625 c -2.519521,0 -4.5625,2.084787 -4.5625,4.59375 5e-7,2.508962 2.053536,4.5625 4.5625,4.5625 1.642022,0 2.943038,-1.003082 3.75,-2.3125 l 2.03125,0.09375 -0.90625,3.28125 c -2.110611,0.397694 -3.75,2.153314 -3.75,4.375 0,2.508964 2.053536,4.562501 4.5625,4.5625 2.508964,3e-6 4.562499,-2.053538 4.5625,-4.5625 0,-1.344006 -0.659592,-2.471407 -1.59375,-3.3125 l 1.15625,-4.1875 1.3125,0.03125 0.03125,0 0.34375,0.03125 3.28125,2.125 c -0.02209,0.1701 -0.0625,0.317988 -0.0625,0.5 0,2.508964 2.042981,4.59375 4.5625,4.59375 2.519521,3e-6 4.5625,-2.084786 4.5625,-4.59375 0,-2.508962 -2.053536,-4.562499 -4.5625,-4.5625 -0.891861,0 -1.653191,0.343584 -2.34375,0.78125 L 25.90625,23.03125 25.5,20.3125 30.5625,19.78125 c 0.83341,1.173878 2.087987,2.03125 3.625,2.03125 2.508963,0 4.562497,-2.053538 4.5625,-4.5625 0,-2.508963 -2.053536,-4.5625 -4.5625,-4.5625 -2.043171,0 -3.706917,1.389981 -4.28125,3.25 l -4.96875,0.46875 -0.15625,-1 c 1.206184,-0.821626 2.125,-2.060503 2.125,-3.625 0,-2.5089627 -2.042979,-4.5937495 -4.5625,-4.59375 z"
+       transform="matrix(1.9226638,0,0,1.9226638,-11.258866,-54.337347)"
+       inkscape:export-filename="/users/cortex/rougier/Development/dana-svn/doc.v2/source/_static/dana.png"
+       inkscape:export-xdpi="244.03999"
+       inkscape:export-ydpi="244.03999"
+       inkscape:href="#path2961" />
+  </g>
+</svg>

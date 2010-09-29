@@ -1,0 +1,20 @@
+#-----------------------------------------------------------------------------
+# DANA - Distributed (Asynchronous) Numerical Adaptive computing framework
+# Copyright (C) 2009-2010  Nicolas P. Rougier
+#
+# Distributed under the terms of the BSD License. The full license is in
+# the file COPYING, distributed as part of this software.
+#-----------------------------------------------------------------------------
+include setup.py
+include common.py
+include MANIFEST.in
+include README
+include examples/*.py
+include examples/*.png
+include doc/Makefile
+include doc/make.bat
+include doc/source
+
+
+
+
