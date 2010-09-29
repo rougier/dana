@@ -6,15 +6,10 @@
 # Distributed under the terms of the BSD License. The full license is in
 # the file COPYING, distributed as part of this software.
 # -----------------------------------------------------------------------------
-from core import *
 
-
-# ------------------------------------------------------ class NetworkError ---
 class NetworkError(Exception):
     pass
 
-
-# ----------------------------------------------------------- class Network ---
 class Network(object):
 
     def __init__(self, groups=[]):

@@ -22,14 +22,24 @@ and/or learning.
 import numpy as np
 import numpy.random as rnd
 
-from core import *
-from core.group import zeros, ones, empty
+from functions import extract, gaussian
+from functions import convolve1d, convolve2d
+from csr_array import csr_array, dot
+
 from group import Group
 from network import Network, run
-from connection import Connection, ConnectionError
-from dense_connection import DenseConnection
+
+from connection        import Connection, ConnectionError
+from dense_connection  import DenseConnection
 from sparse_connection import SparseConnection
 from shared_connection import SharedConnection
+
+from model         import Model, ModelError
+from definition    import Definition, DefinitionError
+from equation      import Equation, EquationError
+from declaration   import Declaration, DeclarationError
+from diff_equation import DifferentialEquation, DifferentialEquationError
+
 from tests import test
 
 try:

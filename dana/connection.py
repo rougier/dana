@@ -9,17 +9,14 @@
 #-----------------------------------------------------------------------------
 import re
 import inspect
+from diff_equation import DifferentialEquation
 import numpy as np
-from core import *
 
 
-# --------------------------------------------------- class ConnectionError ---
 class ConnectionError(Exception):
     ''' Connection Error '''
     pass
 
-
-# -------------------------------------------------------- class Connection ---
 class Connection(object):
     '''
     A connection describes a flow of information between two groups (that can

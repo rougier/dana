@@ -11,7 +11,8 @@ SparseConnection
 '''
 import numpy as np
 import scipy.sparse as sp
-from core import *
+from csr_array import csr_array, dot
+from functions import extract
 from connection import Connection, ConnectionError
 
 

@@ -13,7 +13,7 @@ SparseConnection
 import inspect
 import scipy
 import numpy as np
-from core import *
+from functions import extract, convolve1d, convolve2d
 from connection import Connection, ConnectionError
 
 

@@ -12,7 +12,7 @@ DenseConnection
 
 '''
 import numpy as np
-from core import *
+from functions import extract
 from connection import Connection, ConnectionError
 
 
