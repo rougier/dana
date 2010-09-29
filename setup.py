@@ -22,5 +22,4 @@ if __name__ == '__main__':
           classifiers      = CLASSIFIERS,
           platforms        = PLATFORM,
           packages         =  ['dana',
-                               'dana.core',
                                'dana.tests'])
