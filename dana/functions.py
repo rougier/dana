@@ -247,14 +247,6 @@ def empty(shape, dtype=float, order='C'):
     out : group
         Group with the given shape, dtype, and order.
 
-    **See also**
-
-    * :meth:`dana.zeros` : Return a new group setting values to zero.
-    * :meth:`dana.ones` : Return a new group setting values to one.
-    * :meth:`dana.zeros_like` : Return a group of zeros with shape and type of input.
-    * :meth:`dana.ones_like` : Return a group of ones with shape and type of input.
-    * :meth:`dana.empty_like` : Return a empty group with shape and type of input.
-
     **Notes**
 
     `empty`, unlike `zeros`, does not set the group values to zero, and may
@@ -268,6 +260,14 @@ def empty(shape, dtype=float, order='C'):
     Group([[6.94248367807e-310, 1.34841898023e-316],
            [1.34841977073e-316, 0.0]], 
           dtype=[('f0', '<f8')])
+
+    **See also**
+
+    * :meth:`dana.zeros` : Return a new group setting values to zero.
+    * :meth:`dana.ones` : Return a new group setting values to one.
+    * :meth:`dana.zeros_like` : Return a group of zeros with shape and type of input.
+    * :meth:`dana.ones_like` : Return a group of ones with shape and type of input.
+    * :meth:`dana.empty_like` : Return a empty group with shape and type of input.
     '''
     return Group(shape=shape, dtype=dtype, order=order, fill=None)
 
@@ -291,14 +291,6 @@ def zeros(shape, dtype=float, order='C'):
     out : group
         Group with the given shape, dtype, and order, filled with zeros.
 
-    **See also**
-
-    * :meth:`dana.ones` : Return a new group setting values to one.
-    * :meth:`dana.empty` : Return a new uninitialized group.
-    * :meth:`dana.zeros_like` : Return an group of zeros with shape and type of input.
-    * :meth:`dana.ones_like` : Return an group of ones with shape and type of input.
-    * :meth:`dana.empty_like` : Return an empty group with shape and type of input.
-
     **Examples**
 
     >>> dana.zeros((2,2))
@@ -309,6 +301,14 @@ def zeros(shape, dtype=float, order='C'):
     Group([[0, 0],
            [0, 0]], 
           dtype=[('f0', '<f8')])
+
+    **See also**
+
+    * :meth:`dana.ones` : Return a new group setting values to one.
+    * :meth:`dana.empty` : Return a new uninitialized group.
+    * :meth:`dana.zeros_like` : Return an group of zeros with shape and type of input.
+    * :meth:`dana.ones_like` : Return an group of ones with shape and type of input.
+    * :meth:`dana.empty_like` : Return an empty group with shape and type of input.
     '''
     return Group(shape=shape, dtype=dtype, order=order, fill=0)
 
@@ -332,14 +332,6 @@ def ones(shape, dtype=float, order='C'):
     out : group
         Group with the given shape, dtype, and order, filled with ones.
 
-    **See also**
-
-    * :meth:`dana.zeros` : Return a new group setting values to zero.
-    * :meth:`dana.empty` : Return a new uninitialized group.
-    * :meth:`dana.zeros_like` : Return an group of zeros with shape and type of input.
-    * :meth:`dana.ones_like` : Return an group of ones with shape and type of input.
-    * :meth:`dana.empty_like` : Return an empty group with shape and type of input.
-
     **Examples**
 
     >>> dana.ones((2,2))
@@ -350,6 +342,14 @@ def ones(shape, dtype=float, order='C'):
     Group([[1, 1],
            [1, 1]], 
           dtype=[('f0', '<f8')])
+
+    **See also**
+
+    * :meth:`dana.zeros` : Return a new group setting values to zero.
+    * :meth:`dana.empty` : Return a new uninitialized group.
+    * :meth:`dana.zeros_like` : Return an group of zeros with shape and type of input.
+    * :meth:`dana.ones_like` : Return an group of ones with shape and type of input.
+    * :meth:`dana.empty_like` : Return an empty group with shape and type of input.
     '''
     return Group(shape=shape, dtype=dtype, order=order, fill=1)
 
@@ -368,14 +368,6 @@ def empty_like(other):
     out : group
         Unintialized group with same shape and type as `other`.
 
-    **See also**
-
-    * :meth:`dana.zeros` : Return a new group setting values to zero.
-    * :meth:`dana.ones` : Return a new group setting values to one.
-    * :meth:`dana.empty` : Return a new uninitialized group.
-    * :meth:`dana.ones_like` : Return a group of ones with shape and type of input.
-    * :meth:`dana.zeros_like` : Return a group of zeros with shape and type of input.
-
     **Examples**
 
     >>> x = np.arange(6)
@@ -386,6 +378,14 @@ def empty_like(other):
     >>> np.zeros_like(x)
     array([[0, 0, 0],
            [0, 0, 0]])
+
+    **See also**
+
+    * :meth:`dana.zeros` : Return a new group setting values to zero.
+    * :meth:`dana.ones` : Return a new group setting values to one.
+    * :meth:`dana.empty` : Return a new uninitialized group.
+    * :meth:`dana.ones_like` : Return a group of ones with shape and type of input.
+    * :meth:`dana.zeros_like` : Return a group of zeros with shape and type of input.
     '''
     return Group(shape=other.shape, dtype=other.dtype, fill=None)
 
@@ -404,14 +404,6 @@ def zeros_like(other):
     out : group
         Group of zeros with same shape and type as `other`.
 
-    **See also**
-
-    * :meth:`dana.zeros` : Return a new group setting values to zero.
-    * :meth:`dana.ones` : Return a new group setting values to one.
-    * :meth:`dana.empty` : Return a new uninitialized group.
-    * :meth:`dana.empty_like` : Return an uninitialized group shape and type of input.
-    * :meth:`dana.ones_like` : Return a group of ones with shape and type of input.
-
     **Examples**
 
     >>> x = np.arange(6)
@@ -422,6 +414,14 @@ def zeros_like(other):
     >>> np.zeros_like(x)
     array([[0, 0, 0],
            [0, 0, 0]])
+
+    **See also**
+
+    * :meth:`dana.zeros` : Return a new group setting values to zero.
+    * :meth:`dana.ones` : Return a new group setting values to one.
+    * :meth:`dana.empty` : Return a new uninitialized group.
+    * :meth:`dana.empty_like` : Return an uninitialized group shape and type of input.
+    * :meth:`dana.ones_like` : Return a group of ones with shape and type of input.
     '''
     return Group(shape=other.shape, dtype=other.dtype, fill=0)
 
@@ -440,14 +440,6 @@ def ones_like(other):
     out : group
         Group of ones with same shape and type as other.
 
-    **See also**
-
-    * :meth:`dana.zeros` : Return a new group setting values to zero.
-    * :meth:`dana.ones` : Return a new group setting values to one.
-    * :meth:`dana.empty` : Return a new uninitialized group.
-    * :meth:`dana.empty_like` : Return an empty group with shape and type of input.
-    * :meth:`dana.zeros_like` : Return a group of zeros with shape and type of input.
-
     **Examples**
 
     >>> x = np.arange(6)
@@ -458,5 +450,13 @@ def ones_like(other):
     >>> zeros_like(x)
     group([[0, 0, 0],
            [0, 0, 0]])
+
+    **See also**
+
+    * :meth:`dana.zeros` : Return a new group setting values to zero.
+    * :meth:`dana.ones` : Return a new group setting values to one.
+    * :meth:`dana.empty` : Return a new uninitialized group.
+    * :meth:`dana.empty_like` : Return an empty group with shape and type of input.
+    * :meth:`dana.zeros_like` : Return a group of zeros with shape and type of input.
     '''
     return Group(shape=other, dtype=other.dtype, fill=1)

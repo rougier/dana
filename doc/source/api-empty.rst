@@ -3,5 +3,5 @@
 empty
 =====
 
-.. currentmodule:: dana.core.group
+.. currentmodule:: dana
 .. autofunction:: empty

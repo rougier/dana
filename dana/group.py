@@ -27,12 +27,12 @@ class Group(object):
 
     **See also**
 
-    * :meth:`zeros` : Return a new group setting values to zero.
-    * :meth:`ones` : Return a new group setting values to one.
-    * :meth:`empty` : Return an unitialized group.
-    * :meth:`zeros_like` : Return a group of zeros with shape and type of input.
-    * :meth:`ones_like` : Return a group of ones with shape and type of input.
-    * :meth:`empty_like` : Return a empty group with shape and type of input.
+    * :meth:`dana.zeros` : Return a new group setting values to zero.
+    * :meth:`dana.ones` : Return a new group setting values to one.
+    * :meth:`dana.empty` : Return an unitialized group.
+    * :meth:`dana.zeros_like` : Return a group of zeros with shape and type of input.
+    * :meth:`dana.ones_like` : Return a group of ones with shape and type of input.
+    * :meth:`dana.empty_like` : Return a empty group with shape and type of input.
     '''
 
     def __init__(self, shape=(), dtype=float, model=None, fill=0.0):

@@ -3,5 +3,5 @@
 
 empty_like
 ==========
-.. currentmodule:: dana.core.group
+.. currentmodule:: dana
 .. autofunction:: empty_like

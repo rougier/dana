@@ -24,6 +24,8 @@ import numpy.random as rnd
 
 from functions import extract, gaussian
 from functions import convolve1d, convolve2d
+from functions import zeros, ones, empty
+from functions import zeros_like, ones_like, empty_like
 from csr_array import csr_array, dot
 
 from group import Group

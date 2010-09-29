@@ -2,5 +2,5 @@
 
 ones_like
 =========
-.. currentmodule:: dana.core.group
+.. currentmodule:: dana
 .. autofunction:: ones_like

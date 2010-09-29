@@ -2,5 +2,5 @@
 
 zeros_like
 ==========
-.. currentmodule:: dana.core.group
+.. currentmodule:: dana
 .. autofunction:: zeros_like

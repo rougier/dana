@@ -2,5 +2,5 @@
 
 ones
 ====
-.. currentmodule:: dana.core.group
+.. currentmodule:: dana
 .. autofunction:: ones
