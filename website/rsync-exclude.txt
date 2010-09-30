@@ -1,0 +1,10 @@
+*~
+*.rst
+*.txt
+*.sh
+*.incl
+*.tpl
+Makefile
+*.svn
+rst2htmk-highlight
+

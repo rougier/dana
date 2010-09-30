@@ -10,9 +10,13 @@ TARGETS=$(patsubst %.rst,%.html, $(SOURCES))
 
 all: $(TARGETS)
 
-%.html: %.txt header.incl footer.incl
+%.html: %.rst header.incl footer.incl
 	@echo "Generating $@"
 	@$(RST) $(FLAGS) $< $@
 
 clean:
 	@$(RM) -f $(TARGETS)
+
+publish: all
+	rsync -avz --exclude-from=rsync-exclude.txt -e ssh . rougier@loria.loria.fr:/users/cortex/rougier/Public/dana/htdocs
+	rsync -avz --exclude-from=rsync-exclude.txt -e ssh ../doc/build/html/* rougier@loria.loria.fr:/users/cortex/rougier/Public/dana/htdocs/doc
