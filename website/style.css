@@ -1,146 +1,128 @@
 @import "pygments.css";
 
-body {
+body
+{    
+    font-family: "Liberation Sans", "Bitstream Vera Sans", "Sans-Serif";
+    font-size: 12pt;
+    color: #333333;
+    font-size: 10.5pt;
+    line-height: 1.25em;
+    background-color: #eeeeee;
     padding: 0;
     margin: 0;
-    padding-left:  10%;
-    padding-right: 10%;
-    padding-top:    5%;
-    padding-bottom: 5%;
-    font-size: 11pt;
-    font-family: serif;
-    line-height: 1.25em;
-    background-color: #dddddd;
-    background-color: #eee;
-	background-image: url(background.png);
 }
 
-.document {
-   padding: 5%;
-   border: 1px solid #000000;
-   background-color: #ffffff;
+.document
+{
+    margin-left: 10%;
+    margin-right: 10%;
+    padding: 5%;
+    background-color: #ffffff;
+}
+
+h1 {
+    font-size: 16pt;
+    font-family: "Trebuchet MS";
+    font-weight: bold;
+    color: #000000;
+}
+
+h2 {
+    font-size: 13pt;
+    font-family: "Trebuchet MS";
+    font-weight: normal;
+    color: #777777;
+    line-height: 1.0em;
+    padding:0;
+    margin:0;
+    padding-bottom:1em;
 }
 
 p {
     text-align: justify;
 }
 
-a {
-    text-decoration: none;
-    color: blue;
-}
-a:visited {
-    text-decoration: none;
-    color: blue;
-}
 
-h1.title {
-    font-size: 32pt;
-    font-family: monospace;
-    padding: 0;
-    margin: 0;
-    color: #990000;
-    line-height: 0.75em;
-}
-
-h2.subtitle {
-    font-size: 12pt;
-    font-family: sans-serif;
-    font-weight: normal;
-    padding: 0;
-    margin: 0;
-    padding-bottom: 3em;
-    color: #990000;
-}
-
-h1 {
-    font-size: 16pt;
-    font-family: monospace;
-    padding: 0;
-    margin: 0;
-    padding-top: 2em;
-    color: #000000;
-    line-height: 1.0em;
-}
-
-h2 {
-    font-size: 12pt;
-    font-family: monospace;
-    font-weight: normal;
-    padding: 0;
-    margin: 0;
+/* --- Header -------------------------------------------------------------- */
+.header {
+    color: #ffffff;
+    background-color: #9999ff;
+    background-image: url(banner.png);
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    font-family: sans;
+    font-size: 24pt;
+    padding-top: 1%;
+    padding-bottom: 0px;
+    margin-left: 10%;
+    margin-right: 10%;
     padding-top: 1em;
-    color: #000000;
-    line-height: 1.0em;
+    padding-top: 150px;
+}
+.header ul {
+    font-size: 11pt;
+    font-family: "Bitstream Vera Sans", sans;
+    margin:0;
+    padding: 0;
+    padding-right: 5%;
+    padding-left: 5%;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    background: #000000;
+}
+.header hr {
+    display: none;
+}
+.header ul li {
+    list-style: none;
+    display: inline;
+	padding: 2px 8px 2px 8px;
+}
+.header ul li a {
+    text-decoration: none;
+    font-weight: normal;
+	color: #ffffff;
+}
+.header ul li a:hover {
+    border-bottom: 1px dotted #ffffff;
 }
 
-
-.topic-title {
-    font-family: mono;
-    font-size:15pt;
-    color: #990000;
-}
-
-
-table {
-    width: 100%;
-    border: 0;
-    border-collapse: collapse;
-}
-
-td {
-    border: 0;
-}
-
-pre {
-    background-color:#F0F0F0;
-    border-bottom:1px solid #CCCCCC;
-    border-top:1px solid #CCCCCC;
-    font-family:Bitstream Vera Sans Mono,monospace;
-    font-size:13px;
-    padding:5px;
-}
-
-.figure {
-    padding:        1em;
-    padding-bottom: 0.25em;
-    font-family: sans-serif;
-    font-size: 80%;
+/* --- Footer -------------------------------------------------------------- */
+.footer {
+    color: #ffffff;
     text-align: center;
-    background-color: #e0e0ff;
-}
+    background-color: #9999ff;
+    margin:0;
+    margin-left: 10%;
+    margin-right: 10%;
+    padding-right: 5%;
+    padding-left: 5%;
+    padding-top: .5em;
+    padding-bottom: .5em;
 
-hr {
+}
+.footer hr {
     display: none;
 }
 
-.header {
-    font-family: mono;
-    font-variant: small-caps;
-    margin-bottom: 0.25em;
-}
-.header ul {
-    margin: 0;
-	padding: 0;
-}
-.header ul li {
-    margin: 0;
-	padding: 0 5px;
-	list-style: none;
-	display: inline;
-}
-.header ul li a {
-    letter-spacing: 0.2em;
-	text-decoration: none;
-	color: #00003d;
-}
-.header ul li a:hover {
-	border-bottom: 1px solid #00003d;
-}
 
-.footer {
-    font-family: sans;
-    font-size: 75%;
-    text-align: right;
-    color: #aaaaaa;
+/* --- Highlight -------------------------------------------------------------- */
+ pre {
+     font-size: 9pt;
+     line-height: 1.25em;
+     padding:      1.0em;
+     padding-left: 1.5em;
+     background-color: #f9f9f9;
+
+/*     border-left: 3px solid #dddddd; */
+
+/*    border-color: #0c3762;
+    border-style: dotted;
+    border-width: thin;
+*/
+/*    margin: 0 0 12px 0; */
+/*    padding: 0.8em; */
+/*
+    background-color: #f0f0f0;
+*/
 }

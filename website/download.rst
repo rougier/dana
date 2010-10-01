@@ -1,39 +1,21 @@
-.. include:: header.incl
-.. include:: footer.incl
+.. include:: header-download.txt
+.. include:: footer.txt
 
-===============================================================================
-DANA                                                                           
-===============================================================================
--------------------------------------------------------------------------------
-Distributed (Asynchronous) Numerical & Adaptive computing framework            
--------------------------------------------------------------------------------
+Stable release
+==============
 
-Dana relies on a number of python components that can be easy installed (see
-instructions on respective homepages).
+The latest stable release of dana is from `here
+<https://gforge.inria.fr/frs/?group_id=628&release_id=5462>`_
 
-* **numpy**, http://numpy.scipy.org
+|
 
-  NumPy is the fundamental package for  scientific computing in Python. It is a
-  Python library that provides a multidimensional array object, various derived
-  objects (such as  masked arrays and matrices), and  an assortment of routines
-  for  fast  operations  on  arrays,  including  mathematical,  logical,  shape
-  manipulation,  sorting, selecting,  I/O, discrete  Fourier  transforms, basic
-  linear  algebra, basic  statistical  operations, random  simulation and  much
-  more.
+Unstable release
+================
+You can check out the latest unstable release of dana using
+`svn <http://subversion.tigris.org/>`_.
 
-* **scipy**, http://www.scipy.org
+.. code-block:: bash
 
-  SciPy is  a collection of  mathematical algorithms and  convenience functions
-  built on  the Numpy extension  for Python. It  adds significant power  to the
-  interactive Python  session by exposing  the user to high-level  commands and
-  classes  for the  manipulation  and  visualization of  data.  With SciPy,  an
-  interactive Python  session becomes a  data-processing and system-prototyping
-  environment rivaling sytems such as Matlab, IDL, Octave, R-Lab, and SciLab.
+   svn checkout svn://scm.gforge.inria.fr/svn/dana
 
 
-Once these  two packages  have been installed,  you can  get DANA from  the SVN
-repository::
-
-  svn checkout svn://scm.gforge.inria.fr/svn/dana
-
-and look at the documentation for installation instructions.
