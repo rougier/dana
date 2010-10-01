@@ -12,10 +12,10 @@ Show how to evalute a model asynchronously
 '''
 from dana import *
 
-G = zeros((5,5), 'V=1')
-G.run(n=1)
+G = zeros((5,5), 'dV/dt=1')
+G.run(t=1.0)
 print G.V
 
-G = zeros((5,5), 'V=1')
-G.run(n=1, asynchrony_level=0.1) # 10% of units won't be updated
+G = zeros((5,5), 'dV/dt=1')
+G.run(t=1.0, asynchrony_level=0.2) # 10% of units won't be updated
 print G.V
