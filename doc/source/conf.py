@@ -28,7 +28,7 @@ import sys, os
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo', 'sphinx.ext.coverage', 'sphinx.ext.pngmath']
 
 # Add any paths that contain templates here, relative to this directory.
-# templates_path = []
+templates_path = ['_templates']
 
 # The suffix of source filenames.
 source_suffix = '.rst'
