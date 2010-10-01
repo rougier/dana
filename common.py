@@ -32,8 +32,8 @@ DOWNLOAD_URL        = 'http://pypi.python.org/pypi/dana'
 PLATFORM            = 'any'
 
 MAJOR = 0
-MINOR = 2
-MICRO = 1
+MINOR = 3
+MICRO = 0
 ALPHA = False
 BETA  = False
 DEV   = False
