@@ -55,7 +55,7 @@ T = Group((n,n), 'V')
 K = 1.25*gaussian((2*n+1,2*n+1),0.1) - 0.75*gaussian((2*n+1,2*n+1),1.0)
 C = DenseConnection(S,T,K)
 
-chessboard = np.array(([0,1]*16 + [1,0]*16)*16);
+chessboard = np.array(([0.75,1]*16 + [1,0.75]*16)*16);
 chessboard.shape = 32,32
 
 
@@ -75,7 +75,7 @@ subplot.text(2,2,'Source', fontsize=24)
 
 subplot = plt.subplot(1,2,2)
 plt.imshow(chessboard, cmap=plt.cm.gray, interpolation='nearest',
-           extent=[0,n,0,n], vmin=-1, vmax=2)
+           extent=[0,n,0,n], vmin=0, vmax=1)
 plt.hold(True)
 axis = plt.imshow(T.V, interpolation='nearest', cmap= plt.cm.PuOr,
                   origin='lower', vmin=-1, vmax=1, extent=[0,n,0,n])
