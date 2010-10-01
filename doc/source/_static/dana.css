@@ -30,11 +30,8 @@ table.docutils em
     font-size:0.85em;
 }
 
-div.related ul {
-    background: url('./logo-small-white.png');
-    background-repeat: no-repeat;
-    background-position: 4px , 50%;
-    padding-left: 24px;
+div.related ul img {
+    vertical-align: -20%;
 }
 
 .highlight > pre {
