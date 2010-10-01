@@ -1,7 +1,6 @@
 .. header::
 
   * **About**
-  * `Features <features.html>`_
   * `Download <download.html>`_
   * `Examples <examples.html>`_
   * `Documentation <documentation.html>`_
