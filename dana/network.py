@@ -15,7 +15,7 @@ class Network(object):
     def __init__(self, groups=[]):
         self._groups = groups
 
-    def run(self, t=1.0, dt=0.01, n=None):
+    def run(self, t=1.0, dt=0.01, n=None, asynchrony_level=0):
         ''' '''
 
         if n == None:
@@ -26,7 +26,7 @@ class Network(object):
             group.setup()
         for i in range(n):
             for group in self._groups:
-                group.evaluate(dt)
+                group.evaluate(dt=dt, asynchrony_level=asynchrony_level)
 
     def append(self, group):
         ''' '''

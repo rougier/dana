@@ -29,7 +29,7 @@ Kx = np.array([[-1., 0.,+1.], [-2., 0.,+2.], [-1., 0., 1.]])
 Gx = SharedConnection(L, src('Gx'), Kx)
 Ky = np.array([[+1.,+2.,+1.], [ 0., 0., 0.], [-1.,-2.,-1.]])
 Gy = SharedConnection(L, src('Gy'), Ky)  
-src.run(1)
+src.run(n=1)
 
 fig = plt.figure(figsize=(10,5))
 plt.subplot(1,2,1), plt.title('Original image')

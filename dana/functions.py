@@ -9,6 +9,7 @@
 ''' Some useful functions '''
 import numpy
 import scipy.linalg
+from group import Group
 
 def convolve1d( Z, K ):
     """ Discrete, clamped, linear convolution of two one-dimensional sequences.
@@ -227,7 +228,7 @@ def gaussian(shape=(25,25), width=0.5, center=0.0):
         R += (((C[i]/float(size-1))*2 - 1 - center[i])/width[i])**2
     return numpy.exp(-R/2)
 
-def empty(shape, dtype=float, order='C'):
+def empty(shape, dtype=float):
     '''
     Return a new group of given shape and type, without initialising entries.
 
@@ -238,14 +239,11 @@ def empty(shape, dtype=float, order='C'):
     dtype : data-type, optional
         The desired data-type for the group, e.g., `numpy.int8`.  Default is
         `numpy.float64`.
-    order : {'C', 'F'}, optional
-        Whether to store multidimensional data in C- or Fortran-contiguous
-        (row- or column-wise) order in memory.
     
     **Returns**
 
     out : group
-        Group with the given shape, dtype, and order.
+        Group with the given shape and dtype.
 
     **Notes**
 
@@ -269,9 +267,9 @@ def empty(shape, dtype=float, order='C'):
     * :meth:`dana.ones_like` : Return a group of ones with shape and type of input.
     * :meth:`dana.empty_like` : Return a empty group with shape and type of input.
     '''
-    return Group(shape=shape, dtype=dtype, order=order, fill=None)
+    return Group(shape=shape, dtype=dtype, fill=None)
 
-def zeros(shape, dtype=float, order='C'):
+def zeros(shape, dtype=float):
     '''
     Return a new group of given shape and type, filled with zeros.
 
@@ -282,14 +280,11 @@ def zeros(shape, dtype=float, order='C'):
     dtype : data-type, optional
         The desired data-type for the group, e.g., `numpy.int8`.  Default is
         `numpy.float64`.
-    order : {'C', 'F'}, optional
-        Whether to store multidimensional data in C- or Fortran-contiguous
-        (row- or column-wise) order in memory.
     
     **Returns**
 
     out : group
-        Group with the given shape, dtype, and order, filled with zeros.
+        Group with the given shape and dtype filled with zeros.
 
     **Examples**
 
@@ -310,9 +305,9 @@ def zeros(shape, dtype=float, order='C'):
     * :meth:`dana.ones_like` : Return an group of ones with shape and type of input.
     * :meth:`dana.empty_like` : Return an empty group with shape and type of input.
     '''
-    return Group(shape=shape, dtype=dtype, order=order, fill=0)
+    return Group(shape=shape, dtype=dtype, fill=0)
 
-def ones(shape, dtype=float, order='C'):
+def ones(shape, dtype=float):
     '''
     Return a new group of given shape and type, filled with ones.
 
@@ -323,14 +318,11 @@ def ones(shape, dtype=float, order='C'):
     dtype : data-type, optional
         The desired data-type for the group, e.g., `numpy.int8`.  Default is
         `numpy.float64`.
-    order : {'C', 'F'}, optional
-        Whether to store multidimensional data in C- or Fortran-contiguous
-        (row- or column-wise) order in memory.
     
     **Returns**
 
     out : group
-        Group with the given shape, dtype, and order, filled with ones.
+        Group with the given shape and dtype filled with ones.
 
     **Examples**
 
@@ -351,7 +343,7 @@ def ones(shape, dtype=float, order='C'):
     * :meth:`dana.ones_like` : Return an group of ones with shape and type of input.
     * :meth:`dana.empty_like` : Return an empty group with shape and type of input.
     '''
-    return Group(shape=shape, dtype=dtype, order=order, fill=1)
+    return Group(shape=shape, dtype=dtype, fill=1)
 
 def empty_like(other):
     ''' 

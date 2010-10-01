@@ -16,6 +16,7 @@ You can check out the latest unstable release of dana using
 
 .. code-block:: bash
 
-   svn checkout svn://scm.gforge.inria.fr/svn/dana
+   svn checkout svn://scm.gforge.inria.fr/svn/dana/trunk dana
+
 
 

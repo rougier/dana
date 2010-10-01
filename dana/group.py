@@ -154,12 +154,15 @@ class Group(object):
         self._namespace = namespace
         self._namespace.update(globals())
     
-    def evaluate(self, dt=1):
+    def evaluate(self, dt=1, asynchrony_level=0):
         ''' '''
 
         self._namespace['dt'] = dt
         saved = {}
 
+        if asynchrony_level > 0:
+            R = (np.random.random(self.shape) < asynchrony_level)
+            R_ = 1-R
 
         for connection in self._connections:
             connection.propagate()
@@ -167,49 +170,94 @@ class Group(object):
         # Differential equations
         for eq in self._model._diff_equations:
             saved[eq._varname] = self[eq._varname].copy()
-            self._namespace[eq._varname] = self[eq._varname] #.copy()
+            self._namespace[eq._varname] = self[eq._varname]
         for eq in self._model._diff_equations:
             args = [saved[eq._varname],dt]+ \
                    [self._namespace[var] for var in eq._variables]
             eq.evaluate(*args)
         for eq in self._model._diff_equations:
-            self[eq._varname][...] = saved[eq._varname]
+            if asynchrony_level > 0:
+                self[eq._varname][...] = R*saved[eq._varname] \
+                                       + R_*self[eq._varname][...]
+            else:
+                self[eq._varname][...] = saved[eq._varname]
 
         # Equations
         for eq in self._model._equations:
             saved[eq._varname] = self[eq._varname].copy()
-            self._namespace[eq._varname] = self[eq._varname] #.copy()
+            self._namespace[eq._varname] = self[eq._varname]
         for eq in self._model._equations:
             args = [self._namespace[var] for var in eq._variables]
             saved[eq._varname][...] = eq.evaluate(*args) #*self._mask
+
         for eq in self._model._equations:
-            self[eq._varname][...] = saved[eq._varname]
+            if asynchrony_level > 0:
+                self[eq._varname][...] = R*saved[eq._varname] \
+                                       + R_*self[eq._varname][...]
+            else:
+                self[eq._varname][...] = saved[eq._varname]
 
         for connection in self._connections:
             connection.evaluate(dt)
 
 
-    def run(self, t=1, dt=0.1):
+    def run(self, t=1.0, dt=0.01, n=None, asynchrony_level=0):
         ''' '''
+
+        if n == None:
+            n = int(t/dt)
+        else:
+            dt = 1
 
         self.setup()
         args = {}
+        saved = {}
         for eq in self._model._diff_equations:
             args[eq.varname] = [self._data[eq.varname],dt]+ \
                 [self._namespace[var] for var in eq._variables]
         for eq in self._model._equations:
             args[eq.varname] = [self._namespace[var] for var in eq._variables]
+        self._namespace['dt'] = dt
 
-        for i in range(int(t/dt)):
+        if asynchrony_level > 0:
+            for i in range(int(t/dt)):
+                R = (np.random.random(self.shape) < asynchrony_level)
+                R_ = 1-R
+
+                for eq in self._model._diff_equations:
+                    saved[eq.varname] = self[eq._varname].copy()
+                    self._namespace[eq.varname] = self[eq._varname]
+
+                for eq in self._model._equations:
+                    saved[eq._varname] = self[eq._varname].copy()
+                    self._namespace[eq.varname] = self[eq._varname]
+
+                for connection in self._connections:
+                    connection.propagate()
+
+                for eq in self._model._diff_equations:
+                    eq.evaluate(*args[eq.varname])
+                    self[eq.varname][...] = R*saved[eq._varname] \
+                                           + R_*self[eq._varname][...]
+                for eq in self._model._equations:
+                    self[eq.varname] = eq.evaluate(*args[eq.varname])
+                    self[eq.varname][...] = R*saved[eq._varname] \
+                                           + R_*self[eq._varname][...]
+
+                for connection in self._connections:
+                    connection.evaluate(dt)
+        else:
             self._namespace['dt'] = dt
-            for connection in self._connections:
-                connection.propagate()
-            for eq in self._model._diff_equations:
-                eq.evaluate(*args[eq.varname])
-            for eq in self._model._equations:
-                self._data[eq.varname][...]= eq.evaluate(*args[eq.varname])
-            for connection in self._connections:
-                connection.evaluate(dt)
+            for i in range(int(t/dt)):
+                for connection in self._connections:
+                    connection.propagate()
+                for eq in self._model._diff_equations:
+                    eq.evaluate(*args[eq.varname])
+                for eq in self._model._equations:
+                    self._data[eq.varname][...]= eq.evaluate(*args[eq.varname])
+                for connection in self._connections:
+                    connection.evaluate(dt)
+
 
 
     def item(self):

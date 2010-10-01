@@ -20,20 +20,18 @@ import Image
 from dana import *
 
 image = np.asarray(Image.open('lena.jpg'))/256.0
-I = image.view(dtype=[('R',float), ('G',float), ('B',float)]).squeeze()
+I = image.copy().view(dtype=[('R',float), ('G',float), ('B',float)]).squeeze()
 
-src = Group(I.shape, 'R; G; B')
 G = gaussian((10,10),.5)
 K = G/G.sum()
-Cr = SharedConnection(I['R'], src('R'), K)
-Cg = SharedConnection(I['G'], src('G'), K)
-Cb = SharedConnection(I['B'], src('B'), K)
-src.run(1)
+SharedConnection(I['R'], I['R'], K).propagate()
+SharedConnection(I['G'], I['G'], K).propagate()
+SharedConnection(I['B'], I['B'], K).propagate()
 
 fig = plt.figure(figsize=(10,5))
 plt.subplot(1,2,1), plt.title('Original image')
 plt.imshow(image, origin='upper', interpolation='bicubic')
 plt.subplot(1,2,2), plt.title('Gaussian blur')
-plt.imshow(src.asarray().view(float).reshape(src.shape+(3,)),
+plt.imshow(I.view(float).reshape(I.shape+(3,)),
            origin='upper', interpolation='bicubic')
 plt.show()
