@@ -57,7 +57,7 @@ Sobel filter
    Gx = SharedConnection(L, src('Gx'), Kx)
    Ky = np.array([[+1.,+2.,+1.], [ 0., 0., 0.], [-1.,-2.,-1.]])
    Gy = SharedConnection(L, src('Gy'), Ky)  
-   src.run(1)
+   src.run(n=1)
 
 |
 
