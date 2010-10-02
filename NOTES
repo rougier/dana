@@ -1,0 +1,18 @@
+Release notes for 0.3.0
+=======================
+* Remove the core module and moves all objects under dana module
+* Restored the synchronous evaluation/run of groups
+* Added examples showing connections using matplotlib
+
+
+Release notes for 0.2.0
+=======================
+* Redesign of groups and links in favor of connection objects
+* Rewrite of all examples
+
+
+Release notes for 0.1.0
+=======================
+* First release based on "old" code
+
+
