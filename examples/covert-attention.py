@@ -33,26 +33,29 @@ def format_coord(axis, x, y):
     if 0 <= x < Z.shape[1] and 0 <= y < Z.shape[0]:
         return '[%d,%d]: %s' % (x,y, Z[y,x])
     return ''
+
 def update(G=None, x=-1, y=-1):
     mgr = plt.get_current_fig_manager()
     if G is None:
-        for axis,Z in mgr.subplots:
+        for axis,Z,subplot in mgr.subplots:
             axis.set_data (Z)
     else:
-        for axis,z in mgr.subplots:
+        for axis,z,subplot in mgr.subplots:
             axis.set_data(np.empty_like(z)*np.NaN)
         if hasattr(G, '_connections'):
             for C in G._connections:
-                for axis,z in mgr.subplots:
+                for axis,z,subplot in mgr.subplots:
                     if C._actual_source is z:
                         axis.set_data(C[y,x])
-    plt.draw()
+
 def button_press_event(event):
     G,x,y = None, -1, -1
     if event.inaxes and event.button == 1:
         G = event.inaxes.group
         x,y = int(event.xdata), int(event.ydata)
     update(G, x, y)
+    plt.draw()
+
 def plot(subplot, data, name):
      mgr = plt.get_current_fig_manager()
      a,b = 0.75, 1.0
@@ -72,11 +75,12 @@ def plot(subplot, data, name):
                        extent=[0,group.shape[0],0,group.shape[1]])
      subplot.format_coord = partial(format_coord, axis)
      subplot.group = group
+     plt.xticks([]), plt.yticks([])
+     plt.axis([-.5,group.shape[0]+0.5,-.5,group.shape[1]+0.5])
      if not hasattr(mgr, 'subplots'):
          mgr.subplots = []
-     mgr.subplots.append((axis,data))
-     subplot.text(.05, .05, name, fontsize=16,transform=subplot.transAxes)
-     plt.hold(False)
+     mgr.subplots.append((axis,data,subplot))
+     plt.title(name,fontsize=16)
 
 
 # Simulation parameters
@@ -90,16 +94,16 @@ dtheta = np.pi/300.0
 # Build groups
 # ------------
 visual = np.zeros((n,n))
-focus = Group((n,n), '''dV/dt = -V+(L+Iv+Is)/30 -0.05 : float
+focus = zeros((n,n), '''dV/dt = -V+(L+Iv+Is)/30 -0.05 : float
                         U = maximum(V,0) : float
                         L : float; Iv: float; Is: float''')
-wm  = Group((n,n), '''dV/dt = -V+(L+Iv+If)/31 - 0.2 : float
+wm  = zeros((n,n), '''dV/dt = -V+(L+Iv+If)/31 - 0.2 : float
                       U = minimum(maximum(V,0),1) : float
                       L : float; Iv: float; If: float''')
-striatum = Group((n,n), '''dV/dt = -V+(L+Iw+Ir)/28 - 0.3 : float
+striatum = zeros((n,n), '''dV/dt = -V+(L+Iw+Ir)/28 - 0.3 : float
                            U = maximum(V,0) : float
                            L : float; Iw: float; Ir: float''')
-reward = Group((1,1), '''dV/dt = -0.1*V : float
+reward = zeros((1,1), '''dV/dt = -0.1*V : float
                          U = maximum(V,0) : float''')
 
 # Connections
@@ -114,7 +118,7 @@ SharedConnection(focus('U'),    wm('If'),       +0.20*gaussian(s, 0.05))
 SharedConnection(wm('U'),       wm('L'),        +3.00*gaussian(s, 0.05)
                                                 -0.50*gaussian(s, 0.10))
 SharedConnection(wm('U'),       striatum('Iw'), +0.50*gaussian(s, 0.0625))
-DenseConnection(reward('U'),    striatum('Ir'), +1.0)
+DenseConnection(reward('U'),    striatum('Ir'), +20.00)
 SharedConnection(striatum('U'), striatum('L'),  +2.50*gaussian(s, 0.05)
                                                 -1.00*gaussian(s, 0.10))
 
@@ -122,23 +126,14 @@ SharedConnection(striatum('U'), striatum('L'),  +2.50*gaussian(s, 0.05)
 # Visualization
 # --------------
 plt.ion()
-fig = plt.figure(figsize=(8,12), facecolor='white')
-plot(plt.subplot(3,2,1), visual, 'Visual')
-plot(plt.subplot(3,2,2), focus('U'), 'Focus')
-plot(plt.subplot(3,2,3), wm('U'), 'Working memory')
-plot(plt.subplot(3,2,4), striatum('U'), 'Striatum')
-plot(plt.subplot(3,2,5), reward('U'), 'Reward')
+fig = plt.figure(figsize=(10,10), facecolor='white')
+plot(plt.subplot(2,2,1), visual, 'Visual')
+plot(plt.subplot(2,2,2), focus('U'), 'Focus')
+plot(plt.subplot(2,2,3), wm('U'), 'Working memory')
+plot(plt.subplot(2,2,4), striatum('U'), 'Striatum')
 plt.connect('button_press_event', button_press_event)
+plt.draw()
 
-
-def reset():
-    visual[...] = 0
-    focus[...] = 0
-    wm[...] = 0
-    striatum[...] = 0
-    reward[...] = 0
-def switch():
-    reward['V'] = 30.0
 def rotate():
     global theta, visual
     theta += dtheta
@@ -147,18 +142,23 @@ def rotate():
         x, y = r*np.cos(theta[i]), r*np.sin(theta[i])
         visual += gaussian((n,n), 0.2, (x,y))
     visual += (2*rnd.random((n,n))-1)*.05
+
 def iterate(t=100):
+    mgr = plt.get_current_fig_manager()
     for i in range(t):
         rotate()
         run(t=.5,dt=.5)
         update()
-        plt.draw()
+        for axis,z,subplot in mgr.subplots:
+            subplot.draw_artist(axis)
+            fig.canvas.blit(subplot.bbox)
+
 def demo(t=1000):
-    reset()
     iterate(100)
     for i in range(2):
-        switch()
-        iterate(150)
+        reward['V'] = 1.0
+        print "Switch now"
+        iterate(100)
 
 demo()
 plt.show()
