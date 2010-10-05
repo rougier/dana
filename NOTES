@@ -1,3 +1,8 @@
+Release notes for 0.3.1
+=======================
+* Added overt and covert attentional models
+* Refactored the display code in the examples
+
 Release notes for 0.3.0
 =======================
 * Remove the core module and moves all objects under dana module

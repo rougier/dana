@@ -23,65 +23,6 @@ then you'll be allowed to click on any group to see different connections
 between groups.
 '''
 from dana import *
-from functools import partial
-
-def format_coord(axis, x, y):
-    Z = axis.get_array()
-    if x is None or y is None or Z is None:
-        return ''
-    x,y = int(x), int(y)
-    if 0 <= x < Z.shape[1] and 0 <= y < Z.shape[0]:
-        return '[%d,%d]: %s' % (x,y, Z[y,x])
-    return ''
-
-def update(G=None, x=-1, y=-1):
-    mgr = plt.get_current_fig_manager()
-    if G is None:
-        for axis,Z,subplot in mgr.subplots:
-            axis.set_data (Z)
-    else:
-        for axis,z,subplot in mgr.subplots:
-            axis.set_data(np.empty_like(z)*np.NaN)
-        if hasattr(G, '_connections'):
-            for C in G._connections:
-                for axis,z,subplot in mgr.subplots:
-                    if C._actual_source is z:
-                        axis.set_data(C[y,x])
-
-def button_press_event(event):
-    G,x,y = None, -1, -1
-    if event.inaxes and event.button == 1:
-        G = event.inaxes.group
-        x,y = int(event.xdata), int(event.ydata)
-    update(G, x, y)
-    plt.draw()
-
-def plot(subplot, data, name):
-     mgr = plt.get_current_fig_manager()
-     a,b = 0.75, 1.0
-     chessboard = np.array(([a,b]*16 + [b,a]*16)*16)
-     chessboard.shape = 32,32
-     if isinstance(data, Group):
-         group = data.base
-         data = data[data.keys[0]]
-     else:
-         group = data
-         data = data
-     plt.imshow(chessboard, cmap=plt.cm.gray, interpolation='nearest',
-                extent=[0,group.shape[0],0,group.shape[1]], vmin=0, vmax=1)
-     plt.hold(True)
-     axis = plt.imshow(data, interpolation='nearest', cmap= plt.cm.PuOr_r,
-                       origin='lower', vmin=-1, vmax=1,
-                       extent=[0,group.shape[0],0,group.shape[1]])
-     subplot.format_coord = partial(format_coord, axis)
-     subplot.group = group
-     plt.xticks([]), plt.yticks([])
-     plt.axis([-.5,group.shape[0]+0.5,-.5,group.shape[1]+0.5])
-     if not hasattr(mgr, 'subplots'):
-         mgr.subplots = []
-     mgr.subplots.append((axis,data,subplot))
-     plt.title(name,fontsize=16)
-
 
 # Simulation parameters
 # ---------------------
@@ -122,18 +63,6 @@ DenseConnection(reward('U'),    striatum('Ir'), +20.00)
 SharedConnection(striatum('U'), striatum('L'),  +2.50*gaussian(s, 0.05)
                                                 -1.00*gaussian(s, 0.10))
 
-
-# Visualization
-# --------------
-plt.ion()
-fig = plt.figure(figsize=(10,10), facecolor='white')
-plot(plt.subplot(2,2,1), visual, 'Visual')
-plot(plt.subplot(2,2,2), focus('U'), 'Focus')
-plot(plt.subplot(2,2,3), wm('U'), 'Working memory')
-plot(plt.subplot(2,2,4), striatum('U'), 'Striatum')
-plt.connect('button_press_event', button_press_event)
-plt.draw()
-
 def rotate():
     global theta, visual
     theta += dtheta
@@ -160,5 +89,16 @@ def demo(t=1000):
         print "Switch now"
         iterate(100)
 
-demo()
-plt.show()
+if __name__ == '__main__':
+    from display import *
+
+    plt.ion()
+    fig = plt.figure(figsize=(10,10), facecolor='white')
+    plot(plt.subplot(2,2,1), visual, 'Visual')
+    plot(plt.subplot(2,2,2), focus('U'), 'Focus')
+    plot(plt.subplot(2,2,3), wm('U'), 'Working memory')
+    plot(plt.subplot(2,2,4), striatum('U'), 'Striatum')
+    plt.connect('button_press_event', button_press_event)
+    plt.draw()
+    demo()
+    plt.show()
