@@ -7,6 +7,9 @@ Stable release
 The latest stable release of dana is from `here
 <https://gforge.inria.fr/frs/?group_id=628&release_id=5462>`_
 
+You should consider having fairly recents version of numpy (> 1.2) and scipy
+(> 0.7.0).
+
 |
 
 Unstable release
