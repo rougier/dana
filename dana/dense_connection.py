@@ -77,10 +77,16 @@ class DenseConnection(Connection):
         ''' '''
 
         key = np.array(key) % self.target.shape
-        s = np.ones((len(self.target.shape),))
-        for i in range(0,len(self.target.shape)-1):
-            s[i] = self.target.shape[i]*s[i+1]
-        index = int((s*key).sum())
+        K = np.zeros((len(key)+1,),dtype=int)
+        K[1:] = key
+        S = np.ones((len(self.target.shape)+1),dtype=int)
+        S[:-1] = self.target.shape
+        index = (S*K).sum()
+#        key = np.array(key) % self.target.shape
+#        s = np.ones((len(self.target.shape),))
+#        for i in range(0,len(self.target.shape)-1):
+#            s[i] = self.target.shape[i]*s[i+1]
+#        index = int((s*key).sum())
         if type(self._mask) is np.ndarray:
             K = self.weights[index]*np.where(self._mask[index], 1, np.NaN)
         else:

@@ -14,8 +14,8 @@ from dana import *
 
 n = 20
 p = 2*n+1
-A, B = Group((n,n),'V'), Group((n,n),'V')
-C, D = Group((n,n),'V'), Group((n/2,n/2),'V')
+A, B = Group((n,5),'V'), Group((n,n),'V')
+C, D = Group((n,5),'V'), Group((n/2,n/2),'V')
 
 # Difference of Gaussians connections
 K = 1.25*gaussian((p,p),0.1) - 0.75*gaussian((p,p),1.0)

@@ -87,10 +87,16 @@ class SparseConnection(Connection):
 
     def __getitem__(self, key):
         key = np.array(key) % self.target.shape
-        s = np.ones((len(self.target.shape),))
-        for i in range(0,len(self.target.shape)-1):
-            s[i] = self.target.shape[i]*s[i+1]
-        index = int((s*key).sum()) 
+        K = np.zeros((len(key)+1,),dtype=int)
+        K[1:] = key
+        S = np.ones((len(self.target.shape)+1),dtype=int)
+        S[:-1] = self.target.shape
+        index = (S*K).sum()
+        #key = np.array(key) % self.target.shape
+        #s = np.ones((len(self.target.shape),))
+        #for i in range(0,len(self.target.shape)-1):
+        #    s[i] = self.target.shape[i]*s[i+1]
+        #index = int((s*key).sum()) 
         nz = self.weights.mask[1][np.where(self.weights.mask[0] == index)]
         a = np.ones_like(nz)*index
         nz = (a,nz)

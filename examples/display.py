@@ -56,7 +56,7 @@ def button_press_event(event):
     update(G, x, y)
     plt.draw()
 
-def plot(subplot, data, name):
+def plot(subplot, data, title=''):
      mgr = plt.get_current_fig_manager()
      a,b = 0.75, 1.0
      chessboard = np.array(([a,b]*16 + [b,a]*16)*16)
@@ -67,17 +67,25 @@ def plot(subplot, data, name):
      else:
          group = data
          data = data
+
      plt.imshow(chessboard, cmap=plt.cm.gray, interpolation='nearest',
-                extent=[0,group.shape[0],0,group.shape[1]], vmin=0, vmax=1)
+                # extent=[0,group.shape[1],0,group.shape[0]],
+                vmin=0, vmax=1)
      plt.hold(True)
      axis = plt.imshow(data, interpolation='nearest', cmap= plt.cm.PuOr_r,
                        origin='lower', vmin=-1, vmax=1,
-                       extent=[0,group.shape[0],0,group.shape[1]])
+                       extent=[0,group.shape[1],0,group.shape[0]])
      subplot.format_coord = partial(format_coord, axis)
      subplot.group = group
      plt.xticks([]), plt.yticks([])
-     plt.axis([-.5,group.shape[0]+0.5,-.5,group.shape[1]+0.5])
+
+     x,y,w,h = axis.get_axes().bbox.bounds
+     dw = float(group.shape[1])/w
+     dh = float(group.shape[0])/h
+     plt.axis([-dw,group.shape[1]+dw,-dh,group.shape[0]+dh])
      if not hasattr(mgr, 'subplots'):
          mgr.subplots = []
      mgr.subplots.append((axis,data,subplot))
-     plt.title(name,fontsize=16)
+
+     if title:
+         plt.title(title,fontsize=16)
