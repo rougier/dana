@@ -80,8 +80,8 @@ def plot(subplot, data, title=''):
      plt.xticks([]), plt.yticks([])
 
      x,y,w,h = axis.get_axes().bbox.bounds
-     dw = float(group.shape[1])/w
-     dh = float(group.shape[0])/h
+     dw = 0*float(group.shape[1]-1)/w
+     dh = 0*float(group.shape[0]-1)/h
      plt.axis([-dw,group.shape[1]+dw,-dh,group.shape[0]+dh])
      if not hasattr(mgr, 'subplots'):
          mgr.subplots = []
