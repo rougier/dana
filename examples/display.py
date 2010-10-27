@@ -69,7 +69,7 @@ def plot(subplot, data, title=''):
          data = data
 
      plt.imshow(chessboard, cmap=plt.cm.gray, interpolation='nearest',
-                # extent=[0,group.shape[1],0,group.shape[0]],
+                extent=[0,group.shape[1],0,group.shape[0]],
                 vmin=0, vmax=1)
      plt.hold(True)
      axis = plt.imshow(data, interpolation='nearest', cmap= plt.cm.PuOr_r,
