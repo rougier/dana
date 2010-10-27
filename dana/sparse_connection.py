@@ -51,8 +51,8 @@ class SparseConnection(Connection):
                 Ss = np.array(list(self.source.shape), dtype=int)//2
                 for i in range(K.shape[0]):
                     index = np.array(list(np.unravel_index(i, self.target.shape)))
-                    index = (index/np.array(self.target.shape, dtype=float) \
-                                 * np.array(self.source.shape)).astype(int)
+                    index = np.rint((index/np.array(self.target.shape, dtype=float) \
+                                 * np.array(self.source.shape))).astype(int)
                     k = extract(weights, self.source.shape, Ks+Ss - index, np.NaN)
                     k = k.flatten()
                     #J_ = k.nonzero()[0].tolist()

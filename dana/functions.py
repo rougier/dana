@@ -195,6 +195,7 @@ def extract(Z, shape, position, fill=0):
     R[r] = Z[z]
 
     return R
+
 def gaussian(shape=(25,25), width=0.5, center=0.0):
     ''' Generate a gaussian of the form g(x) = height*exp(-(x-center)**2/width**2).
 

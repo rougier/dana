@@ -21,6 +21,7 @@ and/or learning.
 '''
 import numpy as np
 import numpy.random as rnd
+import scipy as sp
 
 from functions import extract, gaussian
 from functions import convolve1d, convolve2d

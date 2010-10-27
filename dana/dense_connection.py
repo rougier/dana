@@ -35,7 +35,7 @@ class DenseConnection(Connection):
 
         if weights.shape == (self.target.size, self.source.size):
             self._weights = weights
-            self._mask = 1-np.isnan(self._weights).astype(int)
+            self._mask = 1-np.isnan(self._weights).astype(np.int32)
             if self._mask.all():
                 self._mask = 1
             return
@@ -49,8 +49,8 @@ class DenseConnection(Connection):
         K = np.zeros((self.target.size,self.source.size), dtype=weights.dtype)
         for i in range(K.shape[0]):
             index =  np.array(list(np.unravel_index(i, self.target.shape)))
-            index = (index/np.array(self.target.shape, dtype=weights.dtype) \
-                         * np.array(self.source.shape)).astype(int)
+            index = np.rint((index/np.array(self.target.shape, dtype=weights.dtype) \
+                             * np.array(self.source.shape))).astype(int)
             K[i,:] = extract(weights,
                              self.source.shape, Ks+Ss-index, np.NaN).flatten()
         self._mask = 1 - np.isnan(K).astype(int)
@@ -77,9 +77,9 @@ class DenseConnection(Connection):
         ''' '''
 
         key = np.array(key) % self.target.shape
-        K = np.zeros((len(key)+1,),dtype=int)
+        K = np.zeros((len(key)+1,),dtype=np.int32)
         K[1:] = key
-        S = np.ones((len(self.target.shape)+1),dtype=int)
+        S = np.ones((len(self.target.shape)+1),dtype=np.int32)
         S[:-1] = self.target.shape
         index = (S*K).sum()
 #        key = np.array(key) % self.target.shape

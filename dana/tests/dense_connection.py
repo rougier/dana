@@ -14,53 +14,39 @@ from dana import DenseConnection as Connection
 
 
 class DenseOneDimensionTestCase(unittest.TestCase):
-
     def test_1(self):
         assert np_equal( Connection(ones(3), ones(3), ones(1)).output(),
                          ones(3))
-
     def test_2(self):
         assert np_equal( Connection(ones(3), ones(5), ones(1)).output(),
                          ones(5))
-
     def test_3(self):
         assert np_equal( Connection(ones(5), ones(3), ones(1)).output(),
                          ones(3))
-
     def test_4(self):
         assert np_equal( Connection(ones(3), ones(3), ones(3)).output(),
                          array([2,3,2]))
-
     def test_5(self):
         assert np_equal( Connection(ones(3), ones(5), ones(3)).output(),
                          array([2,2,3,3,2]))
-
     def test_6(self):
         assert np_equal( Connection(ones(5), ones(3), ones(3)).output(),
                          array([2,3,3]))
-
     def test_7(self):
         assert np_equal( Connection(ones(3), ones(3), array([1,NaN,1])).output(),
                          array([1,2,1]))
-
     def test_8(self):
         assert np_equal( Connection(ones(3), ones(3), array([NaN,NaN,NaN])).output(),
                          zeros(3))
-
     def test_9(self):
         assert np_equal( Connection(ones(3), ones(3), ones((3,3))).output(),
                          3*ones(3))
-
     def test_10(self):
         C = Connection(ones(3), ones(3), ones(1))
         assert np_equal(C[0], array([1, NaN, NaN]))
         assert np_equal(C[1], array([NaN, 1, NaN]))
         assert np_equal(C[2], array([NaN, NaN, 1]))
-
-
-
 class DenseTwoDimensionTestCase(unittest.TestCase):
-
     def test_1(self):
         assert np_equal( Connection(ones((3,3)), ones((3,3)), ones((1,1))).output(),
                          ones((3,3)))
@@ -108,8 +94,6 @@ class DenseTwoDimensionTestCase(unittest.TestCase):
         assert np_equal(C[1,1], array([[NaN, NaN, NaN],
                                        [NaN,  1,  NaN],
                                        [NaN, NaN, NaN]]))
-
-
 
 if __name__ == "__main__":
     unittest.main()
