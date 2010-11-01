@@ -11,44 +11,47 @@ Maze solving using the Bellman-Ford algorithm
 '''
 from dana import *
 
-def maze(shape=(64,64), complexity=.75, density =.5):
-    assert len(shape) == 2
-    assert shape[0] % 2 == shape[1] % 2 == 1
 
-    complexity = int(complexity*(shape[0]+shape[1]))
-    density = int(density*(shape[0]*shape[1])/4)
+def maze(shape=(64,64), complexity=.75, density = 1):
+    # Only odd shapes
     shape = ((shape[0]//2)*2+1, (shape[1]//2)*2+1)
-    Z = np.zeros(shape, dtype=int)
+    # Adjust complexity and density relative to maze size
+    complexity = int(complexity*(5*(shape[0]+shape[1])))
+    density    = int(density*(shape[0]//2*shape[1]//2))
+    # Build actual maze
+    Z = np.zeros(shape, dtype=bool)
+    # Fill borders
     Z[0,:] = Z[-1,:] = 1
     Z[:,0] = Z[:,-1] = 1
+    # Make isles
     for i in range(density):
-        x = (rnd.random_integers(0,shape[1]//2))*2
-        y = (rnd.random_integers(0,shape[0]//2))*2
-        Z[x,y] = 1
+        x = shape[1]*(.5-min(max(np.random.normal(0,.5),-.5),.5))
+        y = shape[0]*(.5-min(max(np.random.normal(0,.5),-.5),.5))
+        x, y = (x//2)*2, (y//2)*2
+        #x, y = rnd(0,shape[1]//2)*2, rnd(0,shape[0]//2)*2
+        Z[y,x] = 1
         for j in range(complexity):
             neighbours = []
-            if x > 1:          neighbours.append( (x-2,y) )
-            if x < shape[1]-2: neighbours.append( (x+2,y) )
-            if y > 1:          neighbours.append( (x,y-2) )
-            if y < shape[0]-2: neighbours.append( (x,y+2) )
-            if len(neighbours) == 0:
-                continue
-            d = rnd.random_integers(0,len(neighbours)-1)
-            x_,y_ = neighbours[d]
-            if Z[x_,y_] == 0:
-                Z[x_,y_] = 1
-                Z[x+(x_-x)//2, y+(y_-y)//2] = 1
-                x, y = x_, y_
+            if x > 1:           neighbours.append( (y,x-2) )
+            if x < shape[1]-2:  neighbours.append( (y,x+2) )
+            if y > 1:           neighbours.append( (y-2,x) )
+            if y < shape[0]-2:  neighbours.append( (y+2,x) )
+            if len(neighbours):
+                y_,x_ = neighbours[rnd.random_integers(0,len(neighbours)-1)]
+                if Z[y_,x_] == 0:
+                    Z[y_,x_] = 1
+                    Z[y_+(y-y_)//2, x_+(x-x_)//2] = 1
+                    x, y = x_, y_
     Z[ 0, 1] = 0
     Z[-2,-1] = 0
     return Z
 
 
-n = 45
+n = 41
 a = 0.99
 Z = 1-maze((n,n))
 G = Group((n,n),'''V = I*maximum(maximum(maximum(maximum(V,E),W),N),S)
-                   W; E; N; S; I''')
+                     W; E; N; S; I''')
 SparseConnection(Z,   G('I'), np.array([ [1] ]))
 SparseConnection(G.V, G('N'), np.array([ [a],      [np.NaN], [np.NaN] ]))
 SparseConnection(G.V, G('S'), np.array([ [np.NaN], [np.NaN], [a]      ]))
@@ -57,10 +60,8 @@ SparseConnection(G.V, G('W'), np.array([ [a,       np.NaN,  np.NaN]   ]))
 G.V[-2,-1] = 1
 run(n=5*(n+n))
 
-
-
 # Visualization
-plt.figure(figsize=(10,10))
+plt.figure(figsize=(9,9))
 cmap = plt.cm.hot
 cmap.set_under('white')
 cmap.set_over('black')
