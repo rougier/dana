@@ -78,9 +78,10 @@ def iterate(t=100):
         rotate()
         run(t=.5,dt=.5)
         update()
-        for axis,z,subplot in mgr.subplots:
-            subplot.draw_artist(axis)
-            fig.canvas.blit(subplot.bbox)
+        plt.draw()
+        #for axis,z,subplot in mgr.subplots:
+        #    subplot.draw_artist(axis)
+        #    fig.canvas.blit(subplot.bbox)
 
 def demo(t=1000):
     iterate(100)
