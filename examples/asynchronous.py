@@ -15,7 +15,9 @@ from dana import *
 G = zeros((5,5), 'dV/dt=1')
 G.run(t=1.0)
 print G.V
+print
 
 G = zeros((5,5), 'dV/dt=1')
-G.run(t=1.0, asynchrony_level=0.2) # 10% of units won't be updated
+# 80% of units are evaluated at each timestep
+G.run(t=1.0, asynchrony_level=0.2)
 print G.V
