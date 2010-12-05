@@ -61,6 +61,8 @@ G.V[-2,-1] = 1
 run(n=5*(n+n))
 
 # Visualization
+# from ascii import *
+# imshow(G.V,show_cmap=False)
 plt.figure(figsize=(9,9))
 cmap = plt.cm.hot
 cmap.set_under('white')
