@@ -65,27 +65,22 @@ class SharedConnection(Connection):
     def output(self):
         ''' '''
         if len(self._source.shape) == 1:
+            #if not hasattr(self._source, 'mask'):
             R = convolve1d(self._actual_source, self._weights)
-            return R #.reshape(self._target.shape)
-            #if names == None:
-            #    return convolve1d(src, self._kernel)
-            #elif 'mask' not in names:
-            #    return convolve1d(src[names[0]], self._weights)
             #else:
-            #    return convolve1d(src[names[0]] * src['mask'], self._weights)
+            #    mask = self._source.mask
+            #    R = convolve1d(self._actual_source*mask, self._weights)
         else:
+            #if not hasattr(self._source,'mask'):
             R = convolve2d(self._actual_source, self._weights, self._USV)
-            return R #.reshape(self._target.shape)
-            #if names == None:
-            #    return convolve2d(src, self._weights, self._USV)
-            #elif 'mask' not in names:
-            #    return convolve2d(src[names[0]], self._weights, self._USV)
             #else:
-            #    return convolve2d(src[names[0]]*src['mask'], self._weights, self._USV)
-
+            #    mask = self._source.mask
+            #    R = convolve2d(self._actual_source*mask, self._weights, self._USV)
+        return R.reshape(self._target.shape)
 
     def __getitem__(self, key):
         ''' '''
+
         key = np.array(key) % self.target.shape
         s = np.array(list(self.source.shape)).astype(float)/np.array(list(self.target.shape))
         c = (key*s).astype(int).flatten()

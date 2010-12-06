@@ -113,7 +113,6 @@ underlying numpy array is not copied.
    True
 
 
-
 The model paradigm                                                             
 ===============================================================================
 Beyond the quite limited group dtype argument, one can also define a group

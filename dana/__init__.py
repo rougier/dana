@@ -46,7 +46,7 @@ from diff_equation import DifferentialEquation, DifferentialEquationError
 from tests import test
 
 try:
-    import matplotlib
+    import matplotlib as mpl
     import matplotlib.pyplot as plt
 except:
     pass

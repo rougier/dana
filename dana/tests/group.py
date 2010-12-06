@@ -9,6 +9,7 @@
 import unittest
 import numpy as np
 from dana import Group
+from tools import np_equal
 
 
 class GroupDefault(unittest.TestCase):
@@ -39,6 +40,55 @@ class GroupFill(unittest.TestCase):
         self.Z = Group((3,5), fill=1.2)
     def test_fill(self):
         assert 1-(self.Z.f0-np.ones((3,5))*1.2).all()
+
+class GroupMask(unittest.TestCase):
+    def setUp(self):
+        self.Z = Group((3,3))
+
+    def test_mask_true(self):
+        self.Z.mask = True
+        self.Z[...] = 1
+        self.Z.setup()
+        assert np_equal(self.Z.f0,np.ones((3,3)))
+
+    def test_mask_1(self):
+        self.Z.mask = 1
+        self.Z[...] = 1
+        self.Z.setup()
+        assert np_equal(self.Z.f0,np.ones((3,3)))
+
+    def test_mask_false(self):
+        self.Z.mask = False
+        self.Z[...] = 1
+        self.Z.setup()
+        assert np_equal(self.Z.f0,np.zeros((3,3)))
+
+    def test_mask_0(self):
+        self.Z.mask = 0
+        self.Z[...] = 1
+        self.Z.setup()
+        assert np_equal(self.Z.f0,np.zeros((3,3)))
+
+    def test_mask_shape_0(self):
+        self.Z.mask = np.zeros((3,3))
+        self.Z[...] = 1
+        self.Z.setup()
+        assert np_equal(self.Z.f0,np.zeros((3,3)))
+
+    def test_mask_shape_1(self):
+        self.Z.mask = np.ones((3,3))
+        self.Z[...] = 1
+        self.Z.setup()
+        assert np_equal(self.Z.f0,np.ones((3,3)))
+
+    def test_mask_shape_2(self):
+        mask = np.ones((3,3))
+        mask[1,1] = 0
+        self.Z.mask = mask
+        self.Z[...] = 1
+        self.Z.setup()
+        assert np_equal(self.Z.f0,mask)
+
 
 class GroupDtype(unittest.TestCase):
     def setUp(self):

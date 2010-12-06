@@ -51,7 +51,7 @@ class SparseConnection(Connection):
                 Ss = np.array(list(self.source.shape), dtype=int)//2
                 for i in range(K.shape[0]):
                     index = np.array(list(np.unravel_index(i, self.target.shape)))
-                    index = np.rint((index/np.array(self.target.shape, dtype=float) \
+                    index = np.fix((index/np.array(self.target.shape, dtype=float) \
                                  * np.array(self.source.shape))).astype(int)
                     k = extract(weights, self.source.shape, Ks+Ss - index, np.NaN)
                     k = k.flatten()
@@ -73,19 +73,17 @@ class SparseConnection(Connection):
 
     def output(self):
         ''' '''
-        R = dot(self._weights, self._actual_source.flatten())
+        #if not hasattr(self._source,'mask'):
+        R = dot(self._weights, self._actual_source.flatten()) 
+        #else:
+        #    mask = self._source.mask
+        #    R = dot(self._weights, (self._actual_source*mask).flatten()) 
         return R.reshape(self._target.shape)
-
-        # src = self._source.flatten()
-        # names = src.dtype.names
-        # if names == None or 'mask' not in names:
-        #     R = dot(self._weights, src)
-        # else:
-        #     R = dot(self._weights, src[names[0]]*src['mask'])
-        # return R.reshape(self._target.shape)
 
 
     def __getitem__(self, key):
+        ''' '''
+
         key = np.array(key) % self.target.shape
         K = np.zeros((len(key)+1,),dtype=int)
         K[1:] = key

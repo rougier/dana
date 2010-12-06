@@ -31,7 +31,7 @@ h2 {
     font-size: 13pt;
     font-family: "Trebuchet MS";
     font-weight: normal;
-    color: #777777;
+/*    color: #777777;*/
     line-height: 1.0em;
     padding:0;
     margin:0;
@@ -126,3 +126,6 @@ p {
     background-color: #f0f0f0;
 */
 }
+
+
+

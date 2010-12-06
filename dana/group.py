@@ -11,8 +11,10 @@ import numpy as np
 from model import Model
 from network import __default_network__
 
+
 class GroupError(Exception):
     pass
+
 
 class Group(object):
     '''
@@ -121,6 +123,7 @@ class Group(object):
         except:
             pass
 
+
     def setup(self, namespace=None):
         ''' '''
         
@@ -153,16 +156,25 @@ class Group(object):
                     namespace[name] =  frame.f_globals[name]
         self._namespace = namespace
         self._namespace.update(globals())
-    
-    def evaluate(self, dt=1, asynchrony_level=0):
+
+        # Make sure all masked units are set to 0
+        if hasattr(self,'mask'):
+            for key in self._data.keys():
+                self._data[key] *= self.mask
+
+        # Make sure all masked connections source units are set to 0
+        for connection in self._connections:
+            source = connection._source
+            if hasattr(source,'mask'):
+                for key in source._data.keys():
+                    source._data[key] *= source.mask
+
+
+    def evaluate(self, dt=1):
         ''' '''
 
         self._namespace['dt'] = dt
         saved = {}
-
-        if asynchrony_level > 0:
-            R = (np.random.random(self.shape) < asynchrony_level)
-            R_ = 1-R
 
         for connection in self._connections:
             connection.propagate()
@@ -176,11 +188,7 @@ class Group(object):
                    [self._namespace[var] for var in eq._variables]
             eq.evaluate(*args)
         for eq in self._model._diff_equations:
-            if asynchrony_level > 0:
-                self[eq._varname][...] = R*saved[eq._varname] \
-                                       + R_*self[eq._varname][...]
-            else:
-                self[eq._varname][...] = saved[eq._varname]
+            self[eq._varname][...] = saved[eq._varname]
 
         # Equations
         for eq in self._model._equations:
@@ -189,29 +197,29 @@ class Group(object):
         for eq in self._model._equations:
             args = [self._namespace[var] for var in eq._variables]
             saved[eq._varname][...] = eq.evaluate(*args) #*self._mask
-
         for eq in self._model._equations:
-            if asynchrony_level > 0:
-                self[eq._varname][...] = R*saved[eq._varname] \
-                                       + R_*self[eq._varname][...]
-            else:
-                self[eq._varname][...] = saved[eq._varname]
+            self[eq._varname][...] = saved[eq._varname]
 
+        # Make sure all masked units are set to 0
+        if hasattr(self,'mask'):
+            for key in self._data.keys():
+                self._data[eq.varname] *= self.mask
+
+        # Learning
         for connection in self._connections:
             connection.evaluate(dt)
 
 
-    def run(self, t=1.0, dt=0.01, n=None, asynchrony_level=0):
+    def run(self, t=1.0, dt=0.01, n=None):
         ''' '''
 
         if n == None:
             n = int(t/dt)
         else:
             dt = 1
-
         self.setup()
-        args = {}
-        saved = {}
+        args,saved = {}, {}
+
         for eq in self._model._diff_equations:
             args[eq.varname] = [self._data[eq.varname],dt]+ \
                 [self._namespace[var] for var in eq._variables]
@@ -219,45 +227,21 @@ class Group(object):
             args[eq.varname] = [self._namespace[var] for var in eq._variables]
         self._namespace['dt'] = dt
 
-        if asynchrony_level > 0:
-            for i in range(int(t/dt)):
-                R = (np.random.random(self.shape) < asynchrony_level)
-                R_ = 1-R
+        for i in range(int(t/dt)):
+            for connection in self._connections:
+                connection.propagate()
+            for eq in self._model._diff_equations:
+                eq.evaluate(*args[eq.varname])
+            for eq in self._model._equations:
+                self._data[eq.varname][...] = eq.evaluate(*args[eq.varname])
 
-                for eq in self._model._diff_equations:
-                    saved[eq.varname] = self[eq._varname].copy()
-                    self._namespace[eq.varname] = self[eq._varname]
+            # Make sure all masked units are set to 0
+            if hasattr(self,'mask'):
+                for key in self._data.keys():
+                    self._data[eq.varname][...] *= self.mask
 
-                for eq in self._model._equations:
-                    saved[eq._varname] = self[eq._varname].copy()
-                    self._namespace[eq.varname] = self[eq._varname]
-
-                for connection in self._connections:
-                    connection.propagate()
-
-                for eq in self._model._diff_equations:
-                    eq.evaluate(*args[eq.varname])
-                    self[eq.varname][...] = R*saved[eq._varname] \
-                                           + R_*self[eq._varname][...]
-                for eq in self._model._equations:
-                    self[eq.varname] = eq.evaluate(*args[eq.varname])
-                    self[eq.varname][...] = R*saved[eq._varname] \
-                                           + R_*self[eq._varname][...]
-
-                for connection in self._connections:
-                    connection.evaluate(dt)
-        else:
-            self._namespace['dt'] = dt
-            for i in range(int(t/dt)):
-                for connection in self._connections:
-                    connection.propagate()
-                for eq in self._model._diff_equations:
-                    eq.evaluate(*args[eq.varname])
-                for eq in self._model._equations:
-                    self._data[eq.varname][...]= eq.evaluate(*args[eq.varname])
-                for connection in self._connections:
-                    connection.evaluate(dt)
-
+            for connection in self._connections:
+                connection.evaluate(dt)
 
 
     def item(self):
@@ -342,11 +326,14 @@ class Group(object):
 
 
     def __getitem__(self, key):
+        ''' '''
+
         if type(key) is str:
             if key in self._keys:
                 return self._data[key]
             else:
                 raise ValueError, 'field named %s not found' % key
+
         elif type(key) in [int, slice, tuple]:
             shape = self._data.values()[0][key].shape
             if shape is not ():
@@ -361,6 +348,7 @@ class Group(object):
 
         elif key is Ellipsis:
             return self
+
         elif not len(self._shape):
             if key is Ellipsis:
                 return self
@@ -374,6 +362,7 @@ class Group(object):
                     '''list of newaxes (and a single ...) as an index'''
             else:
                 raise IndexError, "0-d groups can't be indexed"
+
         raise IndexError, 'index must be either an int or a sequence'
 
 
@@ -410,6 +399,7 @@ class Group(object):
             else:
                 raise ValueError, \
                     "Data-type not understood"                        
+
         elif type(key) in [int, slice, tuple] or key is Ellipsis:
             if key is Ellipsis:
                 G = self
@@ -464,15 +454,42 @@ class Group(object):
 
     def asarray(self):
         ''' Return a ndarray copy of this group '''
+
         return np.array(self, dtype=self.dtype)
+
+
+    def as_masked_array(self):
+        ''' Return a masked ndarray copy of this group '''
+
+        if hasattr(self,'mask') and self.mask != None:
+            mask = self.mask
+        else:
+            mask = 1
+        Z = np.ma.array(self, dtype=self.dtype)
+        dtype = []
+        for i, name in enumerate(self.dtype.names):
+            dtype.append((name, int))
+        Z.mask = np.ones(self.shape,dtype=dtype)
+        for i, name in enumerate(self.dtype.names):
+            Z.mask[name] = 1-self.mask
+        return Z
+
 
     def __str__(self):
         ''' x.__str__() <==> str(x) '''
-        return np.array_str(self)
+        if hasattr(self,'mask') and self.mask != None:
+            return str(self.as_masked_array())
+        else:
+            return np.array_str(self)
+
 
     def __repr__(self):
         ''' x.__repr__() <==> repr(x) '''
-        return np.array_repr(self)
+        if hasattr(self,'mask') and self.mask != None:
+            return repr(self.as_masked_array())
+        else:
+            return np.array_repr(self)
+
 
     def _get_shape(self):
         '''Get group shape'''
@@ -485,11 +502,13 @@ class Group(object):
     shape = property(_get_shape, _set_shape,
                      doc='''Tuple of group dimensions.''')
 
+
     def _get_size(self):
         '''Get group size'''
         return self._data.values()[0].size
     size = property(_get_size,
                     doc = '''Number of elements in the group.''')
+
 
     def _get_base(self):
         '''Get group base'''
@@ -497,11 +516,13 @@ class Group(object):
     base = property(_get_base,
                     doc = '''Base group.''')
 
+
     def _get_dtype(self):
         '''Get group dtype'''
         return self._dtype
     dtype = property(_get_dtype,
                      doc='''Data-type for the group.''')
+
 
     def _get_data(self):
         '''Get group data'''
@@ -509,11 +530,13 @@ class Group(object):
     data = property(_get_data,
                     doc='''Group data (list of arrays)''')
 
+
     def _get_keys(self):
         '''Get group keys'''
         return self._keys
     keys = property(_get_keys,
                     doc='''Group keys''')
+
 
     def _get_model(self):
         '''Get group model'''

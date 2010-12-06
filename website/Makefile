@@ -1,8 +1,8 @@
 STYLE = style.css
-FLAGS = --stylesheet=$(STYLE) --link-stylesheet --no-toc-backlinks          \
-	     --language=en --no-generator --no-source-link --no-datestamp       \
-	     --section-numbering --output-encoding=UTF-8 --input-encoding=UTF-8 \
-	     --footnote-references=superscript --template=template.tpl
+FLAGS = --link-stylesheet --no-toc-backlinks          \
+	    --language=en --no-generator --no-source-link --no-datestamp       \
+	    --section-numbering --output-encoding=UTF-8 --input-encoding=UTF-8 \
+	    --footnote-references=superscript --cloak-email-addresses --template=template.tpl
 RST = ./rst2html-highlight
 RM = /bin/rm
 SOURCES= $(wildcard *.rst)
@@ -10,9 +10,16 @@ TARGETS=$(patsubst %.rst,%.html, $(SOURCES))
 
 all: $(TARGETS)
 
+
+article.html : article.rst
+	@echo "Generating $@"
+	./rst2html.py $(FLAGS) --stylesheet="article.css"  $< $@
+	@pygmentize -O full,linenos=1,encoding=utf8,style=tango  -f html -l rest -o $<.html $<
+
+
 %.html: %.rst
 	@echo "Generating $@"
-	@$(RST) $(FLAGS) $< $@
+	@$(RST) $(FLAGS) --stylesheet=$(STYLE) $< $@
 
 clean:
 	@$(RM) -f $(TARGETS)

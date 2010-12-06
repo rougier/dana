@@ -48,8 +48,8 @@ class DenseConnection(Connection):
         Ss = np.array(list(self.source.shape), dtype=int)//2
         K = np.zeros((self.target.size,self.source.size), dtype=weights.dtype)
         for i in range(K.shape[0]):
-            index =  np.array(list(np.unravel_index(i, self.target.shape)))
-            index = np.rint((index/np.array(self.target.shape, dtype=weights.dtype) \
+            index = np.array(list(np.unravel_index(i, self.target.shape)))
+            index = np.fix((index/np.array(self.target.shape, dtype=weights.dtype) \
                              * np.array(self.source.shape))).astype(int)
             K[i,:] = extract(weights,
                              self.source.shape, Ks+Ss-index, np.NaN).flatten()
@@ -61,15 +61,11 @@ class DenseConnection(Connection):
 
     def output(self):
         ''' '''
-#        src = 
-#        names = self._source.dtype.names
-#        if names == None:
-#            src = self.source.flatten()
-#        elif 'mask' not in names:
-#            src = (self.source._data[names[0]]).flatten()
-#        else:
-#            src = self.source[names[0]].flatten() * self.source['mask'].flatten()
+        #if not hasattr(self._source,'mask'):
         R = np.dot(self._weights, self._actual_source.flatten()) 
+        #else:
+        #mask = self._source.mask
+        #R = np.dot(self._weights, (self._actual_source*mask).flatten()) 
         return R.reshape(self._target.shape)
 
 

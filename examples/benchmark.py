@@ -14,7 +14,7 @@ class array(np.ndarray):
     pass
 
 n = 50
-t = 1.0
+t = 2.0
 dt = 0.00001
 epochs = int(t/dt) #100000
 

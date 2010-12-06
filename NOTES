@@ -1,3 +1,8 @@
+Release notes for 0.3.3
+=======================
+* Group mask implemented
+* Asynchronous computing removed (temporarily)
+
 Release notes for 0.3.2
 =======================
 * Added DNF-1D.py example
@@ -13,12 +18,10 @@ Release notes for 0.3.0
 * Restored the synchronous evaluation/run of groups
 * Added examples showing connections using matplotlib
 
-
 Release notes for 0.2.0
 =======================
 * Redesign of groups and links in favor of connection objects
 * Rewrite of all examples
-
 
 Release notes for 0.1.0
 =======================

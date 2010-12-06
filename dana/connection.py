@@ -147,11 +147,11 @@ class Connection(object):
 
     def output(self):
         ''' Return output of connection '''
-        raise NotImplemented
+        raise NotImplementedError
 
     def __getitem__(self, key):
         ''' Return connection from '''
-        raise NotImplemented
+        raise NotImplementedError
 
     source = property(lambda self: self._source,
         doc='''Source of the connection.''')

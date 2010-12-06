@@ -10,13 +10,14 @@
 import unittest
 import numpy as np
 import scipy.sparse as sp
+from scipy.sparse import issparse
 from dana import *
 
 
 def np_almost_equal(A, B, epsilon=1e-10):
-    if sp.issparse(A):
+    if issparse(A):
         A = A.todense()
-    if sp.issparse(B):
+    if issparse(B):
         B = B.todense()
     A_nan = np.isnan(A)
     B_nan = np.isnan(B)
@@ -25,9 +26,9 @@ def np_almost_equal(A, B, epsilon=1e-10):
     return np.all(A_nan==B_nan) and (abs(A_num-B_num)).sum() <= epsilon
 
 def np_equal(A, B):
-    if sp.issparse(A):
+    if issparse(A):
         A = A.todense()
-    if sp.issparse(B):
+    if issparse(B):
         B = B.todense()
     return np_almost_equal(A,B,epsilon = 0)
 

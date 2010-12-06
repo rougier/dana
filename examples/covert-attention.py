@@ -13,7 +13,7 @@ soon as a stimulus if focused, it entered the working memory where a virtual
 "link" is made with the visual input. The focus may be considered as a gate
 allowing the working memory to make a specific bind ith the visual input.
 
-A switch is made by setting the reward group to a very high value that
+A switch is made by setting the switch group to a very high value that
 disinhibit the striatum group which in turn inhibit the focus group. Since the
 working memory is also continuously inhibiting the focus group, the focus can
 only be made on never focused stimuli.
@@ -44,7 +44,7 @@ wm  = zeros((n,n), '''dV/dt = -V+(L+Iv+If)/31 - 0.2 : float
 striatum = zeros((n,n), '''dV/dt = -V+(L+Iw+Ir)/28 - 0.3 : float
                            U = maximum(V,0) : float
                            L : float; Iw: float; Ir: float''')
-reward = zeros((1,1), '''dV/dt = -0.1*V : float
+switch = zeros((1,1), '''dV/dt = -0.1*V : float
                          U = maximum(V,0) : float''')
 
 # Connections
@@ -59,7 +59,7 @@ SharedConnection(focus('U'),    wm('If'),       +0.20*gaussian(s, 0.05))
 SharedConnection(wm('U'),       wm('L'),        +3.00*gaussian(s, 0.05)
                                                 -0.50*gaussian(s, 0.10))
 SharedConnection(wm('U'),       striatum('Iw'), +0.50*gaussian(s, 0.0625))
-DenseConnection(reward('U'),    striatum('Ir'), +20.00)
+DenseConnection(switch('U'),    striatum('Ir'), +20.00)
 SharedConnection(striatum('U'), striatum('L'),  +2.50*gaussian(s, 0.05)
                                                 -1.00*gaussian(s, 0.10))
 
@@ -79,14 +79,11 @@ def iterate(t=100):
         run(t=.5,dt=.5)
         update()
         plt.draw()
-        #for axis,z,subplot in mgr.subplots:
-        #    subplot.draw_artist(axis)
-        #    fig.canvas.blit(subplot.bbox)
 
 def demo(t=1000):
     iterate(100)
     for i in range(2):
-        reward['V'] = 1.0
+        switch['V'] = 1.0
         print "Switch now"
         iterate(100)
 
@@ -94,7 +91,7 @@ if __name__ == '__main__':
     from display import *
 
     plt.ion()
-    fig = plt.figure(figsize=(10,10), facecolor='white')
+    fig = plt.figure(figsize=(8,10), facecolor='white')
     plot(plt.subplot(2,2,1), visual, 'Visual')
     plot(plt.subplot(2,2,2), focus('U'), 'Focus')
     plot(plt.subplot(2,2,3), wm('U'), 'Working memory')
