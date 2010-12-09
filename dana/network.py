@@ -15,6 +15,10 @@ class Network(object):
     def __init__(self, groups=[]):
         self._groups = groups
 
+    def setup(self):
+        for group in self._groups:
+            group.setup()
+
     def run(self, t=1.0, dt=0.01, n=None):
         ''' '''
 
@@ -22,8 +26,7 @@ class Network(object):
             n = int(t/dt)
         else:
             dt = 1
-        for group in self._groups:
-            group.setup()
+        setup()
         for i in range(n):
             for group in self._groups:
                 group.evaluate(dt=dt)
@@ -39,3 +42,6 @@ __default_network__ = Network([])
 
 def run(t=1.0, dt=0.01, n=None):
     __default_network__.run(t,dt,n)
+
+def setup():
+    __default_network__.setup()
