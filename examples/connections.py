@@ -17,6 +17,10 @@ p = 2*n+1
 A, B = Group((n,n),'V'), Group((n,n),'V')
 C, D = Group((n,n),'V'), Group((n/2,n/2),'V')
 
+for Z in [A,B,C,D]:
+    Z.V = rnd.random(Z.shape)
+
+
 # Difference of Gaussians connections
 K = 1.25*gaussian((p,p),0.1) - 0.75*gaussian((p,p),1.0)
 DenseConnection(B,A,K)
@@ -38,12 +42,12 @@ if __name__ == '__main__':
     from display import *
 
     plt.figure(figsize=(10,10))
-    plot(plt.subplot(2,2,1), A('V'),
-         'Difference of Gaussians using\n dense, shared and sparse connection')
-    plot(plt.subplot(2,2,2), B('V'),
-         'Row, column and point connections')
-    plot(plt.subplot(2,2,3), C('V'),
-         'Random sparse connections')
-    plot(plt.subplot(2,2,4), D('V'), '')
+    plot(plt.subplot(2,2,1), A('V'), 'A')
+    #'Difference of Gaussians using\n dense, shared and sparse connection')
+    plot(plt.subplot(2,2,2), B('V'), 'B')
+    #'Row, column and point connections')
+    plot(plt.subplot(2,2,3), C('V'), 'C')
+    #'Random sparse connections')
+    plot(plt.subplot(2,2,4), D('V'), 'D')
     plt.connect('button_press_event', button_press_event)
     plt.show()
