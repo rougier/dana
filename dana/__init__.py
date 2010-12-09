@@ -30,7 +30,7 @@ from functions import zeros_like, ones_like, empty_like
 from csr_array import csr_array, dot
 
 from group import Group
-from network import Network, run
+from network import Network, run, setup
 
 from connection        import Connection, ConnectionError
 from dense_connection  import DenseConnection
@@ -48,8 +48,64 @@ from tests import test
 try:
     import matplotlib as mpl
     import matplotlib.pyplot as plt
+
+    cdict = {
+      'red':  ([0.00, 0, 0], [0.25, 0, 0], [0.50, 1, 1], [0.75, 1, 1], [1.00, 1, 1]),
+      'green':([0.00, 0, 0], [0.25, 1, 1], [0.50, 1, 1], [0.75, 1, 1], [1.00, 0, 0]),
+      'blue': ([0.00, 1, 1], [0.25, 1, 1], [0.50, 1, 1], [0.75, 0, 0], [1.00, 0, 0]) }
+    ice_and_fire = mpl.colors.LinearSegmentedColormap('ice-and-fire',cdict)
+
+    cdict = {
+      'red':  ([0.00, 0, 0], [0.25, 0, 0], [0.50, 1, 1]),
+      'green':([0.00, 0, 0], [0.25, 1, 1], [0.50, 1, 1]),
+      'blue': ([0.00, 1, 1], [0.25, 1, 1], [0.50, 1, 1]) }
+    ice = mpl.colors.LinearSegmentedColormap('ice',cdict)
+
+    cdict = {
+      'red':  ([0.00, 1, 1], [0.25, 1, 1], [0.50, 1, 1]),
+      'green':([0.00, 1, 1], [0.25, 1, 1], [0.50, 0, 0]),
+      'blue': ([0.00, 1, 1], [0.25, 0, 0], [0.50, 0, 0]) }
+    fire = mpl.colors.LinearSegmentedColormap('fire',cdict)
+
+    cdict = {
+      'red':  ([0.00, 0, 0], [1.00, 1, 1]),
+      'green':([0.00, 0, 0], [1.00, 0, 0]),
+      'blue': ([0.00, 0, 0], [1.00, 0, 0]) }
+    dark_red = mpl.colors.LinearSegmentedColormap('dark-red',cdict)
+
+    cdict = {
+      'red':  ([0.00, 1, 1], [1.00, 1, 1]),
+      'green':([0.00, 1, 1], [1.00, 0, 0]),
+      'blue': ([0.00, 1, 1], [1.00, 0, 0]) }
+    light_red = mpl.colors.LinearSegmentedColormap('light-red',cdict)
+
+    cdict = {
+      'red':  ([0.00, 0, 0], [1.00, 0, 0]),
+      'green':([0.00, 0, 0], [1.00, 1, 1]),
+      'blue': ([0.00, 0, 0], [1.00, 0, 0]) }
+    dark_green = mpl.colors.LinearSegmentedColormap('dark-green',cdict)
+
+    cdict = {
+      'red':  ([0.00, 1, 1], [1.00, 0, 0]),
+      'green':([0.00, 1, 1], [1.00, 1, 1]),
+      'blue': ([0.00, 1, 1], [1.00, 0, 0]) }
+    light_green = mpl.colors.LinearSegmentedColormap('light-green',cdict)
+
+    cdict = {
+      'red':  ([0.00, 0, 0], [1.00, 0, 0]),
+      'green':([0.00, 0, 0], [1.00, 0, 0]),
+      'blue': ([0.00, 0, 0], [1.00, 1, 1]) }
+    dark_blue = mpl.colors.LinearSegmentedColormap('dark-blue',cdict)
+
+    cdict = {
+      'red':  ([0.00, 1, 1], [1.00, 0, 0]),
+      'green':([0.00, 1, 1], [1.00, 0, 0]),
+      'blue': ([0.00, 1, 1], [1.00, 1, 1]) }
+    light_blue = mpl.colors.LinearSegmentedColormap('light-blue',cdict)
+
 except:
     pass
+
 try:
     from info import version as __version__
     from info import release as __release__
