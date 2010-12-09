@@ -64,15 +64,19 @@ class Connection(object):
         names = source.dtype.names
         if names == None:
             self._actual_source = source #.flatten()
+            self._source_name = ''
         else:
             self._actual_source = (source[names[0]]) #.flatten()
+            self._source_name = names[0]
 
         # Get actual target
         names = target.dtype.names
         if names == None:
             self._actual_target = target
+            self._target_name = ''
         else:
             self._actual_target = (target[names[0]])
+            self._target_name = names[0]
 
         # Get source base group
         if source.base == None:
@@ -156,8 +160,14 @@ class Connection(object):
     source = property(lambda self: self._source,
         doc='''Source of the connection.''')
 
+    source_name = property(lambda self: self._source_name,
+        doc='''Name of the source value of the connection.''')
+
     target = property(lambda self: self._target,
         doc='''Target of the connection.''')
+
+    target_name = property(lambda self: self._target_name,
+        doc='''Name of the target value of the connection.''')
 
     weights = property(lambda self: self._weights,
         doc='''Weights matrix.''')

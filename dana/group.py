@@ -10,6 +10,9 @@ import inspect
 import numpy as np
 from model import Model
 from network import __default_network__
+from definition import Definition, DefinitionError
+from declaration import Declaration, DeclarationError
+from diff_equation import DifferentialEquation, DifferentialEquationError
 
 
 class GroupError(Exception):
@@ -251,6 +254,7 @@ class Group(object):
         '''
         return self._data[self._data.keys()[0]]
 
+ 
 
     def flatten(self):
         return self.reshape( (self.size,) )
@@ -321,7 +325,32 @@ class Group(object):
         dtype.append( (key, self._dtype[key]) )
         G = Group(shape=self.shape, dtype=dtype)
         G.data[key] = self.data[key]
-        G._base = self
+        G._base = self.base or self
+
+        # Get subgroup relevant connections
+        base = G._base
+        model = base.model
+        deps, done, exts = [key], [], []
+        while deps:
+            var = deps[0]
+            deps.remove(var)
+            done.append(var)
+            if isinstance(model[var], Declaration):
+                if var not in exts: exts.append(var)
+                continue
+            eq = model[var]
+            for v in eq.variables:
+                if v not in base.keys:
+                    continue
+                elif isinstance(model[v], Declaration):
+                    if v not in exts: exts.append(v)
+                    continue
+                elif v not in done and v not in deps:
+                    deps.append(v)
+        for connection in base.connections:
+            if connection.target_name in exts:
+                G.connections.append(connection)
+
         return G
 
 
@@ -536,6 +565,13 @@ class Group(object):
         return self._keys
     keys = property(_get_keys,
                     doc='''Group keys''')
+
+
+    def _get_connections(self):
+        '''Get group connections'''
+        return self._connections
+    connections = property(_get_connections,
+                           doc='''Group connections''')
 
 
     def _get_model(self):
