@@ -85,6 +85,7 @@ class Model(object):
         self._equations = []
         self._declarations = []
         self._all = []
+        self._variables = []
         self._parse(definition)
 
 
@@ -94,6 +95,7 @@ class Model(object):
         self._diff_equations = []
         self._equations = []
         self._declarations = []
+        self._variables = []
         self._all = []
         definition = re.sub('\\\s*?\n', ' ', definition)
         for line in re.split('[\n;]', definition):
@@ -109,10 +111,19 @@ class Model(object):
                 self._all.append(equation)
                 if isinstance(equation, Declaration):
                     self._declarations.append(equation)
+                    varname = equation.varname
+                    if varname not in self._variables:
+                        self._variables.append(varname)
                 elif isinstance(equation, Equation):
                     self._equations.append(equation)
+                    varname = equation.varname
+                    if varname not in self._variables:
+                        self._variables.append(varname)
                 elif isinstance(equation, DifferentialEquation):
                     self._diff_equations.append(equation)
+                    varname = equation.varname
+                    if varname not in self._variables:
+                        self._variables.append(varname)
                     
                
         # Check for circular dependencies in equations and order equations
@@ -226,6 +237,12 @@ class Model(object):
         return self._connections
     connections = property(_get_connections,
                            doc = ''' Model connections ''')
+
+    def _get_variables(self):
+        '''Get model variables'''
+        return self._variables
+    variables = property(_get_variables,
+                         doc='''Model variable names''')
 
 
 # ---------------------------------------------------------------- __main__ ---
