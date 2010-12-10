@@ -335,6 +335,8 @@ class Group(object):
             var = deps[0]
             deps.remove(var)
             done.append(var)
+            if var not in model.variables:
+                continue
             if isinstance(model[var], Declaration):
                 if var not in exts: exts.append(var)
                 continue
