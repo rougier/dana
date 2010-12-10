@@ -10,6 +10,8 @@ import unittest
 import numpy as np
 from dana import Group
 from tools import np_equal
+from dana import ConnectionError
+from dana import SharedConnection, SparseConnection, DenseConnection
 
 
 class GroupDefault(unittest.TestCase):
@@ -167,6 +169,24 @@ class GroupSubGroup(unittest.TestCase):
      def test_subgroup_2(self):
          S = self.Z('x')
          assert S.base is self.Z
+     def test_subgroup_connections(self):
+         src = np.ones((3,3))
+         dst = Group((3,3), '''U = A+B+V;  V = C+D+Z; Z = E
+                               A;B;C;D;E''')
+         SparseConnection(src,dst('A'),np.ones((1,1)))
+         SparseConnection(src,dst('B'),np.ones((1,1)))
+         SparseConnection(src,dst('C'),np.ones((1,1)))
+         SparseConnection(src,dst('D'),np.ones((1,1)))
+         SparseConnection(src,dst('E'),np.ones((1,1)))
+         Z = dst('U')
+         links = []
+         for c in Z.connections:
+             links.append(c.target_name)
+         assert 'A' in links
+         assert 'B' in links
+         assert 'C' in links
+         assert 'D' in links
+         assert 'E' in links
 
 
 class GroupFunctions(unittest.TestCase):
