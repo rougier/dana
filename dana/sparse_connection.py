@@ -19,10 +19,10 @@ from connection import Connection, ConnectionError
 class SparseConnection(Connection):
     ''' '''
 
-    def __init__(self, source=None, target=None, weights=None, equation = ''):
+    def __init__(self, source=None, target=None, weights=None, equation = '', toric=False):
         ''' '''
 
-        Connection.__init__(self, source, target)
+        Connection.__init__(self, source, target, toric)
         self.setup_weights(weights)
         self.setup_equation(equation)
 
@@ -42,29 +42,7 @@ class SparseConnection(Connection):
                 self._weights = csr_array(weights, dtype=weights.dtype)
         elif weights.shape != (self.target.size,self.source.size):
             if len(weights.shape) == len(self.source.shape):
-
-                # K = sp.lil_matrix((self.target.size, self.source.size),
-                #                   dtype=weights.dtype)
-                # I = []
-                # J = []
-                # V = []
-                # Ks = np.array(list(weights.shape), dtype=int)//2
-                # Ss = np.array(list(self.source.shape), dtype=int)//2
-                # for i in range(K.shape[0]):
-                #     index = np.array(list(np.unravel_index(i, self.target.shape)))
-                #     index = np.fix((index/np.array(self.target.shape, dtype=float) \
-                #                  * np.array(self.source.shape))).astype(int)
-                #     k = extract(weights, self.source.shape, Ks+Ss - index, np.NaN)
-                #     k = k.flatten()
-                #     #J_ = k.nonzero()[0].tolist()
-                #     J_ =(1-np.isnan(k)).nonzero()[0].tolist()
-                #     I_ = [i,]*len(J_)
-                #     V_ = k[J_].tolist()
-                #     I += I_
-                #     J += J_
-                #     V += V_
-                # K = sp.coo_matrix((V,(I,J)), shape=K.shape)
-                K = convolution_matrix(self.source, self.target, weights)
+                K = convolution_matrix(self.source, self.target, weights, self._toric)
                 self._weights = csr_array(K, dtype=weights.dtype)
             else:
                 raise ConnectionError, \

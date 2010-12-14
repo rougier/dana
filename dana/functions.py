@@ -10,10 +10,11 @@
 import numpy as np
 import scipy.linalg
 import scipy.sparse as sp
+from scipy.ndimage.filters import convolve
 from group import Group
 
 
-def convolve1d( Z, K ):
+def convolve1d(Z, K, toric=False):
     """ Discrete, clamped, linear convolution of two one-dimensional sequences.
 
         The convolution operator is often seen in signal processing, where it
@@ -46,16 +47,22 @@ def convolve1d( Z, K ):
                       http://en.wikipedia.org/wiki/Convolution.
     """
 
-    R = np.convolve(Z, K, 'same')
-    i0 = 0
-    if R.shape[0] > Z.shape[0]:
-        i0 = (R.shape[0]-Z.shape[0])/2 + 1 - Z.shape[0]%2
-    i1 = i0+ Z.shape[0]
-    return R[i0:i1]
+    if toric:
+        return convolve(Z,K,mode='wrap')
+    else:
+        return convolve(Z,K,mode='constant')
+
+    #return convolve(Z,K,mode='wrap')
+    #R = np.convolve(Z, K, 'same')
+    #i0 = 0
+    #if R.shape[0] > Z.shape[0]:
+    #    i0 = (R.shape[0]-Z.shape[0])/2 + 1 - Z.shape[0]%2
+    #i1 = i0+ Z.shape[0]
+    #return R[i0:i1]
 
 
 
-def convolve2d(Z, K, USV = None):
+def convolve2d(Z, K, USV = None, toric=False):
     """ Discrete, clamped convolution of two two-dimensional arrays.
 
         The convolution operator is often seen in signal processing, where it
@@ -103,9 +110,9 @@ def convolve2d(Z, K, USV = None):
     for k in range(n):
         Zt = Z.copy() * S[k]
         for i in range(Zt.shape[0]):
-            Zt[i,:] = convolve1d(Zt[i,:], V[k,::-1])
+            Zt[i,:] = convolve1d(Zt[i,:], V[k,::-1], toric)
         for i in range(Zt.shape[1]):
-            Zt[:,i] = convolve1d(Zt[:,i], U[::-1,k])
+            Zt[:,i] = convolve1d(Zt[:,i], U[::-1,k], toric)
         R += Zt
     return R
 

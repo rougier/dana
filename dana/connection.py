@@ -43,7 +43,7 @@ class Connection(object):
     and the output of the connection is computed by mutliplying src by ``K``.
     '''
 
-    def __init__(self, source, target):
+    def __init__(self, source, target, toric=False):
 
         '''
         Constructs a new connection between a source and a target using
@@ -59,6 +59,7 @@ class Connection(object):
 
         self._weights = None
         self._equation = None
+        self._toric = toric
 
         # Get actual source
         names = source.dtype.names

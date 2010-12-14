@@ -20,10 +20,10 @@ from connection import Connection, ConnectionError
 class SharedConnection(Connection):
     ''' '''
 
-    def __init__(self, source=None, target=None, weights=None):
+    def __init__(self, source=None, target=None, weights=None, toric=False):
         ''' '''
 
-        Connection.__init__(self, source, target)
+        Connection.__init__(self, source, target, toric)
         self._src_rows = None
         self._src_cols = None
         self.setup_weights(weights)
@@ -79,17 +79,16 @@ class SharedConnection(Connection):
                 source = self._actual_source[self._src_rows]
             else:
                 source = self._actual_source
-
-            print source
-            R = convolve1d(source, self._weights)
+            R = convolve1d(source, self._weights, self._toric)
         else:
             if self._src_rows is not None and self._src_cols is not None:
                 source = self._actual_source[self._src_rows, self._src_cols]
                 source = source.reshape(self.target.shape)
             else:
                 source = self._actual_source
-            R = convolve2d(source, self._weights, self._USV)
+            R = convolve2d(source, self._weights, self._USV, self._toric)
         return R.reshape(self._target.shape)
+
 
     def __getitem__(self, key):
         ''' '''

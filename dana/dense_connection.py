@@ -20,10 +20,10 @@ from connection import Connection, ConnectionError
 class DenseConnection(Connection):
     ''' '''
 
-    def __init__(self, source=None, target=None, weights=None, equation = ''):
+    def __init__(self, source=None, target=None, weights=None, equation = '', toric=False):
         ''' '''
 
-        Connection.__init__(self, source, target)
+        Connection.__init__(self, source, target, toric)
         self.setup_weights(weights)
         self.setup_equation(equation)
 
@@ -45,35 +45,20 @@ class DenseConnection(Connection):
             raise ConnectionError, \
                 'Weights matrix shape is wrong relative to source and target'
 
-        K = convolution_matrix(self.source, self.target, weights)
+        K = convolution_matrix(self.source, self.target, weights, self._toric)
         nz_rows = K.row
         nz_cols = K.col
         self._weights = K.todense()
         self._mask = np.zeros(K.shape)
         self._mask[nz_rows, nz_cols] = 1
-
-#        Ks = np.array(list(weights.shape), dtype=int)//2
-#        Ss = np.array(list(self.source.shape), dtype=int)//2
-#        K = np.zeros((self.target.size,self.source.size), dtype=weights.dtype)
-#        for i in range(K.shape[0]):
-#            index = np.array(list(np.unravel_index(i, self.target.shape)))
-#            index = np.fix((index/np.array(self.target.shape, dtype=weights.dtype) \
-#                             * np.array(self.source.shape))).astype(int)
-#            K[i,:] = extract(weights,
-#                             self.source.shape, Ks+Ss-index, np.NaN).flatten()
-#        self._mask = 1 - np.isnan(K).astype(int)
         if self._mask.all():
             self._mask = 1
-        self._weights = np.array(K.todense()) #np.nan_to_num(K)
+        self._weights = np.array(K.todense())
 
 
     def output(self):
         ''' '''
-        #if not hasattr(self._source,'mask'):
         R = np.dot(self._weights, self._actual_source.flatten()) 
-        #else:
-        #mask = self._source.mask
-        #R = np.dot(self._weights, (self._actual_source*mask).flatten()) 
         return R.reshape(self._target.shape)
 
 
@@ -86,11 +71,6 @@ class DenseConnection(Connection):
         S = np.ones((len(self.target.shape)+1),dtype=np.int32)
         S[:-1] = self.target.shape
         index = (S*K).sum()
-#        key = np.array(key) % self.target.shape
-#        s = np.ones((len(self.target.shape),))
-#        for i in range(0,len(self.target.shape)-1):
-#            s[i] = self.target.shape[i]*s[i+1]
-#        index = int((s*key).sum())
         if type(self._mask) is np.ndarray:
             K = self.weights[index]*np.where(self._mask[index], 1, np.NaN)
         else:

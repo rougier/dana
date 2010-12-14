@@ -57,6 +57,10 @@ class SparseOneDimensionTestCase(unittest.TestCase):
         assert np_equal(C[1], array([NaN, 1, NaN]))
         assert np_equal(C[2], array([NaN, NaN, 1]))
 
+    def test_11(self):
+        assert np_equal(Connection(ones(3), ones(3), ones(3), toric=True).output(),
+                        ones(3)*3)
+
 
 
 class SparseTwoDimensionTestCase(unittest.TestCase):
@@ -108,6 +112,10 @@ class SparseTwoDimensionTestCase(unittest.TestCase):
         assert np_equal(C[1,1], array([[NaN, NaN, NaN],
                                        [NaN,  1,  NaN],
                                        [NaN, NaN, NaN]]))
+
+    def test_11(self):
+        assert np_equal(Connection(ones((3,3)), ones((3,3)), ones((3,3)), toric=True).output(),
+                        ones((3,3))*9)
 
 if __name__ == "__main__":
     unittest.main()
