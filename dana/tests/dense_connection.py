@@ -28,10 +28,10 @@ class DenseOneDimensionTestCase(unittest.TestCase):
                          array([2,3,2]))
     def test_5(self):
         assert np_equal( Connection(ones(3), ones(5), ones(3)).output(),
-                         array([2,2,3,3,2]))
+                         array([2,2,3,2,2]))
     def test_6(self):
         assert np_equal( Connection(ones(5), ones(3), ones(3)).output(),
-                         array([2,3,3]))
+                         array([2,3,2]))
     def test_7(self):
         assert np_equal( Connection(ones(3), ones(3), array([1,NaN,1])).output(),
                          array([1,2,1]))
@@ -46,6 +46,8 @@ class DenseOneDimensionTestCase(unittest.TestCase):
         assert np_equal(C[0], array([1, NaN, NaN]))
         assert np_equal(C[1], array([NaN, 1, NaN]))
         assert np_equal(C[2], array([NaN, NaN, 1]))
+
+
 class DenseTwoDimensionTestCase(unittest.TestCase):
     def test_1(self):
         assert np_equal( Connection(ones((3,3)), ones((3,3)), ones((1,1))).output(),
@@ -63,16 +65,16 @@ class DenseTwoDimensionTestCase(unittest.TestCase):
                                 [4,6,4]]))
     def test_5(self):
         assert np_equal( Connection(ones((3,3)), ones((5,5)), ones((3,3))).output(),
-                         array([[4,4,6,6,4],
-                                [4,4,6,6,4],
-                                [6,6,9,9,6],
-                                [6,6,9,9,6],
-                                [4,4,6,6,4]]))
+                         array([[4,4,6,4,4],
+                                [4,4,6,4,4],
+                                [6,6,9,6,6],
+                                [4,4,6,4,4],
+                                [4,4,6,4,4]]))
     def test_6(self):
         assert np_equal( Connection(ones((5,5)), ones((3,3)), ones((3,3))).output(),
-                         array([[4,6,6],
-                                [6,9,9],
-                                [6,9,9]]))
+                         array([[4,6,4],
+                                [6,9,6],
+                                [4,6,4]]))
 
     def test_7(self):
         assert np_equal( Connection(ones((3,3)), ones((3,3)), array([[1, 1, 1],

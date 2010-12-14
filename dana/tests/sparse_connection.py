@@ -33,11 +33,11 @@ class SparseOneDimensionTestCase(unittest.TestCase):
 
     def test_5(self):
         assert np_equal( Connection(ones(3), ones(5), ones(3)).output(),
-                         array([2,2,3,3,2]))
+                         array([2,2,3,2,2]))
 
     def test_6(self):
         assert np_equal( Connection(ones(5), ones(3), ones(3)).output(),
-                         array([2,3,3]))
+                         array([2,3,2]))
 
     def test_7(self):
         assert np_equal( Connection(ones(3), ones(3), array([1,NaN,1])).output(),
@@ -77,16 +77,16 @@ class SparseTwoDimensionTestCase(unittest.TestCase):
                                 [4,6,4]]))
     def test_5(self):
         assert np_equal( Connection(ones((3,3)), ones((5,5)), ones((3,3))).output(),
-                         array([[4,4,6,6,4],
-                                [4,4,6,6,4],
-                                [6,6,9,9,6],
-                                [6,6,9,9,6],
-                                [4,4,6,6,4]]))
+                         array([[4,4,6,4,4],
+                                [4,4,6,4,4],
+                                [6,6,9,6,6],
+                                [4,4,6,4,4],
+                                [4,4,6,4,4]]))
     def test_6(self):
         assert np_equal( Connection(ones((5,5)), ones((3,3)), ones((3,3))).output(),
-                         array([[4,6,6],
-                                [6,9,9],
-                                [6,9,9]]))
+                         array([[4,6,4],
+                                [6,9,6],
+                                [4,6,4]]))
 
     def test_7(self):
         assert np_equal( Connection(ones((3,3)), ones((3,3)), array([[1, 1, 1],
