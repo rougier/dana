@@ -24,6 +24,8 @@ class SharedConnection(Connection):
         ''' '''
 
         Connection.__init__(self, source, target)
+        self._src_rows = None
+        self._src_cols = None
         self.setup_weights(weights)
         self.setup_equation(None)
 
@@ -31,16 +33,16 @@ class SharedConnection(Connection):
     def setup_weights(self, weights):
         ''' Setup weights '''
 
-        if self.source.shape != self.target.shape:
-            raise ConnectionError, \
-                '''Shared connection requires identical shape for source and target'''
-
         # 1d convolution case
         # -------------------
         if len(self.source.shape) == len(self.target.shape) == 1:
             if len(weights.shape) != 1:
                 raise ConnectionError, \
                  '''Shared connection requested but weights matrix shape does not match.'''
+            if self.source.shape != self.target.shape:
+                rows = np.rint((np.linspace(0,1,self.target.shape[0])\
+                                 *(self.source.shape[0]-1))).astype(int)
+                self._src_rows = rows
             self._weights = np.nan_to_num(weights)
 
         # 2d convolution case
@@ -49,6 +51,14 @@ class SharedConnection(Connection):
             if len(weights.shape) != 2:
                 raise ConnectionError, \
                     '''Shared connection requested but weights matrix shape does not match.'''
+            if self.source.shape != self.target.shape:
+                rows = np.rint((np.linspace(0,1,self.target.shape[0])\
+                                 *(self.source.shape[0]-1))).astype(int)
+                cols = np.rint((np.linspace(0,1,self.target.shape[1])\
+                                 *(self.source.shape[1]-1))).astype(int)
+                self._src_rows = rows.reshape((len(rows),1))
+                self._src_cols = cols.reshape((1,len(cols)))
+
             self._weights = np.nan_to_num(weights)
             dtype = weights.dtype
             self._USV = scipy.linalg.svd(np.nan_to_num(weights))
@@ -65,17 +75,20 @@ class SharedConnection(Connection):
     def output(self):
         ''' '''
         if len(self._source.shape) == 1:
-            #if not hasattr(self._source, 'mask'):
-            R = convolve1d(self._actual_source, self._weights)
-            #else:
-            #    mask = self._source.mask
-            #    R = convolve1d(self._actual_source*mask, self._weights)
+            if self._src_rows is not None:
+                source = self._actual_source[self._src_rows]
+            else:
+                source = self._actual_source
+
+            print source
+            R = convolve1d(source, self._weights)
         else:
-            #if not hasattr(self._source,'mask'):
-            R = convolve2d(self._actual_source, self._weights, self._USV)
-            #else:
-            #    mask = self._source.mask
-            #    R = convolve2d(self._actual_source*mask, self._weights, self._USV)
+            if self._src_rows is not None and self._src_cols is not None:
+                source = self._actual_source[self._src_rows, self._src_cols]
+                source = source.reshape(self.target.shape)
+            else:
+                source = self._actual_source
+            R = convolve2d(source, self._weights, self._USV)
         return R.reshape(self._target.shape)
 
     def __getitem__(self, key):
