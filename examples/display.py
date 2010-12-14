@@ -10,16 +10,6 @@
 This is a set of plot functions dedicated to DANA. They allow to show
 connections when user click on a unit and to display unit activity when mouse is
 over a unit.
-
-**Examples**::
-
-  >>> from dana import *
-  >>> from display import plot
-  >>> Z = Group((40,40), 'V;U')
-  >>> fig = plt.figure(figsize=(10,10), facecolor='white')
-  >>> plot(plt.subplot(1,2,1), Z('V'), 'Zv')
-  >>> plot(plt.subplot(1,2,2), Z('U'), 'Zu')
-  >>> plt.show()
 '''
 from dana import *
 from functools import partial
@@ -139,13 +129,8 @@ def plot(subplot, data, title='', *args, **kwargs):
      axins = inset_axes(subplot, width="35%", height="2.5%", loc=2,
                         bbox_to_anchor=(0.65, 0.05, 1, 1),
                         bbox_transform=subplot.transAxes, borderpad = 0)
-     #axis.vmin =-1
-     #axis.vmax =+1
-     #axis.cmap = plt.cm.PuOr_r
      cb = plt.colorbar(axis, cax=axins, orientation="horizontal", format='%.2f', ticks=[])
      vmin,vmax = cb.get_clim()
-     #cb.set_clim(vmin,vmax)
-     #cb.set_cmap(plt.cm.PuOr_r)
      cb.set_ticks([vmin,vmax])
      cb.original_cmap = cb.get_cmap()
      cb.original_clim = vmin,vmax
@@ -160,9 +145,6 @@ def plot(subplot, data, title='', *args, **kwargs):
 
 if __name__ == '__main__':
     Z = np.random.random((40,40))
-    #Z = Group((40,40), 'V')
-    #Z.mask = np.ones((40,40))
-    #Z.mask[:20,:20] = 0
     fig = plt.figure(figsize=(8,8), facecolor='white')
     plot(plt.subplot(1,1,1), Z, 'A group', cmap=ice_and_fire)
     plt.show()
