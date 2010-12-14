@@ -7,9 +7,11 @@
 # the file COPYING, distributed as part of this software.
 # -----------------------------------------------------------------------------
 ''' Some useful functions '''
-import numpy
+import numpy as np
 import scipy.linalg
+import scipy.sparse as sp
 from group import Group
+
 
 def convolve1d( Z, K ):
     """ Discrete, clamped, linear convolution of two one-dimensional sequences.
@@ -44,12 +46,14 @@ def convolve1d( Z, K ):
                       http://en.wikipedia.org/wiki/Convolution.
     """
 
-    R = numpy.convolve(Z, K, 'same')
+    R = np.convolve(Z, K, 'same')
     i0 = 0
     if R.shape[0] > Z.shape[0]:
         i0 = (R.shape[0]-Z.shape[0])/2 + 1 - Z.shape[0]%2
     i1 = i0+ Z.shape[0]
     return R[i0:i1]
+
+
 
 def convolve2d(Z, K, USV = None):
     """ Discrete, clamped convolution of two two-dimensional arrays.
@@ -95,7 +99,7 @@ def convolve2d(Z, K, USV = None):
         U,S,V = USV
     n = (S > 1e-9).sum()
 #    n = (S > 0).sum()
-    R = numpy.zeros( Z.shape )
+    R = np.zeros( Z.shape )
     for k in range(n):
         Zt = Z.copy() * S[k]
         for i in range(Zt.shape[0]):
@@ -104,6 +108,8 @@ def convolve2d(Z, K, USV = None):
             Zt[:,i] = convolve1d(Zt[:,i], U[::-1,k])
         R += Zt
     return R
+
+
 
 def extract(Z, shape, position, fill=0):
     """ Extract a sub-array from Z using given shape and centered on position.
@@ -129,7 +135,7 @@ def extract(Z, shape, position, fill=0):
 
         **Examples**
 
-        >>> Z = numpy.arange(0,16).reshape((4,4))
+        >>> Z = np.arange(0,16).reshape((4,4))
         >>> extract(Z, shape=(3,3), position=(0,0))
         [[ NaN  NaN  NaN]
          [ NaN   0.   1.]
@@ -149,7 +155,7 @@ def extract(Z, shape, position, fill=0):
                 | 12 13  14  15 |
                 +---------------+
 
-        >>> Z = numpy.arange(0,16).reshape((4,4))
+        >>> Z = np.arange(0,16).reshape((4,4))
         >>> extract(Z, shape=(3,3), position=(3,3))
         [[ 10.  11.  NaN]
          [ 14.  15.  NaN]
@@ -173,21 +179,21 @@ def extract(Z, shape, position, fill=0):
 #    if len(shape) < len(Z.shape):
 #        shape = shape + Z.shape[len(Z.shape)-len(shape):]
 
-    R = numpy.ones(shape, dtype=Z.dtype)*fill
-    P  = numpy.array(list(position)).astype(int)
-    Rs = numpy.array(list(R.shape)).astype(int)
-    Zs = numpy.array(list(Z.shape)).astype(int)
+    R = np.ones(shape, dtype=Z.dtype)*fill
+    P  = np.array(list(position)).astype(int)
+    Rs = np.array(list(R.shape)).astype(int)
+    Zs = np.array(list(Z.shape)).astype(int)
 
-    R_start = numpy.zeros((len(shape),)).astype(int)
-    R_stop  = numpy.array(list(shape)).astype(int)
+    R_start = np.zeros((len(shape),)).astype(int)
+    R_stop  = np.array(list(shape)).astype(int)
     Z_start = (P-Rs//2)
     Z_stop  = (P+Rs//2)+Rs%2
 
-    R_start = (R_start - numpy.minimum(Z_start,0)).tolist()
-    Z_start = (numpy.maximum(Z_start,0)).tolist()
-    #R_stop = (R_stop - numpy.maximum(Z_stop-Zs,0)).tolist()
-    R_stop = numpy.maximum(R_start, (R_stop - numpy.maximum(Z_stop-Zs,0))).tolist()
-    Z_stop = (numpy.minimum(Z_stop,Zs)).tolist()
+    R_start = (R_start - np.minimum(Z_start,0)).tolist()
+    Z_start = (np.maximum(Z_start,0)).tolist()
+    #R_stop = (R_stop - np.maximum(Z_stop-Zs,0)).tolist()
+    R_stop = np.maximum(R_start, (R_stop - np.maximum(Z_stop-Zs,0))).tolist()
+    Z_stop = (np.minimum(Z_stop,Zs)).tolist()
 
     r = [slice(start,stop) for start,stop in zip(R_start,R_stop)]
     z = [slice(start,stop) for start,stop in zip(Z_start,Z_stop)]
@@ -195,6 +201,95 @@ def extract(Z, shape, position, fill=0):
     R[r] = Z[z]
 
     return R
+
+
+
+def convolution_matrix(src, dst, kernel, toric=False):
+    '''
+    Build a sparse convolution matrix M such that:
+
+    (M*src.flatten()).reshape(src.shape) = convolve2d(src,kernel)
+
+    You can specify whether convolution is toric or not and specify a different
+    output shape. If output (dst) is different, convolution is only applied at
+    corresponding normalized location within the src array.
+
+    Building the matrix can be pretty long if your kernel is big but it can
+    nonetheless saves you some time if you need to apply several convolution
+    compared to fft convolution (no need to go to the Fourier domain).
+
+    Parameters:
+    -----------
+
+    src : n-dimensional numpy array
+        Source shape
+
+    dst : n-dimensional numpy array
+        Destination shape
+
+    kernel : n-dimensional numpy array
+        Kernel to be used for convolution
+
+    Returns:
+    --------
+
+    A sparse convolution matrix
+
+    Examples:
+    ---------
+
+    >>> Z = np.ones((3,3))
+    >>> M = convolution_matrix(Z,Z,Z,True)
+    >>> print (M*Z.flatten()).reshape(Z.shape)
+    [[ 9.  9.  9.]
+     [ 9.  9.  9.]
+     [ 9.  9.  9.]]
+    >>> M = convolution_matrix(Z,Z,Z,False)
+    >>> print (M*Z.flatten()).reshape(Z.shape)
+    [[ 4.  6.  4.]
+     [ 6.  9.  6.]
+     [ 4.  6.  4.]]
+    '''
+
+    #nz = kernel.nonzero()
+    nz = (1 - np.isnan(kernel)).nonzero()
+    data = kernel[nz].flatten()
+    indices = [0,]*(len(kernel.shape)+1)
+    indices[0] = np.array(nz)
+    indices[0] += np.atleast_2d((np.array(src.shape)//2 - np.array(kernel.shape)//2)).T
+    to_flat_index = np.ones((len(src.shape),1), dtype=int)
+    to_flat_index[:-1] = src.shape[:-1]
+    R, C, D = [], [], []
+    dst_index = 0
+    src_indices = []
+    for i in range(len(src.shape)):
+        z = np.rint((np.linspace(0,1,dst.shape[i])*(src.shape[i]-1))).astype(int)
+        src_indices.append(z)
+    for index in np.ndindex(dst.shape):
+        dims = []
+        if index[-1] == 0:
+            for i in range(len(index)-1,0,-1):
+                if index[i]: break
+                dims.insert(0,i-1)
+        dims.append(len(dst.shape)-1)
+        for dim in dims:
+            i = index[dim]
+            if toric:
+                z = (indices[dim][dim] - src_indices[dim][i]) % src.shape[dim]
+            else:
+                z = (indices[dim][dim] - src.shape[dim]//2 + src_indices[dim][i])
+            n = np.where((z >= 0)*(z < src.shape[dim]))[0]
+            indices[dim+1] = np.take(indices[dim], n, 1)
+            indices[dim+1][dim] = z[n]
+        dim = len(dst.shape)-1
+        z = indices[dim+1]
+        R.extend( [dst_index,]*len(z[0]) )
+        C.extend( (z*to_flat_index).sum(0).tolist() )
+        D.extend( data[n].tolist() )
+        dst_index += 1
+    return sp.coo_matrix( (D,(R,C)), (dst.size,src.size))
+
+
 
 def gaussian(shape=(25,25), width=0.5, center=0.0):
     ''' Generate a gaussian of the form g(x) = height*exp(-(x-center)**2/width**2).
@@ -223,11 +318,11 @@ def gaussian(shape=(25,25), width=0.5, center=0.0):
     grid=[]
     for size in shape:
         grid.append (slice(0,size))
-    C = numpy.mgrid[tuple(grid)]
-    R = numpy.zeros(shape)
+    C = np.mgrid[tuple(grid)]
+    R = np.zeros(shape)
     for i,size in enumerate(shape):
         R += (((C[i]/float(size-1))*2 - 1 - center[i])/width[i])**2
-    return numpy.exp(-R/2)
+    return np.exp(-R/2)
 
 def empty(shape, dtype=float):
     '''
@@ -238,8 +333,8 @@ def empty(shape, dtype=float):
     shape : {tuple of ints, int}
         Shape of the new group, e.g., ``(2, 3)`` or ``2``.
     dtype : data-type, optional
-        The desired data-type for the group, e.g., `numpy.int8`.  Default is
-        `numpy.float64`.
+        The desired data-type for the group, e.g., `np.int8`.  Default is
+        `np.float64`.
     
     **Returns**
 
@@ -279,8 +374,8 @@ def zeros(shape, dtype=float):
     shape : {tuple of ints, int}
         Shape of the new group, e.g., ``(2, 3)`` or ``2``.
     dtype : data-type, optional
-        The desired data-type for the group, e.g., `numpy.int8`.  Default is
-        `numpy.float64`.
+        The desired data-type for the group, e.g., `np.int8`.  Default is
+        `np.float64`.
     
     **Returns**
 
@@ -317,8 +412,8 @@ def ones(shape, dtype=float):
     shape : {tuple of ints, int}
         Shape of the new group, e.g., ``(2, 3)`` or ``2``.
     dtype : data-type, optional
-        The desired data-type for the group, e.g., `numpy.int8`.  Default is
-        `numpy.float64`.
+        The desired data-type for the group, e.g., `np.int8`.  Default is
+        `np.float64`.
     
     **Returns**
 
