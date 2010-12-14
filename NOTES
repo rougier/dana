@@ -1,16 +1,21 @@
 Release notes for 0.3.3
 =======================
+* Rewrite code for sparse and dense connection
+   -> they can now be made toric and are faster to build
+* Rewrite code for shared connection
+   -> can now accept different source shape
+
+
+Release notes for 0.3.2
+=======================
 * Group mask implemented
 * Asynchronous computing removed (temporarily)
 * Subgroup improved to get relevant connections
 * Examples improved
 
-Release notes for 0.3.2
-=======================
-* Added DNF-1D.py example
-
 Release notes for 0.3.1
 =======================
+* Added DNF-1D.py example
 * Added overt and covert attentional models
 * Refactored the display code in the examples
 
