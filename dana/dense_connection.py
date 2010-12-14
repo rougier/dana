@@ -13,6 +13,7 @@ DenseConnection
 '''
 import numpy as np
 from functions import extract
+from functions import extract, convolution_matrix
 from connection import Connection, ConnectionError
 
 
@@ -44,19 +45,26 @@ class DenseConnection(Connection):
             raise ConnectionError, \
                 'Weights matrix shape is wrong relative to source and target'
 
-        Ks = np.array(list(weights.shape), dtype=int)//2
-        Ss = np.array(list(self.source.shape), dtype=int)//2
-        K = np.zeros((self.target.size,self.source.size), dtype=weights.dtype)
-        for i in range(K.shape[0]):
-            index = np.array(list(np.unravel_index(i, self.target.shape)))
-            index = np.fix((index/np.array(self.target.shape, dtype=weights.dtype) \
-                             * np.array(self.source.shape))).astype(int)
-            K[i,:] = extract(weights,
-                             self.source.shape, Ks+Ss-index, np.NaN).flatten()
-        self._mask = 1 - np.isnan(K).astype(int)
+        K = convolution_matrix(self.source, self.target, weights)
+        nz_rows = K.row
+        nz_cols = K.col
+        self._weights = K.todense()
+        self._mask = np.zeros(K.shape)
+        self._mask[nz_rows, nz_cols] = 1
+
+#        Ks = np.array(list(weights.shape), dtype=int)//2
+#        Ss = np.array(list(self.source.shape), dtype=int)//2
+#        K = np.zeros((self.target.size,self.source.size), dtype=weights.dtype)
+#        for i in range(K.shape[0]):
+#            index = np.array(list(np.unravel_index(i, self.target.shape)))
+#            index = np.fix((index/np.array(self.target.shape, dtype=weights.dtype) \
+#                             * np.array(self.source.shape))).astype(int)
+#            K[i,:] = extract(weights,
+#                             self.source.shape, Ks+Ss-index, np.NaN).flatten()
+#        self._mask = 1 - np.isnan(K).astype(int)
         if self._mask.all():
             self._mask = 1
-        self._weights = np.nan_to_num(K)
+        self._weights = np.array(K.todense()) #np.nan_to_num(K)
 
 
     def output(self):
