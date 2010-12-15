@@ -282,7 +282,7 @@ def convolution_matrix(src, dst, kernel, toric=False):
         for dim in dims:
             i = index[dim]
             if toric:
-                z = (indices[dim][dim] - src_indices[dim][i]) % src.shape[dim]
+                z = (indices[dim][dim] - src.shape[dim]//2 + src_indices[dim][i]) % src.shape[dim]
             else:
                 z = (indices[dim][dim] - src.shape[dim]//2 + src_indices[dim][i])
             n = np.where((z >= 0)*(z < src.shape[dim]))[0]

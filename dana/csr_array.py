@@ -18,6 +18,7 @@ class csr_array(sp.csr_matrix):
     def __init__(self, *args, **kwargs):
         ''' Build array and create mask based on non zero values '''
         sp.csr_matrix.__init__(self, *args, **kwargs)
+        #self.mask = (1-np.isnan(self.data)).nonzero()
         self.mask = self.nonzero()
 
 

@@ -11,6 +11,7 @@ import unittest
 from group import *
 from model import *
 from equation import *
+from learning import *
 from csr_array import *
 from declaration import *
 from diff_equation import *

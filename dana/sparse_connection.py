@@ -32,6 +32,7 @@ class SparseConnection(Connection):
 
         if type(weights) in [int,float]:
             weights = np.ones((1,)*len(self.source.shape))*weights
+        dtype = weights.dtype
 
         # Is kernel already a sparse array ?
         if sp.issparse(weights):
@@ -39,48 +40,42 @@ class SparseConnection(Connection):
                 raise ConnectionError, \
                     'weights matrix shape is wrong relative to source and target'
             else:
-                self._weights = csr_array(weights, dtype=weights.dtype)
+                W = weights.to_coo()
+                data, row, col  = W.data,W.row,W.col
+                i = (1 - np.isnan(data)).nonzero()
+                data, row, col = data[i], row[i], col[i]
+                data = np.where(data, data, np.NaN)
+                weights = sp.sparse.coo_matrix((data,(row,col)), shape=W.shape)
+                weights.data = np.nan_to_num(data)
+        # Else, we need to build it
         elif weights.shape != (self.target.size,self.source.size):
             if len(weights.shape) == len(self.source.shape):
-                K = convolution_matrix(self.source, self.target, weights, self._toric)
-                self._weights = csr_array(K, dtype=weights.dtype)
+                weights = convolution_matrix(self.source, self.target, weights, self._toric)
             else:
                 raise ConnectionError, \
                     'weights matrix shape is wrong relative to source and target'
-        else:
-            self._weights = csr_array(weights, dtype=weights.dtype)
+        self._weights = csr_array(weights, dtype=dtype)
 
 
     def output(self):
         ''' '''
-        #if not hasattr(self._source,'mask'):
         R = dot(self._weights, self._actual_source.flatten()) 
-        #else:
-        #    mask = self._source.mask
-        #    R = dot(self._weights, (self._actual_source*mask).flatten()) 
         return R.reshape(self._target.shape)
 
 
     def __getitem__(self, key):
         ''' '''
-
-        key = np.array(key) % self.target.shape
-        K = np.zeros((len(key)+1,),dtype=int)
-        K[1:] = key
-        S = np.ones((len(self.target.shape)+1),dtype=int)
-        S[:-1] = self.target.shape
-        index = (S*K).sum()
-        #key = np.array(key) % self.target.shape
-        #s = np.ones((len(self.target.shape),))
-        #for i in range(0,len(self.target.shape)-1):
-        #    s[i] = self.target.shape[i]*s[i+1]
-        #index = int((s*key).sum()) 
-        nz = self.weights.mask[1][np.where(self.weights.mask[0] == index)]
-        a = np.ones_like(nz)*index
-        nz = (a,nz)
-        k = np.ones((self.source.size,))*np.NaN
-        k[nz[1]] = self.weights[nz]
-        return k.reshape(self.source.shape)
+        to_flat_index = np.ones(len(self.source.shape), dtype=int)
+        to_flat_index[:-1] = self.source.shape[:-1]
+        index = (key*to_flat_index).sum()
+        w = self._weights[index].tocoo()
+        #print w
+        #print w.col
+        W = np.array([np.NaN,]*self.source.size)
+        W[w.col] = w.data
+        #print W
+        #print W.reshape(self.source.shape)
+        return W.reshape(self.source.shape)
 
 
 

@@ -51,8 +51,7 @@ class DenseConnection(Connection):
         self._weights = K.todense()
         self._mask = np.zeros(K.shape)
         self._mask[nz_rows, nz_cols] = 1
-        if self._mask.all():
-            self._mask = 1
+        if self._mask.all(): self._mask = 1
         self._weights = np.array(K.todense())
 
 
@@ -62,20 +61,29 @@ class DenseConnection(Connection):
         return R.reshape(self._target.shape)
 
 
+    def evaluate(self, dt=0.01):
+        ''' Update weights relative to connection equation '''
+        if not self._equation:
+            return
+        self._equation.evaluate(self._weights, dt, **self._kwargs)
+        if self._mask is not 1:
+            self._weights *= self._mask
+
+
     def __getitem__(self, key):
         ''' '''
-
-        key = np.array(key) % self.target.shape
-        K = np.zeros((len(key)+1,),dtype=np.int32)
-        K[1:] = key
-        S = np.ones((len(self.target.shape)+1),dtype=np.int32)
-        S[:-1] = self.target.shape
-        index = (S*K).sum()
-        if type(self._mask) is np.ndarray:
-            K = self.weights[index]*np.where(self._mask[index], 1, np.NaN)
+        to_flat_index = np.ones(len(self.source.shape), dtype=int)
+        to_flat_index[:-1] = self.source.shape[:-1]
+        index = (key*to_flat_index).sum()
+        weights = np.array(self._weights[index]).flatten()
+        mask = self._mask
+        if mask is not 1:
+            nz = np.array(self._mask[index]).flatten().nonzero()
+            masked_weights = np.zeros(weights.size)*np.NaN
+            masked_weights[nz] = weights[nz]
+            return masked_weights.reshape(self.source.shape)
         else:
-            K = self.weights[index]*self._mask
-        return K.reshape(self.source.shape)
+            return weight.reshape(self.source.shape)
 
 
 
