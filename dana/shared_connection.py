@@ -43,6 +43,8 @@ class SharedConnection(Connection):
                 rows = np.rint((np.linspace(0,1,self.target.shape[0])\
                                  *(self.source.shape[0]-1))).astype(int)
                 self._src_rows = rows
+            self._mask = np.ones(weights.shape)
+            self._mask[np.isnan(weights).nonzero()] = 0
             self._weights = np.nan_to_num(weights)
 
         # 2d convolution case
@@ -58,7 +60,8 @@ class SharedConnection(Connection):
                                  *(self.source.shape[1]-1))).astype(int)
                 self._src_rows = rows.reshape((len(rows),1))
                 self._src_cols = cols.reshape((1,len(cols)))
-
+            self._mask = np.ones(weights.shape)
+            self._mask[np.isnan(weights).nonzero()] = 0
             self._weights = np.nan_to_num(weights)
             dtype = weights.dtype
             self._USV = scipy.linalg.svd(np.nan_to_num(weights))
@@ -93,65 +96,52 @@ class SharedConnection(Connection):
     def __getitem__(self, key):
         ''' '''
 
-        key = np.array(key) % self.target.shape
-        s = np.array(list(self.source.shape)).astype(float)/np.array(list(self.target.shape))
-        c = (key*s).astype(int).flatten()
-        Ks = np.array(list(self.weights.shape), dtype=int)//2
-        Ss = np.array(list(self.source.shape), dtype=int)//2
-        return extract(self.weights, self.source.shape, Ks+Ss-c, np.NaN)
+        src = self.source
+        dst = self.target
+        kernel = self._weights
+        src_shape = np.array(src.shape, dtype=float)
+        dst_shape = np.array(dst.shape, dtype=float)
+        kernel_shape = np.array(kernel.shape, dtype=float)
+        dst_key = np.array(key, dtype=float)
+        src_key = np.rint((dst_key/(dst_shape-1))*(src_shape-1)).astype(int)
+        scale = dst_shape/src_shape
+
+        Z = np.zeros(src.shape) * np.NaN
+        for i in range(kernel.size):
+            k_key = np.array(np.unravel_index(i, kernel.shape))
+            if self._toric:
+                key = (src_key + scale*k_key - kernel_shape//2).astype(int) % src_shape
+            else:
+                key = (src_key + scale*k_key - kernel_shape//2).astype(int)
+            bad = False
+            for k in range(len(key)):
+                if key[k] < 0 or key[k] >= Z.shape[k]: bad = True
+            if not bad:
+                if self._mask[tuple(k_key.tolist())]:
+                    Z[tuple(key.tolist())] = kernel[tuple(k_key.tolist())]
+        return Z
+
+        # I = np.ogrid[ [slice(0, src_shape[i] )
+        #                for i in range(src_shape.size)] ]
+
+        # if not self._toric:
+        #     key = np.array(key) % self.target.shape
+        #     s = np.array(list(self.source.shape)).astype(float)/np.array(list(self.target.shape))
+        #     c = (key*s).astype(int).flatten()
+        #     Ks = np.array(list(self.weights.shape), dtype=int)//2
+        #     Ss = np.array(list(self.source.shape), dtype=int)//2
+        #     W = self.weights.copy()
+        #     W[self._mask] = np.NaN
+        #     return extract(W, self.source.shape, Ks+Ss-c, np.NaN)
+        # else:
+        #     src_shape = np.array(list(self.source.shape))
+        #     kernel_shape = np.array(list(self.weights.shape))
+        #     shape = np.maximum(src_shape, kernel_shape)
+        #     W = np.ones(shape)*np.NaN
+        #     I = np.ogrid[ [slice(0, src_shape[i] )
+        #                    for i in range(src_shape.size)] ]
+        #     print I
+        #     return W
+            
 
 
-# ---------------------------------------------------------------- __main__ ---
-if __name__ == '__main__':
-    from random import choice
-
-    # 1. SharedConnection example using regular arrays
-    # -------------------------------------------------------------------------
-    source = np.ones((3,3))
-    target = np.ones((3,3))
-
-    # 1.1 Without learning, full specification of the weights
-    # -------------------------------------------------------
-    weights = np.ones((target.size,source.size))
-    C = SharedConnection(source, target, weights)
-    C.propagate()
-    print target
-    print C[0,0]
-
-    # 1.2 Without learning, partial specification of the weights
-    # ----------------------------------------------------------
-    weights = np.ones((3,3))
-    C = SharedConnection(source, target, weights)
-    C.propagate()
-    print target
-    print C[0,0]
-
-    # 2. SharedConnection example using record arrays
-    # -------------------------------------------------------------------------
-    source = np.ones((3,3), dtype=[('V','f8'), ('mask','f8')])
-    target = np.ones((3,3), dtype=[('V','f8'), ('mask','f8')])
-    weights = np.ones((3,3))
-
-    # 2.1 Without learning, without mask
-    # ----------------------------------
-    C = SharedConnection(source, target, weights)
-    C.propagate()
-    print target['V']
-    print C[0,0]
-
-    # 2.2 Without learning, with mask in source
-    # -----------------------------------------
-    source['mask'][0,0] = 0
-    C = SharedConnection(source, target, weights)
-    C.propagate()
-    print target['V']
-    print C[0,0]
-
-    # 2.3 Without learning, with mask in weights
-    # ------------------------------------------
-    source['mask'] = 1
-    weights[1,1] = np.NaN
-    C = SharedConnection(source, target, weights)
-    C.propagate()
-    print target['V']
-    print C[0,0]

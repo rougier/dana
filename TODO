@@ -1,17 +1,22 @@
-
-* Add circular option for connection (might be difficult for dense and sparse)
-    -> done for dense and sparse
-
 * Add FFT convolution for shared connections when kernel is badly separable
-
-* Allow shared connections even when src and dst are not the same size
-   (use scipy.ndimage.interpolation.zoom)
-
-* Make sparse and dense kernel building much faster (no idea how yet)
-   -> done (see convolution_matrix)
 
 * Implement Monitor objects to monitior various activities
 
 * Implement Network operators that can be called anytime
   => @every(dt)
   => @random(dt)
+
+- __getitem__ of connections is not working properly
+   1. does not take different src/dst shapes into account
+   2. does not handle toric connections for shared connections
+   -> done
+
+- Add circular option for connection (might be difficult for dense and sparse)
+   -> done for dense and sparse
+
+- Allow shared connections even when src and dst are not the same size
+   (use scipy.ndimage.interpolation.zoom)
+   -> done, use indexing in place of zoom
+
+- Make sparse and dense kernel building much faster (no idea how yet)
+   -> done (see convolution_matrix)
