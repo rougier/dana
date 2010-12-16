@@ -31,7 +31,6 @@ class SharedOneDimensionTestCase(unittest.TestCase):
         assert np_equal( Connection(ones(3), ones(3), ones(3)).output(),
                          array([2,3,2]))
 
-    @unittest.expectedFailure
     def test_5(self):
         assert np_equal( Connection(ones(3), ones(5), ones(3)).output(),
                          array([2,2,3,2,2]))
@@ -80,7 +79,7 @@ class SharedTwoDimensionTestCase(unittest.TestCase):
                          array([[4,6,4],
                                 [6,9,6],
                                 [4,6,4]]))
-    @unittest.expectedFailure
+
     def test_5(self):
         assert np_equal( Connection(ones((3,3)), ones((5,5)), ones((3,3))).output(),
                          array([[4,4,6,4,4],

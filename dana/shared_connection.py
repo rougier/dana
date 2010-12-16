@@ -50,6 +50,7 @@ class SharedConnection(Connection):
         # 2d convolution case
         # -------------------
         elif len(self.source.shape) == len(self.target.shape) == 2:
+
             if len(weights.shape) != 2:
                 raise ConnectionError, \
                     '''Shared connection requested but weights matrix shape does not match.'''
@@ -78,18 +79,15 @@ class SharedConnection(Connection):
     def output(self):
         ''' '''
         if len(self._source.shape) == 1:
-            if self._src_rows is not None:
-                source = self._actual_source[self._src_rows]
-            else:
-                source = self._actual_source
+            source = self._actual_source
             R = convolve1d(source, self._weights, self._toric)
+            if self._src_rows is not None:
+                R = R[self._src_rows]
         else:
-            if self._src_rows is not None and self._src_cols is not None:
-                source = self._actual_source[self._src_rows, self._src_cols]
-                source = source.reshape(self.target.shape)
-            else:
-                source = self._actual_source
+            source = self._actual_source
             R = convolve2d(source, self._weights, self._USV, self._toric)
+            if self._src_rows is not None and self._src_cols is not None:
+                R = R[self._src_rows, self._src_cols]
         return R.reshape(self._target.shape)
 
 
@@ -104,8 +102,7 @@ class SharedConnection(Connection):
         kernel_shape = np.array(kernel.shape, dtype=float)
         dst_key = np.array(key, dtype=float)
         src_key = np.rint((dst_key/(dst_shape-1))*(src_shape-1)).astype(int)
-        scale = dst_shape/src_shape
-
+        scale = 1 #dst_shape/src_shape
         Z = np.zeros(src.shape) * np.NaN
         for i in range(kernel.size):
             k_key = np.array(np.unravel_index(i, kernel.shape))
@@ -120,28 +117,3 @@ class SharedConnection(Connection):
                 if self._mask[tuple(k_key.tolist())]:
                     Z[tuple(key.tolist())] = kernel[tuple(k_key.tolist())]
         return Z
-
-        # I = np.ogrid[ [slice(0, src_shape[i] )
-        #                for i in range(src_shape.size)] ]
-
-        # if not self._toric:
-        #     key = np.array(key) % self.target.shape
-        #     s = np.array(list(self.source.shape)).astype(float)/np.array(list(self.target.shape))
-        #     c = (key*s).astype(int).flatten()
-        #     Ks = np.array(list(self.weights.shape), dtype=int)//2
-        #     Ss = np.array(list(self.source.shape), dtype=int)//2
-        #     W = self.weights.copy()
-        #     W[self._mask] = np.NaN
-        #     return extract(W, self.source.shape, Ks+Ss-c, np.NaN)
-        # else:
-        #     src_shape = np.array(list(self.source.shape))
-        #     kernel_shape = np.array(list(self.weights.shape))
-        #     shape = np.maximum(src_shape, kernel_shape)
-        #     W = np.ones(shape)*np.NaN
-        #     I = np.ogrid[ [slice(0, src_shape[i] )
-        #                    for i in range(src_shape.size)] ]
-        #     print I
-        #     return W
-            
-
-
