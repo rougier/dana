@@ -341,7 +341,7 @@ class Group(object):
                 if var not in exts: exts.append(var)
                 continue
             eq = model[var]
-            for v in eq.variables:
+            for v in eq._variables:
                 if v not in base.keys:
                     continue
                 elif isinstance(model[v], Declaration):

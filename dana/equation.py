@@ -162,8 +162,14 @@ class Equation(Definition):
         return self.__f__(*args, **kwargs)
 
 
-    variables = property(lambda self: self._variables,
-                         doc='''Equation variables''')
+
+    def _get_variables(self):
+        '''Get equation variables'''
+        return self._variables
+    variables = property(_get_variables,
+                         doc='''Equation variable names''')
+
+
 
 if __name__ == '__main__':
     y, t,dt = 0.0, 1.0,  0.01
