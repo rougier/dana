@@ -206,7 +206,7 @@ class Group(object):
         # Make sure all masked units are set to 0
         if hasattr(self,'mask'):
             for key in self._data.keys():
-                self._data[eq.varname] *= self.mask
+                self._data[key] *= self.mask
 
         # Learning
         for connection in self._connections:
@@ -241,7 +241,7 @@ class Group(object):
             # Make sure all masked units are set to 0
             if hasattr(self,'mask'):
                 for key in self._data.keys():
-                    self._data[eq.varname][...] *= self.mask
+                    self._data[key][...] *= self.mask
 
             for connection in self._connections:
                 connection.evaluate(dt)
