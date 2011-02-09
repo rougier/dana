@@ -31,6 +31,9 @@ Ky = np.array([[+1.,+2.,+1.], [ 0., 0., 0.], [-1.,-2.,-1.]])
 Gy = SharedConnection(L, src('Gy'), Ky)  
 src.run(n=1)
 
+Z = I.view(dtype=float).reshape(I.shape[0],I.shape[1],3)
+Image.fromarray((src.V*256).astype(np.uint8)).save('lena-sobel.png')
+
 fig = plt.figure(figsize=(10,5))
 plt.subplot(1,2,1), plt.title('Original image')
 plt.imshow(image, origin='upper', interpolation='bicubic')
