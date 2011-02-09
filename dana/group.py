@@ -256,7 +256,12 @@ class Group(object):
 
  
 
-    def flatten(self):
+    def ravel(self):
+        '''
+        Return a flattened group.
+    
+        A 1-D group, containing the elements of the group, is returned.
+        '''
         return self.reshape( (self.size,) )
 
 

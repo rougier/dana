@@ -57,7 +57,7 @@ class DenseConnection(Connection):
 
     def output(self):
         ''' '''
-        R = np.dot(self._weights, self._actual_source.flatten()) 
+        R = np.dot(self._weights, self._actual_source.ravel()) 
         return R.reshape(self._target.shape)
 
 
@@ -77,10 +77,10 @@ class DenseConnection(Connection):
         to_flat_index = np.ones(len(dst.shape), dtype=int)
         to_flat_index[:-1] = dst.shape[:-1]
         index = (key*to_flat_index).sum()
-        weights = np.array(self._weights[index]).flatten()
+        weights = np.array(self._weights[index]).ravel()
         mask = self._mask
         if mask is not 1:
-            nz = np.array(self._mask[index]).flatten().nonzero()
+            nz = np.array(self._mask[index]).ravel().nonzero()
             masked_weights = np.zeros(weights.size)*np.NaN
             masked_weights[nz] = weights[nz]
             return masked_weights.reshape(self.source.shape)

@@ -10,7 +10,7 @@
 SparseConnection
 '''
 import numpy as np
-import scipy.sparse as sp
+import scipy.sparse as sparse
 from csr_array import csr_array, dot
 from functions import extract, convolution_matrix
 from connection import Connection, ConnectionError
@@ -35,17 +35,17 @@ class SparseConnection(Connection):
         dtype = weights.dtype
 
         # Is kernel already a sparse array ?
-        if sp.issparse(weights):
+        if sparse.issparse(weights):
             if weights.shape != (self.target.size, self.source.size):
                 raise ConnectionError, \
                     'weights matrix shape is wrong relative to source and target'
             else:
-                W = weights.to_coo()
+                W = weights.tocoo()
                 data, row, col  = W.data,W.row,W.col
                 i = (1 - np.isnan(data)).nonzero()
                 data, row, col = data[i], row[i], col[i]
                 data = np.where(data, data, np.NaN)
-                weights = sp.sparse.coo_matrix((data,(row,col)), shape=W.shape)
+                weights = sparse.coo_matrix((data,(row,col)), shape=W.shape)
                 weights.data = np.nan_to_num(data)
         # Else, we need to build it
         elif weights.shape != (self.target.size,self.source.size):
@@ -59,7 +59,7 @@ class SparseConnection(Connection):
 
     def output(self):
         ''' '''
-        R = dot(self._weights, self._actual_source.flatten()) 
+        R = dot(self._weights, self._actual_source.ravel()) 
         return R.reshape(self._target.shape)
 
 

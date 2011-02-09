@@ -215,7 +215,7 @@ def convolution_matrix(src, dst, kernel, toric=False):
     '''
     Build a sparse convolution matrix M such that:
 
-    (M*src.flatten()).reshape(src.shape) = convolve2d(src,kernel)
+    (M*src.ravel()).reshape(src.shape) = convolve2d(src,kernel)
 
     You can specify whether convolution is toric or not and specify a different
     output shape. If output (dst) is different, convolution is only applied at
@@ -247,12 +247,12 @@ def convolution_matrix(src, dst, kernel, toric=False):
 
     >>> Z = np.ones((3,3))
     >>> M = convolution_matrix(Z,Z,Z,True)
-    >>> print (M*Z.flatten()).reshape(Z.shape)
+    >>> print (M*Z.ravel()).reshape(Z.shape)
     [[ 9.  9.  9.]
      [ 9.  9.  9.]
      [ 9.  9.  9.]]
     >>> M = convolution_matrix(Z,Z,Z,False)
-    >>> print (M*Z.flatten()).reshape(Z.shape)
+    >>> print (M*Z.ravel()).reshape(Z.shape)
     [[ 4.  6.  4.]
      [ 6.  9.  6.]
      [ 4.  6.  4.]]
@@ -260,7 +260,7 @@ def convolution_matrix(src, dst, kernel, toric=False):
 
     #nz = kernel.nonzero()
     nz = (1 - np.isnan(kernel)).nonzero()
-    data = kernel[nz].flatten()
+    data = kernel[nz].ravel()
     indices = [0,]*(len(kernel.shape)+1)
     indices[0] = np.array(nz)
     indices[0] += np.atleast_2d((np.array(src.shape)//2 - np.array(kernel.shape)//2)).T

@@ -64,10 +64,10 @@ class Connection(object):
         # Get actual source
         names = source.dtype.names
         if names == None:
-            self._actual_source = source #.flatten()
+            self._actual_source = source
             self._source_name = ''
         else:
-            self._actual_source = (source[names[0]]) #.flatten()
+            self._actual_source = (source[names[0]])
             self._source_name = names[0]
 
         # Get actual target
