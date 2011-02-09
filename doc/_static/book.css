@@ -1,0 +1,264 @@
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                                  General │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
+body {
+    font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;
+    font-size:   9pt;
+    line-height: 1.5;
+    margin:      0;
+    padding:     0;
+    color:            #333;
+    background-color: #eee;
+}
+
+p {
+    text-align: justify;
+}
+
+
+
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                                    Links │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
+a {
+    text-decoration: None;
+    color: #336698;
+}
+.headerlink {
+    display: none;
+}
+
+
+
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                                   Header │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
+div.header { }
+
+
+
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                                  Content │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
+div.document {
+    border: 1px solid #ddd;
+    background-color: #fff;
+    width: 600px;
+    margin: 32px auto;
+    padding: 0 64px 0px 164px;
+}
+div.section {
+    padding-top: 2em;
+}
+.abstract {
+    display:block;
+    font-size: 150%;
+    color: #ccd;
+    padding-bottom: 2em;
+}
+
+.document-toc {
+    line-height: 1.25em;
+    margin:0;
+    padding:0;
+    text-align: right;
+    float: right;
+    font-size: 7pt;
+    border-right:  2px solid #0C3762;
+    margin-top: 20px;
+    padding-right: 24px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-right: -24px;
+    border: none;
+}
+.document-toc .toctree-l1, .document-toc.toctree-l1 a {
+    color: #aaaaaa;
+    list-style-type: none;
+}
+.document-toc .toctree-l2, .document-toc .toctree-l2 a {
+    list-style-type: none;
+    padding-left: 0.5em;
+    display: none;
+}
+.document-toc li .current {
+    font-weight: bold;
+/*    color: black;*/
+}
+
+
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                                   Footer │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
+div.footer {
+    text-align: right;
+    line-height: 1.25em;
+    font-size: 8pt;
+    color: #0C3762;
+    margin: 0;
+    padding: 0;
+    padding-top: 8px;
+    padding-right: 12px;
+    padding-bottom: 8px;
+    margin-right: -12px;
+    margin-top: 64px;
+    margin-bottom: 8px;
+    border-right:  1px solid #0C3762;
+    width: 600px;
+
+}
+
+
+
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                        Table of Contents │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
+
+.section .toctree-l1 {
+    color: #387dbf;
+    font-size: 11pt;
+    list-style-type: none;
+    padding-top: 1em;
+}
+
+.section .toctree-l2, .section .toctree-l2 a {
+    font-size: 9pt;
+    color: black;
+    list-style-type: none;
+	list-style: none;
+	padding: 0;
+    margin: 0;
+    padding-left: 1em;
+}
+
+
+
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                                  Headers │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
+h1 {
+    font-weight: normal;
+    color: #0C3762;
+    text-decoration: None;
+    font-size: 18pt;
+    margin: 0;
+    padding: 0;
+    padding-top: 40px;
+    padding-left: 24px;
+    padding-bottom: 16px;
+    margin-left: -24px;
+    margin-bottom: 40px;
+    border: none;
+    border-left:  2px solid #0C3762;
+    width: 500px;
+}
+
+h1:before {
+    display:block;
+    content: "DANA Handbook";
+    margin: 0;
+    padding: 0;
+    margin-bottom: -8px;
+    font-size:  12px;
+}
+
+h2, h2 a {
+    color: #0C3762;
+    font-size: 15pt;
+    font-weight: normal;
+/*    border-bottom: thin dotted #E0E0E0;*/
+    padding-top: 1em;
+    padding-left: -32px;
+    margin-left: -32px;
+}
+
+h3, h3 a {
+    color: #0C3762;
+    font-size: 12pt;
+    font-weight: normal;
+    padding-top: 0em;
+}
+
+
+
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                                     Code │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
+pre.literal-block {
+    font-family: Monaco, Monotype;
+    font-size: 90%;
+    line-height: 1.25em;
+    margin: 0;
+    padding: 0.5em;
+    border: 0;
+    border-left: 3px solid #cccccc;
+}
+
+
+
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                               Admonition │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
+div.admonition {
+    float: left;
+    font-size: 7pt;
+    margin: 0;
+    padding:          3px 5px;
+    margin-left:     -150px;
+    width:            130px;
+    border-left:     1px solid #cccccc;
+}
+div.admonition p {
+    text-align: left;
+    margin: 0;
+    padding: 0;
+}
+
+div.admonition .first {
+    font-weight: bold;
+}
+
+
+
+
+
+
+ol, ul {
+    padding: 0;
+    margin: 0;
+}
+
+ul > li, ol > li
+{
+    padding: 0;
+    margin: 0;
+}
+
+div.related {
+    float:right;
+    font-size: 18pt;
+    margin-right: -60px;
+}
+
+.highlight {
+    border-left: 3px solid #ccc;
+    padding-left: 1em;
+}

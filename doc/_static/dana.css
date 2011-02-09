@@ -1,0 +1,244 @@
+@import url("reset.css");
+
+body {
+    color: #333333;
+    font-family: "optima", "lucida grande", "lucida sans unicode",
+                 verdana, arial, helvetica, sans-serif;
+    font-size: 1.1em;
+    line-height: 1.5em;
+    margin-top: 0em;
+}
+
+/* -------------------------------------------------------------------------
+   Document
+   ------------------------------------------------------------------------- */
+div.document {
+    margin-top:     50px;
+    margin-bottom:   5em;
+    margin-left:   250px;
+    margin-right:    5em;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: "futura", "lucida grande", "lucida sans unicode",
+                 verdana, arial, helvetica, sans-serif;
+    font-weight: normal;
+}
+h1 {
+    font-size: 2em;
+    margin-top:    2em;
+    margin-bottom: 1em;
+}
+h2 {
+    font-size:  1.25em;
+    margin-top:    3em;
+    margin-bottom: 1em;
+    color: #326598;
+    padding-left:  2em;
+    margin-left:  -2em;
+    margin-right: 25%;
+    padding-bottom: .5em;
+    border-bottom: 2px solid #326598;
+}
+h3 {
+    font-size:     1em;
+    margin-top:    3em;
+    margin-bottom: 1em;
+    border-bottom: 1px solid #efefef;
+    color: #326598;
+}
+
+p {
+    margin-bottom: .5em;
+}
+
+dl.docutils {
+    margin-bottom: 1.5em;
+}
+
+strong {
+    font-weight: bold;
+}
+em {
+    font-style: italic;
+}
+a {
+    color: #326598;
+    text-decoration: none;
+}
+a:hover {
+    color: #326598;
+    text-decoration: underline;
+}
+hr {
+    margin-top: 1em;
+    border: 0;
+}    
+
+
+ul {
+    list-style-position: outside;
+    list-style-type: circle;
+    margin-left: 0;
+    padding-bottom: 1em;
+}
+
+
+/* -- image ---------------------------------------------------------------- */
+img {
+    text-align : left;
+}
+
+/* -- figure --------------------------------------------------------------- */
+.figure {
+    margin-top:    1em;
+    margin-bottom: 1em;
+}
+
+/* -- math display --------------------------------------------------------- */
+img.math {
+    vertical-align: middle;
+}
+div.body div.math p {
+    text-align: center;
+}
+span.eqno {
+    float: right;
+}
+
+/* -- code ----------------------------------------------------------------- */
+tt {
+    font-family: Inconsolata, Monaco, monospace;
+}
+pre {
+    padding:    .5em;
+    line-height: 1.25em;
+    border-left: 3px solid #cccccc;
+    background-color: #ffffff;
+    font-family: Inconsolata, Monaco, monospace;
+    margin-bottom: 1em;
+}
+
+
+dl > dt  {
+    font-family: Inconsolata, Monaco, monospace;
+}
+dl.method, dl.attribute, dl.function, dl.class {
+    margin-bottom: 1em;
+}
+dl.class > dt, dl.function > dt, dl.method > dt, dl.attribute > dt {
+    padding: .25em;
+    margin-top: 2em;
+    background: #eeeeee;
+}
+.descname {
+    font-weight: bold;
+}
+
+
+/* -------------------------------------------------------------------------
+   Document TOC
+   ------------------------------------------------------------------------- */
+/* Global */
+.toctree-wrapper {
+    padding-bottom: 3em;
+}
+.toctree-wrapper ul {
+  list-style-type:none;
+  padding-bottom: 0;
+}
+/*
+.toctree-l1 {
+    margin-bottom: 1em;
+}
+*/
+.toctree-l2 {
+    padding-left: 2em;
+}
+
+/* Local */
+li > ul > li {
+    padding-left: 2em;
+}
+
+div.document .contents {
+    margin-bottom: 5em;
+}
+div.document .topic-title {
+    margin-top: 2em;
+    font-weight: bold;
+}
+.contents ul {
+  list-style-type:none;
+  padding-bottom: 0;
+}
+
+
+
+/* -------------------------------------------------------------------------
+   Admonition
+   ------------------------------------------------------------------------- */
+div.admonition {
+    float: left;
+    line-height: 1.5em;
+    font-size: 80%;
+    margin: 0;
+    padding:          3px 5px;
+    margin-left:     -220px;
+    width:            200px;
+    border-left:     1px solid #cccccc;
+}
+div.admonition p {
+    text-align: left;
+    margin: 0;
+    padding: 0;
+}
+
+div.admonition .first {
+    font-weight: bold;
+}
+
+
+
+/* -------------------------------------------------------------------------
+   Header
+   ------------------------------------------------------------------------- */
+div.header {
+    padding-top: 25px;
+    padding-left:15px;
+}
+
+/* -------------------------------------------------------------------------
+   Footer
+   ------------------------------------------------------------------------- */
+div.footer {
+    font-family: "futura", "lucida grande", "lucida sans unicode",
+                 verdana, arial, helvetica, sans-serif;
+    font-size: 75%;
+    line-height: 1.5em;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background-color: #EEE;
+    width: 100%;
+    border-top: 1px solid;
+}
+div.footer table {
+    width: 98%;
+    margin: auto;
+}
+div.footer table td a {
+    color: #777;
+    text-decoration: none;
+}
+div.footer td.left {
+    text-align: left;
+    width: 40%;
+}
+div.footer td.center {
+    text-align: center;
+    width: 20%;
+}
+div.footer td.right {
+    text-align: right;
+    width: 40%;
+}
