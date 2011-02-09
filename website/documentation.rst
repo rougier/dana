@@ -2,16 +2,21 @@
 .. include:: footer.txt
 
 
-Tutorial
-========
-A gentle `introduction <doc/tutorial.html>`_ to dana.
+Complete guide
+===============
+The dana `handbook <doc/index.html>`_.
+
+|
+
+Quick Start
+===========
+A `quickstart <doc/quickstart.html>`_ to dana for the impatients.
 
 |
 
 API Reference
 =============
-Application programming interface for all dana objects is available from `here
-<doc/api.html>`_.
+Application programming interface available from `here <doc/api.html>`_.
 
 |
 
