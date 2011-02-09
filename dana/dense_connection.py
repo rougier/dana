@@ -85,6 +85,6 @@ class DenseConnection(Connection):
             masked_weights[nz] = weights[nz]
             return masked_weights.reshape(self.source.shape)
         else:
-            return weight.reshape(self.source.shape)
+            return weights.reshape(self.source.shape)
 
        
