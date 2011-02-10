@@ -258,22 +258,34 @@ def convolution_matrix(src, dst, kernel, toric=False):
      [ 4.  6.  4.]]
     '''
 
-    #nz = kernel.nonzero()
+
+
+    # Get non NaN value from kernel and their indices.
     nz = (1 - np.isnan(kernel)).nonzero()
     data = kernel[nz].ravel()
     indices = [0,]*(len(kernel.shape)+1)
     indices[0] = np.array(nz)
     indices[0] += np.atleast_2d((np.array(src.shape)//2 - np.array(kernel.shape)//2)).T
+
+    # Generate an array A for a given shape such that given an index tuple I,
+    # we can translate into a flat index F = (I*A).sum()
     to_flat_index = np.ones((len(src.shape),1), dtype=int)
     to_flat_index[:-1] = src.shape[:-1]
+
     R, C, D = [], [], []
     dst_index = 0
     src_indices = []
+
+    # Translate target tuple indices into source tuple indices taking care of
+    # possible scaling (this is done by normalizing indices)
     for i in range(len(src.shape)):
         z = np.rint((np.linspace(0,1,dst.shape[i])*(src.shape[i]-1))).astype(int)
         src_indices.append(z)
+
+    nd = [0,]*(len(kernel.shape))
     for index in np.ndindex(dst.shape):
         dims = []
+        # Are we starting a new dimension ?
         if index[-1] == 0:
             for i in range(len(index)-1,0,-1):
                 if index[i]: break
@@ -286,15 +298,61 @@ def convolution_matrix(src, dst, kernel, toric=False):
             else:
                 z = (indices[dim][dim] - src.shape[dim]//2 + src_indices[dim][i])
             n = np.where((z >= 0)*(z < src.shape[dim]))[0]
+            if dim == 0:
+                nd[dim] = n.copy()
+            else:
+                nd[dim] = nd[dim-1][n]
             indices[dim+1] = np.take(indices[dim], n, 1)
             indices[dim+1][dim] = z[n]
         dim = len(dst.shape)-1
         z = indices[dim+1]
         R.extend( [dst_index,]*len(z[0]) )
         C.extend( (z*to_flat_index).sum(0).tolist() )
-        D.extend( data[n].tolist() )
+        D.extend( data[nd[-1]].tolist() )
         dst_index += 1
+
     return sp.coo_matrix( (D,(R,C)), (dst.size,src.size))
+    #Z = np.zeros((dst.size,src.size))
+    #Z[R,C] = D
+    #return Z
+
+    # #nz = kernel.nonzero()
+    # nz = (1 - np.isnan(kernel)).nonzero()
+    # data = kernel[nz].flatten()
+    # indices = [0,]*(len(kernel.shape)+1)
+    # indices[0] = np.array(nz)
+    # indices[0] += np.atleast_2d((np.array(src.shape)//2 - np.array(kernel.shape)//2)).T
+    # to_flat_index = np.ones((len(src.shape),1), dtype=int)
+    # to_flat_index[:-1] = src.shape[:-1]
+    # R, C, D = [], [], []
+    # dst_index = 0
+    # src_indices = []
+    # for i in range(len(src.shape)):
+    #     z = np.rint((np.linspace(0,1,dst.shape[i])*(src.shape[i]-1))).astype(int)
+    #     src_indices.append(z)
+    # for index in np.ndindex(dst.shape):
+    #     dims = []
+    #     if index[-1] == 0:
+    #         for i in range(len(index)-1,0,-1):
+    #             if index[i]: break
+    #             dims.insert(0,i-1)
+    #     dims.append(len(dst.shape)-1)
+    #     for dim in dims:
+    #         i = index[dim]
+    #         if toric:
+    #             z = (indices[dim][dim] - src.shape[dim]//2 + src_indices[dim][i]) % src.shape[dim]
+    #         else:
+    #             z = (indices[dim][dim] - src.shape[dim]//2 + src_indices[dim][i])
+    #         n = np.where((z >= 0)*(z < src.shape[dim]))[0]
+    #         indices[dim+1] = np.take(indices[dim], n, 1)
+    #         indices[dim+1][dim] = z[n]
+    #     dim = len(dst.shape)-1
+    #     z = indices[dim+1]
+    #     R.extend( [dst_index,]*len(z[0]) )
+    #     C.extend( (z*to_flat_index).sum(0).tolist() )
+    #     D.extend( data[n].tolist() )
+    #     dst_index += 1
+#    return sp.coo_matrix( (D,(R,C)), (dst.size,src.size))
 
 
 
