@@ -63,13 +63,13 @@ manually the simulation, we can check those are the expected values::
 
     t=2: V₁(2) = W₁(1)*V₁(1) = 1
          V₂(2) = W₂(1)*V₂(1) = 2
-         W₁(1) = 1 
-         W₂(1) = W₂(0)+dt*1 = 3
+         W₁(2) = 1 
+         W₂(2) = W₂(1)+dt*1 = 3
 
-    t=3: V₁(2) = W₁(1)*V₁(1) = 1
-         V₂(2) = W₂(1)*V₂(1) = 6
-         W₁(1) = 1 
-         W₂(1) = W₂(0)+dt*1 = 4
+    t=3: V₁(3) = W₁(2)*V₁(2) = 1
+         V₂(3) = W₂(2)*V₂(2) = 6
+         W₁(3) = 1 
+         W₂(3) = W₂(2)+dt*1 = 4
 
 
 
@@ -84,13 +84,13 @@ consider the following situation::
     >>> source = Group(10, 'V')
     >>> target = Group(10, 'V;I')
     >>> C = DenseConnection(source('V'), target('I'), np.ones(1),
-                            '''dW/dt = V''')
+                            'dW/dt = V')
 
-Does the ``V``value relates to the source or to the target group ? To be able
-to disambiguate this kind of situation, dana provides the ``pre`` and ``post``
+Does the ``V`` value relates to the source or to the target group ? To
+disambiguate this kind of situation, dana provides the ``pre`` and ``post``
 keyword for the definition of the equation of a connection. The ``pre``relates
 to the source and the ``post`` relates to the target. We an now re-write the
 equation withtou any ambiguities::
 
     >>> C = DenseConnection(source('V'), target('I'), np.ones(1),
-                            '''dW/dt = post.V''')
+                            'dW/dt = post.V')
