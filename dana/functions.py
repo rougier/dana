@@ -270,7 +270,7 @@ def convolution_matrix(src, dst, kernel, toric=False):
     # Generate an array A for a given shape such that given an index tuple I,
     # we can translate into a flat index F = (I*A).sum()
     to_flat_index = np.ones((len(src.shape),1), dtype=int)
-    to_flat_index[:-1] = src.shape[:-1]
+    to_flat_index[:-1] = src.shape[1]
 
     R, C, D = [], [], []
     dst_index = 0
@@ -386,7 +386,8 @@ def gaussian(shape=(25,25), width=0.5, center=0.0):
     C = np.mgrid[tuple(grid)]
     R = np.zeros(shape)
     for i,size in enumerate(shape):
-        R += (((C[i]/float(size-1))*2 - 1 - center[i])/width[i])**2
+        if shape[i] > 1:
+            R += (((C[i]/float(size))*2 - 1 - center[i])/width[i])**2
     return np.exp(-R/2)
 
 def empty(shape, dtype=float):
