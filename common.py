@@ -33,7 +33,7 @@ PLATFORM            = 'any'
 
 MAJOR = 0
 MINOR = 3
-MICRO = 3
+MICRO = 4
 ALPHA = False
 BETA  = False
 DEV   = False

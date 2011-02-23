@@ -1,10 +1,15 @@
+Release notes for 0.3.4
+=======================
+* Fix a nasty bug in convolution matrix building
+  and added relevant unittests
+
 Release notes for 0.3.3
 =======================
 * Rewrite code for sparse and dense connection
    -> they can now be made toric and are faster to build
 * Rewrite code for shared connection
    -> can now accept different source shape
-
+* Rewrite documentation
 
 Release notes for 0.3.2
 =======================

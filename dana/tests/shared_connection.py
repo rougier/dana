@@ -62,6 +62,24 @@ class SharedOneDimensionTestCase(unittest.TestCase):
         assert np_equal(Connection(ones(3), ones(3), ones(3), toric=True).output(),
                         ones(3)*3)
 
+    def test_12(self):
+        Z = ones(5)
+        K = arange(5)
+        C = Connection(Z,Z,K)
+        assert np_equal(C[0], array([2,3,4,NaN,NaN]))
+
+    def test_13(self):
+        Z = ones(5)
+        K = arange(5)
+        C = Connection(Z,Z,K)
+        assert np_equal(C[2],K)
+
+    def test_14(self):
+        Z = ones(5)
+        K = arange(5)
+        C = Connection(Z,Z,K)
+        assert np_equal(C[4], array([NaN,NaN,0,1,2]))
+
 
 class SharedTwoDimensionTestCase(unittest.TestCase):
 
@@ -118,6 +136,55 @@ class SharedTwoDimensionTestCase(unittest.TestCase):
         assert np_equal(Connection(ones((3,3)), ones((3,3)), ones((3,3)), toric=True).output(),
                         ones((3,3))*9)
 
+    def test_12(self):
+        Z = ones((5,5))
+        K = arange(5*5).reshape((5,5))
+        C = Connection(Z,Z,K)
+        assert np_equal(C[0,0],
+                        array([[12, 13, 14,NaN,NaN],
+                               [17, 18, 19,NaN,NaN],
+                               [22, 23, 24,NaN,NaN],
+                               [NaN,NaN,NaN,NaN,NaN],
+                               [NaN,NaN,NaN,NaN,NaN]]))
+
+    def test_13(self):
+        Z = ones((5,5))
+        K = arange(5*5).reshape((5,5))
+        C = Connection(Z,Z,K)
+        assert np_equal(C[0,4],
+                        array([[NaN,NaN,10, 11, 12],
+                               [NaN,NaN,15, 16, 17],
+                               [NaN,NaN,20, 21, 22],
+                               [NaN,NaN,NaN,NaN,NaN],
+                               [NaN,NaN,NaN,NaN,NaN]]))
+
+    def test_14(self):
+        Z = ones((5,5))
+        K = arange(5*5).reshape((5,5))
+        C = Connection(Z,Z,K)
+        assert np_equal(C[4,0],
+                        array([[NaN,NaN,NaN,NaN,NaN],
+                               [NaN,NaN,NaN,NaN,NaN],
+                               [  2,  3,  4,NaN,NaN],
+                               [  7,  8,  9,NaN,NaN],
+                               [ 12, 13, 14,NaN,NaN]]))
+
+    def test_15(self):
+        Z = ones((5,5))
+        K = arange(5*5).reshape((5,5))
+        C = Connection(Z,Z,K)
+        assert np_equal(C[4,4],
+                        array([[NaN,NaN,NaN,NaN,NaN],
+                               [NaN,NaN,NaN,NaN,NaN],
+                               [NaN,NaN,  0,  1,  2],
+                               [NaN,NaN,  5,  6,  7],
+                               [NaN,NaN, 10, 11, 12]]))
+
+    def test_16(self):
+        Z = ones((5,5))
+        K = arange(5*5).reshape((5,5))
+        C = Connection(Z,Z,K)
+        assert np_equal(C[2,2],K)
 
 if __name__ == "__main__":
     unittest.main()
