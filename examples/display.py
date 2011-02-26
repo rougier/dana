@@ -169,15 +169,8 @@ def plot(subplot, data, title='', *args, **kwargs):
 
 
 if __name__ == '__main__':
-
-    n = 40
-    p = 2*n+1
-    A = Group((n,n),'V')
-    K = 1.25*gaussian((p,p),0.1) - 0.75*gaussian((p,p),1.0)
-    DenseConnection(A,A,K)
-
     Z = np.random.random((40,40))
     fig = plt.figure(figsize=(8,8), facecolor='white')
-    plot(plt.subplot(1,1,1), A, 'A group', cmap=ice_and_fire)
+    plot(plt.subplot(1,1,1), Z, 'A group', cmap=ice_and_fire)
     plt.connect('button_press_event', button_press_event)
     plt.show()
