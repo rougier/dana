@@ -88,7 +88,7 @@ consider the following situation::
 
 Does the ``V`` value relates to the source or to the target group ? To
 disambiguate this kind of situation, dana provides the ``pre`` and ``post``
-keyword for the definition of the equation of a connection. The ``pre``relates
+keyword for the definition of the equation of a connection. The ``pre`` relates
 to the source and the ``post`` relates to the target. We an now re-write the
 equation withtou any ambiguities::
 

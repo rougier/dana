@@ -15,9 +15,7 @@ You should consider having fairly recents version of numpy (> 1.2) and scipy
 Unstable release
 ================
 You can check out the latest unstable release of dana using
-`svn <http://subversion.tigris.org/>`_.
-
-.. code-block:: bash
+`svn <http://subversion.tigris.org/>`_::
 
    svn checkout svn://scm.gforge.inria.fr/svn/dana/trunk dana
 

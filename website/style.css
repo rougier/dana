@@ -21,10 +21,12 @@ body
 }
 
 h1 {
+    padding-top: 1em;
     font-size: 16pt;
     font-family: "Trebuchet MS";
     font-weight: bold;
     color: #000000;
+    clear:both;
 }
 
 h2 {
@@ -42,6 +44,10 @@ p {
     text-align: justify;
 }
 
+.left {
+    float: left;
+    margin-right: 2em;
+}
 
 /* --- Header -------------------------------------------------------------- */
 .header {
@@ -112,19 +118,7 @@ p {
      line-height: 1.25em;
      padding:      1.0em;
      padding-left: 1.5em;
-     background-color: #f9f9f9;
-
-/*     border-left: 3px solid #dddddd; */
-
-/*    border-color: #0c3762;
-    border-style: dotted;
-    border-width: thin;
-*/
-/*    margin: 0 0 12px 0; */
-/*    padding: 0.8em; */
-/*
-    background-color: #f0f0f0;
-*/
+     background-color: #f0f0f0;
 }
 
 
