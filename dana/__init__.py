@@ -54,7 +54,7 @@ from functions import zeros, ones, empty
 from functions import zeros_like, ones_like, empty_like
 from csr_array import csr_array, dot
 
-from time import Clock, before, after, second, millisecond
+from clock import Clock, before, after, second, millisecond
 
 from group import Group
 from network import Network, run, setup, clock

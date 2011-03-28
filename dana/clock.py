@@ -92,7 +92,8 @@ class Tick(object):
 
     clock = Clock()
     @clock.tick
-    def timer(t): print 'called at time', t
+    def timer(t):
+        print 'called at time', t
     '''
     _func = None
     _clock = None
@@ -198,7 +199,7 @@ class Every(object):
 
     def __call__(self, func):
         ''' Add function to the clock using given dt and order. '''
-        clock.add(func, self._dt, self._order)
+        self._clock.add(func, self._dt, self._order)
 
 
 

@@ -30,6 +30,7 @@ This book includes the following chapters:
 * Chapter :doc:`connection` gives details on group connections
 * Chapter :doc:`learning` gives main concepts related to learning
 * Chapter :doc:`life-and-death` explains what are dead units and dead connections
+* Chapter :doc:`time` details time management and timers
 * Chapter :doc:`advanced` introduces advanced dana concepts
 * Chapter :doc:`examples` comments on examples from various scientific domain.
 * Chapter :doc:`api` Application Programming Interface

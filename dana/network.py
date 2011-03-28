@@ -31,7 +31,7 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
-from dana.time import Clock
+from clock import Clock
 
 clock = Clock(0.0, 1.0, 0.001)
 
@@ -79,6 +79,8 @@ class Network(object):
         ''' '''
         for group in self._groups:
             group.evaluate(dt=clock.dt)
+        for group in self._groups:
+            group.learn(dt=clock.dt)
 
         
 

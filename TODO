@@ -5,6 +5,7 @@
 * Implement Network operators that can be called anytime
   => @every(dt)
   => @random(dt)
+  -> done trough clock object
 
 - __getitem__ of connections is not working properly
    1. does not take different src/dst shapes into account

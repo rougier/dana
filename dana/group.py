@@ -10,8 +10,7 @@
 # This software is governed by the CeCILL license under French law and abiding
 # by the rules of distribution of free software. You can use, modify and/ or
 # redistribute the software under the terms of the CeCILL license as circulated
-# by CEA, CNRS and INRIA at the following URL
-# http://www.cecill.info/index.en.html.
+# by CEA, CNRS and INRIA at the following URL: http://www.cecill.info.
 #
 # As a counterpart to the access to the source code and rights to copy, modify
 # and redistribute granted by the license, users are provided only with a
@@ -40,7 +39,7 @@ from declaration import Declaration, DeclarationError
 from diff_equation import DifferentialEquation, DifferentialEquationError
 
 
-class GroupError(Exception):
+class GroupException(Exception):
     pass
 
 
@@ -234,42 +233,54 @@ class Group(object):
                 self._data[key] *= self.mask
 
         # Learning
+#        for connection in self._connections:
+#            connection.evaluate(dt)
+
+
+    def learn(self, dt=1):
+        # Learning
         for connection in self._connections:
             connection.evaluate(dt)
 
 
-    def run(self, t=1.0, dt=0.01, n=None):
-        ''' '''
+    def run(self, dt=1):
+         ''' '''
+         self.evaluate(dt)
+         self.learn(dt)
 
-        if n == None:
-            n = int(t/dt)
-        else:
-            dt = 1
-        self.setup()
-        args,saved = {}, {}
 
-        for eq in self._model._diff_equations:
-            args[eq.varname] = [self._data[eq.varname],dt]+ \
-                [self._namespace[var] for var in eq._variables]
-        for eq in self._model._equations:
-            args[eq.varname] = [self._namespace[var] for var in eq._variables]
-        self._namespace['dt'] = dt
+    # def run(self, t=1.0, dt=0.01, n=None):
+    #     ''' '''
 
-        for i in range(int(t/dt)):
-            for connection in self._connections:
-                connection.propagate()
-            for eq in self._model._diff_equations:
-                eq.evaluate(*args[eq.varname])
-            for eq in self._model._equations:
-                self._data[eq.varname][...] = eq.evaluate(*args[eq.varname])
+    #     if n == None:
+    #         n = int(t/dt)
+    #     else:
+    #         dt = 1
+    #     self.setup()
+    #     args,saved = {}, {}
 
-            # Make sure all masked units are set to 0
-            if hasattr(self,'mask'):
-                for key in self._data.keys():
-                    self._data[key][...] *= self.mask
+    #     for eq in self._model._diff_equations:
+    #         args[eq.varname] = [self._data[eq.varname],dt]+ \
+    #             [self._namespace[var] for var in eq._variables]
+    #     for eq in self._model._equations:
+    #         args[eq.varname] = [self._namespace[var] for var in eq._variables]
+    #     self._namespace['dt'] = dt
 
-            for connection in self._connections:
-                connection.evaluate(dt)
+    #     for i in range(int(t/dt)):
+    #         for connection in self._connections:
+    #             connection.propagate()
+    #         for eq in self._model._diff_equations:
+    #             eq.evaluate(*args[eq.varname])
+    #         for eq in self._model._equations:
+    #             self._data[eq.varname][...] = eq.evaluate(*args[eq.varname])
+
+    #         # Make sure all masked units are set to 0
+    #         if hasattr(self,'mask'):
+    #             for key in self._data.keys():
+    #                 self._data[key][...] *= self.mask
+
+    #         for connection in self._connections:
+    #             connection.evaluate(dt)
 
 
     def item(self):

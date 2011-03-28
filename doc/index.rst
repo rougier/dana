@@ -1,8 +1,6 @@
-
 ===============================================================================
 DANA handbook                                                                  
 ===============================================================================
-
 This guide provides a complete overview of the dana computing framework and is
 organized along several chapters:
 
@@ -32,6 +30,8 @@ Tutorial
   | → How to render you model adaptive ?
 * | :doc:`life-and-death`
   | → What are dead units and dead connections
+* | :doc:`time`
+  | → Time management and timers
 * | :doc:`examples`
   | → Commented examples in various scientific domain.
 * | :doc:`advanced`
