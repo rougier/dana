@@ -78,12 +78,12 @@ def convolve1d(Z, K, toric=False):
         return convolve(Z,K,mode='constant')
 
     #return convolve(Z,K,mode='wrap')
-    #R = np.convolve(Z, K, 'same')
-    #i0 = 0
-    #if R.shape[0] > Z.shape[0]:
-    #    i0 = (R.shape[0]-Z.shape[0])/2 + 1 - Z.shape[0]%2
-    #i1 = i0+ Z.shape[0]
-    #return R[i0:i1]
+    # R = np.convolve(Z, K, 'same')
+    # i0 = 0
+    # if R.shape[0] > Z.shape[0]:
+    #     i0 = (R.shape[0]-Z.shape[0])/2 + 1 - Z.shape[0]%2
+    # i1 = i0+ Z.shape[0]
+    # return R[i0:i1]
 
 
 
@@ -129,7 +129,7 @@ def convolve2d(Z, K, USV = None, toric=False):
         U,S,V = U.astype(K.dtype), S.astype(K.dtype), V.astype(K.dtype)
     else:
         U,S,V = USV
-    n = (S > 1e-9).sum()
+    n = (S > 1e-12).sum()
 #    n = (S > 0).sum()
     R = np.zeros( Z.shape )
     for k in range(n):
@@ -282,8 +282,12 @@ def convolution_matrix(src, dst, kernel, toric=False):
      [ 6.  9.  6.]
      [ 4.  6.  4.]]
     '''
-
-
+ 
+    # For a toric connection, it is wrong to have a kernel larger
+    # than the source
+ #   if toric:
+ #       shape = np.minimum(np.array(src.shape), np.array(kernel.shape))
+ #       kernel = extract(kernel, shape, np.rint(np.array(kernel.shape)/2.))
 
     # Get non NaN value from kernel and their indices.
     nz = (1 - np.isnan(kernel)).nonzero()
@@ -319,10 +323,17 @@ def convolution_matrix(src, dst, kernel, toric=False):
         dims.append(len(dst.shape)-1)
         for dim in dims:
             i = index[dim]
+
             if toric:
-                z = (indices[dim][dim] - src.shape[dim]//2 + src_indices[dim][i]) % src.shape[dim]
+                z = (indices[dim][dim] - src.shape[dim]//2 +(kernel.shape[dim]+1)%2 + src_indices[dim][i]) % src.shape[dim]
             else:
-                z = (indices[dim][dim] - src.shape[dim]//2 + src_indices[dim][i])
+                z = (indices[dim][dim] - src.shape[dim]//2 +(kernel.shape[dim]+1)%2 + src_indices[dim][i])
+
+            # if toric:
+            #     z = (indices[dim][dim] - src.shape[dim]/2.0 -(kernel.shape[dim]+1)%2 + src_indices[dim][i]) % src.shape[dim]
+            # else:
+            #     z = (indices[dim][dim] - src.shape[dim]/2.0 -(kernel.shape[dim]+1)%2+ src_indices[dim][i])
+
             n = np.where((z >= 0)*(z < src.shape[dim]))[0]
             if dim == 0:
                 nd[dim] = n.copy()
@@ -338,6 +349,7 @@ def convolution_matrix(src, dst, kernel, toric=False):
         dst_index += 1
 
     return sp.coo_matrix( (D,(R,C)), (dst.size,src.size))
+
     #Z = np.zeros((dst.size,src.size))
     #Z[R,C] = D
     #return Z

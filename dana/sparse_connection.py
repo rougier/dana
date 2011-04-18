@@ -75,6 +75,12 @@ class SparseConnection(Connection):
         # Else, we need to build it
         elif weights.shape != (self.target.size,self.source.size):
             if len(weights.shape) == len(self.source.shape):
+                # If we have a toric connection, weights cannot be greater than source
+                # in any dimension
+                if self._toric:
+                    s = np.array(self.source.shape)
+                    w = np.array(weights.shape)
+                    weights = extract(weights, np.minimum(s,w), w//2)
                 weights = convolution_matrix(self.source, self.target, weights, self._toric)
             else:
                 raise ConnectionError, \

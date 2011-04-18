@@ -76,6 +76,14 @@ class DenseOneDimensionTestCase(unittest.TestCase):
         assert np_equal(Connection(ones(3), ones(3), ones(3), toric=True).output(),
                         ones(3)*3)
 
+    def test_11(self):
+        assert np_equal(Connection(ones(3), ones(3), ones(3), toric=True).output(),
+                        ones(3)*3)
+
+    def test_11_bis(self):
+        assert np_equal(Connection(ones(3), ones(3), ones(20), toric=True).output(),
+                        ones(3)*3)
+
     def test_12(self):
         Z = ones(5)
         K = arange(5)
@@ -149,6 +157,14 @@ class DenseTwoDimensionTestCase(unittest.TestCase):
     def test_11(self):
         assert np_equal(Connection(ones((3,3)), ones((3,3)), ones((3,3)), toric=True).output(),
                         ones((3,3))*9)
+
+    def test_11_bis(self):
+        assert np_equal(Connection(ones((3,3)), ones((3,3)), ones((20,20)), toric=True).output(),
+                        ones((3,3))*9)
+
+    def test_11_ter(self):
+        assert np_equal(Connection(ones((3,3)), ones((3,3)), ones((1,20)), toric=True).output(),
+                        ones((3,3))*3)
 
     def test_12(self):
         Z = ones((5,5))

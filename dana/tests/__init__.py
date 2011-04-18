@@ -40,9 +40,11 @@ from learning import *
 from csr_array import *
 from declaration import *
 from diff_equation import *
+from connection import *
 from dense_connection import *
 from sparse_connection import *
 from shared_connection import *
+from shared_connection_fft import *
 
 
 def test():

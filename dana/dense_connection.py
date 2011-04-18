@@ -55,6 +55,7 @@ class DenseConnection(Connection):
     def setup_weights(self, weights):
         ''' Setup weights '''
 
+
         if type(weights) in [int,float]:
             weights = np.ones((1,)*len(self.source.shape))*weights
 
@@ -68,6 +69,13 @@ class DenseConnection(Connection):
         if len(weights.shape) != len(weights.shape):
             raise ConnectionError, \
                 'Weights matrix shape is wrong relative to source and target'
+
+        # If we have a toric connection, weights cannot be greater than source
+        # in any dimension
+        if self._toric:
+            s = np.array(self.source.shape)
+            w = np.array(weights.shape)
+            weights = extract(weights, np.minimum(s,w), w//2)
 
         K = convolution_matrix(self.source, self.target, weights, self._toric)
         nz_rows = K.row

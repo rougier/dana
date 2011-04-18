@@ -67,7 +67,7 @@ weights = 100.0/n*((1.50*gaussian(2*n+1,0.1) - 0.75*gaussian(2*n+1,1.0)))
 SharedConnection(tgt('V'), tgt('L'), weights)
 
 src[...] = .45
-run(t=60.0, dt=0.1)
+run(time=60.0, dt=0.1)
 
 X = np.arange(0.0, 1.0, 1.0/n)
 plt.figure(figsize=(10,6))

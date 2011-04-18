@@ -32,7 +32,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
 '''
-SparseConnection
+SharedConnection
 
 '''
 import inspect
@@ -40,23 +40,32 @@ import scipy
 import numpy as np
 from functions import extract, convolve1d, convolve2d
 from connection import Connection, ConnectionError
+from scipy.fftpack import fft, ifft, fft2, ifft2, fftshift, ifftshift
 
 
 class SharedConnection(Connection):
     ''' '''
 
-    def __init__(self, source=None, target=None, weights=None, toric=False):
+    def __init__(self, source=None, target=None, weights=None, toric=False, fft=True):
         ''' '''
 
         Connection.__init__(self, source, target, toric)
         self._src_rows = None
         self._src_cols = None
+        self._fft = fft
         self.setup_weights(weights)
         self.setup_equation(None)
 
 
     def setup_weights(self, weights):
         ''' Setup weights '''
+
+        # If we have a toric connection, kernel cannot be greater than source
+        # in any dimension
+        if self._toric:
+            s = np.array(self.source.shape)
+            w = np.array(weights.shape)
+            weights = extract(weights, np.minimum(s,w), w//2)
 
         # 1d convolution case
         # -------------------
@@ -68,14 +77,25 @@ class SharedConnection(Connection):
                 rows = np.rint((np.linspace(0,1,self.target.shape[0])\
                                  *(self.source.shape[0]-1))).astype(int)
                 self._src_rows = rows
+
+            if self._fft:
+                m = self.source.shape[0]
+                p = weights.shape[0]
+                if self._toric:
+                    _weights = extract(weights[::-1], (m,), (np.floor(p/2.0),) )
+                else:
+                    self._src_holder = np.zeros(2*m+1)
+                    _weights = extract(weights[::-1], (2*m+1,), (np.floor(p/2.0),) )
+                self._fft_weights = fft(ifftshift(np.nan_to_num(_weights)))
+
             self._mask = np.ones(weights.shape)
             self._mask[np.isnan(weights).nonzero()] = 0
             self._weights = np.nan_to_num(weights)
 
+
         # 2d convolution case
         # -------------------
         elif len(self.source.shape) == len(self.target.shape) == 2:
-
             if len(weights.shape) != 2:
                 raise ConnectionError, \
                     '''Shared connection requested but weights matrix shape does not match.'''
@@ -86,6 +106,19 @@ class SharedConnection(Connection):
                                  *(self.source.shape[1]-1))).astype(int)
                 self._src_rows = rows.reshape((len(rows),1))
                 self._src_cols = cols.reshape((1,len(cols)))
+
+            if self._fft:
+                m,n = self.source.shape
+                p,q = weights.shape
+                if self._toric:
+                    _weights = extract(weights[::-1,::-1], (m,n),
+                                       (np.floor(p/2.0),np.floor(q/2.0)))
+                else:
+                    self._src_holder = np.zeros((2*m+1,2*n+1))
+                    _weights = extract(weights[::-1,::-1], (2*m+1,2*n+1),
+                                       (np.floor(p/2.0),np.floor(q/2.0)))
+                self._fft_weights = fft2(ifftshift(np.nan_to_num(_weights)))
+
             self._mask = np.ones(weights.shape)
             self._mask[np.isnan(weights).nonzero()] = 0
             self._weights = np.nan_to_num(weights)
@@ -93,6 +126,8 @@ class SharedConnection(Connection):
             self._USV = scipy.linalg.svd(np.nan_to_num(weights))
             U,S,V = self._USV
             self._USV = U.astype(dtype), S.astype(dtype), V.astype(dtype)
+
+
 
         # Higher dimensional case
         # ------------------------
@@ -103,14 +138,40 @@ class SharedConnection(Connection):
 
     def output(self):
         ''' '''
+
+        # One dimension
         if len(self._source.shape) == 1:
             source = self._actual_source
-            R = convolve1d(source, self._weights, self._toric)
+            # Use FFT convolution
+            if self._fft:
+                if self._toric:
+                    R  = ifft(fft(source)*self._fft_weights).real
+                else:
+                    n = source.shape[0]
+                    self._src_holder[n//2:n//2+n] = source
+                    R = ifft(fft(self._src_holder)*self._fft_weights)
+                    R = R.real[n//2:n//2+n]
+            # Use regular convolution
+            else:
+                R = convolve1d(source, self._weights[::-1], self._toric)
             if self._src_rows is not None:
                 R = R[self._src_rows]
+            return R.reshape(self._target.shape)
+        # Two dimensions
         else:
             source = self._actual_source
-            R = convolve2d(source, self._weights, self._USV, self._toric)
+            # Use FFT convolution
+            if self._fft:
+                if self._toric:
+                    R  = ifft2(fft2(source)*self._fft_weights).real
+                else:
+                    m,n = source.shape
+                    self._src_holder[m//2:m//2+m,n//2:n//2+n] = source
+                    R = ifft2(fft2(self._src_holder)*self._fft_weights)
+                    R = R.real[m//2:m//2+m,n//2:n//2+n]
+            # Use SVD convolution
+            else:
+                R = convolve2d(source, self._weights, self._USV, self._toric)
             if self._src_rows is not None and self._src_cols is not None:
                 R = R[self._src_rows, self._src_cols]
         return R.reshape(self._target.shape)
