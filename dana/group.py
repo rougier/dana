@@ -30,6 +30,15 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
+'''
+A group object represents a multidimensional, homogeneous group of contiguous
+numpy arrays.  An associated data-type object describes the format of each
+element in the group (its byte-order, how many bytes it occupies in memory,
+whether it is an integer or a floating point number, etc.).
+
+A group is very similar to a numpy record array and those not familiar should
+have a look at numpy first.
+'''
 import inspect
 import numpy as np
 from model import Model
@@ -152,7 +161,9 @@ class Group(object):
 
 
     def setup(self, namespace=None):
-        ''' '''
+        '''
+        
+        '''
         
         # Get unknown constants (and only them) from upper frame
         if not namespace:

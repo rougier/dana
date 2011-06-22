@@ -187,11 +187,12 @@ class Every(object):
     def __init__(self, dt, order=0):
         '''
         dt : float
-            Time interval between two calls
+             Time interval between two calls
 
         order : int
-            In case several timers share the same time interval, those with
-            lower order are called first.
+
+                In case several timers share the same time interval, those with
+                lower order are called first.
 
         '''
         self._dt = dt
@@ -210,7 +211,16 @@ class ClockException(Exception):
 
 
 class Clock(object):
-    ''' Clock class '''
+    ''' Clock class
+
+    **Examples:**
+
+      >>> clock = Clock(start=0.0, end=1.0, dt=0.1)
+      >>> @clock.tick
+      >>> def tick(time):
+      ...    print 'timer tick at time %.3f' % time
+      >>> clock.run()
+    '''
 
     _start   = 0.0*second
     _time    = 0.0*second
@@ -224,7 +234,7 @@ class Clock(object):
 
         **Parameters**
 
-        start : float
+        **start** : float
             Start time
         
         end : float
@@ -414,9 +424,9 @@ class Clock(object):
 # -----------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    clock = Clock(end=1.0, dt=0.1)
-    @clock.tick
+    clock = Clock(start=0.0, end=1.0, dt=0.1)
 
+    @clock.tick
     def timer_2(time):
         print 'timer 2 called at time %.3f' % time
 
