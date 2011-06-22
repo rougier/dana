@@ -3,6 +3,7 @@ Release notes for 0.4.0
 * Changed license (from BSD to Cecill v2)
 * Added time management through a Clock object
 * Update documentation
+* Add fft convolution
 
 Release notes for 0.3.4
 =======================
