@@ -72,7 +72,7 @@ SharedConnection(focus('V'), focus('L'),
 input[...] = gaussian((n,n),0.25,(0.5,0.5))   \
            + gaussian((n,n),0.25,(-0.5,-0.5)) \
            + (2*rnd.random((n,n))-1)*.05
-run(t=5.0, dt=0.01)
+run(time=5.0, dt=0.01)
 
 
 

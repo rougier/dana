@@ -124,7 +124,7 @@ def evaluate(epochs):
     global visual, stimuli, stimuli_size
     for i in range(epochs):
         encode(visual, stimuli, stimuli_size)
-        run(t=dt,dt=dt)
+        run(time=dt,dt=dt)
         update()
         plt.draw()
 

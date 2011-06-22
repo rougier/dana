@@ -76,7 +76,7 @@ n = 41
 a = 0.99
 Z = 1-maze((n,n))
 G = Group((n,n),'''V = I*maximum(maximum(maximum(maximum(V,E),W),N),S)
-                     W; E; N; S; I''')
+                   W; E; N; S; I''')
 SparseConnection(Z,   G('I'), np.array([ [1] ]))
 SparseConnection(G.V, G('N'), np.array([ [a],      [np.NaN], [np.NaN] ]))
 SparseConnection(G.V, G('S'), np.array([ [np.NaN], [np.NaN], [a]      ]))

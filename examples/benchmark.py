@@ -39,9 +39,9 @@ class array(np.ndarray):
     pass
 
 n = 50
-t = 2.0
-dt = 0.00001
-epochs = int(t/dt) #100000
+t = 5.0
+dt = 0.0001
+epochs = int(t/dt)
 
 # Numpy regular array
 Z = np.ones((n,n), dtype=np.double)
@@ -139,5 +139,13 @@ print 'dana differential equation:          ', time.clock()-t0
 group = Group((n,n), 'dV/dt = (V+1) : double')
 group.V = 0
 t0 = time.clock()
-group.run(t,dt)
+for i in range(epochs):
+    group.evaluate(dt=dt)
 print 'dana group:                          ', time.clock()-t0
+
+group.V = 0
+t0 = time.clock()
+eq = group._model._diff_equations[0]
+for i in range(epochs):
+    eq.evaluate(group['V'],dt)
+print 'dana group 2:                        ', time.clock()-t0
