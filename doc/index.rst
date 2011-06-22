@@ -14,7 +14,7 @@ Introduction
   | → Highlights dana key concepts.
 * | :doc:`install`
   | → Explains how to install dana on your machine.
-* | :doc:`quickstart`
+* | :doc:`quicktour`
   | → Gives a rapid overview of main dana concepts.
 
 Tutorial                                                                       
@@ -56,12 +56,13 @@ Appendix
    preface
    intro
    install
-   quickstart   
+   quicktour
    numpy-to-dana
    model
    connection
    learning
    life-and-death
+   time
    examples
    advanced
    api

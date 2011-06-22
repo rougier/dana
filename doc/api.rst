@@ -6,6 +6,7 @@ Application Programming Interface
 | :doc:`api-group`
 | :doc:`api-model`
 | :doc:`api-connection`
+| :doc:`api-time`
 
 .. toctree::
    :maxdepth: 1
@@ -15,6 +16,7 @@ Application Programming Interface
    api-group
    api-model
    api-connection
+   api-time
 
 ----
 

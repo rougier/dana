@@ -187,22 +187,117 @@
     <div class="footer">
     <table>
       <tr>
-        <td width="40%" align="left">
+        <td class="left">
           {%- if prev %}
           <a href="{{ prev.link|e }}">Prev</a>
           {%- endif %}
         </td>
-        <td width="20%" align="center">
-          {%- if parents %}
-          <a href="{{ parents[-1].link|e }}">Up</a>
+        <td class="center">
+
+          {%- if pagename == "preface" %}
+            <span class="current">1</span>
+          {%- else %}
+            <a href="preface.html" title="Preface">1</a>
           {%- endif %}
+
+          {%- if pagename == "intro" %}
+           <span class="current">2</span>
+          {%- else %}
+            <a href="intro.html" title="Introduction">2</a>
+          {%- endif %}
+
+          {%- if pagename == "install" %}
+            <span class="current">3</span>
+          {%- else %}
+            <a href="install.html" title="Installation">3</a>
+          {%- endif %}
+
+          {%- if pagename == "quicktour" %}
+            <span class="current">4</span>
+          {%- else %}
+            <a href="quicktour.html" title="Quick Tour">4</a>
+          {%- endif %}
+
+          {%- if pagename == "numpy-to-dana" %}
+            <span class="current">5</span>
+          {%- else %}
+            <a href="numpy-to-dana.html" title="Numpy to DANA">5</a>
+          {%- endif %}
+
+          {%- if pagename == "model" %}
+            <span class="current">6</span>
+          {%- else %}
+            <a href="model.html" title="Models & Equations">6</a>
+          {%- endif %}
+
+          {%- if pagename == "connection" %}
+            <span class="current">7</span>
+          {%- else %}
+            <a href="connection.html" title="Connections">7</a>
+          {%- endif %}
+
+          {%- if pagename == "learning" %}
+            <span class="current">8</span>
+          {%- else %}
+            <a href="learning.html" title="Learning">8</a>
+          {%- endif %}
+
+          {%- if pagename == "life-and-death" %}
+            <span class="current">9</span>
+          {%- else %}
+            <a href="life-and-death.html" title="Life & Death">9</a>
+          {%- endif %}
+
+          {%- if pagename == "time" %}
+            <span class="current">10</span>
+          {%- else %}
+            <a href="time.html" title="Time">10</a>
+          {%- endif %}
+
+          {%- if pagename == "examples" %}
+            <span class="current">11</span>
+          {%- else %}
+            <a href="examples.html" title="Examples">11</a>
+          {%- endif %}
+
+          {%- if pagename == "advanced" %}
+            <span class="current">12</span>
+          {%- else %}
+            <a href="advanced.html" title="Advanced Concepts">12</a>
+          {%- endif %}
+
+          {%- if pagename == "api" %}
+            <span class="current">13</span>
+          {%- else %}
+            <a href="api.html" title="Application Programming Interface">13</a>
+          {%- endif %}
+
+          {%- if pagename == "faq" %}
+            <span class="current">14</span>
+          {%- else %}
+            <a href="faq.html" title="Frequently Asked Questions">14</a>
+          {%- endif %}
+
+          {%- if pagename == "glossary" %}
+            <span class="current">15</span>
+          {%- else %}
+            <a href="glossary.html" title="Glossary">15</a>
+          {%- endif %}
+
+          {%- if pagename == "license" %}
+            <span class="current">16</span>
+          {%- else %}
+            <a href="license.html" title="GNU Free Documentation License">16</a>
+          {%- endif %}
+
         </td>
-        <td width="40%" align="right">
+        <td class="right">
           {%- if next %}
           <a href="{{ next.link|e }}">Next</a>
           {%- endif %}
         </td>
       </tr>
+
       <tr>
         <td class="left">
           {%- if prev %}
