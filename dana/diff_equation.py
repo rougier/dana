@@ -151,6 +151,7 @@ class DifferentialEquation(Definition):
                             (name in numpy_ns.keys() or name in frame.f_globals.keys()) and
                             callable(eval(name, numpy_ns, frame.f_globals))):
                             self._variables.remove(name)
+                            numpy_ns[name] = frame.f_globals[name]
 
                 args = self.__f__.func_code.co_names
                 if len(args):
@@ -199,6 +200,7 @@ class DifferentialEquation(Definition):
                         (name in numpy_ns.keys() or name in frame.f_globals.keys()) and
                         callable(eval(name, numpy_ns, frame.f_globals))):
                         self._variables.remove(name)
+                        numpy_ns[name] = frame.f_globals[name]
             args = self.__f__.func_code.co_names
             if len(args):
                 args = ' = 0, '.join(self._variables)+ ' = 0'
