@@ -33,9 +33,11 @@
 # -----------------------------------------------------------------------------
 ''' Management of time '''
 
-second = 1
+second      = 1
 millisecond = 0.001
-ms = millisecond
+ms          = millisecond
+minute      = 60*second
+hour        = 60*minute
 
 
 class Timer(object):
@@ -46,8 +48,9 @@ class Timer(object):
     _next = 0
     _order = 0
     _clock = None
+    _once = False
 
-    def __init__(self, func, clock, dt, order=0):
+    def __init__(self, func, clock, dt, order=0, once = False):
         ''' Create a new timer function to be called every dt.
         
         **Parameter**
@@ -64,17 +67,25 @@ class Timer(object):
         order : int
             In case several timers share the same time interval, those with
             lower order are called first.
+
+        once : bool
+            Whether this timer has to be called only once.
         '''
         self._func = func
         self._dt = dt
         self._next = 0
+        if once:
+            self._next = dt
         self._order = order
+        self._once = once
         self._clock = clock
 
     def __call__(self):
         ''' Call the timer function and update local time '''
         self._func(self._next)
         self._next += self._dt
+        if self._once:
+            self._clock._timers.remove(self)
 
     def __cmp__(self, other):
         ''' Comparison function used to order timers '''
@@ -190,10 +201,8 @@ class Every(object):
              Time interval between two calls
 
         order : int
-
-                In case several timers share the same time interval, those with
-                lower order are called first.
-
+             In case several timers share the same time interval, those with
+             lower order are called first.
         '''
         self._dt = dt
         self._order = order
@@ -201,6 +210,40 @@ class Every(object):
     def __call__(self, func):
         ''' Add function to the clock using given dt and order. '''
         self._clock.add(func, self._dt, self._order)
+
+
+class At(object):
+    ''' Clock decorator 
+
+    This is used to specify that a function is to be called once.
+
+    **Usage**
+
+    clock = Clock()
+    @clock.at(0.1)
+    def timer(t): print 'called at time', t
+    '''
+
+    _order = 0
+    _dt = None
+    _clock = None
+
+    def __init__(self, dt, order=0):
+        '''
+        dt : float
+            Time before call
+
+        order : int
+             In case several timers share the same time interval, those with
+             lower order are called first.
+
+        '''
+        self._dt = dt
+        self._order = order
+
+    def __call__(self, func):
+        ''' Add function to the clock using given dt and order. '''
+        self._clock.add_once(func, self._dt, self._order)
 
 
 
@@ -249,6 +292,8 @@ class Clock(object):
         self._time = self._start
         self.every = Every
         self.every._clock = self
+        self.at = At
+        self.at._clock = self
         self.tick = Tick
         self.tick._clock = self
 
@@ -259,7 +304,10 @@ class Clock(object):
 
         self._time = self._start
         for timer in self._timers:
-            timer._next = self._start
+            if not timer._once:
+                timer._next = self._start
+            else:
+                timer._next = self._start+timer._dt
         self._timers.sort()
 
 
@@ -288,7 +336,6 @@ class Clock(object):
         self.start = start or self._start
         self.end = end or self._end
         self._dt = dt or self._dt
-
         self._running = True
         while self._time <= self._end and self._running:
             # print 'Tick : %.3f' % self.time
@@ -335,6 +382,26 @@ class Clock(object):
         self._timers.append(timer)
         self._timers.sort()
 
+
+    def add_once(self, func, dt, order=0):
+        ''' Add a new timer to the timer list
+
+        **Parameters**
+
+        func : function(time)
+            Function to be added
+
+        dt : float
+            Time before calling function.
+
+        order : int
+            In case several timers share the same time, those with
+            lower order are called first.
+        '''
+        timer = Timer(func, self, dt, order, once=True)
+        timer._next = dt
+        self._timers.append(timer)
+        self._timers.sort()
 
 
     def remove(self, func, dt=None):
@@ -443,5 +510,8 @@ if __name__ == '__main__':
 
     @clock.every(100*millisecond,+1)
     def timer_5(time): print 'timer 5 called at time %.3f' % time
+
+    @clock.at(50*millisecond)
+    def timer_6(time): print 'timer 6 called at time %.3f' % time
 
     clock.run()
