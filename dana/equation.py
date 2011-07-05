@@ -88,10 +88,10 @@ class Equation(Definition):
 
         '''
         Definition.__init__(self,definition)
-        self._parse(definition)
+        self.parse()
 
 
-    def _parse(self, definition):
+    def parse(self, definition = None):
         '''
         Parse definition and check it is an equation.
 
@@ -101,8 +101,9 @@ class Equation(Definition):
             Equation definition of the form 'y = expr : dtype'
             expr must be a valid python expression.
         '''
-        self._definition = definition
-        definition = str(definition.replace(' ',''))
+        if definition is not None:
+            self._definition = definition
+        definition = str(self._definition.replace(' ',''))
 
         # Check if equation is of the form: y = f(...) : dtype
         p = re.compile(

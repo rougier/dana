@@ -43,10 +43,10 @@ class Declaration(Definition):
     def __init__(self, definition):
         ''' Builds a new Declaration of type: 'y : dtype' '''
         Definition.__init__(self, definition)
-        self._parse(definition)
+        self.parse()
 
 
-    def _parse(self, definition):
+    def parse(self, definition = None):
         '''
         Parse definition and check it is a declaration.
 
@@ -55,15 +55,17 @@ class Declaration(Definition):
         definition : str
             Equation definition of the form 'y : dtype'
         '''
-        self._definition = definition
-        definition = str(definition.replace(' ',''))
+        if definition is not None:
+            self._definition = definition
+        definition = str(self._definition.replace(' ',''))
+            
         p = re.compile(r'''(?P<y>\w+) (:(?P<dtype>\w+))?''', re.VERBOSE)
         result = p.match(definition)
         if result:
             self._varname = result.group('y')
             self._lhs = self._varname
             self._rhs = ''
-            self._definition = None
+            #self._definition = None
             self._dtype = result.group('dtype') or 'float'
         else:
             raise DeclarationError, 'Definition is not a declaration'

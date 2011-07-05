@@ -53,13 +53,19 @@ class Definition(object):
     '''
   
     def __init__(self, definition):
-        self._definition = None
+        self._definition = definition
         self._varname = None
         self._dtype = None
 
-    def _parse(self, definition):
-        ''' Parse definition '''
-        raise NotImplemented(definition)
+    def parse(self, definition = None):
+        ''' Parse definition
+
+        **Parameters**
+
+        definition : str
+            Declaration, equation or differential equation expression.
+            '''
+        raise NotImplemented
 
     def __repr__(self):
         ''' x.__repr__() <==> repr(x) '''

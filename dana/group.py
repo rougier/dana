@@ -135,6 +135,7 @@ class Group(object):
         object.__setattr__(self, '_dtype', np.dtype(dtype))
         object.__setattr__(self, '_shape', shape)
         object.__setattr__(self, '_data', {})
+        object.__setattr__(self, '_saved', {})
         object.__setattr__(self, '_base', None)
         object.__setattr__(self, '_scalar', None)
         object.__setattr__(self, '_keys', np.dtype(dtype).names)                
@@ -144,14 +145,18 @@ class Group(object):
 
         for key in self._keys:
             self._data[key] = np.empty(shape=shape,
-                                          dtype=self._dtype[key])
+                                       dtype=self._dtype[key])
             if fill is not None:
                 if type(fill) in [bool, int, float]:
                     self._data[key][...] = fill
                 elif type(fill) is np.ndarray:
-                    self._data[key][...] = fill[key] 
+                    self._data[key][...] = fill[key]
         if type(fill) in [tuple, list]:
             self[...] = fill
+
+        for key in self._keys:
+            self._saved[key] = self._data[key].copy()
+
     
         __default_network__.append(self)
         try:
@@ -171,10 +176,13 @@ class Group(object):
         numpy_ns = dir(np)
         unknown = {}
         for eq in self._model._diff_equations:
+            eq.parse()
             namespace[eq._varname] = self[eq._varname]
         for eq in self._model._equations:
+            eq.parse()
             namespace[eq._varname] = self[eq._varname]
         for eq in self._model._declarations:
+            eq.parse()
             namespace[eq._varname] = self[eq._varname]
         for eq in self._model._diff_equations:
             for var in eq._variables:
@@ -207,46 +215,75 @@ class Group(object):
                 for key in source._data.keys():
                     source._data[key] *= source.mask
 
+        # Copy current values to saved ones
+        for key in self._data.keys():
+            self._saved[key][...] = self._data[key]
 
-    def evaluate(self, dt=1):
-        ''' '''
+
+    def evaluate(self, dt=1, update=True):
+        '''
+        Evaluate group state
+
+        **Parameters**
+
+        dt : float
+            Elementary time step
+        update: bool
+            Whether to immediately make computed values public
+        '''
 
         self._namespace['dt'] = dt
-        saved = {}
+        #saved = {}
 
         for connection in self._connections:
             connection.propagate()
 
         # Differential equations
         for eq in self._model._diff_equations:
-            saved[eq._varname] = self[eq._varname].copy()
+#            saved[eq._varname] = self[eq._varname].copy()
             self._namespace[eq._varname] = self[eq._varname]
         for eq in self._model._diff_equations:
-            args = [saved[eq._varname],dt]+ \
+            args = [self._saved[eq._varname],dt]+ \
                    [self._namespace[var] for var in eq._variables]
             eq.evaluate(*args)
-        for eq in self._model._diff_equations:
-            self[eq._varname][...] = saved[eq._varname]
+
+#        for eq in self._model._diff_equations:
+#            self[eq._varname][...] = saved[eq._varname]
 
         # Equations
         for eq in self._model._equations:
-            saved[eq._varname] = self[eq._varname].copy()
+#            saved[eq._varname] = self[eq._varname].copy()
             self._namespace[eq._varname] = self[eq._varname]
         for eq in self._model._equations:
             args = [self._namespace[var] for var in eq._variables]
-            saved[eq._varname][...] = eq.evaluate(*args) #*self._mask
-        for eq in self._model._equations:
-            self[eq._varname][...] = saved[eq._varname]
+            self._saved[eq._varname][...] = eq.evaluate(*args) #*self._mask
+
+#        for eq in self._model._equations:
+#            self[eq._varname][...] = saved[eq._varname]
+
+        if update:
+            self.update()
 
         # Make sure all masked units are set to 0
         if hasattr(self,'mask'):
             for key in self._data.keys():
-                self._data[key] *= self.mask
+#                self._data[key] *= self.mask
+                self._saved[key] *= self.mask
 
         # Learning
 #        for connection in self._connections:
 #            connection.evaluate(dt)
 
+
+    def update(self):
+        '''
+        Update group state by making public previously computed values
+        '''
+        for eq in self._model._diff_equations:
+            self._data[eq._varname][...] = self._saved[eq._varname]
+        for eq in self._model._equations:
+            self._data[eq._varname][...] = self._saved[eq._varname]
+        
 
     def learn(self, dt=1):
         # Learning

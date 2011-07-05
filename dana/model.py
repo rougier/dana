@@ -110,10 +110,10 @@ class Model(object):
         self._declarations = []
         self._all = []
         self._variables = []
-        self._parse(definition)
+        self.parse(definition)
 
 
-    def _parse(self, definition):
+    def parse(self, definition):
         ''' Parse definition and instantiate corresponding objects '''
 
         self._diff_equations = []

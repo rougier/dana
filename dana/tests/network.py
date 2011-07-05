@@ -31,26 +31,31 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
-import dana
 import unittest
-from group import *
-from model import *
-from equation import *
-from learning import *
-from network import *
-from csr_array import *
-from declaration import *
-from diff_equation import *
-from connection import *
-from dense_connection import *
-from sparse_connection import *
-from shared_connection import *
-from shared_connection_fft import *
+import numpy as np
+from dana import Group, run
 
+class TestEvaluationOrder(unittest.TestCase):
+    def test_1(self):
+        A = Group(1, 'V = B.V')
+        A[...] = 1
+        B = Group(1, 'V = A.V')
+        B[...] = 2
+        A.setup()
+        B.setup()
+        A.evaluate(dt=1, update=False)
+        B.evaluate(dt=1, update=False)
+        A.update()
+        B.update()
+        assert A['V'][0] == 2 and B['V'][0] == 1
 
-def test():
-    suite = unittest.TestLoader().loadTestsFromModule(dana.tests)
-    unittest.TextTestRunner(verbosity=1).run(suite)
+     def test_2(self):
+        A = Group(1, 'V = B.V')
+        A[...] = 1
+        B = Group(1, 'V = A.V')
+        B[...] = 2
+        run(n=1)
+        assert A['V'][0] == 2 and B['V'][0] == 1
 
 if __name__ == "__main__":
-    test()
+    unittest.main()

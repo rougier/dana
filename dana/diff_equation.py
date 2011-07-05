@@ -90,8 +90,8 @@ class DifferentialEquation(Definition):
             Equation definition of the form 'dy/dt = expr : dtype'
             expr must be a valid python expression.
         '''
-        Definition.__init__(self,definition)
-        self._parse(definition)
+        Definition.__init__(self, definition)
+        self.parse()
         self.__method__ = self._forward_euler
 
 
@@ -102,7 +102,7 @@ class DifferentialEquation(Definition):
         return "%s('d%s/dt = %s : %s')" % (classname, self._lhs, self._rhs, self._dtype)
 
 
-    def _parse(self, definition):
+    def parse(self, definition = None):
         '''
         Parse definition and check if it is an equation.
 
@@ -112,8 +112,9 @@ class DifferentialEquation(Definition):
             Equation definition of the form 'y = expr : dtype'
             expr must be a valid python expression.
         '''
-        self._definition = definition
-        definition = str(definition.replace(' ',''))
+        if definition is not None:
+            self._definition = definition
+        definition = str(self._definition.replace(' ',''))
 
         # First, we check if equation is of the form:
         #   dy/dt = A + (B)*y [: dtype]

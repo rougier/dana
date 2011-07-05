@@ -42,8 +42,6 @@ class NetworkError(Exception):
 
 
 
-
-
 class Network(object):
     ''' '''
 
@@ -64,7 +62,7 @@ class Network(object):
         ''' '''
 
         if n != None:
-            clock.end = n
+            clock.end = n-0.01
             clock.dt = 1.0
         else:
             clock.end = time
@@ -77,8 +75,11 @@ class Network(object):
 
     def evaluate(self,time):
         ''' '''
+
         for group in self._groups:
-            group.evaluate(dt=clock.dt)
+            group.evaluate(dt=clock.dt, update=False)
+        for group in self._groups:
+            group.update()
         for group in self._groups:
             group.learn(dt=clock.dt)
 
