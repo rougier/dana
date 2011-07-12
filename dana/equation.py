@@ -76,7 +76,7 @@ class Equation(Definition):
     >>> y = eq.evaluate(x=1, b=2, a=3)     # a=3, b=2, x=1
     ''' 
 
-    def __init__(self, definition):
+    def __init__(self, definition, known_variables=None):
         '''
         Creates equation if `definition` is of the right form.
 
@@ -91,7 +91,7 @@ class Equation(Definition):
         self.parse()
 
 
-    def parse(self, definition = None):
+    def parse(self, definition = None, known_variables = []):
         '''
         Parse definition and check it is an equation.
 
@@ -128,7 +128,8 @@ class Equation(Definition):
             for i in range(0,len(inspect.stack())):
                 frame = inspect.stack()[i][0]
                 for name in self.__f__.func_code.co_names:
-                    if (name in self._variables) and (name != self._varname):
+                    if ((name in self._variables) and (name != self._varname)
+                        and (name not in known_variables)):
                         if name in numpy_ns.keys() and callable(eval(name, numpy_ns)):
                             namespace[name] = numpy_ns[name]
                             self._variables.remove(name)

@@ -73,7 +73,7 @@ class Group(object):
     * :meth:`dana.empty_like` : Return a empty group with shape and type of input.
     '''
 
-    def __init__(self, shape=(), dtype=float, model=None, fill=0.0):
+    def __init__(self, shape=(), dtype=float, model=None, fill=0.0, base=None):
         '''
         Creates a new group
 
@@ -136,7 +136,7 @@ class Group(object):
         object.__setattr__(self, '_shape', shape)
         object.__setattr__(self, '_data', {})
         object.__setattr__(self, '_saved', {})
-        object.__setattr__(self, '_base', None)
+        object.__setattr__(self, '_base', base)
         object.__setattr__(self, '_scalar', None)
         object.__setattr__(self, '_keys', np.dtype(dtype).names)                
         object.__setattr__(self, '_connections', [])
@@ -156,30 +156,31 @@ class Group(object):
 
         for key in self._keys:
             self._saved[key] = self._data[key].copy()
+        for eq in model._declarations:
+            self._saved[eq._varname] = self._data[eq._varname]
 
-    
-        __default_network__.append(self)
+        if base is None:
+            __default_network__.append(self)
         try:
-           self.setup()
+            self.setup()
         except:
             pass
 
 
     def setup(self, namespace=None):
         '''
-        
         '''
         
         # Get unknown constants (and only them) from upper frame
-        if not namespace:
+        if namespace is None:
             namespace = {}
         numpy_ns = dir(np)
         unknown = {}
         for eq in self._model._diff_equations:
-            eq.parse()
+            eq.parse(known_variables = self._keys)
             namespace[eq._varname] = self[eq._varname]
         for eq in self._model._equations:
-            eq.parse()
+            eq.parse(known_variables = self._keys)
             namespace[eq._varname] = self[eq._varname]
         for eq in self._model._declarations:
             eq.parse()
@@ -191,13 +192,13 @@ class Group(object):
                     unknown[var] = None
         for eq in self._model._equations:
             for var in eq._variables:
-                if var not in numpy_ns and var not in namespace \
+                if var not in numpy_ns and var not in namespace.keys() \
                         and var not in unknown:
                     unknown[var] = None
         for i in range(1,len(inspect.stack())):
             frame = inspect.stack()[i][0]
             for name in unknown:
-                if name in frame.f_globals.keys() and name not in namespace:
+                if name in frame.f_globals.keys(): # and name not in namespace.keys():
                     unknown[name] =  frame.f_globals[name]
                     namespace[name] =  frame.f_globals[name]
         self._namespace = namespace
@@ -220,6 +221,11 @@ class Group(object):
             self._saved[key][...] = self._data[key]
 
 
+    def propagate(self):
+        for connection in self._connections:
+           connection.propagate()
+
+
     def evaluate(self, dt=1, update=True):
         '''
         Evaluate group state
@@ -233,46 +239,69 @@ class Group(object):
         '''
 
         self._namespace['dt'] = dt
-        #saved = {}
 
-        for connection in self._connections:
-            connection.propagate()
+        # for connection in self._connections:
+        #    connection.propagate()
+
+        # # Differential equations
+        # for eq in self._model._diff_equations:
+        #     self._saved[eq._varname][...] = self[eq._varname] #.copy()
+        #     self._namespace[eq._varname] = self[eq._varname]
+        # for eq in self._model._diff_equations:
+        #     args = [self._saved[eq._varname],dt]+ \
+        #            [self._namespace[var] for var in eq._variables]
+        #     eq.evaluate(*args)
+        # for eq in self._model._diff_equations:
+        #     self[eq._varname][...] = self._saved[eq._varname]
+
+        # # Equations
+        # for eq in self._model._equations:
+        #     self._saved[eq._varname][...] = self[eq._varname] #.copy()
+        #     self._namespace[eq._varname] = self[eq._varname]
+        # for eq in self._model._equations:
+        #     args = [self._namespace[var] for var in eq._variables]
+        #     self._saved[eq._varname][...] = eq.evaluate(*args) #*self._mask
+        # for eq in self._model._equations:
+        #     self[eq._varname][...] = self._saved[eq._varname]
+
+
+        # # Make sure all masked units are set to 0
+        # if hasattr(self,'mask'):
+        #     for key in self._data.keys():
+        #         self._data[key] *= self.mask
+
 
         # Differential equations
         for eq in self._model._diff_equations:
-#            saved[eq._varname] = self[eq._varname].copy()
+            self._saved[eq._varname][...] = self[eq._varname]
             self._namespace[eq._varname] = self[eq._varname]
+
         for eq in self._model._diff_equations:
             args = [self._saved[eq._varname],dt]+ \
-                   [self._namespace[var] for var in eq._variables]
+                   [self._namespace[var] for var in eq._variables]            
             eq.evaluate(*args)
 
-#        for eq in self._model._diff_equations:
-#            self[eq._varname][...] = saved[eq._varname]
+        # Make newly computed values available to equations below (and only to them)
+        for eq in self._model._diff_equations:
+            self._namespace[eq._varname] = self._saved[eq._varname]
 
         # Equations
         for eq in self._model._equations:
-#            saved[eq._varname] = self[eq._varname].copy()
+            self._saved[eq._varname][...] = self[eq._varname]
             self._namespace[eq._varname] = self[eq._varname]
         for eq in self._model._equations:
             args = [self._namespace[var] for var in eq._variables]
             self._saved[eq._varname][...] = eq.evaluate(*args) #*self._mask
-
-#        for eq in self._model._equations:
-#            self[eq._varname][...] = saved[eq._varname]
-
-        if update:
-            self.update()
+            # Make results available to subsequent equations
+            self._namespace[eq._varname] = self._saved[eq._varname]
 
         # Make sure all masked units are set to 0
         if hasattr(self,'mask'):
             for key in self._data.keys():
-#                self._data[key] *= self.mask
                 self._saved[key] *= self.mask
 
-        # Learning
-#        for connection in self._connections:
-#            connection.evaluate(dt)
+        if update:
+            self.update()
 
 
     def update(self):
@@ -293,42 +322,9 @@ class Group(object):
 
     def run(self, dt=1):
          ''' '''
+         self.propagate()
          self.evaluate(dt)
          self.learn(dt)
-
-
-    # def run(self, t=1.0, dt=0.01, n=None):
-    #     ''' '''
-
-    #     if n == None:
-    #         n = int(t/dt)
-    #     else:
-    #         dt = 1
-    #     self.setup()
-    #     args,saved = {}, {}
-
-    #     for eq in self._model._diff_equations:
-    #         args[eq.varname] = [self._data[eq.varname],dt]+ \
-    #             [self._namespace[var] for var in eq._variables]
-    #     for eq in self._model._equations:
-    #         args[eq.varname] = [self._namespace[var] for var in eq._variables]
-    #     self._namespace['dt'] = dt
-
-    #     for i in range(int(t/dt)):
-    #         for connection in self._connections:
-    #             connection.propagate()
-    #         for eq in self._model._diff_equations:
-    #             eq.evaluate(*args[eq.varname])
-    #         for eq in self._model._equations:
-    #             self._data[eq.varname][...] = eq.evaluate(*args[eq.varname])
-
-    #         # Make sure all masked units are set to 0
-    #         if hasattr(self,'mask'):
-    #             for key in self._data.keys():
-    #                 self._data[key][...] *= self.mask
-
-    #         for connection in self._connections:
-    #             connection.evaluate(dt)
 
 
     def item(self):
@@ -412,9 +408,9 @@ class Group(object):
         ''' '''
         dtype = []
         dtype.append( (key, self._dtype[key]) )
-        G = Group(shape=self.shape, dtype=dtype)
+        G = Group(shape=self.shape, dtype=dtype, base=self.base or self)
         G.data[key] = self.data[key]
-        G._base = self.base or self
+        #G._base = self.base or self
 
         # Get subgroup relevant connections
         base = G._base

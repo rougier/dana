@@ -46,7 +46,6 @@ Abstract: A model  reaction-diffusion system  with two  coupled  layers  yields
 
 Website: http://hopf.chem.brandeis.edu/yanglingfa/pattern/oscTu/index.html
 
-
 F₁(x,y) = 1/ε₁[x - x² - f₁z(x-q₁)/(x+q₁)]
 F₂(x,y) = 1/ε₂[x - x² - f₂z(x-q₂)/(x+q₂)]
 G(x,y) = x - z
@@ -93,26 +92,36 @@ SparseConnection(Z('r'),Z('Lr'), K, toric=True)
 SparseConnection(Z('u'),Z('Lu'), K, toric=True)
 SparseConnection(Z('w'),Z('Lw'), K, toric=True)
 
-Z['x'] = 0.1*np.random.random((n,n))
-Z['z'] = 0.1*np.random.random((n,n))
-Z['r'] = 0.1*np.random.random((n,n))
-Z['u'] = 0.1*np.random.random((n,n))
-Z['w'] = 0.1*np.random.random((n,n))
+Z['x'] = .1*np.random.random((n,n))
+Z['z'] = .1*np.random.random((n,n))
+Z['r'] = .1*np.random.random((n,n))
+Z['u'] = .1*np.random.random((n,n))
+Z['w'] = .1*np.random.random((n,n))
 
 
-plt.figure(figsize=(10,10))
-im_x = plt.imshow(Z['x'], interpolation='bicubic', cmap=plt.cm.gray)
+fig = plt.figure(figsize=(8,8))
+border = 0.0
+fig.subplots_adjust(bottom=border, top=1-border,
+                    left=border, right=1-border)
+im = plt.imshow(Z['x'], interpolation='bicubic', cmap=plt.cm.gray)
+plt.xticks([]), plt.yticks([])
 
-@clock.every(25*millisecond)
-def elapsed_time(t):
-    im_x.set_data(Z['x'])
+@clock.every(100*millisecond)
+def frame(t):
+    im.set_data(Z['x'])
+    im.changed()
     plt.draw()
+    # fig.savefig('/tmp/turing-movie-%08d.png' % (t*1000), dpi=25)
 
 @clock.every(1*second)
-def elapsed_time(t):
+def print_time(t):
     print 'Elapsed simulation time: %.2f seconds' % t
 
+# @clock.every(10*second)
+# def screenshot(t):
+#     fig.savefig('/tmp/turing-screenshot-%08d.png' % (t*1000))
+
 plt.ion()
-run(time=500*second, dt=1*millisecond)
+run(time=200*second, dt=1*millisecond)
 plt.ioff()
 plt.show()

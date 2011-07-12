@@ -102,7 +102,7 @@ class DifferentialEquation(Definition):
         return "%s('d%s/dt = %s : %s')" % (classname, self._lhs, self._rhs, self._dtype)
 
 
-    def parse(self, definition = None):
+    def parse(self, definition = None, known_variables = []):
         '''
         Parse definition and check if it is an equation.
 
@@ -115,7 +115,6 @@ class DifferentialEquation(Definition):
         if definition is not None:
             self._definition = definition
         definition = str(self._definition.replace(' ',''))
-
         # First, we check if equation is of the form:
         #   dy/dt = A + (B)*y [: dtype]
         p = re.compile(r'''d(?P<y>\w+)/dt =
@@ -149,6 +148,7 @@ class DifferentialEquation(Definition):
                     frame = inspect.stack()[i][0]
                     for name in self.__f__.func_code.co_names:
                         if ((name in self._variables) and (name != self._varname) and
+                            (name not in known_variables) and
                             (name in numpy_ns.keys() or name in frame.f_globals.keys()) and
                             callable(eval(name, numpy_ns, frame.f_globals))):
                             self._variables.remove(name)
@@ -198,6 +198,7 @@ class DifferentialEquation(Definition):
                 frame = inspect.stack()[i][0]
                 for name in self.__f__.func_code.co_names:
                     if ((name in self._variables) and (name != self._varname) and
+                        (name not in known_variables) and
                         (name in numpy_ns.keys() or name in frame.f_globals.keys()) and
                         callable(eval(name, numpy_ns, frame.f_globals))):
                         self._variables.remove(name)

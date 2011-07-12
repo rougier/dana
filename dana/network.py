@@ -60,7 +60,6 @@ class Network(object):
 
     def run(self, time=1.0, dt=0.01, n=None):
         ''' '''
-
         if n != None:
             clock.end = n-0.01
             clock.dt = 1.0
@@ -70,16 +69,22 @@ class Network(object):
         setup()
         clock.remove(self.evaluate)
         clock.add(self.evaluate)
+#        for group in self._groups:
+#            group.update()
         clock.run()
 
 
     def evaluate(self,time):
         ''' '''
+        for group in self._groups:
+            group.propagate()
 
         for group in self._groups:
             group.evaluate(dt=clock.dt, update=False)
+
         for group in self._groups:
             group.update()
+
         for group in self._groups:
             group.learn(dt=clock.dt)
 

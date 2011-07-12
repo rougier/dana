@@ -54,15 +54,21 @@ from random import choice
 from dana import *
 
 n = 10
+tau_c = 1.0
+tau_t = tau_c * 0.1
+eta   = tau_t * 0.1
 stims = np.identity(n)
-src = Group((n,), ''' V = choice(stims)    : float ''')
-tgt = Group((n,), ''' dC/dt = (F-C)*1.0    : float
-                      dT/dt = (C**2-T)*0.1 : float
-                      ----------------------------
-                      F                    : float ''')
+src = np.zeros(n)
+tgt = ones(n, ''' C = C + (F-C)*tau_c    : float
+                  T = T + (C**2-T)*tau_t : float
+                  ----------------------------
+                  F                    : float ''')
 C = DenseConnection(src, tgt('F'), np.random.random((n,n)),
-                    'dW/dt = pre.V*post.C*(post.C-post.T)*0.01')
+                    'dW/dt = pre*post.C*(post.C-post.T)*eta')
+
+@before(clock.tick)
+def set_stimulus(*args):
+    src[:] = choice(stims)
 run(n=10000)
 for i in range(n):
-    print 'Unit %d selective to ' % i, (C.weights[i] > 1e-3).astype(int)
-
+    print 'Unit %d selective to ' % i, (C.weights[i] > 1e-2).astype(int)

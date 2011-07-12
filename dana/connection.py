@@ -91,7 +91,7 @@ class Connection(object):
             self._actual_source = source
             self._source_name = ''
         else:
-            self._actual_source = (source[names[0]])
+            self._actual_source = source[names[0]]
             self._source_name = names[0]
 
         # Get actual target
@@ -100,7 +100,7 @@ class Connection(object):
             self._actual_target = target
             self._target_name = ''
         else:
-            self._actual_target = (target[names[0]])
+            self._actual_target = target[names[0]]
             self._target_name = names[0]
 
         # Get source base group
