@@ -48,9 +48,10 @@ class Timer(object):
     _next = 0
     _order = 0
     _clock = None
-    _once = False
+    _start = 0
+    _stop =0
 
-    def __init__(self, func, clock, dt, order=0, once = False):
+    def __init__(self, func, clock, dt, order=0, start=None, stop=None):
         ''' Create a new timer function to be called every dt.
         
         **Parameter**
@@ -68,24 +69,27 @@ class Timer(object):
             In case several timers share the same time interval, those with
             lower order are called first.
 
-        once : bool
-            Whether this timer has to be called only once.
+        start : float
+            When to start this timer
+
+        stop : float
+            When to stop this timer
         '''
         self._func = func
         self._dt = dt
-        self._next = 0
-        if once:
-            self._next = dt
         self._order = order
-        self._once = once
         self._clock = clock
+        self._start = start or self._clock._time
+        self._stop = stop or self._clock._stop
+        self._next = self._start
 
     def __call__(self):
         ''' Call the timer function and update local time '''
         self._func(self._next)
         self._next += self._dt
-        if self._once:
-            self._clock._timers.remove(self)
+        if self._next > self._stop:
+            #self._clock._timers.remove(self)
+            self._next = self._clock.stop + 1
 
     def __cmp__(self, other):
         ''' Comparison function used to order timers '''
@@ -195,7 +199,7 @@ class Every(object):
     _dt = None
     _clock = None
 
-    def __init__(self, dt, order=0):
+    def __init__(self, dt, start=None, stop=None, order=0):
         '''
         dt : float
              Time interval between two calls
@@ -206,11 +210,19 @@ class Every(object):
         '''
         self._dt = dt
         self._order = order
+        self._start = start
+        self._stop = stop
+
 
     def __call__(self, func):
         ''' Add function to the clock using given dt and order. '''
-        self._clock.add(func, self._dt, self._order)
 
+        dt = self._dt
+        start = max(self._start, self._clock.time)
+        stop  = min(self._stop, self._clock.stop)
+        order = self._order
+
+        self._clock.add(func, dt=dt, start=start, stop=stop, order=order)
 
 class At(object):
     ''' Clock decorator 
@@ -239,11 +251,14 @@ class At(object):
 
         '''
         self._dt = dt
+        self._start = self._dt
+        self._stop  = self._dt
         self._order = order
 
     def __call__(self, func):
         ''' Add function to the clock using given dt and order. '''
-        self._clock.add_once(func, self._dt, self._order)
+        self._clock.add(func, self._dt, self._order,
+                        start = self._start, stop = self._stop)
 
 
 
@@ -258,7 +273,7 @@ class Clock(object):
 
     **Examples:**
 
-      >>> clock = Clock(start=0.0, end=1.0, dt=0.1)
+      >>> clock = Clock(start=0.0, stop=1.0, dt=0.1)
       >>> @clock.tick
       >>> def tick(time):
       ...    print 'timer tick at time %.3f' % time
@@ -267,27 +282,27 @@ class Clock(object):
 
     _start   = 0.0*second
     _time    = 0.0*second
-    _end     = 1.0*second
+    _stop    = 1.0*second
     _dt      = 1.0*millisecond
     _running = False
     _timers  = []
     
-    def __init__(self, start=0.0, end=1.0, dt=0.001):
+    def __init__(self, start=0.0, stop=1.0, dt=0.001):
         ''' Initialize clock
 
         **Parameters**
 
-        **start** : float
+        start : float
             Start time
         
-        end : float
-            End time
+        stop : float
+            Stop time
 
         dt : float
             Time step resolution
         '''
         self._start = start
-        self._end = end
+        self._stop = stop
         self._dt = dt
         self._time = self._start
         self.every = Every
@@ -304,12 +319,8 @@ class Clock(object):
 
         self._time = self._start
         for timer in self._timers:
-            if not timer._once:
-                timer._next = self._start
-            else:
-                timer._next = self._start+timer._dt
+            timer._next = timer._start
         self._timers.sort()
-
 
 
     def clear(self):
@@ -319,7 +330,7 @@ class Clock(object):
 
 
 
-    def run(self, start=None, end=None, dt=None):
+    def run(self, start=None, stop=None, dt=None):
         ''' Run the clock.
         
         **Parameters**
@@ -327,29 +338,32 @@ class Clock(object):
         start : float
             Start time
         
-        end : float
-            End time
+        stop : float
+            Stop time
 
         dt : float
             Time step resolution
         '''
         self.start = start or self._start
-        self.end = end or self._end
+        self.stop = stop or self._stop
         self._dt = dt or self._dt
+        self.reset()
         self._running = True
-        while self._time <= self._end and self._running:
-            # print 'Tick : %.3f' % self.time
-            while self._timers[0]._next < (self._time+self._dt) and self._running:
+        while self._time <= self._stop and self._running:
+            print 'Tick : %.3f' % self.time
+            while (self._timers and
+                   self._timers[0]._next < (self._time+self._dt)
+                   and self._running):
+
                 timer = self._timers[0]
-                if timer._next <= self._end and \
+                if timer._next <= self._stop and \
                         self._time + self._dt - timer._next > 1e-10:
                     timer()
                 else:
-                    #self._running = False
                     break
                 self._timers.sort()
             self._time += self._dt
-
+        self._running = False
 
                 
     def stop(self):
@@ -359,7 +373,7 @@ class Clock(object):
         
 
 
-    def add(self, func, dt=None, order=0):
+    def add(self, func, dt=None, order=0, start=None, stop=None):
         ''' Add a new timer to the timer list
 
         **Parameters**
@@ -378,28 +392,7 @@ class Clock(object):
 
         if not dt:
             dt = self._dt
-        timer = Timer(func, self, dt, order)
-        self._timers.append(timer)
-        self._timers.sort()
-
-
-    def add_once(self, func, dt, order=0):
-        ''' Add a new timer to the timer list
-
-        **Parameters**
-
-        func : function(time)
-            Function to be added
-
-        dt : float
-            Time before calling function.
-
-        order : int
-            In case several timers share the same time, those with
-            lower order are called first.
-        '''
-        timer = Timer(func, self, dt, order, once=True)
-        timer._next = dt
+        timer = Timer(func, clock=self, dt=dt, order=order, start=start, stop=stop)
         self._timers.append(timer)
         self._timers.sort()
 
@@ -424,13 +417,20 @@ class Clock(object):
         removed.
         '''
 
-        if not dt:
-            dt = self._dt
-        for i in range(len(self._timers)):
-            timer = self._timers[i]
-            if timer._func == func and timer._dt == dt:
-                self._timers.pop(i)
-                break
+        if dt is None:
+            for i in range(len(self._timers)):
+                print i, self._timers[i], func
+                timer = self._timers[i]
+                if timer._func == func:
+                    self._timers.pop(i)
+                    break
+        else:
+            for i in range(len(self._timers)):
+                timer = self._timers[i]
+                if timer._func == func and timer._dt == dt:
+                    self._timers.pop(i)
+                    break
+
 
     def _get_time(self):
         ''' Return current time '''
@@ -445,26 +445,26 @@ class Clock(object):
         ''' Set start time '''
         if self._running:
             raise ClockException('Cannot set start time while running')
-        if self._end < self._start:
-            raise ClockException('Start time must be inferor to end time')
+        if self._stop < self._start:
+            raise ClockException('Start time must be inferor to stop time')
         self._start = time
         self.reset()
     start = property(_get_start, _set_start,
                      doc = '''Clock start time''')
 
-    def _get_end(self):
-        ''' Return end time '''
-        return self._end
-    def _set_end(self, time):
-        ''' Set end time '''
+    def _get_stop(self):
+        ''' Return stop time '''
+        return self._stop
+    def _set_stop(self, time):
+        ''' Set stop time '''
         if self._running:
-            raise ClockException('Cannot set end time while running.')
-        if self._end < self._start:
-            raise ClockException('End time must be superior to start time.')
-        self._end = time
+            raise ClockException('Cannot set stop time while running.')
+        if self._stop < self._start:
+            raise ClockException('Stop time must be superior to start time.')
+        self._stop = time
         self.reset()
-    end = property(_get_end, _set_end,
-                     doc = '''Clock end time.''')
+    stop = property(_get_stop, _set_stop,
+                     doc = '''Clock stop time.''')
 
 
 
@@ -491,7 +491,7 @@ class Clock(object):
 # -----------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    clock = Clock(start=0.0, end=1.0, dt=0.1)
+    clock = Clock(start=0.0, stop=1.0, dt=0.1)
 
     @clock.tick
     def timer_2(time):
@@ -505,13 +505,25 @@ if __name__ == '__main__':
     def timer_3(time):
         print 'timer 3 called at time %.3f' % time
 
-    @clock.every(100*millisecond,-1)
+    @clock.every(100*millisecond,order=-1)
     def timer_4(time): print 'timer 4 called at time %.3f' % time
 
-    @clock.every(100*millisecond,+1)
+    @clock.every(100*millisecond,order=+1)
     def timer_5(time): print 'timer 5 called at time %.3f' % time
 
     @clock.at(50*millisecond)
     def timer_6(time): print 'timer 6 called at time %.3f' % time
 
+    @clock.at(500*millisecond)
+    def timer_7(time): print 'timer 7 called at time %.3f' % time
+
+    @clock.every(dt=100*millisecond, order=-2,
+                 start=100*millisecond, stop=200*millisecond)
+    def timer_8(time): print 'timer 8 called at time %.3f' % time
+
+
+    print "First run"
+    clock.run()
+    print
+    print "Second run"
     clock.run()

@@ -323,7 +323,8 @@ class Group(object):
     def run(self, dt=1):
          ''' '''
          self.propagate()
-         self.evaluate(dt)
+         self.evaluate(dt, update=False)
+         self.update()
          self.learn(dt)
 
 
