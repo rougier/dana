@@ -14,7 +14,6 @@ homogeneous units.
 
 License
 =======
-
 Copyright (c) 2009, 2011 INRIA
 Contributors: Nicolas P. Rougier (Nicolas.Rougier@inria.fr)
 
