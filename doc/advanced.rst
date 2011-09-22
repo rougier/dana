@@ -3,9 +3,12 @@
 ===============================================================================
 Advanced concepts                                                              
 ===============================================================================
-.. contents::
-   :local:
-   :depth: 2
+
+.. only:: html
+
+   .. contents::
+      :local:
+      :depth: 2
 
 
 Integration methods                                                            
@@ -17,55 +20,69 @@ equation object. Below is the description of each method.
 
 Forward Euler
 -------------
-Considering an equation of the form *x' = f(x)*, *x* is updated according to::
+Considering an equation of the form `x' = f(x)`, `x` is updated according to:
 
-    x ← x + f(x)*dt
+.. math::
+
+   x \leftarrow x + f(x) \times dt
 
 
 Runge-Kutta second order
 ------------------------
-Considering an equation of the form *x' = f(x)*, *x* is updated according to::
+Considering an equation of the form `x' = f(x)`, `x` is updated according to:
 
-    k₁ = f(x)
-    k₂ = f(x + xdt)    
-    x ← x + ½(k₁ + k₂)*dt
+.. math::
+
+   k_1 &= f(x)
+
+   k_2 &= f(x + x dt)    
+
+   x   &= x + \frac{1}{2}(k_1 + k_2) dt
 
 
 Runge-Kutta fourth order
 ------------------------
-Considering an equation of the form *x' = f(x)*, *x* is updated according to::
+Considering an equation of the form `x' = f(x)`, `x` is updated according to:
 
-    k₁ = f(x)
-    k₂ = f(x + ½k₁*dt) 
-    k₃ = f(x + ½k₂*dt)
-    k₄ = f(x +  k₃*dt)
-    x ← x + ⅙(k₁ + k₄)*dt + ⅓(k₂ + k₃)*dt
+.. math::
+
+    k_1 &= f(x)
+
+    k_2 &= f(x + \frac{1}{2} k_1 dt)
+
+    k_3 &= f(x + \frac{1}{2} k_2 dt)
+
+    k_4 &= f(x + \frac{1}{2} k_ 3dt)
+
+    x  &\leftarrow x + \frac{1}{6}(k_1 + k_4) dt + \frac{1}{3}(k_2 + k_3) dt
 
 
 Exponential Euler
 -----------------
-Considering an equation of the form *x' = A-Bx*, *x* is updated according to::
+Considering an equation of the form `x' = f(x)`, `x` is updated according to:
 
-   x ← x + x*exp(-D*dt) + A/B(1-exp(-D*dt))
+.. math::
+
+   x \leftarrow x + x e^{-Ddt} + \frac{A}{B} (1 - e^{-D*dt})
 
 
-Asynchronicity                                                                 
+Asynchronicity
 ===============================================================================
 Most computational paradigms linked to artificial neural networks (using rate
 code) or cellular automata use implicitly what is called synchronous evaluation
 of activity. This means that information at time t+dt is evaluated exclusively
 on information available at time t. The explicit numerical procedure to perform
 such a synchronized update is to implement a temporary buffer at the unit level
-where activity computed at time t+∆t is stored. Once all units have evaluated
-their activity at time t+∆t, The current activity is replaced by the content of
-the buffer. We point out that other update procedures have been developed
-[Lambert:1991]_ but the basic idea remains the same, namely not to mix
-information between time t and time t+∆t. To perform such a synchronization,
-there is thus a need for a global signal that basically tell units that
-evaluation is over and they can replace their previous activity with the newly
-computed one. At the computational level, this synchronization is rather
-expensive and is mostly justified by the difficulty of handling asynchronous
-models.
+where activity computed at time `t + \Delta t` is stored. Once all units have
+evaluated their activity at time `t + \Delta t`, The current activity is
+replaced by the content of the buffer. We point out that other update
+procedures have been developed [Lambert:1991]_ but the basic idea remains the
+same, namely not to mix information between time `t` and time `t + \Delta
+t`. To perform such a synchronization, there is thus a need for a global signal
+that basically tell units that evaluation is over and they can replace their
+previous activity with the newly computed one. At the computational level, this
+synchronization is rather expensive and is mostly justified by the difficulty
+of handling asynchronous models.
 
 For example, cellular automata have been extensively studied during the past
 decades for the synchronous case and many theorems has been proved in this
@@ -82,10 +99,10 @@ synchronization signal).
 In [Taouali:2009]_ and [Rougier:2010]_, we've been studying the effect of such
 asynchronous computation (uniform or non-uniform) on neural networks and more
 specifically for the case of dynamic neural fields. The whole story is that if
-you choose a ∆t small enough, asynchronous and synchronous computation may be
-considered to lead tp the same result provided the leak term in your equation
-is not too strong. This is reason why currently, the asynchronous part of dana
-has been disabled.
+you choose a `\Delta t` small enough, asynchronous and synchronous computation
+may be considered to lead tp the same result provided the leak term in your
+equation is not too strong. This is reason why currently, the asynchronous part
+of dana has been disabled.
 
 
 References
@@ -115,14 +132,19 @@ spatial dimensions that involves a finite transmission speed,
 i.e. distance-dependent delays and derived a fast numerical scheme that allow
 to quickly simulate numerically such equations.
 
-More formaly, the NF equation reads::
+More formaly, the NF equation reads:
 
-    τ ∂V(x,t)/∂t = -V(x,t) + ∫ K(x,y) S(V(y, t-║x-y║/c)) d²y + I(x,t) (2)
+.. math::
+
+   \tau \frac{\partial{V}(x,t)}{\partial{t}} =
+             -V(x,t) + \sum K(x,y) S(V(y, t- \frac{||x-y||}{c})) d^2 y + I(x,t)
+     
+..    τ ∂V(x,t)/∂t = -V(x,t) + ∫ K(x,y) S(V(y, t-║x-y║/c)) d²y + I(x,t) (2)
 
 where:
  * V(x,t) is the potential of a neural population at position x and time t
- * K(x,y) is a neighborhood function from ℝ²→ℝ
- * S(u) is the firing rate of a single neuron from ℝ⁺→ℝ
+.. * K(x,y) is a neighborhood function from `\mathbb{R}^2 \rightarrow \mathbb{R}`
+.. * S(u) is the firing rate of a single neuron from `\mathbb{R}^+ \rightarrow \mathbb{R}`
  * c is the velocity of an action potential
  * τ is the temporal decay of the synapse
  * I(x,t) is the input at position x and time t

@@ -1,9 +1,12 @@
 ===============================================================================
 Installation                                                                   
 ===============================================================================
-.. contents::
-   :local:
-   :depth: 1
+
+.. only:: html
+
+   .. contents::
+      :local:
+      :depth: 1
 
 Dana is a python package and depends  on a number of python components that can
 be easily installed (see instructions on respective homepages):

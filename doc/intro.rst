@@ -1,9 +1,12 @@
 ===============================================================================
 Introduction                                                                   
 ===============================================================================
-.. contents::
-   :local:
-   :depth: 1
+
+.. only:: html
+
+   .. contents::
+      :local:
+      :depth: 1
 
 Computational neuroscience is a vast domain of research going down from the
 very precise modeling of a single spiking neuron, taking into account ion
@@ -25,10 +28,10 @@ of such homogeneous units.
 
 More formally, we can write the following definitions:
 
-* A unit is a set of one to several values (Vᵢ, i ∈ ℕ), each of them being
-  potentially described by an equation.
+* A unit is a set of one to several values, each of them being potentially
+  described by an equation.
 * A group is a structured set of one to several homogeneous units.
-* A layer is a subset of a group restricted to a unique value Vᵢ.
+* A layer is a subset of a group restricted to a unique value.
 * A layer is a group.
 * A connection links a source layer to a target layer and may have an equation
   describing its evolution along time according to source and target.
@@ -68,11 +71,11 @@ emergent property of the model.
 What can I do with DANA ?                                                      
 -------------------------------------------------------------------------------
 
-Dana has been designed in the first place for computational
-neurocience. However, because of the structure of the framework, it might be
-possible to use dana other scientific modesl as well. You might for example
-have a look at the :doc:`examples` chapter that introduces models dealing with
-cellular automaton and image processing.
+Dana has been designed in the first place for computational neurocience.
+However, because of the structure of the framework, it might be possible to use
+dana other scientific modesl as well. You might for example have a look at the
+:doc:`examples` chapter that introduces models dealing with cellular automaton
+and image processing.
 
 
 

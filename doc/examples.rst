@@ -3,9 +3,12 @@
 ===============================================================================
 Examples                                                                       
 ===============================================================================
-.. contents::
-   :local:
-   :depth: 1
+
+.. only:: html
+
+   .. contents::
+      :local:
+      :depth: 1
 
 
 Image processing                                                               
@@ -40,9 +43,13 @@ one vertical) with a minimal size kernel (3×3) to get local gradients from
 which we can compute the gradient magnitude::
 
     >>> src = Group(I.shape, 'V = sqrt(Gx**2+Gy**2); Gx; Gy')
-    >>> Kx = np.array([[-1., 0.,+1.], [-2., 0.,+2.], [-1., 0., 1.]])
+    >>> Kx = np.array([[-1., 0.,+1.],
+                       [-2., 0.,+2.],
+                       [-1., 0., 1.]])
     >>> Gx = SharedConnection(L, src('Gx'), Kx)
-    >>> Ky = np.array([[+1.,+2.,+1.], [ 0., 0., 0.], [-1.,-2.,-1.]])
+    >>> Ky = np.array([[+1.,+2.,+1.],
+                       [ 0., 0., 0.],
+                       [-1.,-2.,-1.]])
     >>> Gy = SharedConnection(L, src('Gy'), Ky)  
     >>> src.run(n=1)
 

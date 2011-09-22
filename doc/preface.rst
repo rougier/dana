@@ -1,19 +1,11 @@
-Copyright (C) 2011 Nicolas P. Rougier.
-
-Permission is granted to copy, distribute and/or modify this document under the
-terms of the  GNU Free Documentation License, Version 1.3  or any later version
-published  by the  Free Software  Foundation;  with no  Invariant Sections,  no
-Front-Cover Texts, and no Back-Cover Texts.
-
-A  copy  of  the  license  is  included  in  the  section  entitled  "GNU  Free
-Documentation License".
-
 ===============================================================================
 Preface                                                                        
 ===============================================================================
-.. contents::
-   :local:
 
+.. only:: html
+
+   .. contents::
+      :local:
 
 
 What is in this handbook ?                                                     
@@ -23,8 +15,7 @@ This book includes the following chapters:
 * Chapter :doc:`intro` gives a general overview of the DANA computing
   framework
 * Chapter :doc:`install` explains how to install DANA on your machine.
-* Chapter :doc:`quickstart` gives a rapid overview of main concepts related to
-  DANA.
+* Chapter :doc:`quicktour` gives a rapid overview of main concepts related to DANA.
 * Chapter :doc:`numpy-to-dana` explains conceptual differences between array and group.
 * Chapter :doc:`model` explains what are model and equations and how to use them.
 * Chapter :doc:`connection` gives details on group connections
@@ -40,7 +31,7 @@ This book includes the following chapters:
 
 
 
-Who should read this book ?                                                   
+Who should read this book ?                                                    
 ===============================================================================
 
 You  should read this  book if  you intent  to develop  models using  the DANA

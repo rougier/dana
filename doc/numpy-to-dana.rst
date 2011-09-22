@@ -3,9 +3,12 @@
 ===============================================================================
 From numpy array to dana group                                                 
 ===============================================================================
-.. contents::
-   :local:
-   :depth: 2
+
+.. only:: html
+
+   .. contents::
+      :local:
+      :depth: 2
 
 
 For brevity and convenience, we assume from now on that main packages (dana,

@@ -3,9 +3,12 @@
 ===============================================================================
 Learning                                                                       
 ===============================================================================
-.. contents::
-   :local:
-   :depth: 2
+
+.. only:: html
+
+   .. contents::
+      :local:
+      :depth: 2
 
 
 Since dana stands for Distributed Asynchronous Numerical & Adaptive

@@ -1,15 +1,19 @@
 ===============================================================================
 GNU Free Documentation License                                                 
 ===============================================================================
+
 | GNU Free Documentation License - Version 1.3, 3 November 2008.
 | Copyright (C) 2000, 2001, 2002, 2007, 2008 Free Software Foundation, Inc. <http://fsf.org/>
-| Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.
+| Everyone is permitted to copy and distribute verbatim copies of this license document,
+  but changing it is not allowed.
 
 ----
 
-.. contents::
-   :local:
-   :depth: 1
+.. only:: html
+
+   .. contents::
+      :local:
+      :depth: 1
 
 
 Preamble

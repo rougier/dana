@@ -51,8 +51,8 @@ class TestEvaluationOrder(unittest.TestCase):
 
     def test_2(self):
         A = Group(1, 'V = B.V')
-        A[...] = 1
         B = Group(1, 'V = A.V')
+        A[...] = 1
         B[...] = 2
         run(n=1)
         assert A['V'][0] == 2 and B['V'][0] == 1

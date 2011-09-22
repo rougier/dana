@@ -3,9 +3,12 @@
 ===============================================================================
 Connections                                                                    
 ===============================================================================
-.. contents::
-   :local:
-   :depth: 2
+
+.. only:: html
+
+   .. contents::
+      :local:
+      :depth: 2
 
 A connection can be made between two groups (a source and a target that can be
 the same) in order to model the propagation of activity from one group to the
@@ -113,7 +116,7 @@ illustrated below::
 In this case, the given kernel is interpreted as a prototype kernel for a
 single target unit that is to be used for every other unit. To do this, when
 the connection is created, a new matrix is built such that any target unit
-reveices the output of the prototype kernel multiplied by the source unit and
+receives the output of the prototype kernel multiplied by the source unit and
 its immediate neighborood (that span the kernel size) as illustrated on the
 figure below.
 
@@ -183,7 +186,7 @@ dimensionality but not the same size::
 
 Sparse connection                                                              
 -------------------------------------------------------------------------------
-If you have onyl a few connection between two groups, you might consider using
+If you have only a few connection between two groups, you might consider using
 this type of connection that is built on top of scipy sparse matrix that saves
 a lot of unnecessary computations when a matrix is mainly filled with zeros::
 

@@ -108,14 +108,16 @@ span.eqno {
 /* -- code ----------------------------------------------------------------- */
 tt {
     font-family: Inconsolata, Monaco, monospace;
+    font-size: 80%;
 }
 pre {
     padding:    .5em;
     line-height: 1.25em;
     border-left: 3px solid #cccccc;
-    background-color: #ffffff;
+    background-color: #eeeeee;
     font-family: Inconsolata, Monaco, monospace;
     margin-bottom: 1em;
+    font-size: 80%;
 }
 
 

@@ -3,9 +3,12 @@
 ===============================================================================
 Model and equations                                                            
 ===============================================================================
-.. contents::
-   :local:
-   :depth: 2
+
+.. only:: html
+
+   .. contents::
+      :local:
+      :depth: 2
 
 Beyond the quite limited group dtype argument, a group can also be created
 using a Model_ that allow to finely tune the behavior of each field of the

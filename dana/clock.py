@@ -32,6 +32,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
 ''' Management of time '''
+import sys
 
 second      = 1
 millisecond = 0.001
@@ -199,7 +200,7 @@ class Every(object):
     _dt = None
     _clock = None
 
-    def __init__(self, dt, start=None, stop=None, order=0):
+    def __init__(self, dt, start=0, stop=sys.maxint, order=0):
         '''
         dt : float
              Time interval between two calls
@@ -218,10 +219,18 @@ class Every(object):
         ''' Add function to the clock using given dt and order. '''
 
         dt = self._dt
+        #if self._start is None:
+        #    start = self._clock.time
+        #else:
         start = max(self._start, self._clock.time)
-        stop  = min(self._stop, self._clock.stop)
-        order = self._order
+        #if self._stop is None:
+        #    stop = self._clock.stop
+        #else:
+        # stop = min(self._stop, self._clock.stop)
 
+        start = self._start
+        stop = self._stop
+        order = self._order
         self._clock.add(func, dt=dt, start=start, stop=stop, order=order)
 
 class At(object):
@@ -350,7 +359,7 @@ class Clock(object):
         self.reset()
         self._running = True
         while self._time <= self._stop and self._running:
-            print 'Tick : %.3f' % self.time
+            # print 'Tick : %.3f' % self.time
             while (self._timers and
                    self._timers[0]._next < (self._time+self._dt)
                    and self._running):
@@ -419,7 +428,6 @@ class Clock(object):
 
         if dt is None:
             for i in range(len(self._timers)):
-                print i, self._timers[i], func
                 timer = self._timers[i]
                 if timer._func == func:
                     self._timers.pop(i)

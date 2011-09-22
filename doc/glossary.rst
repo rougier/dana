@@ -7,8 +7,6 @@ Glossary
 **layer**
     A group with a single field.
 
-----
-
 **group**
     A group is equivalent to a numpy structured array with a different memory
     layout. Array layout is such that the data pointer points to one block of

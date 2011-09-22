@@ -3,9 +3,12 @@
 ===============================================================================
 Quick tour                                                                     
 ===============================================================================
-.. contents::
-   :local:
-   :depth: 1
+
+.. only:: html
+
+   .. contents::
+      :local:
+      :depth: 1
 
 Getting started  with a  new library or  framework can be  daunting, especially
 when presented with a large amount  of reference material to read. This chapter
@@ -51,16 +54,17 @@ And check they are equal to their definition::
   0.132681542455 -0.478192959504
 
 
-Basic concepts                                                                 
+Basic concepts
 ===============================================================================
-Groups are the  central objects of the DANA framework and  most of the modeling
-work relates  to the  definition of  a group model  which is  a set  of generic
+Groups are the central objects of the DANA framework and most of the modeling
+work relates to the definition of a group model which is a set of generic
 definitions of variables. Such definitions can be a simple declaration of a new
-variable, an  equation defining  how to compute  the variable (with  regards to
+variable, an equation defining how to compute the variable (with regards to
 other variables) or a differential equation defining how to update the variable
 at each timestep. Let us for example consider the case of a uniform accelerated
-solid (dx/dy  = v, dv/dt =  a). Considering the  initial state (x₀, y₀)  we can
-easily compute the exact solution x(t) = ½ a.t² + v₀t + x₀.
+solid (`\frac{dx}{dy} = v`, `frac{dv}{dt} = a`). Considering the initial state
+`(x_0, y_0)` we can easily compute the exact solution `x(t) = \frac{1}{2}at^2 +
+v_0t + x_0`.
 
 Simulating such a simple system using DANA is straightforward::
 
@@ -73,13 +77,14 @@ Simulating such a simple system using DANA is straightforward::
   >>> print G.x[0]
   4.485
 
+.. note:: The error comes from both the numerical integration and the default
+          integration method which is the forward Euler.
+
 And we can check the difference with the theoretical solution::
 
   >>> print 0.5*a*t**2 + v0*t + x0
   4.5
   
-The error comes from both the numerical integration and the default integration
-method which is the forward Euler.
 
 
 Connecting groups                                                              
@@ -92,11 +97,11 @@ groups together allowing them to interact in possibly tricky ways.
 Let us consider for example the heat equation which describe the distribution
 of heat (or variation in temperature) in a given region over time. For a
 function u(x,y,t) of two spatial variables (x,y) and a time variable t, the
-heat equation is given by ∂u/∂t = κ∇²u where κ is a constant. The numerical
-solution can be approximated using various methods such as the explicit,
-implicit or Crank-Nicolson methods. We'll use the explicit method in our
-implementation and write the heat equation using the forward difference/central
-difference (FCTS) equation::
+heat equation is given by `\frac{\partial{u}}{\partial{t}} = k\nabla^2u where k is a
+constant. The numerical solution can be approximated using various methods such
+as the explicit, implicit or Crank-Nicolson methods. We'll use the explicit
+method in our implementation and write the heat equation using the forward
+difference/central difference (FCTS) equation::
 
   >>> n = 50
   >>> k = 5

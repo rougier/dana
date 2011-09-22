@@ -70,7 +70,7 @@ class DenseOneDimensionTestCase(unittest.TestCase):
         kernel = np.ones(1)
         C = DenseConnection(src, dst('I'), kernel,
                              equation = 'dW/dt = I')
-        dst.run(t=0.1, dt=0.1)
+        dst.run(time=0.1, dt=0.1)
         assert np_equal(C.weights, np.identity(3)*1.1)
 
 
@@ -105,7 +105,7 @@ class SparseOneDimensionTestCase(unittest.TestCase):
         kernel = np.ones(1)
         C = SparseConnection(src, dst('I'), kernel,
                              equation = 'dW/dt = I')
-        dst.run(t=0.1, dt=0.1)
+        dst.run(time=0.1, dt=0.1)
         assert np_equal(C.weights, np.identity(3)*1.1)
 
 

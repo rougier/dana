@@ -61,10 +61,10 @@ class Network(object):
     def run(self, time=1.0, dt=0.01, n=None):
         ''' '''
         if n != None:
-            clock.end = n-0.01
+            clock.stop = n-0.01
             clock.dt = 1.0
         else:
-            clock.end = time
+            clock.stop = time
             clock.dt = dt
         setup()
         clock.remove(self.evaluate)

@@ -36,7 +36,7 @@ Simple and naive model of heat diffusion
 '''
 from dana import *
 
-n,k  = 40, 12
+n,k  = 40, 4
 src = Group((n,n), '''dV/dt = k*N : float
                       N           : float''')
 SparseConnection(src('V'), src('N'), np.array([[np.NaN, 1,  np.NaN], 
@@ -46,8 +46,8 @@ src.V = 1
 
 @after(clock.tick)
 def set_border(time):
-    src.V[:,n-1] = src.V[n-1,:] = src.V[:,0] = 1
-    src.V[0,:] = 0 
+    src['V'][:,n-1] = src.V[n-1,:] = src.V[:,0] = 1
+    src['V'][0,:] = 0 
 
 run(time=10.0*second, dt=5*millisecond)
 
