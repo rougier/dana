@@ -1,6 +1,8 @@
 DANA, Distributed (Asynchronous) Adaptive Numerical Computing Framework
 =======================================================================
 
+Overview
+--------
 DANA is a python computing framework based on numpy and scipy libraries whose
 primary goals relate to computational neuroscience and artificial neural
 networks. However, this framework can be used in several different areas like
@@ -13,7 +15,7 @@ homogeneous units.
 
 
 License
-=======
+-------
 Copyright (c) 2009, 2011 INRIA
 Contributors: Nicolas P. Rougier (Nicolas.Rougier@inria.fr)
 
