@@ -1,5 +1,10 @@
 @import url("reset.css");
 
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                                     Body │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
 body {
     color: #333333;
     font-family: "optima", "lucida grande", "lucida sans unicode",
@@ -9,25 +14,31 @@ body {
     margin-top: 0em;
 }
 
-/* -------------------------------------------------------------------------
-   Document
-   ------------------------------------------------------------------------- */
+
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                                 Document │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
 div.document {
     margin-top:     50px;
     margin-bottom:   5em;
     margin-left:   250px;
     margin-right:    5em;
 }
+
 h1, h2, h3, h4, h5, h6 {
     font-family: "futura", "lucida grande", "lucida sans unicode",
                  verdana, arial, helvetica, sans-serif;
     font-weight: normal;
 }
+
 h1 {
     font-size: 2em;
     margin-top:    2em;
     margin-bottom: 1em;
 }
+
 h2 {
     font-size:  1.25em;
     margin-top:    3em;
@@ -39,6 +50,7 @@ h2 {
     padding-bottom: .5em;
     border-bottom: 2px solid #326598;
 }
+
 h3 {
     font-size:     1em;
     margin-top:    3em;
@@ -48,82 +60,118 @@ h3 {
 }
 
 p {
-    margin-bottom: .5em;
-}
-
-dl.docutils {
-    margin-bottom: 1.5em;
+    margin-bottom: 1em;
 }
 
 strong {
     font-weight: bold;
 }
+
 em {
     font-style: italic;
 }
+
 a {
     color: #326598;
     text-decoration: none;
 }
+
 a:hover {
     color: #326598;
     text-decoration: underline;
 }
+
 hr {
     margin-top: 1em;
     border: 0;
 }    
 
 
-ul {
-    list-style-position: outside;
-    list-style-type: circle;
-    margin-left: 0;
-    padding-bottom: 1em;
-}
-
-
-/* -- image ---------------------------------------------------------------- */
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                                    Image │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
 img {
     text-align : left;
 }
 
-/* -- figure --------------------------------------------------------------- */
-.figure {
+
+
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                                   Figure │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
+.figure
+{
     margin-top:    1em;
     margin-bottom: 1em;
 }
 
-/* -- math display --------------------------------------------------------- */
+
+
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                                     Math │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
 img.math {
     vertical-align: middle;
 }
 div.body div.math p {
-    text-align: center;
+    text-align: left;
 }
 span.eqno {
     float: right;
 }
 
-/* -- code ----------------------------------------------------------------- */
+
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                                    Table │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
+table
+{
+}
+th.head
+{
+    font-weight: bold;
+    text-align: left;
+    border-bottom: 1px solid black;
+    padding-right: .5em;
+}
+
+th.field-name
+{
+    font-weight: bold;
+    text-align: left;
+    padding-right: 1em;
+}
+
+
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                                     Code │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
 tt {
-    font-family: Inconsolata, Monaco, monospace;
-    font-size: 80%;
+    font-family: monospace;
 }
 pre {
     padding:    .5em;
     line-height: 1.25em;
     border-left: 3px solid #cccccc;
-    background-color: #eeeeee;
-    font-family: Inconsolata, Monaco, monospace;
+    background-color: #ffffff;
+    font-family: monospace;
     margin-bottom: 1em;
-    font-size: 80%;
 }
 
 
 dl.docutils > dd {
     margin-left: 2em;
-    font-size: 90%;
+/*    font-size: 90%;*/
 }
 
 dl.docutils > dt {
@@ -140,7 +188,7 @@ dl.docutils > dt {
 }
 
 dl > dt  {
-    font-family: Inconsolata, Monaco, monospace;
+    font-family: monospace;
 }
 dl.method, dl.attribute, dl.function, dl.class {
     margin-bottom: 1em;
@@ -155,9 +203,13 @@ dl.class > dt, dl.function > dt, dl.method > dt, dl.attribute > dt {
 }
 
 
-/* -------------------------------------------------------------------------
-   Document TOC
-   ------------------------------------------------------------------------- */
+
+/*
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │                                                         Table Of Content │
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
+
 /* Global */
 .toctree-wrapper {
     padding-bottom: 3em;

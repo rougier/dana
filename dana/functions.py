@@ -48,17 +48,14 @@ def convolve1d(Z, K, toric=False):
         distributed according to the convolution of their individual
         distributions.
     
-        **Parameters**
-
-            Z : (N,) array_like
-                First one-dimensional input array (input).
-            K : (M,) array_like
-                Second one-dimensional input array (kernel).
-
-        **Returns**
-
-            out : array
-                Discrete, clamped, linear convolution of `Z` and `K`.
+        :param array Z:
+            One-dimensional array.
+        :param array K:
+            One-dimensional array.
+        :param bool toric:
+            Indicate whether convolution should be considered toric
+        :return: 
+            Discrete, clamped, linear convolution of `Z` and `K`.
 
         **Note**
 
@@ -98,17 +95,17 @@ def convolve2d(Z, K, USV = None, toric=False):
         singular value decomposition [2]_ and the computing is optimized
         accordingly (when rank n is inferior to S.size/2)
     
-        **Parameters**
 
-            Z : (N1,N2) array_like
-                First two-dimensional input array (input).
-            K : (M1,M2) array_like
-                Second two-dimensional input array (kernel).
-
-        **Returns**
-
-            out : ndarray
-                Discrete, clamped, linear convolution of `Z` and `K`.
+        :param array Z:
+            Two-dimensional array.
+        :param array K:
+            Two-dimensional array.
+        :param tuple USV
+            (U,S,V) as a result of scipy.linalg.svd(K).
+        :param bool toric:
+            Indicate whether convolution should be considered toric
+        :return: 
+            Discrete, clamped, linear convolution of `Z` and `K`.
 
         **Note**
 
@@ -432,18 +429,14 @@ def empty(shape, dtype=float):
     '''
     Return a new group of given shape and type, without initialising entries.
 
-    **Parameters**
 
-    shape : {tuple of ints, int}
+    :param tuple shape:
         Shape of the new group, e.g., ``(2, 3)`` or ``2``.
-    dtype : data-type, optional
+    :param dtype:
         The desired data-type for the group, e.g., `np.int8`.  Default is
         `np.float64`.
-    
-    **Returns**
-
-    out : group
-        Group with the given shape and dtype.
+    :return:
+        Group with the given shape and dtype filled with zeros.
 
     **Notes**
 
@@ -473,17 +466,12 @@ def zeros(shape, dtype=float):
     '''
     Return a new group of given shape and type, filled with zeros.
 
-    **Parameters**
-
-    shape : {tuple of ints, int}
+    :param tuple shape:
         Shape of the new group, e.g., ``(2, 3)`` or ``2``.
-    dtype : data-type, optional
+    :param dtype:
         The desired data-type for the group, e.g., `np.int8`.  Default is
         `np.float64`.
-    
-    **Returns**
-
-    out : group
+    :return:
         Group with the given shape and dtype filled with zeros.
 
     **Examples**
@@ -511,18 +499,13 @@ def ones(shape, dtype=float):
     '''
     Return a new group of given shape and type, filled with ones.
 
-    **Parameters**
-
-    shape : {tuple of ints, int}
+    :param tuple shape:
         Shape of the new group, e.g., ``(2, 3)`` or ``2``.
-    dtype : data-type, optional
+    :param dtype:
         The desired data-type for the group, e.g., `np.int8`.  Default is
         `np.float64`.
-    
-    **Returns**
-
-    out : group
-        Group with the given shape and dtype filled with ones.
+    :return:
+        Group with the given shape and dtype filled with zeros.
 
     **Examples**
 
@@ -549,16 +532,11 @@ def empty_like(other):
     ''' 
     Create a new group with the same shape and type as another.
 
-    **Parameters**
-
-    other : array_like
+    :param array other:
         The shape and data-type of `other` defines the parameters of the
         returned group.
-
-    **Returns**
-
-    out : group
-        Unintialized group with same shape and type as `other`.
+    :return:
+        Uninitialized group with same shape and type as `other`.
 
     **Examples**
 
@@ -585,15 +563,11 @@ def zeros_like(other):
     ''' 
     Create a new group of zeros with the same shape and type as another.
 
-    **Parameters**
 
-    other : array_like
+    :param array other:
         The shape and data-type of `other` defines the parameters of the
         returned group.
-
-    **Returns**
-
-    out : group
+    :return:
         Group of zeros with same shape and type as `other`.
 
     **Examples**
@@ -621,16 +595,11 @@ def ones_like(other):
     '''
     Returns a group of ones with the same shape and type as a given array.
 
-    **Parameters**
-
-    other : group_like
-        The shape and data-type of other defines the parameters of the
+    :param array other:
+        The shape and data-type of `other` defines the parameters of the
         returned group.
-
-    **Returns**
-
-    out : group
-        Group of ones with same shape and type as other.
+    :return:
+        Group of ones with same shape and type as `other`.
 
     **Examples**
 
