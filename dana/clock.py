@@ -81,14 +81,14 @@ class Timer(object):
         self._order = order
         self._clock = clock
         self._start = start or self._clock._time
-        self._stop = stop or self._clock._stop
+        self._stop = stop #or self._clock._stop
         self._next = self._start
 
     def __call__(self):
         ''' Call the timer function and update local time '''
         self._func(self._next)
         self._next += self._dt
-        if self._next > self._stop:
+        if self._stop and self._next > self._stop:
             #self._clock._timers.remove(self)
             self._next = self._clock.stop + 1
 
@@ -360,10 +360,8 @@ class Clock(object):
         self._running = True
         while self._time <= self._stop and self._running:
             # print 'Tick : %.3f' % self.time
-            while (self._timers and
-                   self._timers[0]._next < (self._time+self._dt)
-                   and self._running):
-
+            while (self._timers and self._running
+                   and self._timers[0]._next < (self._time+self._dt)):
                 timer = self._timers[0]
                 if timer._next <= self._stop and \
                         self._time + self._dt - timer._next > 1e-10:
