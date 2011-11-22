@@ -166,7 +166,7 @@ class Connection(object):
     def propagate(self):
         ''' Propagate activity from source to target '''        
 
-        self._actual_target[...] = self.output()
+        self._actual_target[...] += self.output()
 
     def evaluate(self, dt=0.01):
         ''' Update weights relative to connection equation '''

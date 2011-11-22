@@ -222,6 +222,12 @@ class Group(object):
 
 
     def propagate(self):
+        targets = []
+        for connection in self._connections:
+            target = connection._actual_target
+            if id(target) not in targets:
+                target[...] = 0
+                targets.append(id(target))
         for connection in self._connections:
            connection.propagate()
 
