@@ -33,7 +33,7 @@
 # -----------------------------------------------------------------------------
 import unittest
 import numpy as np
-from dana import Group, run
+from dana import Network, Group
 
 class TestEvaluationOrder(unittest.TestCase):
     def test_1(self):
@@ -50,11 +50,14 @@ class TestEvaluationOrder(unittest.TestCase):
         assert A['V'][0] == 2 and B['V'][0] == 1
 
     def test_2(self):
+        net = Network()
         A = Group(1, 'V = B.V')
         B = Group(1, 'V = A.V')
         A[...] = 1
         B[...] = 2
-        run(n=1)
+        net.append(A)
+        net.append(B)
+        net.run(n=1)
         assert A['V'][0] == 2 and B['V'][0] == 1
 
 if __name__ == "__main__":

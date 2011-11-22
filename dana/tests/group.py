@@ -132,11 +132,11 @@ class GroupAddItem(unittest.TestCase):
     def test_int(self):
         self.Z['z'] = 1
         assert self.Z.z.shape == (5,5)
-        assert self.Z.z.dtype == np.int64
+        assert self.Z.z.dtype == np.int
     def test_float(self):
         self.Z['z'] = 1.0
         assert self.Z.z.shape == (5,5)
-        assert self.Z.z.dtype == np.float64
+        assert self.Z.z.dtype == np.float
 
 class GroupDelItem(unittest.TestCase):
     def setUp(self):
@@ -168,14 +168,14 @@ class GroupSetItem(unittest.TestCase):
 
 class GroupGetItem(unittest.TestCase):
     def setUp(self):
-        self.Z = Group((5,5), dtype=[('U', float), ('V', int)])
+        self.Z = Group((5,5), dtype=[('U', np.double), ('V', np.int32)])
     def test_getitem_1(self):
         a,b = self.Z[0,0]
-        assert type(a) is np.float64
-        assert type(b) is np.int64
+        assert type(a) is np.double
+        assert type(b) is np.int32
     def test_getitem_2(self):
         assert self.Z[:2,:2].shape == (2,2)
-        assert self.Z[:2,:2].dtype == np.dtype([('U', float), ('V', int)])
+        assert self.Z[:2,:2].dtype == np.dtype([('U', np.double), ('V', np.int32)])
 
 class GroupReshape(unittest.TestCase):
      def setUp(self):
@@ -222,6 +222,17 @@ class GroupFunctions(unittest.TestCase):
         assert A.dtype == np.dtype([('U', float), ('V', int)])
         assert A['U'].sum() == 25
         assert A['V'].sum() == 25
+
+
+class GroupConnections(unittest.TestCase):
+     def test_1(self):
+         G = Group(5, 'V = I; I')
+         Z = np.ones(5)
+         DenseConnection(Z, G('I'), 1)
+         DenseConnection(Z, G('I'), 2)
+         G.run()
+         assert np_equal(3*np.ones(5),G('V'))
+         
 
 if __name__ == "__main__":
     unittest.main()

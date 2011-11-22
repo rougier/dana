@@ -66,7 +66,7 @@ class Network(object):
         else:
             clock.stop = time
             clock.dt = dt
-        setup()
+        self.setup()
         clock.remove(self.evaluate)
         clock.add(self.evaluate)
 #        for group in self._groups:
