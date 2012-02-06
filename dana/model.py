@@ -110,10 +110,11 @@ class Model(object):
         self._declarations = []
         self._all = []
         self._variables = []
-        self.parse(definition)
+        self._definition = definition
+        self.setup()
 
 
-    def parse(self, definition):
+    def setup(self):
         ''' Parse definition and instantiate corresponding objects '''
 
         self._diff_equations = []
@@ -121,7 +122,7 @@ class Model(object):
         self._declarations = []
         self._variables = []
         self._all = []
-        definition = re.sub('\\\s*?\n', ' ', definition)
+        definition = re.sub('\\\s*?\n', ' ', self._definition)
         for line in re.split('[\n;]', definition):
             line = line.strip()
             if len(line) and line[0] != '-':
@@ -223,15 +224,9 @@ class Model(object):
                 return equation
         raise ModelError, 'There is no definition for %s' % key
 
-
-    # def __rmul__(self, other):
-    #     ''' x.__rmul__(n) <==> n*x '''
-    #     return self*other
-
-
-    # def __mul__(self, other):
-    #     ''' x.__mul__(n) <==> x*n '''
-    #     return ModelGroup(shape=other, model=self)
+    def __iter__(self):
+        for eq in self._all:
+            yield eq
 
 
     def __repr__(self):

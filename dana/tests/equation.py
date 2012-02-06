@@ -61,7 +61,8 @@ class TestEquationIntegration(unittest.TestCase):
         eq = Equation('V = f(x) : float')
         assert eq(x=0.5) == 0.5
     def test_4(self):
-        eq = Equation('V = sin(x)**2 + cos(x)**2 : float')
+        import numpy as np
+        eq = Equation('V = np.sin(x)**2 + np.cos(x)**2 : float')
         assert eq(x=0.5) == 1
     def test_5(self):
         y, t,dt = 1.0, 1.0,  0.00001

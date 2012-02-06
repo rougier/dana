@@ -50,9 +50,10 @@ case, an `EquationError` is raised.
 >>> y = eq.evaluate(x=1, b=2, a=3)     # a=3, b=2, x=1
 '''
 import re
-import numpy as np
 import inspect
-from definition import Definition
+import compiler
+from definition import Definition, Visitor
+
 
 class EquationError(Exception):
     pass
@@ -76,22 +77,20 @@ class Equation(Definition):
     >>> y = eq.evaluate(x=1, b=2, a=3)     # a=3, b=2, x=1
     ''' 
 
-    def __init__(self, definition, known_variables=None):
+    def __init__(self, definition, constants={}):
         '''
-        Creates equation if `definition` is of the right form.
+        Creates equation.
 
-        **Parameters**
-
-        definition : str
-            Equation definition of the form 'y = expr : dtype'
-            expr must be a valid python expression.
-
+        :param string definition:
+            Equation definition of the form:
+        :param list constants:
+            Name of variables that must be considered constant
         '''
         Definition.__init__(self,definition)
-        self.parse()
+        self.setup()
 
 
-    def parse(self, definition = None, known_variables = []):
+    def setup(self, constants = {}):
         '''
         Parse definition and check it is an equation.
 
@@ -101,48 +100,42 @@ class Equation(Definition):
             Equation definition of the form 'y = expr : dtype'
             expr must be a valid python expression.
         '''
-        if definition is not None:
-            self._definition = definition
-        definition = str(self._definition.replace(' ',''))
 
         # Check if equation is of the form: y = f(...) : dtype
         p = re.compile(
             r'''(?P<y>\w+) = (?P<f>[^:]+) (:(?P<dtype>\w+))?''', re.VERBOSE)
-        result = p.match(definition)
+        result = p.match(self._definition)
         if result:
             y = result.group('y').strip()
             f = result.group('f').strip()
             dtype = (result.group('dtype') or 'float').strip()
-            self._varname = y
             self._lhs = y
+            self._varname = y
             self._rhs = f
-            self.__f__ = eval('lambda: %s' % f)
+            self._dtype = dtype
+            visitor = Visitor()
+            compiler.walk(compiler.parse(f), visitor)
+            variables = visitor._vars
 
-            # This line get all strings from function code definition...
-            self._variables = list(self.__f__.func_code.co_names)
-            #  ... and we need to sort out actual variables from function names
-            namespace = {}
-            numpy_ns = {}
-            for key in dir(np):
-                numpy_ns[key] = getattr(np,key)
-            for i in range(0,len(inspect.stack())):
-                frame = inspect.stack()[i][0]
-                for name in self.__f__.func_code.co_names:
-                    if ((name in self._variables) and (name != self._varname)
-                        and (name not in known_variables)):
-                        if name in numpy_ns.keys() and callable(eval(name, numpy_ns)):
-                            namespace[name] = numpy_ns[name]
-                            self._variables.remove(name)
-                        if name in frame.f_locals.keys() and callable(eval(name, frame.f_locals)):
-                            namespace[name] = frame.f_locals[name]
-                            self._variables.remove(name)
-            args = self.__f__.func_code.co_names
-            if len(args):
-                args = ' = 0, '.join(self._variables)+ ' = 0'
+            # Make sure to get function form highest stack frame
+            # since the function name can be also defined locally
+            ns = {}
+            for name in visitor._funcs:
+                for i in range(0,len(inspect.stack())):
+                    frame = inspect.stack()[i][0]
+                    name = name.split('.')[0]
+                    if name in frame.f_locals.keys():
+                        ns[name] = frame.f_locals[name]
+            ns.update(constants)
+
+            variables = list(set(variables) - set(constants.keys()))
+            self._variables = variables
+
+            if len(variables):
+                args = ' = 0, '.join(variables)+ ' = 0'
             else:
                 args = ''
-            self.__f__ = eval('lambda %s: %s' % (args,f), namespace)
-            self._dtype = dtype
+            self.__f__ = eval('lambda %s: %s' % (args,f),ns)
         else:
             raise EquationError, 'Definition is not an equation'
 

@@ -37,9 +37,9 @@ from dana import Network, Group
 
 class TestEvaluationOrder(unittest.TestCase):
     def test_1(self):
-        A = Group(1, 'V = B.V')
+        A = Group(1, "V = B['V']")
         A[...] = 1
-        B = Group(1, 'V = A.V')
+        B = Group(1, "V = A['V']")
         B[...] = 2
         A.setup()
         B.setup()
@@ -51,8 +51,8 @@ class TestEvaluationOrder(unittest.TestCase):
 
     def test_2(self):
         net = Network()
-        A = Group(1, 'V = B.V')
-        B = Group(1, 'V = A.V')
+        A = Group(1, "V = B['V']")
+        B = Group(1, "V = A['V']")
         A[...] = 1
         B[...] = 2
         net.append(A)

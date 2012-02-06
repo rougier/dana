@@ -38,6 +38,9 @@ Generic definition of type:
 * :class:`Equation` (``Y = expr : type``)
 * :class:`Declaration` (``Y : type``)
 '''
+import compiler
+import compiler.ast
+import compiler.visitor
 
 class DefinitionError(Exception):
     ''' Definition Error '''
@@ -52,12 +55,12 @@ class Definition(object):
     * :class:`Declaration` (``Y : type``)
     '''
   
-    def __init__(self, definition):
-        self._definition = definition
+    def __init__(self, definition, constants={}):
+        self._definition = str(definition.replace(' ',''))
         self._varname = None
         self._dtype = None
 
-    def parse(self, definition = None):
+    def setup(self, constants={}):
         ''' Parse definition
 
         **Parameters**
@@ -103,5 +106,59 @@ class Definition(object):
         return self._dtype
     dtype = property(_get_dtype,
                      doc='''Equation data type''')
+
+
+class Visitor(compiler.visitor.ASTVisitor):
+    """ 
+    This class is used with compiler.walk and extract functions calls,
+    variables and dotted variable names from an expression.
+    """
+
+    def __init__(self):
+        compiler.visitor.ASTVisitor.__init__(self)
+        self._funcs = []
+        self._vars  = []
+        self._constants = []
+        self._call = False
+
+    def visitName(self, node):
+        name = node.name
+        if not self._call:
+            if name not in self._vars:
+                self._vars.append(name)
+        else:
+            if name not in self._funcs:
+                self._funcs.append(name)
+
+    def visitCallFunc(self, node):
+        self._call = True
+        self.visit(node.node)
+        self._call = False
+        if node.args:
+            for arg in node.args: self.visit(arg)
+        if node.star_args:
+            self.visit(node.dstar_args)
+        if node.dstar_args:
+            self.visit(node.dstar_args)
+
+    def visitGetattr(self, node):
+        dotted = []
+        n = node
+        while isinstance(n, compiler.ast.Getattr):
+            dotted.append(n.attrname)
+            n = n.expr
+            try:
+                dotted.append(n.name)
+            except AttributeError:
+                pass
+                #print >> sys.stderr, "ignoring", node
+            else:
+                name = ".".join(reversed(dotted))
+                if not self._call:
+                    if name not in self._constants:
+                        self._constants.append(name)
+                else:
+                    if name not in self._funcs:
+                        self._funcs.append(name)
 
 

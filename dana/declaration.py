@@ -40,13 +40,13 @@ class DeclarationError(Exception):
 class Declaration(Definition):
     ''' Declaration of type: 'y : dtype' '''
   
-    def __init__(self, definition):
+    def __init__(self, definition, constants = {}):
         ''' Builds a new Declaration of type: 'y : dtype' '''
-        Definition.__init__(self, definition)
-        self.parse()
+        Definition.__init__(self, definition, constants)
+        self.setup()
 
 
-    def parse(self, definition = None):
+    def setup(self, constants = {}):
         '''
         Parse definition and check it is a declaration.
 
@@ -55,18 +55,15 @@ class Declaration(Definition):
         definition : str
             Equation definition of the form 'y : dtype'
         '''
-        if definition is not None:
-            self._definition = definition
-        definition = str(self._definition.replace(' ',''))
             
         p = re.compile(r'''(?P<y>\w+) (:(?P<dtype>\w+))?''', re.VERBOSE)
-        result = p.match(definition)
+        result = p.match(self._definition)
         if result:
             self._varname = result.group('y')
             self._lhs = self._varname
             self._rhs = ''
-            #self._definition = None
             self._dtype = result.group('dtype') or 'float'
+            self._variables = []
         else:
             raise DeclarationError, 'Definition is not a declaration'
 

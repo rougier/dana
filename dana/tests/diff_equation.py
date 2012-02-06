@@ -55,15 +55,15 @@ class TestDifferentialEquationParsing(unittest.TestCase):
     def test_exponential_form_1(self):
         eq = DifferentialEquation('dy/dt = 1.2+(3.4)*y')
         assert eq._A_string == '1.2'
-        assert eq._B_string == '3.4'
+        assert eq._B_string == '-3.4'
     def test_exponential_form_2(self):
         eq = DifferentialEquation('dy/dt = +(1.1)*y')
         assert eq._A_string == '0'
-        assert eq._B_string == '1.1'
+        assert eq._B_string == '-1.1'
     def test_exponential_form_3(self):
         eq = DifferentialEquation('dy/dt = (1.3)*y')
         assert eq._A_string == '0'
-        assert eq._B_string == '1.3'
+        assert eq._B_string == '-1.3'
     def test_empty_definition(self):
         def test(): eq = DifferentialEquation('')
         self.assertRaises(DifferentialEquationError,test)

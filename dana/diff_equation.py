@@ -50,11 +50,11 @@ the case, a `DifferentialEquationError` is raised.
 >>> y = eq.evaluate(y, 0.01, 1, 2)     # a=1, b=2
 >>> y = eq.evaluate(y, 0.01, b=1, a=2) # a=2, b=1
 '''
-
 import re
-import numpy as np
 import inspect
-from definition import Definition
+import compiler
+import numpy as np
+from definition import Definition, Visitor
 
 
 class DifferentialEquationError(Exception):
@@ -80,20 +80,19 @@ class DifferentialEquation(Definition):
     0.1
     '''
 
-    def __init__(self, definition):
+    def __init__(self, definition, constants={}):
         '''
-        Creates equation if `definition` is of the right form.
+        Creates differential equation.
 
-        **Parameters**
+        :param string definition:
+            Equation definition
 
-        definition : str
-            Equation definition of the form 'dy/dt = expr : dtype'
-            expr must be a valid python expression.
+        :param list constants:
+            Name of variables that must be considered constant
         '''
         Definition.__init__(self, definition)
-        self.parse()
+        self.setup()
         self.__method__ = self._forward_euler
-
 
     def __repr__(self):
         ''' x.__repr__() <==> repr(x) '''
@@ -101,125 +100,121 @@ class DifferentialEquation(Definition):
         classname = self.__class__.__name__
         return "%s('d%s/dt = %s : %s')" % (classname, self._lhs, self._rhs, self._dtype)
 
-
-    def parse(self, definition = None, known_variables = []):
+    def setup(self, constants = {}):
         '''
         Parse definition and check if it is an equation.
 
-        **Parameters**
+        :param string definition:
+            Equation definition of the form:
 
-        definition : str
-            Equation definition of the form 'y = expr : dtype'
-            expr must be a valid python expression.
+             dy/dt = expr : dtype or dy/dt = A+(B)*y : dtype
+
+            expr, A and B must be valid python expressions.
+
+        :param list constants:
+            List of variable names that must be considered constants.
         '''
-        if definition is not None:
-            self._definition = definition
-        definition = str(self._definition.replace(' ',''))
-        # First, we check if equation is of the form:
-        #   dy/dt = A + (B)*y [: dtype]
-        p = re.compile(r'''d(?P<y>\w+)/dt =
-                           (?P<A>.+?)? (?P<sign>\+|-)? \((?P<B>.*)\)\*(?P=y)
+
+        # First, we check if equation is of the form: dy/dt = A + (B)*y [: dtype]
+        # -----------------------------------------------------------------------
+        p = re.compile(
+            r'''d(?P<y>\w+)/dt = (?P<A>.+?)? (?P<sign>\+|-)? \((?P<B>.*)\)\*(?P=y)
                            (: (?P<dtype>.+))?''',re.VERBOSE)
-        result = p.match(definition)
+        result = p.match(self._definition)
         if result:
-            y = result.group('y')
-            A  = result.group('A') or '0'
-            sign = result.group('sign') or '+'
-            B = result.group('B')
+            y = result.group('y').strip()
+            A = (result.group('A') or '0').strip()
+            sign = (result.group('sign') or '+').strip()
+            B = result.group('B').strip()
             if A == '-' or A == '+':
-                sign = A
-                A = '0'
+                sign, A = A, '0'
+            if sign == '+':
+                B = '-' + B
             dtype = (result.group('dtype') or 'float')
 
-            # Check that var is not in A nor B
+
+            # Check that var is not in A nor in B
             if (y not in compile(A,'<string>', 'eval').co_names
                 and y not in compile(B,'<string>', 'eval').co_names):
+                self._lhs = y
                 self._varname = y
-                self._lhs = 'd%s/dt' % y
-                self.__f__ = eval('lambda %s: %s+%s*%s' % (y, A, B, y))
+                self._rhs = '%s%s(%s)*%s' % (A,sign,B,y)
+                self._dtype = dtype
+                visitor = Visitor()
+                compiler.walk(compiler.parse('%s+%s' % (A,B)), visitor)
+                variables = visitor._vars
 
-                # This line get all strings from function code definition...
-                self._variables = list(self.__f__.func_code.co_names)
-                #  ... and we need to sort out actual variables from function names
-                numpy_ns = {}
-                for key in dir(np):
-                    numpy_ns[key] = getattr(np,key)
-                for i in range(0,len(inspect.stack())):
-                    frame = inspect.stack()[i][0]
-                    for name in self.__f__.func_code.co_names:
-                        if ((name in self._variables) and (name != self._varname) and
-                            (name not in known_variables) and
-                            (name in numpy_ns.keys() or name in frame.f_globals.keys()) and
-                            callable(eval(name, numpy_ns, frame.f_globals))):
-                            self._variables.remove(name)
-                            numpy_ns[name] = frame.f_globals[name]
+                ns = {}
+                for name in visitor._funcs:
+                    for i in range(0,len(inspect.stack())):
+                        frame = inspect.stack()[i][0]
+                        name = name.split('.')[0]
+                        if name in frame.f_locals.keys():
+                            ns[name] = frame.f_locals[name]
+                ns.update(constants)
 
-                args = self.__f__.func_code.co_names
-                if len(args):
-                    args = ' = 0, '.join(self._variables)+ ' = 0'
+                if y in variables:
+                    variables.remove(y)
+                variables = list(set(variables) - set(constants.keys()))
+                self._variables = variables
+                if len(variables):
+                    args = ' = 0, '.join(variables)+ ' = 0'
                 else:
                     args = ''
-                self.__f__ = eval('lambda %s,%s: %s+%s*%s' % (y,args,A,B,y), numpy_ns)
-                self._rhs = '%s+%s*%s' % (A,B,y)
-                self.__A__ = eval('lambda : %s+%s' % (A,B), numpy_ns)
-                args = self.__A__.func_code.co_names
-                if len(args):
-                    args = ' = 0, '.join(args)+ ' = 0'
-                else:
-                    args = ''
-                self.__A__ = eval('lambda %s: %s' % (args,A), numpy_ns)
+                self.__f__ = eval('lambda %s,%s: %s-%s*%s' % (y,args,A,B,y),ns)
+                self.__A__ = eval('lambda %s: %s' % (args,A))
+                self.__B__ = eval('lambda %s: %s' % (args,B))
                 self._A_string = A
-                self.__B__ = eval('lambda %s: %s' % (args,B), numpy_ns)
                 self._B_string = B
                 self._dtype = dtype
-                #self._variables = self._f.func_code.co_names
                 return
 
         # Second, we check if equation is of the form: dy/dt = f(y)
-        p = re.compile(r'''d(?P<y>\w+)/dt =
-                           (?P<f>[^:]+)
-                           (: (?P<dtype>\w+))?''', re.VERBOSE)
-        result = p.match(definition)
+        # ---------------------------------------------------------
+        p = re.compile(
+            r"d(?P<y>\w+)/dt = (?P<f>[^:]+) (: (?P<dtype>\w+))?", re.VERBOSE)
+        result = p.match(self._definition)
         if result:
             y = result.group('y').strip()
             f = result.group('f').strip()
             dtype = (result.group('dtype') or 'float').strip()
-            self._varname = y
             self._lhs = y
             self._rhs = f
-            self.__f__ = eval('lambda %s: %s' % (y,f))
-            # This line get all strings from function code definition...
-            self._variables = list(self.__f__.func_code.co_names)
-            #  ... and we need to sort out actual variables from function names
-            numpy_ns = {}
-            for key in dir(np):
-                numpy_ns[key] = getattr(np,key)
-            for i in range(0,len(inspect.stack())):
-                frame = inspect.stack()[i][0]
-                for name in self.__f__.func_code.co_names:
-                    if ((name in self._variables) and (name != self._varname) and
-                        (name not in known_variables) and
-                        (name in numpy_ns.keys() or name in frame.f_globals.keys()) and
-                        callable(eval(name, numpy_ns, frame.f_globals))):
-                        self._variables.remove(name)
-                        numpy_ns[name] = frame.f_globals[name]
-            args = self.__f__.func_code.co_names
-            if len(args):
-                args = ' = 0, '.join(self._variables)+ ' = 0'
+            self._dtype = dtype
+            self._varname = y
+            visitor = Visitor()
+            compiler.walk(compiler.parse(f), visitor)
+            variables = visitor._vars
+
+            ns = {}
+            for name in visitor._funcs:
+                for i in range(0,len(inspect.stack())):
+                    frame = inspect.stack()[i][0]
+                    name = name.split('.')[0]
+                    if name in frame.f_locals.keys():
+                        ns[name] = frame.f_locals[name]
+                        break
+            ns.update(constants)
+
+            if y in variables:
+                variables.remove(y)
+            variables = list(set(variables) - set(constants.keys()))
+            self._variables = variables
+            if len(variables):
+                args = ' = 0, '.join(variables)+ ' = 0'
             else:
                 args = ''
-            self.__f__ = eval('lambda %s,%s: %s' % (y,args,f), numpy_ns)
+            self.__f__ = eval('lambda %s,%s: %s' % (y,args,f), ns)
             self.__A__ = None
-            self._A_string = ''
             self.__B__ = None
-            self._B_string = ''
-            self._dtype = dtype
+            self._A_string = ""
+            self._B_string = ""
             return
 
         # Last case, it is not a differential equation
+        # --------------------------------------------
         raise DifferentialEquationError, \
             'Equation is not a first order differential equation'
-
 
     def _forward_euler(self, __x__, dt, *args, **kwargs):
         '''
@@ -231,7 +226,6 @@ class DifferentialEquation(Definition):
         '''
         __x__ += self.__f__(__x__, *args, **kwargs)*dt
         return __x__
-
 
     def _runge_kutta_2(self, __x__, dt, *args, **kwargs):
         '''
@@ -246,7 +240,6 @@ class DifferentialEquation(Definition):
         __k2 = self.__f__(__x__ + dt*__x__, *args, **kwargs)
         __x__ += 0.5*dt*(__k1 + __k2)
         return __x__
-
 
     def _runge_kutta_4(self, __x__, dt, *args, **kwargs):
         '''
@@ -264,7 +257,6 @@ class DifferentialEquation(Definition):
         __x__ += (__k1+__k4)*(dt/6.0)+(__k2+__k3)*(dt/3.0)
         return __x__
 
-
     def _exponential_euler(self, __x__, dt, *args, **kwargs):
         '''
         Exponential Euler evaluation method.
@@ -274,16 +266,16 @@ class DifferentialEquation(Definition):
         See ``evaluate`` method for parameters.
         Only available for equation of the form dy/dt = A + B*y
         '''
-        A = self.__A__(*args, **kwargs)
-        B = self.__B__(*args, **kwargs)
-        AB = A/B
-        E = np.exp(B*dt)
+        A = float(self.__A__(*args, **kwargs))
+        B = float(self.__B__(*args, **kwargs))
+        AB = A
+        AB /= B
+        E = np.exp(-B*dt)
         __x__ *=  E
-        __x__ -=  AB
-        AB *= E          
-        __x__ += AB
+        __x__ +=  AB
+        AB *= E
+        __x__ -= AB
         return __x__
-
 
     def select(self, method = 'Forward Euler'):
         '''
@@ -321,15 +313,16 @@ class DifferentialEquation(Definition):
 
     def __call__(self, __x__, dt, *args, **kwargs):
         '''
-        Evaluate __x__(t+dt)
+        Evaluate __x__ at time t+dt.
         
-        **Parameters**
-
-        __x__ : float
-            Variable that need to be evaluated
-
-        dt : float
+        :param __x__:
+             Variable that need to be evaluated
+        :param dt:
             Elementaty time step
+        :param list args:
+            Optional arguments
+        :param dict kwargs:
+            Optional keyword arguments
 
         **Notes**
 
@@ -344,18 +337,14 @@ class DifferentialEquation(Definition):
         >>> y = eq.evaluate(y, 0.01, b=1, a=2) # a=2, b=1
         '''
         return self.__method__ (__x__, dt, *args, **kwargs)
-
 
     def evaluate(self, __x__, dt, *args, **kwargs):
         '''
         Evaluate __x__(t+dt)
         
-        **Parameters**
-
-        __x__ : float
-            Variable that need to be evaluated
-
-        dt : float
+        :param __x__:
+             Variable that need to be evaluated
+        :param dt:
             Elementaty time step
 
         **Notes**
@@ -373,11 +362,19 @@ class DifferentialEquation(Definition):
         return self.__method__ (__x__, dt, *args, **kwargs)
 
 
+
 # -----------------------------------------------------------------------------
 if __name__ == '__main__':
-    t, dt = 10.0, 0.01
-    eq = DifferentialEquation('dy/dt = a + (b)*y''')
-    #eq = DifferentialEquation('dy/dt = a + b*y''')
+    import numpy as np
+    
+    dt=1
+    y = 0.0
+    def f():
+        global y
+        y = eq(y, dt, a=1, b=1)
+    t, dt = 3.0, 0.01
+    eq = DifferentialEquation('dy/dt=a + sin(b)*y''')
+    f()
 
     eq.select('Forward Euler')
     y = 0.0

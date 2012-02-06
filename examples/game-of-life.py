@@ -40,9 +40,8 @@ References:
   * http://en.wikipedia.org/wiki/Conway's_Game_of_Life
 '''
 from dana import *
-
 src = Group((50,100),
-            '''V = maximum(0,1.0-(N<1.5)-(N>3.5)-(N<2.5)*(1-V)) : int
+            '''V = np.maximum(0,1.0-(N<1.5)-(N>3.5)-(N<2.5)*(1-V)) : int
                N : float''')
 C = SparseConnection(src('V'), src('N'), np.array([[1., 1., 1.], 
                                                    [1., 0., 1.], 

@@ -171,38 +171,22 @@ class Group(object):
         '''
         '''
         
-        # Get unknown constants (and only them) from upper frame
-        if namespace is None:
-            namespace = {}
-        numpy_ns = dir(np)
-        unknown = {}
-        for eq in self._model._diff_equations:
-            eq.parse(known_variables = self._keys)
+        namespace = namespace or {}
+        variables = []
+
+        for eq in self._model:
+            eq.setup()
             namespace[eq._varname] = self[eq._varname]
-        for eq in self._model._equations:
-            eq.parse(known_variables = self._keys)
-            namespace[eq._varname] = self[eq._varname]
-        for eq in self._model._declarations:
-            eq.parse()
-            namespace[eq._varname] = self[eq._varname]
-        for eq in self._model._diff_equations:
-            for var in eq._variables:
-                if var not in numpy_ns and var not in namespace \
-                        and var not in unknown:
-                    unknown[var] = None
-        for eq in self._model._equations:
-            for var in eq._variables:
-                if var not in numpy_ns and var not in namespace.keys() \
-                        and var not in unknown:
-                    unknown[var] = None
-        for i in range(1,len(inspect.stack())):
-            frame = inspect.stack()[i][0]
-            for name in unknown:
-                if name in frame.f_globals.keys(): # and name not in namespace.keys():
-                    unknown[name] =  frame.f_globals[name]
-                    namespace[name] =  frame.f_globals[name]
+            variables.extend(eq._variables)
+
+        for name in variables:
+            for i in range(1,len(inspect.stack())):
+                frame = inspect.stack()[i][0]
+                name = name.split('.')[0]
+                if name in frame.f_locals.keys():
+                    namespace[name] = frame.f_locals[name]
+
         self._namespace = namespace
-        self._namespace.update(globals())
 
         # Make sure all masked units are set to 0
         if hasattr(self,'mask'):
