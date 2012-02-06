@@ -146,7 +146,7 @@ class DifferentialEquation(Definition):
 
                 ns = {}
                 for name in visitor._funcs:
-                    for i in range(0,len(inspect.stack())):
+                    for i in range(1,len(inspect.stack())):
                         frame = inspect.stack()[i][0]
                         name = name.split('.')[0]
                         if name in frame.f_locals.keys() and name not in ns.keys():
@@ -188,7 +188,7 @@ class DifferentialEquation(Definition):
 
             ns = {}
             for name in visitor._funcs:
-                for i in range(0,len(inspect.stack())):
+                for i in range(1,len(inspect.stack())):
                     frame = inspect.stack()[i][0]
                     name = name.split('.')[0]
                     if name in frame.f_locals.keys() and name not in ns.keys():
