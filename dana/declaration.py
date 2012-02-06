@@ -63,7 +63,6 @@ class Declaration(Definition):
             self._lhs = self._varname
             self._rhs = ''
             self._dtype = result.group('dtype') or 'float'
-            self._variables = []
         else:
             raise DeclarationError, 'Definition is not a declaration'
 

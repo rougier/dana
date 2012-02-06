@@ -103,11 +103,7 @@ class Group(object):
             elif type(dtype) is str and model is None:
                 model = Model(dtype)
             dtype = []
-            for eq in model._diff_equations:
-                dtype.append((eq._varname, eq._dtype))
-            for eq in model._equations:
-                dtype.append((eq._varname, eq._dtype))
-            for eq in model._declarations:
+            for eq in model:
                 dtype.append((eq._varname, eq._dtype))
         else:
             model = Model('')
@@ -183,8 +179,9 @@ class Group(object):
             for i in range(1,len(inspect.stack())):
                 frame = inspect.stack()[i][0]
                 name = name.split('.')[0]
-                if name in frame.f_locals.keys():
+                if name in frame.f_locals.keys() and name not in namespace:
                     namespace[name] = frame.f_locals[name]
+                    break
 
         self._namespace = namespace
 

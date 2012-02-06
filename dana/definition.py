@@ -59,6 +59,7 @@ class Definition(object):
         self._definition = str(definition.replace(' ',''))
         self._varname = None
         self._dtype = None
+        self._variables = []
 
     def setup(self, constants={}):
         ''' Parse definition

@@ -124,8 +124,9 @@ class Equation(Definition):
                 for i in range(0,len(inspect.stack())):
                     frame = inspect.stack()[i][0]
                     name = name.split('.')[0]
-                    if name in frame.f_locals.keys():
+                    if name in frame.f_locals.keys() and name not in ns.keys():
                         ns[name] = frame.f_locals[name]
+                        break
             ns.update(constants)
 
             variables = list(set(variables) - set(constants.keys()))
@@ -157,7 +158,7 @@ class Equation(Definition):
         >>> y = eq.evaluate(1,2,3)             # a=1, b=2, x=3
         >>> y = eq.evaluate(x=1, b=2, a=3)     # a=3, b=2, x=1
         '''
-
+        
         return self.__f__(*args, **kwargs)
 
 
@@ -178,6 +179,7 @@ class Equation(Definition):
         >>> y = eq.evaluate(1,2,3)             # a=1, b=2, x=3
         >>> y = eq.evaluate(x=1, b=2, a=3)     # a=3, b=2, x=1
         '''
+
         return self.__f__(*args, **kwargs)
 
 

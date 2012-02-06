@@ -63,8 +63,8 @@ Du, Dv, F, k = 0.16, 0.08, 0.020, 0.055 # Unstable
 
 Z = Group((n,n), '''du/dt = Du*Lu - Z + F*(1-U) : float32
                     dv/dt = Dv*Lv + Z - (F+k)*V : float32
-                    U = maximum(u,0) : float32
-                    V = maximum(v,0) : float32
+                    U = np.maximum(u,0) : float32
+                    V = np.maximum(v,0) : float32
                     Z = U*V*V : float32
                     Lu; Lv; ''')
 K = np.array([[np.NaN,  1., np.NaN], 

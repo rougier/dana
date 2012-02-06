@@ -126,7 +126,7 @@ eq = Equation('Z = (Z+1)*dt : double')
 Z = np.zeros((n,n))
 t0 = time.clock()
 for i in range(epochs):
-    Z += eq.evaluate(Z)
+    Z += eq.evaluate(dt,Z)
 print 'dana equation:                       ', time.clock()-t0
 
 eq = DifferentialEquation('dZ/dt = (Z+1) : double')

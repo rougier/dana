@@ -149,10 +149,10 @@ class DifferentialEquation(Definition):
                     for i in range(0,len(inspect.stack())):
                         frame = inspect.stack()[i][0]
                         name = name.split('.')[0]
-                        if name in frame.f_locals.keys():
+                        if name in frame.f_locals.keys() and name not in ns.keys():
                             ns[name] = frame.f_locals[name]
+                            break
                 ns.update(constants)
-
                 if y in variables:
                     variables.remove(y)
                 variables = list(set(variables) - set(constants.keys()))
@@ -162,8 +162,8 @@ class DifferentialEquation(Definition):
                 else:
                     args = ''
                 self.__f__ = eval('lambda %s,%s: %s-%s*%s' % (y,args,A,B,y),ns)
-                self.__A__ = eval('lambda %s: %s' % (args,A))
-                self.__B__ = eval('lambda %s: %s' % (args,B))
+                self.__A__ = eval('lambda %s: %s' % (args,A),ns)
+                self.__B__ = eval('lambda %s: %s' % (args,B),ns)
                 self._A_string = A
                 self._B_string = B
                 self._dtype = dtype
@@ -191,11 +191,10 @@ class DifferentialEquation(Definition):
                 for i in range(0,len(inspect.stack())):
                     frame = inspect.stack()[i][0]
                     name = name.split('.')[0]
-                    if name in frame.f_locals.keys():
+                    if name in frame.f_locals.keys() and name not in ns.keys():
                         ns[name] = frame.f_locals[name]
                         break
             ns.update(constants)
-
             if y in variables:
                 variables.remove(y)
             variables = list(set(variables) - set(constants.keys()))
@@ -205,6 +204,7 @@ class DifferentialEquation(Definition):
             else:
                 args = ''
             self.__f__ = eval('lambda %s,%s: %s' % (y,args,f), ns)
+            self._f_string = 'lambda %s,%s: %s' % (y,args,f)
             self.__A__ = None
             self.__B__ = None
             self._A_string = ""
@@ -367,35 +367,29 @@ class DifferentialEquation(Definition):
 if __name__ == '__main__':
     import numpy as np
     
-    dt=1
-    y = 0.0
-    def f():
-        global y
-        y = eq(y, dt, a=1, b=1)
-    t, dt = 3.0, 0.01
-    eq = DifferentialEquation('dy/dt=a + sin(b)*y''')
-    f()
+    t, dt = 1.0, 0.001
+    eq = DifferentialEquation('dz/dt=a + (b)*z''')
 
     eq.select('Forward Euler')
-    y = 0.0
+    y = 1.0
     for i in range(int(t/dt)):
-        y = eq(y, dt, a=1, b=1)
+        y = eq(y, dt, a=0, b=1)
     print 'Forward Euler:      ', y
 
     eq.select('Runge Kutta 2')
-    y = 0.0
+    y = 1.0
     for i in range(int(t/dt)):
-        y = eq(y, dt, a=1, b=1)
+        y = eq(y, dt, a=0, b=1)
     print 'Runge Kutta 2:      ', y
 
     eq.select('Runge Kutta 4')
-    y = 0.0
+    y = 1.0
     for i in range(int(t/dt)):
-        y = eq(y, dt, a=1, b=1)
+        y = eq(y, dt, a=0, b=1)
     print 'Runge Kutta 4:      ', y
     
     eq.select('Exponential Euler')
-    y = 0.0
+    y = 1.0
     for i in range(int(t/dt)):
-        y = eq(y, dt, a=1, b=1)
+        y = eq(y, dt, a=0, b=1)
     print 'Exponential Euler:  ',y
