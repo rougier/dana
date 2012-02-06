@@ -272,6 +272,6 @@ class Model(object):
 # ---------------------------------------------------------------- __main__ ---
 if __name__ == '__main__':
     model = Model('''dx/dt = 1.0 : float  # differential equation
-                    y    = 1.0 : float  # equation
-                    z          : float  # declaration''')
+                     y     = 1.0 : float  # equation
+                     z           : float  # declaration''')
     print model

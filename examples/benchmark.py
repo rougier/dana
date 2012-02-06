@@ -38,7 +38,7 @@ from dana import *
 class array(np.ndarray):
     pass
 
-n = 50
+n = 100
 t = 5.0
 dt = 0.0001
 epochs = int(t/dt)
