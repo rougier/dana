@@ -151,27 +151,37 @@ class Connection(object):
                 kwargs[variable] = src[variable[4:]].reshape((1,src.size))
             elif variable.startswith("post_"):
                 kwargs[variable] = tgt[variable[5:]].reshape((tgt.size,1))
-            elif variable in tgt.dtype.names:
-                kwargs[variable] = tgt[variable].reshape((tgt.size,1))
+#            elif variable in tgt.dtype.names:
+#               kwargs[variable] = tgt[variable].reshape((tgt.size,1))
             else:
                 for i in range(1,len(inspect.stack())):
                     frame = inspect.stack()[i][0]
-                    if variable in frame.f_globals.keys() and variable not in kwargs:
+                    if variable in frame.f_globals.keys() and variable not in kwargs:                 
                         kwargs[variable] = frame.f_globals[variable]
         self._equation = eq
         self._kwargs = kwargs
 
-
-
     def propagate(self):
         ''' Propagate activity from source to target '''        
 
-        self._actual_target[...] += self.output()
+        if self._source_name:
+            self._actual_source = self._source._data[self._source_name]
+        if self._target_name:
+            self._actual_target = self._target._data[self._target_name]
+#        self._actual_target[...] += self.output()
+        self._actual_target += self.output()
+
 
     def evaluate(self, dt=0.01):
         ''' Update weights relative to connection equation '''
         if not self._equation:
             return
+        pre, post = self._source, self._target
+        for arg in self._kwargs.keys():
+            if arg.startswith("pre_"):
+                self._kwargs[arg] = pre[arg[4:]].reshape((1,pre.size))
+            elif arg.startswith("post_"):
+                self._kwargs[arg] = post[arg[5:]].reshape((post.size,1))
         self._equation.evaluate(self._weights, dt, **self._kwargs)
 
     def output(self):

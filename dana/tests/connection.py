@@ -39,7 +39,7 @@ from dana import ConnectionError
 from dana import SparseConnection, DenseConnection, SharedConnection
 from scipy.ndimage.filters import convolve, convolve1d
 
-class OneDimensionTestCase(unittest.TestCase):
+class ConnectionOneDimensionTestCase(unittest.TestCase):
 
     def test_1(self):
         n = 9
@@ -189,7 +189,7 @@ class OneDimensionTestCase(unittest.TestCase):
         assert np_equal(Z3,Z4)
 
 
-class TwoDimensionTestCase(unittest.TestCase):
+class ConnectionTwoDimensionTestCase(unittest.TestCase):
 
     def test_1(self):
         n = 9

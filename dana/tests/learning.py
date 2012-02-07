@@ -39,7 +39,7 @@ from dana import Group, zeros, ones
 from dana import DenseConnection, SparseConnection
 
 
-class DenseOneDimensionTestCase(unittest.TestCase):
+class LearningDenseOneDimensionTestCase(unittest.TestCase):
     def test_1(self):
         kernel = np.ones(1)
         C = DenseConnection(np.ones(3), np.ones(3), kernel,
@@ -69,12 +69,12 @@ class DenseOneDimensionTestCase(unittest.TestCase):
         dst = zeros((3,) , 'V=I; I')
         kernel = np.ones(1)
         C = DenseConnection(src, dst('I'), kernel,
-                             equation = 'dW/dt = I')
-        dst.run(time=0.1, dt=0.1)
+                             equation = 'dW/dt = post.I')
+        dst.run(dt=0.1)
         assert np_equal(C.weights, np.identity(3)*1.1)
 
 
-class SparseOneDimensionTestCase(unittest.TestCase):
+class LearningSparseOneDimensionTestCase(unittest.TestCase):
     def test_1(self):
         kernel = np.ones(1)
         C = SparseConnection(np.ones(3), np.ones(3), kernel,
@@ -94,7 +94,7 @@ class SparseOneDimensionTestCase(unittest.TestCase):
         kernel[1] = np.NaN
         C = SparseConnection(np.ones(3), np.ones(3), kernel,
                              equation = 'dW/dt = 1')
-        C.evaluate(dt=.1)
+        C.evaluate(dt=0.1)
         assert np_equal(C.weights, np.array([[0,1,0],
                                              [1,0,1],
                                              [0,1,0]])*1.1)
@@ -104,10 +104,9 @@ class SparseOneDimensionTestCase(unittest.TestCase):
         dst = zeros((3,) , 'V=I; I')
         kernel = np.ones(1)
         C = SparseConnection(src, dst('I'), kernel,
-                             equation = 'dW/dt = I')
-        dst.run(time=0.1, dt=0.1)
+                             equation = 'dW/dt = post.I')
+        dst.run(dt=0.1)
         assert np_equal(C.weights, np.identity(3)*1.1)
-
 
 
 if __name__ == "__main__":

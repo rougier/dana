@@ -33,6 +33,7 @@
 # -----------------------------------------------------------------------------
 import Image
 from dana import *
+from numpy import exp
 from display import *
 
 

@@ -77,7 +77,7 @@ class Equation(Definition):
     >>> y = eq.evaluate(x=1, b=2, a=3)     # a=3, b=2, x=1
     ''' 
 
-    def __init__(self, definition, constants={}):
+    def __init__(self, definition, constants={}, variables=[]):
         '''
         Creates equation.
 

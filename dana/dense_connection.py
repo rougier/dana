@@ -89,6 +89,7 @@ class DenseConnection(Connection):
 
     def output(self):
         ''' '''
+
         R = np.dot(self._weights, self._actual_source.ravel()) 
         return R.reshape(self._target.shape)
 
@@ -97,7 +98,7 @@ class DenseConnection(Connection):
         ''' Update weights relative to connection equation '''
         if not self._equation:
             return
-        self._equation.evaluate(self._weights, dt, **self._kwargs)
+        Connection.evaluate(self,dt)
         if self._mask is not 1:
             self._weights *= self._mask
 

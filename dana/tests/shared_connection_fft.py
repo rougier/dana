@@ -38,7 +38,7 @@ from tools import np_equal
 from dana import ConnectionError
 from dana import SharedConnection as Connection
 
-class SharedOneDimensionTestCase(unittest.TestCase):
+class SharedFFTOneDimensionTestCase(unittest.TestCase):
 
     def test_1(self):
         assert np_equal( Connection(ones(3), ones(3), ones(1),fft=True).output(),
@@ -110,7 +110,7 @@ class SharedOneDimensionTestCase(unittest.TestCase):
         assert np_equal(C[4], array([NaN,NaN,0,1,2]))
 
 
-class SharedTwoDimensionTestCase(unittest.TestCase):
+class SharedFFTTwoDimensionTestCase(unittest.TestCase):
 
     def test_1(self):
         assert np_equal( Connection(ones((3,3)), ones((3,3)), ones((1,1)),fft=True).output(),

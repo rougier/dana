@@ -35,6 +35,7 @@
 Maze solving using the Bellman-Ford algorithm
 '''
 from dana import *
+from numpy import maximum
 
 
 def maze(shape=(64,64), complexity=.75, density = 1):

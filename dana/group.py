@@ -203,6 +203,7 @@ class Group(object):
 
 
     def propagate(self):
+
         targets = []
         for connection in self._connections:
             target = connection._actual_target
@@ -227,40 +228,10 @@ class Group(object):
 
         self._namespace['dt'] = dt
 
-        # for connection in self._connections:
-        #    connection.propagate()
-
-        # # Differential equations
-        # for eq in self._model._diff_equations:
-        #     self._saved[eq._varname][...] = self[eq._varname] #.copy()
-        #     self._namespace[eq._varname] = self[eq._varname]
-        # for eq in self._model._diff_equations:
-        #     args = [self._saved[eq._varname],dt]+ \
-        #            [self._namespace[var] for var in eq._variables]
-        #     eq.evaluate(*args)
-        # for eq in self._model._diff_equations:
-        #     self[eq._varname][...] = self._saved[eq._varname]
-
-        # # Equations
-        # for eq in self._model._equations:
-        #     self._saved[eq._varname][...] = self[eq._varname] #.copy()
-        #     self._namespace[eq._varname] = self[eq._varname]
-        # for eq in self._model._equations:
-        #     args = [self._namespace[var] for var in eq._variables]
-        #     self._saved[eq._varname][...] = eq.evaluate(*args) #*self._mask
-        # for eq in self._model._equations:
-        #     self[eq._varname][...] = self._saved[eq._varname]
-
-
-        # # Make sure all masked units are set to 0
-        # if hasattr(self,'mask'):
-        #     for key in self._data.keys():
-        #         self._data[key] *= self.mask
-
-
         # Differential equations
         for eq in self._model._diff_equations:
-            self._saved[eq._varname][...] = self[eq._varname]
+#            self._saved[eq._varname][...] = self[eq._varname]
+#            self._saved[eq._varname] = self[eq._varname]           # BAD
             self._namespace[eq._varname] = self[eq._varname]
 
         for eq in self._model._diff_equations:
@@ -274,18 +245,21 @@ class Group(object):
 
         # Equations
         for eq in self._model._equations:
-            self._saved[eq._varname][...] = self[eq._varname]
+#            self._saved[eq._varname][...] = self[eq._varname]
+#            self._saved[eq._varname] = self[eq._varname]           # BAD
             self._namespace[eq._varname] = self[eq._varname]
         for eq in self._model._equations:
             args = [self._namespace[var] for var in eq._variables]
-            self._saved[eq._varname][...] = eq.evaluate(*args) #*self._mask
+#            self._saved[eq._varname][...] = eq.evaluate(*args) #*self._mask
+            self._saved[eq._varname] = eq.evaluate(*args) # BAD ?
+
             # Make results available to subsequent equations
             self._namespace[eq._varname] = self._saved[eq._varname]
 
         # Make sure all masked units are set to 0
-        if hasattr(self,'mask'):
-            for key in self._data.keys():
-                self._saved[key] *= self.mask
+#        if hasattr(self,'mask'):
+#            for key in self._data.keys():
+#                self._saved[key] *= self.mask
 
         if update:
             self.update()
@@ -295,10 +269,13 @@ class Group(object):
         '''
         Update group state by making public previously computed values
         '''
-        for eq in self._model._diff_equations:
-            self._data[eq._varname][...] = self._saved[eq._varname]
-        for eq in self._model._equations:
-            self._data[eq._varname][...] = self._saved[eq._varname]
+
+        self._data, self._saved = self._saved, self._data
+#        return
+#        for eq in self._model._diff_equations:
+#            self._data[eq._varname][...] = self._saved[eq._varname]
+#        for eq in self._model._equations:
+#            self._data[eq._varname][...] = self._saved[eq._varname]
         
 
     def learn(self, dt=1):
