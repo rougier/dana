@@ -78,8 +78,8 @@ Z['v'] = 0.0
 r = 20
 Z['u'][n/2-r:n/2+r,n/2-r:n/2+r] = 0.50
 Z['v'][n/2-r:n/2+r,n/2-r:n/2+r] = 0.25
-Z['u'] += 0.05*np.random.random((n,n))
-Z['v'] += 0.05*np.random.random((n,n))
+Z['u'] += 0.025*np.random.random((n,n))
+Z['v'] += 0.025*np.random.random((n,n))
 Z['U'] = Z['u']
 Z['V'] = Z['v']
 

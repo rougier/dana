@@ -235,9 +235,12 @@ class Group(object):
             self._namespace[eq._varname] = self[eq._varname]
 
         for eq in self._model._diff_equations:
-            args = [self._saved[eq._varname],dt]+ \
+            #args = [self._saved[eq._varname],dt]+ \
+            #       [self._namespace[var] for var in eq._variables]            
+            #eq.evaluate(*args)
+            args = [self[eq._varname],dt]+ \
                    [self._namespace[var] for var in eq._variables]            
-            eq.evaluate(*args)
+            self._saved[eq._varname] = eq.evaluate(*args)
 
         # Make newly computed values available to equations below (and only to them)
         for eq in self._model._diff_equations:
@@ -271,7 +274,6 @@ class Group(object):
         '''
 
         self._data, self._saved = self._saved, self._data
-#        return
 #        for eq in self._model._diff_equations:
 #            self._data[eq._varname][...] = self._saved[eq._varname]
 #        for eq in self._model._equations:

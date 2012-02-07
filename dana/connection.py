@@ -139,6 +139,8 @@ class Connection(object):
         # TODO : Replace any dotted variable with actual value in namespace
         #
         eq = DifferentialEquation(equation)
+        eq._in_out = True
+
         kwargs = {}
         src = self.source
         tgt = self.target

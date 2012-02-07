@@ -93,6 +93,7 @@ class DifferentialEquation(Definition):
         Definition.__init__(self, definition)
         self.setup()
         self.__method__ = self._forward_euler
+        self._in_out = False
 
     def __repr__(self):
         ''' x.__repr__() <==> repr(x) '''
@@ -224,8 +225,10 @@ class DifferentialEquation(Definition):
 
         See ``evaluate`` method for parameters
         '''
-        __x__ += self.__f__(__x__, *args, **kwargs)*dt
-        return __x__
+        if self._in_out:
+            __x__ += self.__f__(__x__, *args, **kwargs)*dt
+            return __x__
+        return __x__ + self.__f__(__x__, *args, **kwargs)*dt
 
     def _runge_kutta_2(self, __x__, dt, *args, **kwargs):
         '''
@@ -238,8 +241,10 @@ class DifferentialEquation(Definition):
         __hdt = 0.5*dt
         __k1 = self.__f__(__x__, *args, **kwargs)
         __k2 = self.__f__(__x__ + dt*__x__, *args, **kwargs)
-        __x__ += 0.5*dt*(__k1 + __k2)
-        return __x__
+        if self._in_out:
+            __x__ += 0.5*dt*(__k1 + __k2)
+            return __x__
+        return __x__ + 0.5*dt*(__k1 + __k2)
 
     def _runge_kutta_4(self, __x__, dt, *args, **kwargs):
         '''
@@ -254,8 +259,10 @@ class DifferentialEquation(Definition):
         __k2 = self.__f__(__x__ + __k1 * __hdt, *args, **kwargs)
         __k3 = self.__f__(__x__ + __k2 * __hdt, *args, **kwargs)
         __k4 = self.__f__(__x__ + __k3 * dt, *args, **kwargs)
-        __x__ += (__k1+__k4)*(dt/6.0)+(__k2+__k3)*(dt/3.0)
-        return __x__
+        if self._in_out is not None:
+            __x__ += (__k1+__k4)*(dt/6.0)+(__k2+__k3)*(dt/3.0)
+            return __x__
+        return __x__ + (__k1+__k4)*(dt/6.0)+(__k2+__k3)*(dt/3.0)
 
     def _exponential_euler(self, __x__, dt, *args, **kwargs):
         '''
@@ -271,7 +278,10 @@ class DifferentialEquation(Definition):
         AB = A
         AB /= B
         E = np.exp(-B*dt)
-        __x__ *=  E
+        if self._in_out is not None:
+            __x__ *=  E
+        else:
+            __x__ =  __x__*E
         __x__ +=  AB
         AB *= E
         __x__ -= AB

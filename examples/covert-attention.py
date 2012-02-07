@@ -61,16 +61,16 @@ dtheta = np.pi/300.0
 # ------------
 visual = np.zeros((n,n))
 focus = zeros((n,n), '''dV/dt = -V+(L+Iv+Is)/30 -0.05 : float
-                        U = maximum(V,0) : float
+                        U = np.maximum(V,0) : float
                         L : float; Iv: float; Is: float''')
 wm  = zeros((n,n), '''dV/dt = -V+(L+Iv+If)/31 - 0.2 : float
-                      U = minimum(maximum(V,0),1) : float
+                      U = np.minimum(np.maximum(V,0),1) : float
                       L : float; Iv: float; If: float''')
 striatum = zeros((n,n), '''dV/dt = -V+(L+Iw+Ir)/28 - 0.3 : float
-                           U = maximum(V,0) : float
+                           U = np.maximum(V,0) : float
                            L : float; Iw: float; Ir: float''')
 switch = zeros((1,1), '''dV/dt = -0.1*V : float
-                         U = maximum(V,0) : float''')
+                         U = np.maximum(V,0) : float''')
 
 # Connections
 # -----------
@@ -101,7 +101,7 @@ def iterate(t=100):
     mgr = plt.get_current_fig_manager()
     for i in range(t):
         rotate()
-        run(t=.5,dt=.5)
+        run(time=.5,dt=.5)
         update()
         plt.draw()
 
