@@ -139,8 +139,6 @@ class Connection(object):
         # TODO : Replace any dotted variable with actual value in namespace
         #
         eq = DifferentialEquation(equation)
-        eq._in_out = True
-
         kwargs = {}
         src = self.source
         tgt = self.target
@@ -170,7 +168,6 @@ class Connection(object):
             self._actual_source = self._source._data[self._source_name]
         if self._target_name:
             self._actual_target = self._target._data[self._target_name]
-#        self._actual_target[...] += self.output()
         self._actual_target += self.output()
 
 
@@ -184,6 +181,7 @@ class Connection(object):
                 self._kwargs[arg] = pre[arg[4:]].reshape((1,pre.size))
             elif arg.startswith("post_"):
                 self._kwargs[arg] = post[arg[5:]].reshape((post.size,1))
+        self._equation._in_out = self._weights
         self._equation.evaluate(self._weights, dt, **self._kwargs)
 
     def output(self):

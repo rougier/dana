@@ -91,9 +91,10 @@ class DifferentialEquation(Definition):
             Name of variables that must be considered constant
         '''
         Definition.__init__(self, definition)
+        self._in_out = None
+        self._out = None
         self.setup()
         self.__method__ = self._forward_euler
-        self._in_out = False
 
     def __repr__(self):
         ''' x.__repr__() <==> repr(x) '''
@@ -225,10 +226,14 @@ class DifferentialEquation(Definition):
 
         See ``evaluate`` method for parameters
         '''
-        if self._in_out:
-            __x__ += self.__f__(__x__, *args, **kwargs)*dt
+        dx = self.__f__(__x__, *args, **kwargs)*dt
+        if self._out is not None:
+            np.add(__x__, dx, self._out)
+            return self._out
+        elif self._in_out is not None:
+            __x__ += dx
             return __x__
-        return __x__ + self.__f__(__x__, *args, **kwargs)*dt
+        return __x__ + dx
 
     def _runge_kutta_2(self, __x__, dt, *args, **kwargs):
         '''
@@ -241,10 +246,14 @@ class DifferentialEquation(Definition):
         __hdt = 0.5*dt
         __k1 = self.__f__(__x__, *args, **kwargs)
         __k2 = self.__f__(__x__ + dt*__x__, *args, **kwargs)
-        if self._in_out:
-            __x__ += 0.5*dt*(__k1 + __k2)
+        dx = 0.5*dt*(__k1 + __k2)
+        if self._out is not None:
+            np.add(__x__, dx, self._out)
+            return self._out
+        elif self._in_out is not None:
+            __x__ += dx
             return __x__
-        return __x__ + 0.5*dt*(__k1 + __k2)
+        return __x__ + dx
 
     def _runge_kutta_4(self, __x__, dt, *args, **kwargs):
         '''
@@ -259,10 +268,14 @@ class DifferentialEquation(Definition):
         __k2 = self.__f__(__x__ + __k1 * __hdt, *args, **kwargs)
         __k3 = self.__f__(__x__ + __k2 * __hdt, *args, **kwargs)
         __k4 = self.__f__(__x__ + __k3 * dt, *args, **kwargs)
-        if self._in_out is not None:
-            __x__ += (__k1+__k4)*(dt/6.0)+(__k2+__k3)*(dt/3.0)
+        dx  = (__k1+__k4)*(dt/6.0)+(__k2+__k3)*(dt/3.0)
+        if self._out is not None:
+            np.add(__x__, dx, self._out)
+            return self._out
+        elif self._in_out is not None:
+            __x__ += dx
             return __x__
-        return __x__ + (__k1+__k4)*(dt/6.0)+(__k2+__k3)*(dt/3.0)
+        return __x__ + dx
 
     def _exponential_euler(self, __x__, dt, *args, **kwargs):
         '''
@@ -278,7 +291,11 @@ class DifferentialEquation(Definition):
         AB = A
         AB /= B
         E = np.exp(-B*dt)
-        if self._in_out is not None:
+
+        if self._out is not None:
+            np.mul(__x__,E,self._out)
+            __x__ = self._out
+        elif self._in_out is not None:
             __x__ *=  E
         else:
             __x__ =  __x__*E

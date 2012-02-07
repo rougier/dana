@@ -87,6 +87,8 @@ class Equation(Definition):
             Name of variables that must be considered constant
         '''
         Definition.__init__(self,definition)
+        self._in_out = None
+        self._out = None
         self.setup()
 
 

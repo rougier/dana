@@ -69,13 +69,12 @@ class Network(object):
         self.setup()
         clock.remove(self.evaluate)
         clock.add(self.evaluate)
-#        for group in self._groups:
-#            group.update()
         clock.run()
 
 
     def evaluate(self,time):
         ''' '''
+
         for group in self._groups:
             group.propagate()
 

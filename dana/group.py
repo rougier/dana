@@ -230,17 +230,14 @@ class Group(object):
 
         # Differential equations
         for eq in self._model._diff_equations:
-#            self._saved[eq._varname][...] = self[eq._varname]
-#            self._saved[eq._varname] = self[eq._varname]           # BAD
             self._namespace[eq._varname] = self[eq._varname]
 
         for eq in self._model._diff_equations:
-            #args = [self._saved[eq._varname],dt]+ \
-            #       [self._namespace[var] for var in eq._variables]            
-            #eq.evaluate(*args)
             args = [self[eq._varname],dt]+ \
                    [self._namespace[var] for var in eq._variables]            
-            self._saved[eq._varname] = eq.evaluate(*args)
+            eq._out = self._saved[eq._varname]
+            eq.evaluate(*args)
+            # self._saved[eq._varname] = eq.evaluate(*args)
 
         # Make newly computed values available to equations below (and only to them)
         for eq in self._model._diff_equations:
@@ -248,13 +245,10 @@ class Group(object):
 
         # Equations
         for eq in self._model._equations:
-#            self._saved[eq._varname][...] = self[eq._varname]
-#            self._saved[eq._varname] = self[eq._varname]           # BAD
             self._namespace[eq._varname] = self[eq._varname]
         for eq in self._model._equations:
             args = [self._namespace[var] for var in eq._variables]
-#            self._saved[eq._varname][...] = eq.evaluate(*args) #*self._mask
-            self._saved[eq._varname] = eq.evaluate(*args) # BAD ?
+            self._saved[eq._varname][...] = eq.evaluate(*args)
 
             # Make results available to subsequent equations
             self._namespace[eq._varname] = self._saved[eq._varname]

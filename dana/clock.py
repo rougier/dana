@@ -97,6 +97,18 @@ class Timer(object):
         return ( cmp(self._next, other._next)
                  or cmp(self._order,other._order) )
 
+    def __str__(self):
+        s = ""
+        s += "Timer(start: %.3f, " % self._start
+        if self._stop is not None and self._stop > 0:
+            s += "stop: %.3f, " % self._stop 
+        s += "dt: %.3f, " % self._dt
+        s += " %s)" % self._func.__name__
+        return s
+
+    def __repr__(self):
+        return  self.__str__()
+
 
 
 
@@ -200,7 +212,7 @@ class Every(object):
     _dt = None
     _clock = None
 
-    def __init__(self, dt, start=0, stop=sys.maxint, order=0):
+    def __init__(self, dt, start=0, stop=sys.maxint, order=+1):
         '''
         dt : float
              Time interval between two calls
@@ -353,6 +365,7 @@ class Clock(object):
         dt : float
             Time step resolution
         '''
+
         self.start = start or self._start
         self.stop = stop or self._stop
         self._dt = dt or self._dt
