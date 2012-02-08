@@ -33,7 +33,9 @@
 # -----------------------------------------------------------------------------
 import unittest
 import numpy as np
-from dana import Network, Group
+from tools import np_equal
+from dana import Network, Group, Clock
+from dana import SparseConnection, DenseConnection, SharedConnection
 
 class TestEvaluationOrder(unittest.TestCase):
     def test_1(self):
@@ -59,6 +61,27 @@ class TestEvaluationOrder(unittest.TestCase):
         net.append(B)
         net.run(n=1)
         assert A['V'][0] == 2 and B['V'][0] == 1
+
+    def test_3(self):
+        net = Network(Clock(0.0, 1.0, 0.001))
+        src = Group((1,), 'dV/dt=1')
+        src[...] = 1
+        dst = Group((1,) , 'I')
+        dst[...] = 0
+        kernel = np.ones(1)
+        C = DenseConnection(src('V'), dst('I'), kernel)
+        net.append(src)
+        net.append(dst)
+        V,I=[],[]
+        @net.clock.every(0.1,order=-1)
+        def do(t):
+            V.append(src['V'][0])
+            I.append(dst['I'][0])
+        net.run(time=1.0, dt=0.1)
+        assert np_equal(np.array(V),
+                        [1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0])
+        assert np_equal(np.array(I),
+                        [0.0,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9])
 
 if __name__ == "__main__":
     unittest.main()

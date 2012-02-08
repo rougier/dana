@@ -45,10 +45,14 @@ class NetworkError(Exception):
 class Network(object):
     ''' '''
 
-    def __init__(self, groups=[]):
+    def __init__(self, clock = None, groups=None):
         ''' '''
-        self._groups = groups
+        self._groups = groups or []
+        self._clock = clock or Clock(0.0, 1.0, 0.001)
 
+
+    clock = property(lambda self : self._clock,
+                     doc=  "Network clock")
 
 
     def setup(self):
@@ -61,15 +65,15 @@ class Network(object):
     def run(self, time=1.0, dt=0.01, n=None):
         ''' '''
         if n != None:
-            clock.stop = n-0.01
-            clock.dt = 1.0
+            self._clock.stop = n-0.01
+            self._clock.dt = 1.0
         else:
-            clock.stop = time
-            clock.dt = dt
+            self._clock.stop = time
+            self._clock.dt = dt
         self.setup()
-        clock.remove(self.evaluate)
-        clock.add(self.evaluate)
-        clock.run()
+        self._clock.remove(self.evaluate)
+        self._clock.add(self.evaluate)
+        self._clock.run()
 
 
     def evaluate(self,time):
@@ -79,13 +83,13 @@ class Network(object):
             group.propagate()
 
         for group in self._groups:
-            group.evaluate(dt=clock.dt, update=False)
+            group.evaluate(dt=self._clock.dt, update=False)
 
         for group in self._groups:
             group.update()
 
         for group in self._groups:
-            group.learn(dt=clock.dt)
+            group.learn(dt=self._clock.dt)
 
         
 
@@ -98,7 +102,7 @@ class Network(object):
 
 
 
-__default_network__ = Network([])
+__default_network__ = Network(clock,[])
 
 
 def run(time=1.0, dt=0.001, n=None):
