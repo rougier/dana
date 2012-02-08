@@ -61,8 +61,8 @@ def sample(theta, mu1, std1, mu2, std2):
 theta = -135.0 * pi / 180.0
 src = Group((2,), 'V = sample(theta,0.0,1.0,0.0,0.5)')
 tgt = Group((1,), 'V')
-C = DenseConnection(src, tgt, np.ones((1,2)),
-                    'dW/dt = post.V*(pre.V-post.V*W)*0.001')
-run(n=10000)
+C = DenseConnection(src('V'), tgt('V'), np.ones((1,2)),
+                    'dW/dt = post.V*(pre.V-post.V*W)')
+run(time=10.0,dt=0.001)
 print "Learned weights : ", C.weights[0]
 print "(should be +/- [%f, %f])" % (cos(theta), sin(theta))

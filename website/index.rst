@@ -5,7 +5,7 @@
 What is DANA ?
 ==============
 
-Dana is a python framework for distributed, asynchronous, distributed and
+Dana is a python framework for distributed, asynchronous, numerical and
 adaptive computing. The computational paradigm supporting the dana framework is
 grounded on the notion of a unit that is a essentially a set of arbitrary
 values that can vary along time under the influence of other units and
