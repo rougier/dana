@@ -39,6 +39,33 @@ from scipy.ndimage.filters import convolve
 from group import Group
 
 
+def best_fft_shape(shape, base = [13,11,7,5,3,2]):
+    def factorize(n, base = [13,11,7,5,3,2]):
+        if n == 0:
+            raise(RuntimeError, "Length n must be positive integer")
+        elif n == 1:
+            return [1,]
+        factors = []
+        for b in base:
+            while n % b == 0:
+                n /= b
+                factors.append(b)
+        if n == 1:
+            return factors
+        return []
+
+    def is_optimal(n, base = [13,11,7,5,3,2]):
+        factors = factorize(n,base)
+        return len(factors)> 1 and factors[-1] in base
+
+    shape = np.array(shape)
+    new_shape = []
+    for i in shape:
+        while not is_optimal(i,base): i += 1
+        new_shape.append(i)
+    return np.array(new_shape)
+
+
 def convolve1d(Z, K, toric=False):
     """ Discrete, clamped, linear convolution of two one-dimensional sequences.
 

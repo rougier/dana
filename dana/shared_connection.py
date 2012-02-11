@@ -38,9 +38,16 @@ SharedConnection
 import inspect
 import scipy
 import numpy as np
-from functions import extract, convolve1d, convolve2d
+from functions import extract, convolve1d, convolve2d, best_fft_shape
 from connection import Connection, ConnectionError
-from scipy.fftpack import fft, ifft, fft2, ifft2, fftshift, ifftshift
+from numpy.fft import fft, ifft
+from numpy.fft import fft2, ifft2
+from numpy.fft import rfft, irfft
+from numpy.fft import rfft2, irfft2
+from numpy.fft import fftshift, ifftshift
+#from scipy.fftpack import fft, ifft, fft2, ifft2
+#from numpy import fftshift, ifftshift
+#from scipy.fftpack import rfft, irfft, rfft2, irfft2
 
 
 class SharedConnection(Connection):
@@ -79,14 +86,30 @@ class SharedConnection(Connection):
                 self._src_rows = rows
 
             if self._fft:
-                m = self.source.shape[0]
-                p = weights.shape[0]
+                src_shape = np.array(self.source.shape)
+                wgt_shape = np.array(weights.shape)
+                K = np.nan_to_num(weights)[::-1]
                 if self._toric:
-                    _weights = extract(weights[::-1], (m,), (np.floor(p/2.0),) )
+                    K_ = extract(K, src_shape, wgt_shape//2)
+                    self._fft_weights = rfft(ifftshift(K_))
                 else:
-                    self._src_holder = np.zeros(2*m+1)
-                    _weights = extract(weights[::-1], (2*m+1,), (np.floor(p/2.0),) )
-                self._fft_weights = fft(ifftshift(np.nan_to_num(_weights)))
+                    size = src_shape+wgt_shape//2
+                    shape = best_fft_shape(size)
+                    self._fft_weights = rfft(K,shape[0])
+                    i0 = wgt_shape[0]//2
+                    i1 = i0+src_shape[0]
+                    self._fft_indices = slice(i0,i1)
+                    self._fft_shape = shape
+
+                # m = self.source.shape[0]
+                # p = weights.shape[0]
+                # if self._toric:
+                #     _weights = extract(weights[::-1], (m,), (np.floor(p/2.0),) )
+                # else:
+                #     self._src_holder = np.zeros(2*m+1)
+                #     _weights = extract(weights[::-1], (2*m+1,), (np.floor(p/2.0),) )
+                # self._fft_weights = fft(ifftshift(np.nan_to_num(_weights)))
+
 
             self._mask = np.ones(weights.shape)
             self._mask[np.isnan(weights).nonzero()] = 0
@@ -108,16 +131,22 @@ class SharedConnection(Connection):
                 self._src_cols = cols.reshape((1,len(cols)))
 
             if self._fft:
-                m,n = self.source.shape
-                p,q = weights.shape
+                src_shape = np.array(self.source.shape)
+                wgt_shape = np.array(weights.shape)
+                K = np.nan_to_num(weights)[::-1,::-1]
                 if self._toric:
-                    _weights = extract(weights[::-1,::-1], (m,n),
-                                       (np.floor(p/2.0),np.floor(q/2.0)))
+                    K_ = extract(K, src_shape, wgt_shape//2)
+                    self._fft_weights = rfft2(ifftshift(K_))
                 else:
-                    self._src_holder = np.zeros((2*m+1,2*n+1))
-                    _weights = extract(weights[::-1,::-1], (2*m+1,2*n+1),
-                                       (np.floor(p/2.0),np.floor(q/2.0)))
-                self._fft_weights = fft2(ifftshift(np.nan_to_num(_weights)))
+                    size = src_shape+wgt_shape//2
+                    shape = best_fft_shape(size)
+                    self._fft_weights = rfft2(K,shape)
+                    i0 = wgt_shape[0]//2
+                    i1 = i0+src_shape[0]
+                    j0 = wgt_shape[1]//2
+                    j1 = j0+src_shape[1]
+                    self._fft_indices = slice(i0,i1),slice(j0,j1)
+                    self._fft_shape = shape
 
             self._mask = np.ones(weights.shape)
             self._mask[np.isnan(weights).nonzero()] = 0
@@ -144,13 +173,21 @@ class SharedConnection(Connection):
             source = self._actual_source
             # Use FFT convolution
             if self._fft:
-                if self._toric:
-                    R  = ifft(fft(source)*self._fft_weights).real
+                if not self._toric:
+                    P = rfft(source,self._fft_shape[0])*self._fft_weights
+                    R = irfft(P, self._fft_shape[0]).real
+                    R = R[self._fft_indices]
                 else:
-                    n = source.shape[0]
-                    self._src_holder[n//2:n//2+n] = source
-                    R = ifft(fft(self._src_holder)*self._fft_weights)
-                    R = R.real[n//2:n//2+n]
+                    P = rfft(source)*self._fft_weights
+                    R = irfft(P,source.shape[0]).real
+
+                # if self._toric:
+                #     R  = ifft(fft(source)*self._fft_weights).real
+                # else:
+                #     n = source.shape[0]
+                #     self._src_holder[n//2:n//2+n] = source
+                #     R = ifft(fft(self._src_holder)*self._fft_weights)
+                #     R = R.real[n//2:n//2+n]
             # Use regular convolution
             else:
                 R = convolve1d(source, self._weights[::-1], self._toric)
@@ -162,13 +199,14 @@ class SharedConnection(Connection):
             source = self._actual_source
             # Use FFT convolution
             if self._fft:
-                if self._toric:
-                    R  = ifft2(fft2(source)*self._fft_weights).real
+                if not self._toric:
+                    P = rfft2(source,self._fft_shape)*self._fft_weights
+                    R = irfft2(P, self._fft_shape).real
+                    R = R[self._fft_indices]
                 else:
-                    m,n = source.shape
-                    self._src_holder[m//2:m//2+m,n//2:n//2+n] = source
-                    R = ifft2(fft2(self._src_holder)*self._fft_weights)
-                    R = R.real[m//2:m//2+m,n//2:n//2+n]
+                    P = rfft2(source)*self._fft_weights
+                    R = irfft2(P,source.shape).real
+
             # Use SVD convolution
             else:
                 R = convolve2d(source, self._weights, self._USV, self._toric)
