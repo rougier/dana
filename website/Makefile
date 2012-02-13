@@ -17,6 +17,6 @@ all: $(TARGETS)
 clean:
 	@$(RM) -f $(TARGETS)
 
-# publish: all
-rsync -avz --exclude-from=rsync-exclude.txt -e ssh . rougier@loria.loria.fr:/users/cortex/rougier/Public/dana/htdocs
-rsync -avz --exclude-from=rsync-exclude.txt -e ssh ../doc/_build/html/* rougier@loria.loria.fr:/users/cortex/rougier/Public/dana/htdocs/doc
+publish: all
+	rsync -avz --exclude-from=rsync-exclude.txt -e ssh . rougier@loria.loria.fr:/users/cortex/rougier/Public/dana/htdocs
+	rsync -avz --exclude-from=rsync-exclude.txt -e ssh ../doc/_build/html/* rougier@loria.loria.fr:/users/cortex/rougier/Public/dana/htdocs/doc
