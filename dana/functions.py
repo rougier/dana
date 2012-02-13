@@ -38,9 +38,18 @@ import scipy.sparse as sp
 from scipy.ndimage.filters import convolve
 from group import Group
 
+def best_fft_shape(shape):
+    """
+    From fftw.org:
+        FFTW is best at handling sizes of the form 2^a*3^b*5^c*7^d*11^e*13^f,
+         where e+f is either 0 or 1,
 
-def best_fft_shape(shape, base = [13,11,7,5,3,2]):
-    def factorize(n, base = [13,11,7,5,3,2]):
+    This function finds the best shape for computing fftw
+    """
+
+    base = [13,11,7,5,3,2]
+
+    def factorize(n):
         if n == 0:
             raise(RuntimeError, "Length n must be positive integer")
         elif n == 1:
@@ -54,16 +63,17 @@ def best_fft_shape(shape, base = [13,11,7,5,3,2]):
             return factors
         return []
 
-    def is_optimal(n, base = [13,11,7,5,3,2]):
-        factors = factorize(n,base)
-        return len(factors)> 1 and factors[-1] in base
+    def is_optimal(n):
+        factors = factorize(n)
+        return len(factors) > 0 \
+            and factors[:2] not in [[13,13],[13,11],[11,11]]
 
-    shape = np.array(shape)
-    new_shape = []
-    for i in shape:
-        while not is_optimal(i,base): i += 1
-        new_shape.append(i)
-    return np.array(new_shape)
+    shape = np.atleast_1d(np.array(shape))
+    for i in range(shape.size):
+        while not is_optimal(shape[i]):
+            shape[i] += 1
+    return shape.astype(int)
+
 
 
 def convolve1d(Z, K, toric=False):
