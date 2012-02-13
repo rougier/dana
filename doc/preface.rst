@@ -48,16 +48,21 @@ by Mark  Pilgrim (which is also available  as a book). Numpy  user guide should
 gives  you the  main concepts  related  to vectorized  computation while  scipy
 tutorial may be considered optional but worth reading anyway.
 
+
 **Python**
 
 * Python website : http://www.python.org
 * Python tutorial: http://diveintopython.org
+
+----
 
 **Numpy**
 
 * Numpy website: http://numpy.scipy.org
 * Numpy tutorial: http://docs.scipy.org/doc/numpy/user/
 * Numpy manual: http://docs.scipy.org/doc/numpy/reference/
+
+----
 
 **Scipy**
 
