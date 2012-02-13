@@ -1,6 +1,0 @@
-.. header::
-
-  * `About <index.html>`_
-  * `Download <download.html>`_
-  * **Examples**
-  * `Documentation <documentation.html>`_ 

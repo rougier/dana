@@ -1,4 +1,11 @@
 .. footer::
 
-   Copyright (c) 2010-2012 - Nicolas P. Rougier
+   .. image:: images/logo-dana-vertical.png
+      :class: left
+
+   |
+   | DANA, Distributed, Asynchronous, Numerical & Adaptive computing framework
+   | Copyright 2010-2012 Nicolas P. Rougier
+   | http://dana.loria.fr
+
 

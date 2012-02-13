@@ -1,7 +1,10 @@
 .. header::
 
-  * **About**
+  .. image:: images/logo-dana.png
+
+  * `About <index.html>`_
   * `Download <download.html>`_
   * `Examples <examples.html>`_
   * `Documentation <documentation.html>`_
+  * `Support <help.html>`_
  

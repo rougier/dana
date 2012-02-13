@@ -1,125 +1,119 @@
-.. include:: header-examples.txt
-
-Game of Life
-============
-
-.. image:: images/game-of-life.png
-   :class: left
-
-.. code-block:: python
-
-   from dana import *
-
-   src = Group((50,100),
-                '''V = maximum(0,1.0-(N<1.5)-(N>3.5)-(N<2.5)*(1-V)) : int
-                   N : float''')
-
-   K =  np.array([[1, 1, 1], 
-                  [1, 0, 1], 
-                  [1, 1, 1]]))
-   C = SharedConnection(src('V'), src('N'), K)
-
-   src.V = rnd.randint(0, 2, src.shape)
-
-   run(n=100)
+.. include:: header.txt
+.. include:: footer.txt
 
 |
-
-Heat diffusion
-==============
-
-.. image:: images/diffusion.png
-   :class: left
-
-.. code-block:: python
-
-   from dana import *
-
-   n,k  = 40, .1
-   src = Group((n,n), '''dV/dt = k*N : float
-                         N           : float''')
-   SparseConnection(src('V'), src('N'), np.array([[0, 1, 0], 
-                                                  [1,-4, 1],
-                                                  [0, 1, 0]]))
-   src.V = 1
-
-   for i in range(2500):
-       src.run(dt=0.25)
-       src.V[:,n-1] = src.V[n-1,:] = src.V[:,0] = 1
-       src.V[0,:] = 0 
-
 |
 
-Sobel filter
-============
+Here are some examples of the kind of computation you can achieve using the
+DANA framework. Be sure to have also a look at the ``examples`` directory as
+well as the ``models`` one to get other examples of what can be done with DANA.
 
-.. image:: images/sobel.png
-   :class: left
+Dynamic Neural Fields
+=====================
+
+The dynamical neural field (DNF) theory has been introduced by Wilson and
+Cowan, and latter formalised by Amari and Taylor. This theory considers a
+neural population at the tissue level governed by a unique differential
+equation that describe the spatio-temporal evolution of coarse grained
+variables such as synaptic or firing rate activity. There have been numerous
+theoretical works related to the study of DNF properties like pattern
+formation, analytical solution, bifurcation conditions, etc.
+
+.. image:: images/DNF-1.png
+.. image:: images/DNF-2.png
+.. image:: images/DNF-3.png
+
+
+More formaly, DNF equation reads:
+
+  1/α ∂u(x,t)/∂t  = -u(x,t) + ∫ w(║y-x║) f(u(y,t))dy  + I(x,t) *(1)*
+
+where:
+
+* u(x,t) is the potential of neural population at position x and time t
+* w(d) is a neighborhood function from ℝ→ℝ
+* f(u) is the firing rate of a single neuron
+* α is the temporal decay of the synapse
+* I(x,t) is the input at position x.
+
+It is thus straightforward to  numerically integrate the equation considering a
+given spatial  and temporal resolution.
+
 
 .. code-block:: python
-
-   import Image
-   from dana import *
-
-   image = np.asarray(Image.open('lena.jpg'))/256.0
-   I = image.view(dtype=[('R',float), ('G',float), ('B',float)]).squeeze()
-   L = (0.212671*I['R'] + 0.715160*I['G'] + 0.072169*I['B'])
-   src = Group(I.shape, '''V = sqrt(Gx**2+Gy**2) : float
-                           Gx                    : float
-                           Gy                    : float ''')
-   Kx = np.array([[-1., 0.,+1.], [-2., 0.,+2.], [-1., 0., 1.]])
-   Gx = SharedConnection(L, src('Gx'), Kx)
-   Ky = np.array([[+1.,+2.,+1.], [ 0., 0., 0.], [-1.,-2.,-1.]])
-   Gy = SharedConnection(L, src('Gy'), Ky)  
-   src.run(n=1)
-
-|
-
-Dynamic Neural Field
-====================
-
-.. image:: images/DNF.png
-   :class: left
-
-.. code-block:: python
-
-   from dana import *
 
    n = 256
    src = np.zeros((n,))
-   tgt = Group((n,), '''dU/dt = (-V + 0.1*L + I); V = maximum(U,0); I; L''')
+   tgt = Group((n,), """ dU/dt = (-V + 0.1*L + I);
+                             V = maximum(U,0);
+                             I; L """)
    SparseConnection(src, tgt('I'), np.ones((1,)))
    SharedConnection(tgt('V'), tgt('L'), +1.10*gaussian(2*n+1, 0.20)
                                         -0.95*gaussian(2*n+1, 1.00))
-   for i in range(10):
-       a = 0.50*rnd.random(1)
-       b = 0.25*rnd.random(1)
-       c = 2.00*rnd.random(1)-1.0
-       src[...] = np.maximum(src, a*gaussian(n, [b], [c]))
-   run(t=30.0, dt=0.1)
+
+
+
+Gray Scott reaction-diffusion model
+===================================
+
+The Gray Scott model is a mathematical model of the reaction and diffusion of
+chemical species and may produce a variety of behaviors as illustrated below:
+
+.. image:: images/Pearson-1.png
+
+.. image:: images/Pearson-2.png
+
+.. image:: images/Pearson-3.png
+
+A Gray Scott model is described by a set of two differential equations:
+
+* ∂u/∂t = Du ∇²u - uv² + f(1-u)  (1)
+* ∂v/∂t = Dv ∇²v + vu² - (f+k)v  (2)
+
+
+that can be very easily modeled using DANA:
+
+.. code-block:: python
+
+   Z = Group((n,n), """ du/dt = Du*Lu - Z + F*(1-U)
+                        dv/dt = Dv*Lv + Z - (F+k)*V
+                        U = np.maximum(u,0)
+                        V = np.maximum(v,0)
+                        Z = U*V*V
+                        Lu; Lv; """)
+   K = np.array([[np.NaN,  1., np.NaN], 
+                 [  1.,   -4.,   1.  ],
+                 [np.NaN,  1., np.NaN]])
+   SparseConnection(Z('U'),Z('Lu'), K, toric=True)
+   SparseConnection(Z('V'),Z('Lv'), K, toric=True)
 
 |
+
+The full sources for screenshots above are available from the ``models``
+directory in the DANA distribution.
+
+
 
 Bellman-Ford algorithm
 ======================
 
+The Bellmann-Ford algorithm can be implemented using DANA as illustrated below: 
+
 .. image:: images/maze.png
-   :class: left
+
+The idea is simply to use DANA to diffuse a value and to climb back the ``V``
+value to get the shortest path.
 
 .. code-block:: python
 
-   from dana import *
-
-   ...
-   Z = 1-maze((n,n))
-   G = Group((n,n),'''V = I*maximum(maximum(maximum(maximum(V,E),W),N),S)
-                      W; E; N; S; I''')
-   SparseConnection(Z,   G('I'), np.array([ [1] ]))
-   SparseConnection(G.V, G('N'), np.array([ [a],      [np.NaN], [np.NaN] ]))
-   SparseConnection(G.V, G('S'), np.array([ [np.NaN], [np.NaN], [a]      ]))
-   SparseConnection(G.V, G('E'), np.array([ [np.NaN,  np.NaN,  a]        ]))
-   SparseConnection(G.V, G('W'), np.array([ [a,       np.NaN,  np.NaN]   ]))
-   G.V[-2,-1] = 1
-   run(n=5*(n+n))
-   ...
+   n = 61
+   a = 0.99
+   Z = 1-maze((n,2*n+1))
+   G = Group((n,2*n+1),'''V = I*maximum(maximum(maximum(maximum(V,E),W),N),S)
+                          W; E; N; S; I''')
+   SparseConnection(Z, G('I'), np.array([ [1] ]))
+   SparseConnection(G('V'), G('N'), np.array([ [a],      [np.NaN], [np.NaN] ]))
+   SparseConnection(G('V'), G('S'), np.array([ [np.NaN], [np.NaN], [a]      ]))
+   SparseConnection(G('V'), G('E'), np.array([ [np.NaN,  np.NaN,  a]        ]))
+   SparseConnection(G('V'), G('W'), np.array([ [a,       np.NaN,  np.NaN]   ]))
 

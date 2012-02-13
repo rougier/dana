@@ -1,0 +1,92 @@
+@import "reset.css";
+@import "default.css";
+@import "pygment.css";
+
+
+body { 
+    font-family: "Droid Sans", Ubuntu, "DejaVu Sans", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #2E3436;
+    background-color: #ffffff;
+}
+
+.document {
+    padding-left:  10%;
+    padding-right: 10%;
+}
+
+h1 {
+    font-size: 25px;
+    color: #2E3436;
+    line-height: normal;
+    margin-top: 1em;
+    clear:both;
+}
+
+.left {
+    float: left;
+    margin-right: 2em;
+}
+
+
+/* --- Header -------------------------------------------------------------- */
+.header {
+    color: #ffffff;
+    background-color: #eee;
+    padding-bottom: 3px;
+}
+.header ul {
+    font-size: 16px;
+    font-family: "Bitstream Vera Sans", sans-serif;
+    margin:0;
+    padding: 0;
+    padding-left: 10%;
+    padding-top: .25em;
+    padding-bottom: .25em;
+    background: #999;
+}
+.header hr {
+    display: none;
+}
+.header ul li {
+    list-style: none;
+    display: inline;
+    margin-left: 0;
+	padding: 2px 8px 2px 8px;
+}
+.header ul li a {
+    text-decoration: none;
+    font-weight: normal;
+	color: #ffffff;
+}
+.header ul li a:hover {
+    border-bottom: 2px solid #ffffff;
+}
+
+/* --- Footer -------------------------------------------------------------- */
+.footer {
+    color: #555555;
+    background-color: #ddd;
+    border-top: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+    font-size: 12px;
+    line-height: 1.2em;
+    margin-top:     5.00em;
+    padding-top:    0.75em;
+    padding-bottom: 2.50em;
+    padding-left:   5%;
+}
+.footer hr {
+    display: none;
+}
+
+/* --- Highlight -------------------------------------------------------------- */
+ pre {
+     font-family: 'Droid Sans Mono', Monospace;
+     font-size: 12px;
+     line-height: 1.25em;
+     padding: 1.0em;
+     padding-left: 1.5em;
+     background-color: #f0f0f0;
+}

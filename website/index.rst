@@ -1,4 +1,4 @@
-.. include:: header-about.txt
+.. include:: header.txt
 .. include:: footer.txt
 
 
@@ -12,7 +12,7 @@ values that can vary along time under the influence of other units and
 learning. Each unit can be connected to any other unit (including itself) using
 a weighted link and a group is a structured set of such homogeneous units.
 
-.. image:: group.png
+.. image:: images/group.png
    :alt:   Dana basic concepts
 
 More formally, we can write the following definitions:
