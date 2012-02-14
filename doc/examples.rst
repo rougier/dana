@@ -77,7 +77,7 @@ of the game of life.
 
 Diffusion process                                                              
 ===============================================================================
-Have a look at the chapter :doc:`quickstart` for a commented implementation
+Have a look at the chapter :doc:`quicktour` for a commented implementation
 of a diffusion process.
 
 
