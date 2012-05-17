@@ -29,7 +29,7 @@ from nose.tools import *
 
 
 def test_one_to_one_dense_1():
-    ''' Check link computation, one to one, dense '''
+    """ Check link computation, one to one, dense """
 
     G1 = dana.group(np.random.random((10,)))
     G2 = dana.group(np.random.random((10,)))
@@ -39,7 +39,7 @@ def test_one_to_one_dense_1():
     assert np_almost_equal(G1.V,G2.V)
 
 def test_one_to_one_dense_2():
-    ''' Check link computation, one to one, dense '''
+    """ Check link computation, one to one, dense """
 
     G1 = dana.group(np.random.random((10,10)))
     G2 = dana.group(np.random.random((10,10)))
@@ -49,7 +49,7 @@ def test_one_to_one_dense_2():
     assert np_almost_equal(G1.V,G2.V)
 
 def test_one_to_one_dense_3():
-    ''' Check link computation, one to one, dense '''
+    """ Check link computation, one to one, dense """
 
     G1 = dana.group(np.random.random((5,5)))
     G2 = dana.group(np.random.random((10,10)))
@@ -59,7 +59,7 @@ def test_one_to_one_dense_3():
     assert np_almost_equal(G1.V,G2.V[::2,::2])
 
 def test_one_to_one_dense_4():
-    ''' Check link, one to one, dense '''
+    """ Check link, one to one, dense """
 
     G1 = dana.group(np.random.random((10,)))
     G2 = dana.group(np.random.random((10,)))
@@ -70,7 +70,7 @@ def test_one_to_one_dense_4():
     assert np_almost_equal(W,Z)
 
 def test_one_to_one_dense_5():
-    ''' Check link, one to one, dense '''
+    """ Check link, one to one, dense """
 
     G1 = dana.group(np.random.random((10,10)))
     G2 = dana.group(np.random.random((10,10)))
@@ -81,7 +81,7 @@ def test_one_to_one_dense_5():
     assert np_almost_equal(W,Z)
 
 def test_one_to_one_dense_6():
-    ''' Check link computation, one to one, dense, masked '''
+    """ Check link computation, one to one, dense, masked """
 
     G1 = dana.group(np.random.random((10,)))
     G2 = dana.group(np.random.random((10,)))
@@ -93,7 +93,7 @@ def test_one_to_one_dense_6():
     assert np_almost_equal(G1.V,G2.V)
 
 def test_one_to_one_dense_7():
-    ''' Check link computation, one to one, dense, masked '''
+    """ Check link computation, one to one, dense, masked """
 
     G1 = dana.group(np.random.random((10,10)))
     G2 = dana.group(np.random.random((10,10)))
@@ -105,7 +105,7 @@ def test_one_to_one_dense_7():
     assert np_almost_equal(G1.V,G2.V)
 
 def test_one_to_one_shared_1():
-    ''' Check link computation, one to one, shared '''
+    """ Check link computation, one to one, shared """
 
     G1 = dana.group(np.random.random((10,)))
     G2 = dana.group(np.random.random((10,)))
@@ -115,7 +115,7 @@ def test_one_to_one_shared_1():
     assert np_almost_equal(G1.V,G2.V)
 
 def test_one_to_one_shared_2():
-    ''' Check link computation, one to one, shared '''
+    """ Check link computation, one to one, shared """
 
     G1 = dana.group(np.random.random((10,10)))
     G2 = dana.group(np.random.random((10,10)))
@@ -125,7 +125,7 @@ def test_one_to_one_shared_2():
     assert np_almost_equal(G1.V,G2.V)
 
 def test_one_to_one_shared_3():
-    ''' Check link computation, one to one, shared '''
+    """ Check link computation, one to one, shared """
 
     G1 = dana.group(np.random.random((5,5)))
     G2 = dana.group(np.random.random((10,10)))
@@ -135,7 +135,7 @@ def test_one_to_one_shared_3():
     assert np_almost_equal(G1.V,G2.V[::2,::2])
 
 def test_one_to_one_shared_4():
-    ''' Check link, one to one, shared '''
+    """ Check link, one to one, shared """
 
     G1 = dana.group(np.random.random((10,)))
     G2 = dana.group(np.random.random((10,)))
@@ -146,7 +146,7 @@ def test_one_to_one_shared_4():
     assert np_almost_equal(W,Z)
 
 def test_one_to_one_shared_5():
-    ''' Check link, one to one, shared '''
+    """ Check link, one to one, shared """
 
     G1 = dana.group(np.random.random((10,10)))
     G2 = dana.group(np.random.random((10,10)))
@@ -157,7 +157,7 @@ def test_one_to_one_shared_5():
     assert np_almost_equal(W,Z)
 
 def test_one_to_one_shared_6():
-    ''' Check link, one to one, shared '''
+    """ Check link, one to one, shared """
 
     G1 = dana.group(np.random.random((10,)))
     G2 = dana.group(np.random.random((10,)))
@@ -169,7 +169,7 @@ def test_one_to_one_shared_6():
     assert np_almost_equal(G1.V,G2.V)
 
 def test_one_to_one_shared_7():
-    ''' Check link, one to one, shared '''
+    """ Check link, one to one, shared """
 
     G1 = dana.group(np.random.random((10,10)))
     G2 = dana.group(np.random.random((10,10)))
@@ -181,7 +181,7 @@ def test_one_to_one_shared_7():
     assert np_almost_equal(G1.V,G2.V)
 
 def test_one_to_one_sparse_1():
-    ''' Check link computation, one to one, dense '''
+    """ Check link computation, one to one, dense """
 
     G1 = dana.group(np.random.random((10,)))
     G2 = dana.group(np.random.random((10,)))
@@ -191,7 +191,7 @@ def test_one_to_one_sparse_1():
     assert np_almost_equal(G1.V,G2.V)
 
 def test_one_to_one_sparse_2():
-    ''' Check link computation, one to one, dense '''
+    """ Check link computation, one to one, dense """
 
     G1 = dana.group(np.random.random((10,10)))
     G2 = dana.group(np.random.random((10,10)))
@@ -201,7 +201,7 @@ def test_one_to_one_sparse_2():
     assert np_almost_equal(G1.V,G2.V)
 
 def test_one_to_one_sparse_3():
-    ''' Check link computation, one to one, dense '''
+    """ Check link computation, one to one, dense """
 
     G1 = dana.group(np.random.random((5,5)))
     G2 = dana.group(np.random.random((10,10)))
@@ -211,7 +211,7 @@ def test_one_to_one_sparse_3():
     assert np_almost_equal(G1.V,G2.V[::2,::2])
 
 def test_one_to_one_sparsed_4():
-    ''' Check link, one to one, sparse '''
+    """ Check link, one to one, sparse """
 
     G1 = dana.group(np.random.random((10,)))
     G2 = dana.group(np.random.random((10,)))
@@ -222,7 +222,7 @@ def test_one_to_one_sparsed_4():
     assert np_almost_equal(W,Z)
 
 def test_one_to_one_sparse_5():
-    ''' Check link, one to one, sparse '''
+    """ Check link, one to one, sparse """
 
     G1 = dana.group(np.random.random((10,10)))
     G2 = dana.group(np.random.random((10,10)))
@@ -233,7 +233,7 @@ def test_one_to_one_sparse_5():
     assert np_almost_equal(W,Z)
 
 def test_one_to_one_sparse_6():
-    ''' Check link, one to one, sparse '''
+    """ Check link, one to one, sparse """
 
     G1 = dana.group(np.random.random((10,)))
     G2 = dana.group(np.random.random((10,)))
@@ -245,7 +245,7 @@ def test_one_to_one_sparse_6():
     assert np_almost_equal(G1.V,G2.V)
 
 def test_one_to_one_sparse_7():
-    ''' Check link, one to one, sparse '''
+    """ Check link, one to one, sparse """
 
     G1 = dana.group(np.random.random((10,10)))
     G2 = dana.group(np.random.random((10,10)))
@@ -257,7 +257,7 @@ def test_one_to_one_sparse_7():
     assert np_almost_equal(G1.V,G2.V)
 
 def test_weighted_sum_dense_1():
-    ''' Check link weighted sum computation, dense '''
+    """ Check link weighted sum computation, dense """
 
     G1 = dana.zeros((5,))
     G2 = dana.ones((5,))
@@ -267,7 +267,7 @@ def test_weighted_sum_dense_1():
     assert np_almost_equal(G1.V, np.array([3,4,5,4,3]))
 
 def test_weighted_sum_dense_2():
-    ''' Check link weighted sum computation, dense '''
+    """ Check link weighted sum computation, dense """
 
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
@@ -279,7 +279,7 @@ def test_weighted_sum_dense_2():
                                            [4,6,4]]))
 
 def test_weighted_sum_dense_3():
-    ''' Check link weighted sum computation, dense, masked '''
+    """ Check link weighted sum computation, dense, masked """
 
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
@@ -293,7 +293,7 @@ def test_weighted_sum_dense_3():
                                            [3,5,3]]))
 
 def test_weighted_sum_shared_1():
-    ''' Check link weighted sum computation, shared '''
+    """ Check link weighted sum computation, shared """
 
     G1 = dana.zeros((5,))
     G2 = dana.ones((5,))
@@ -303,7 +303,7 @@ def test_weighted_sum_shared_1():
     assert np_almost_equal(G1.V, np.array([3,4,5,4,3]))
 
 def test_weighted_sum_shared_2():
-    ''' Check link weighted sum computation, shared '''
+    """ Check link weighted sum computation, shared """
 
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
@@ -315,7 +315,7 @@ def test_weighted_sum_shared_2():
                                            [4,6,4]]))
 
 def test_weighted_sum_shared_3():
-    ''' Check link weighted sum computation, shared, masked '''
+    """ Check link weighted sum computation, shared, masked """
 
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
@@ -328,7 +328,7 @@ def test_weighted_sum_shared_3():
                                            [3,5,3]]))
 
 def test_weighted_sum_sparse_1():
-    ''' Check link weighted sum computation, sparse '''
+    """ Check link weighted sum computation, sparse """
 
     G1 = dana.zeros((5,))
     G2 = dana.ones((5,))
@@ -338,7 +338,7 @@ def test_weighted_sum_sparse_1():
     assert np_almost_equal(G1.V, np.array([3,4,5,4,3]))
 
 def test_weighted_sum_sparse_2():
-    ''' Check link weighted sum computation, sparse '''
+    """ Check link weighted sum computation, sparse """
 
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
@@ -350,7 +350,7 @@ def test_weighted_sum_sparse_2():
                                            [4,6,4]]))
 
 def test_weighted_sum_sparse_3():
-    ''' Check link weighted sum computation, sparse, masked '''
+    """ Check link weighted sum computation, sparse, masked """
 
     G1 = dana.zeros((3,3))
     G2 = dana.ones((3,3))
@@ -363,7 +363,7 @@ def test_weighted_sum_sparse_3():
                                            [3,5,3]]))
 
 def test_distance_dense_1():
-    ''' Check link distance computation, dense '''
+    """ Check link distance computation, dense """
 
     G1 = dana.zeros((5,))
     G2 = dana.group(np.random.random((5,)))
@@ -373,7 +373,7 @@ def test_distance_dense_1():
     assert np_almost_equal(G1.V,1-G2.V)
 
 def test_distance_dense_2():
-    ''' Check link distance computation, dense '''
+    """ Check link distance computation, dense """
 
     G1 = dana.zeros((5,5))
     G2 = dana.group(np.random.random((5,5)))
@@ -384,7 +384,7 @@ def test_distance_dense_2():
 
 @raises(ValueError)
 def test_distance_shared_1():
-    ''' Check link distance computation, shared '''
+    """ Check link distance computation, shared """
 
     G1 = dana.zeros((5,))
     G2 = dana.group(np.random.random((5,)))
@@ -395,7 +395,7 @@ def test_distance_shared_1():
 
 @raises(ValueError)
 def test_distance_shared_2():
-    ''' Check link distance computation, dense '''
+    """ Check link distance computation, dense """
 
     G1 = dana.zeros((5,5))
     G2 = dana.group(np.random.random((5,5)))
@@ -405,7 +405,7 @@ def test_distance_shared_2():
     assert np_almost_equal(G1.V,1-G2.V)
 
 def test_distance_sparse_1():
-    ''' Check link distance computation, sparse '''
+    """ Check link distance computation, sparse """
 
     G1 = dana.zeros((5,))
     G2 = dana.group(np.random.random((5,)))
@@ -415,7 +415,7 @@ def test_distance_sparse_1():
     assert np_almost_equal(G1.V,1-G2.V)
 
 def test_distance_sparse_2():
-    ''' Check link distance computation, sparse '''
+    """ Check link distance computation, sparse """
 
     G1 = dana.zeros((5,5))
     G2 = dana.group(np.random.random((5,5)))

@@ -31,7 +31,7 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
-'''
+"""
 DifferentialEquation class.
 
 The DifferentialEquation class allows to manipulate equations of the type:
@@ -49,7 +49,7 @@ the case, a `DifferentialEquationError` is raised.
 >>> eq = DifferentialEquation('dy/dt = a+b*y')
 >>> y = eq.evaluate(y, 0.01, 1, 2)     # a=1, b=2
 >>> y = eq.evaluate(y, 0.01, b=1, a=2) # a=2, b=1
-'''
+"""
 import re
 import inspect
 import compiler
@@ -61,7 +61,7 @@ class DifferentialEquationError(Exception):
     pass
 
 class DifferentialEquation(Definition):
-    ''' DifferentialEquation of type: 'dy/dt = expr' 
+    """ DifferentialEquation of type: 'dy/dt = expr'
 
     The DifferentialEquation class allows to manipulate equations of the type:
 
@@ -78,10 +78,10 @@ class DifferentialEquation(Definition):
     >>> eq = DifferentialEquation('dy/dt = a+b*x')
     >>> y = eq.evaluate(0.0, dt=0.1, a=1, b=2)
     0.1
-    '''
+    """
 
-    def __init__(self, definition, constants={}):
-        '''
+    def __init__(self, definition, constants=None):
+        """
         Creates differential equation.
 
         :param string definition:
@@ -89,7 +89,8 @@ class DifferentialEquation(Definition):
 
         :param list constants:
             Name of variables that must be considered constant
-        '''
+        """
+        if not constants: constants = {}
         Definition.__init__(self, definition)
         self._in_out = None
         self._out = None
@@ -97,13 +98,13 @@ class DifferentialEquation(Definition):
         self.__method__ = self._forward_euler
 
     def __repr__(self):
-        ''' x.__repr__() <==> repr(x) '''
+        """ x.__repr__() <==> repr(x) """
 
         classname = self.__class__.__name__
         return "%s('d%s/dt = %s : %s')" % (classname, self._lhs, self._rhs, self._dtype)
 
-    def setup(self, constants = {}):
-        '''
+    def setup(self, constants=None):
+        """
         Parse definition and check if it is an equation.
 
         :param string definition:
@@ -115,7 +116,8 @@ class DifferentialEquation(Definition):
 
         :param list constants:
             List of variable names that must be considered constants.
-        '''
+        """
+        if not constants: constants = {}
 
         # First, we check if equation is of the form: dy/dt = A + (B)*y [: dtype]
         # -----------------------------------------------------------------------
@@ -219,13 +221,13 @@ class DifferentialEquation(Definition):
             'Equation is not a first order differential equation'
 
     def _forward_euler(self, __x__, dt, *args, **kwargs):
-        '''
+        """
         Forward euler method evaluation method
 
         **Notes:**
 
         See ``evaluate`` method for parameters
-        '''
+        """
         dx = self.__f__(__x__, *args, **kwargs)*dt
         if self._out is not None:
             np.add(__x__, dx, self._out)
@@ -236,13 +238,13 @@ class DifferentialEquation(Definition):
         return __x__ + dx
 
     def _runge_kutta_2(self, __x__, dt, *args, **kwargs):
-        '''
+        """
         Runge Kutta 2nd order evaluation method.
 
         **Notes**
 
         See ``evaluate`` method for parameters.
-        '''
+        """
         __hdt = 0.5*dt
         __k1 = self.__f__(__x__, *args, **kwargs)
         __k2 = self.__f__(__x__ + dt*__x__, *args, **kwargs)
@@ -256,13 +258,13 @@ class DifferentialEquation(Definition):
         return __x__ + dx
 
     def _runge_kutta_4(self, __x__, dt, *args, **kwargs):
-        '''
+        """
         Runge Kutta 4th order evaluation method.
 
         **Notes**
 
         See ``evaluate`` method for parameters.
-        '''
+        """
         __hdt = 0.5*dt
         __k1 = self.__f__(__x__, *args, **kwargs)
         __k2 = self.__f__(__x__ + __k1 * __hdt, *args, **kwargs)
@@ -278,14 +280,14 @@ class DifferentialEquation(Definition):
         return __x__ + dx
 
     def _exponential_euler(self, __x__, dt, *args, **kwargs):
-        '''
+        """
         Exponential Euler evaluation method.
 
         **Notes**
 
         See ``evaluate`` method for parameters.
         Only available for equation of the form dy/dt = A + B*y
-        '''
+        """
         A = float(self.__A__(*args, **kwargs))
         B = float(self.__B__(*args, **kwargs))
         AB = A
@@ -305,12 +307,12 @@ class DifferentialEquation(Definition):
         return __x__
 
     def select(self, method = 'Forward Euler'):
-        '''
+        """
         Select evaluation method.
 
         **Parameters**
 
-        method : 
+        method :
             * 'Forward Euler'
             * 'Runge Kutta 2'
             * 'Runge Kutta 4'
@@ -320,7 +322,7 @@ class DifferentialEquation(Definition):
 
         Exponential Euler method is only available for equation of type:
         dy/dt = A+(B)*y with A,B being valid python expression.
-        '''
+        """
 
         if method == 'Forward Euler':
             self.__method__ = self._forward_euler
@@ -339,9 +341,9 @@ class DifferentialEquation(Definition):
                 'Unknown evaluation method (%s)' % method
 
     def __call__(self, __x__, dt, *args, **kwargs):
-        '''
+        """
         Evaluate __x__ at time t+dt.
-        
+
         :param __x__:
              Variable that need to be evaluated
         :param dt:
@@ -362,13 +364,13 @@ class DifferentialEquation(Definition):
         >>> eq = DifferentialEquation('dy/dt = a+b*y')
         >>> y = eq.evaluate(y, 0.01, 1, 2)     # a=1, b=2
         >>> y = eq.evaluate(y, 0.01, b=1, a=2) # a=2, b=1
-        '''
+        """
         return self.__method__ (__x__, dt, *args, **kwargs)
 
     def evaluate(self, __x__, dt, *args, **kwargs):
-        '''
+        """
         Evaluate __x__(t+dt)
-        
+
         :param __x__:
              Variable that need to be evaluated
         :param dt:
@@ -385,7 +387,7 @@ class DifferentialEquation(Definition):
         >>> eq = DifferentialEquation('dy/dt = a+b*y')
         >>> y = eq.evaluate(y, 0.01, 1, 2)     # a=1, b=2
         >>> y = eq.evaluate(y, 0.01, b=1, a=2) # a=2, b=1
-        '''
+        """
         return self.__method__ (__x__, dt, *args, **kwargs)
 
 

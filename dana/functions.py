@@ -31,7 +31,7 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
-''' Some useful functions '''
+""" Some useful functions """
 import numpy as np
 import scipy.linalg
 import scipy.sparse as sp
@@ -50,7 +50,7 @@ def best_fft_shape(shape):
     base = [13,11,7,5,3,2]
 
     def factorize(n):
-        if n == 0:
+        if not n:
             raise(RuntimeError, "Length n must be positive integer")
         elif n == 1:
             return [1,]
@@ -271,7 +271,7 @@ def extract(Z, shape, position, fill=0):
 
 
 def convolution_matrix(src, dst, kernel, toric=False):
-    '''
+    """
     Build a sparse convolution matrix M such that:
 
     (M*src.ravel()).reshape(src.shape) = convolve2d(src,kernel)
@@ -315,7 +315,7 @@ def convolution_matrix(src, dst, kernel, toric=False):
     [[ 4.  6.  4.]
      [ 6.  9.  6.]
      [ 4.  6.  4.]]
-    '''
+    """
  
     # For a toric connection, it is wrong to have a kernel larger
     # than the source
@@ -350,7 +350,7 @@ def convolution_matrix(src, dst, kernel, toric=False):
     for index in np.ndindex(dst.shape):
         dims = []
         # Are we starting a new dimension ?
-        if index[-1] == 0:
+        if not index[-1]:
             for i in range(len(index)-1,0,-1):
                 if index[i]: break
                 dims.insert(0,i-1)
@@ -369,7 +369,7 @@ def convolution_matrix(src, dst, kernel, toric=False):
             #     z = (indices[dim][dim] - src.shape[dim]/2.0 -(kernel.shape[dim]+1)%2+ src_indices[dim][i])
 
             n = np.where((z >= 0)*(z < src.shape[dim]))[0]
-            if dim == 0:
+            if not dim:
                 nd[dim] = n.copy()
             else:
                 nd[dim] = nd[dim-1][n]
@@ -429,7 +429,7 @@ def convolution_matrix(src, dst, kernel, toric=False):
 
 
 def gaussian(shape=(25,25), width=0.5, center=0.0):
-    ''' Generate a gaussian of the form g(x) = height*exp(-(x-center)**2/width**2).
+    """ Generate a gaussian of the form g(x) = height*exp(-(x-center)**2/width**2).
 
     **Parameters**
 
@@ -445,7 +445,7 @@ def gaussian(shape=(25,25), width=0.5, center=0.0):
     **Returns**
 
        a numpy array of specified shape containing a gaussian
-    '''
+    """
     if type(shape) in [float,int]:
         shape = (shape,)
     if type(width) in [float,int]:
@@ -463,7 +463,7 @@ def gaussian(shape=(25,25), width=0.5, center=0.0):
     return np.exp(-R/2)
 
 def empty(shape, dtype=float):
-    '''
+    """
     Return a new group of given shape and type, without initialising entries.
 
 
@@ -486,7 +486,7 @@ def empty(shape, dtype=float):
 
     >>> Group.empty((2,2))
     Group([[6.94248367807e-310, 1.34841898023e-316],
-           [1.34841977073e-316, 0.0]], 
+           [1.34841977073e-316, 0.0]],
           dtype=[('f0', '<f8')])
 
     **See also**
@@ -496,11 +496,11 @@ def empty(shape, dtype=float):
     * :meth:`dana.zeros_like` : Return a group of zeros with shape and type of input.
     * :meth:`dana.ones_like` : Return a group of ones with shape and type of input.
     * :meth:`dana.empty_like` : Return a empty group with shape and type of input.
-    '''
+    """
     return Group(shape=shape, dtype=dtype, fill=None)
 
 def zeros(shape, dtype=float):
-    '''
+    """
     Return a new group of given shape and type, filled with zeros.
 
     :param tuple shape:
@@ -515,11 +515,11 @@ def zeros(shape, dtype=float):
 
     >>> dana.zeros((2,2))
     Group([[0.0, 0.0],
-           [0.0, 0.0]], 
+           [0.0, 0.0]],
           dtype=[('f0', '<f8')])
     >>> dana.zeros((2,2), dtype=int)
     Group([[0, 0],
-           [0, 0]], 
+           [0, 0]],
           dtype=[('f0', '<f8')])
 
     **See also**
@@ -529,11 +529,11 @@ def zeros(shape, dtype=float):
     * :meth:`dana.zeros_like` : Return an group of zeros with shape and type of input.
     * :meth:`dana.ones_like` : Return an group of ones with shape and type of input.
     * :meth:`dana.empty_like` : Return an empty group with shape and type of input.
-    '''
+    """
     return Group(shape=shape, dtype=dtype, fill=0)
 
 def ones(shape, dtype=float):
-    '''
+    """
     Return a new group of given shape and type, filled with ones.
 
     :param tuple shape:
@@ -548,11 +548,11 @@ def ones(shape, dtype=float):
 
     >>> dana.ones((2,2))
     Group([[1.0, 1.0],
-           [1.0, 1.0]], 
+           [1.0, 1.0]],
           dtype=[('f0', '<f8')])
     >>> dana.ones((2,2), dtype=int)
     Group([[1, 1],
-           [1, 1]], 
+           [1, 1]],
           dtype=[('f0', '<f8')])
 
     **See also**
@@ -562,11 +562,11 @@ def ones(shape, dtype=float):
     * :meth:`dana.zeros_like` : Return an group of zeros with shape and type of input.
     * :meth:`dana.ones_like` : Return an group of ones with shape and type of input.
     * :meth:`dana.empty_like` : Return an empty group with shape and type of input.
-    '''
+    """
     return Group(shape=shape, dtype=dtype, fill=1)
 
 def empty_like(other):
-    ''' 
+    """
     Create a new group with the same shape and type as another.
 
     :param array other:
@@ -593,11 +593,11 @@ def empty_like(other):
     * :meth:`dana.empty` : Return a new uninitialized group.
     * :meth:`dana.ones_like` : Return a group of ones with shape and type of input.
     * :meth:`dana.zeros_like` : Return a group of zeros with shape and type of input.
-    '''
+    """
     return Group(shape=other.shape, dtype=other.dtype, fill=None)
 
 def zeros_like(other):
-    ''' 
+    """
     Create a new group of zeros with the same shape and type as another.
 
 
@@ -625,11 +625,11 @@ def zeros_like(other):
     * :meth:`dana.empty` : Return a new uninitialized group.
     * :meth:`dana.empty_like` : Return an uninitialized group shape and type of input.
     * :meth:`dana.ones_like` : Return a group of ones with shape and type of input.
-    '''
+    """
     return Group(shape=other.shape, dtype=other.dtype, fill=0)
 
 def ones_like(other):
-    '''
+    """
     Returns a group of ones with the same shape and type as a given array.
 
     :param array other:
@@ -656,5 +656,5 @@ def ones_like(other):
     * :meth:`dana.empty` : Return a new uninitialized group.
     * :meth:`dana.empty_like` : Return an empty group with shape and type of input.
     * :meth:`dana.zeros_like` : Return a group of zeros with shape and type of input.
-    '''
+    """
     return Group(shape=other, dtype=other.dtype, fill=1)

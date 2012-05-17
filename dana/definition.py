@@ -31,79 +31,81 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
-'''
+"""
 Generic definition of type:
 
 * :class:`DifferentialEquation` (``dY/dt = expr : type``)
 * :class:`Equation` (``Y = expr : type``)
 * :class:`Declaration` (``Y : type``)
-'''
+"""
 import compiler
 import compiler.ast
 import compiler.visitor
 
 class DefinitionError(Exception):
-    ''' Definition Error '''
+    """ Definition Error """
     pass
 
 
 class Definition(object):
-    ''' Generic definition of type:
+    """ Generic definition of type:
 
     * :class:`DifferentialEquation` (``dY/dt = expr : type``)
     * :class:`Equation` (``Y = expr : type``)
     * :class:`Declaration` (``Y : type``)
-    '''
+    """
   
-    def __init__(self, definition, constants={}):
+    def __init__(self, definition, constants=None):
+        if not constants: constants = {}
         self._definition = str(definition.replace(' ',''))
         self._varname = None
         self._dtype = None
         self._variables = []
 
-    def setup(self, constants={}):
-        ''' Parse definition
+    def setup(self, constants=None):
+        """ Parse definition
 
         **Parameters**
 
         definition : str
             Declaration, equation or differential equation expression.
-            '''
+            """
+        if not constants: constants = {}
         raise NotImplemented
 
     def __repr__(self):
-        ''' x.__repr__() <==> repr(x) '''
+        """ x.__repr__() <==> repr(x) """
 
         classname = self.__class__.__name__
         return "%s('%s = %s : %s')" % (classname, self._lhs, self._rhs, self._dtype)
 
 
     def _get_varname(self):
-        ''' Get variable name (left hand side) '''
+        """ Get variable name (left hand side) """
         return self._varname
     varname = property(_get_varname,
                        doc='''Equation variable name (left hand side) ''')
 
     def _get_lhs(self):
-        ''' Get equation left hand side '''
+        """ Get equation left hand side """
         return self._lhs
     lhs = property(_get_lhs,
                    doc='''Equation left hand-side''')
 
     def _get_rhs(self):
-        ''' Get equation right hand side '''
+        """ Get equation right hand side """
         return self._rhs
     rhs = property(_get_lhs,
                    doc='''Equation right hand-side''')
 
     def _get_definition(self):
-        ''' Get equation original definition '''
+        """ Get equation original definition """
         return self._definition
     definition = property(_get_definition,
                           doc='''Equation original definition''')
 
     def _get_dtype(self):
-        '''Get equation data type '''
+        """Get equation data type """
         return self._dtype
     dtype = property(_get_dtype,
                      doc='''Equation data type''')

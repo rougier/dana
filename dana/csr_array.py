@@ -38,17 +38,17 @@ from scipy.sparse.sputils import isdense, isscalarlike, isintlike
 
 
 class csr_array(sp.csr_matrix):
-    ''' Sparse array with a fixed mask '''
+    """ Sparse array with a fixed mask """
 
     def __init__(self, *args, **kwargs):
-        ''' Build array and create mask based on non zero values '''
+        """ Build array and create mask based on non zero values """
         sp.csr_matrix.__init__(self, *args, **kwargs)
         #self.mask = (1-np.isnan(self.data)).nonzero()
         self.mask = self.nonzero()
 
 
     def __binary_op__ (self, other, operand):
-        ''' Generic binary op (+,-,/,*) implementation '''
+        """ Generic binary op (+,-,/,*) implementation """
         
         M,N = self.shape
         operand = getattr(self.data, operand)
@@ -57,7 +57,7 @@ class csr_array(sp.csr_matrix):
             operand(other)
             return self
         elif sp.issparse(other):
-            if (other.shape != self.shape):
+            if other.shape != self.shape:
                 raise ValueError, "inconsistent shapes"
             data = np.array(sp.lil_matrix(other)[mask].todense())
             operand(data.reshape(data.size))
@@ -164,9 +164,9 @@ class csr_array(sp.csr_matrix):
         return Z
 
     def sum(self, axis=None):
-        '''Sum the matrix over the given axis.  If the axis is None, sum
+        """Sum the matrix over the given axis.  If the axis is None, sum
         over both rows and columns, returning a scalar.
-        '''
+        """
 
         Z = sp.csr_matrix(self)
         return Z.sum(axis)
@@ -189,7 +189,7 @@ class csr_array(sp.csr_matrix):
 
 
 def dot(A,B):
-    ''' dot product AxB '''
+    """ dot product AxB """
 
     return sp.csr_matrix.__mul__(A,B)
     #._mul_sparse_matrix(B)).todense()

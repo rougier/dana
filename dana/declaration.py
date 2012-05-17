@@ -38,24 +38,26 @@ class DeclarationError(Exception):
     pass
 
 class Declaration(Definition):
-    ''' Declaration of type: 'y : dtype' '''
+    """ Declaration of type: 'y : dtype' """
   
-    def __init__(self, definition, constants = {}):
-        ''' Builds a new Declaration of type: 'y : dtype' '''
+    def __init__(self, definition, constants=None):
+        """ Builds a new Declaration of type: 'y : dtype' """
+        if not constants: constants = {}
         Definition.__init__(self, definition, constants)
         self.setup()
 
 
-    def setup(self, constants = {}):
-        '''
+    def setup(self, constants=None):
+        """
         Parse definition and check it is a declaration.
 
         **Parameters**
 
         definition : str
             Equation definition of the form 'y : dtype'
-        '''
-            
+        """
+        if not constants: constants = {}
+
         p = re.compile(r'''(?P<y>\w+) (:(?P<dtype>\w+))?''', re.VERBOSE)
         result = p.match(self._definition)
         if result:
@@ -68,23 +70,23 @@ class Declaration(Definition):
 
 
     def __call__(self):
-        '''
+        """
         Evaluate declaration (return dtype)
-        '''
+        """
 
         return eval(self.dtype)
 
 
     def evaluate(self):
-        '''
+        """
         Evaluate declaration (return dtype)
-        '''
+        """
 
         return eval(self.dtype)
 
 
     def __repr__(self):
-        ''' x.__repr__() <==> repr(x) '''
+        """ x.__repr__() <==> repr(x) """
 
         classname = self.__class__.__name__
         return "%s('%s : %s')" % (classname, self._varname, self._dtype)

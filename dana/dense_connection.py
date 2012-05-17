@@ -31,10 +31,10 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
-'''
+"""
 DenseConnection
 
-'''
+"""
 import numpy as np
 from functions import extract
 from functions import extract, convolution_matrix
@@ -42,10 +42,10 @@ from connection import Connection, ConnectionError
 
 
 class DenseConnection(Connection):
-    ''' '''
+    """ """
 
     def __init__(self, source=None, target=None, weights=None, equation = '', toric=False):
-        ''' '''
+        """ """
 
         Connection.__init__(self, source, target, toric)
         self.setup_weights(weights)
@@ -53,7 +53,7 @@ class DenseConnection(Connection):
 
 
     def setup_weights(self, weights):
-        ''' Setup weights '''
+        """ Setup weights """
 
 
         if type(weights) in [int,float]:
@@ -88,14 +88,14 @@ class DenseConnection(Connection):
 
 
     def output(self):
-        ''' '''
+        """ """
 
         R = np.dot(self._weights, self._actual_source.ravel()) 
         return R.reshape(self._target.shape)
 
 
     def evaluate(self, dt=0.01):
-        ''' Update weights relative to connection equation '''
+        """ Update weights relative to connection equation """
         if not self._equation:
             return
         Connection.evaluate(self,dt)
@@ -104,7 +104,7 @@ class DenseConnection(Connection):
 
 
     def __getitem__(self, key):
-        ''' '''
+        """ """
         src = self.source
         dst = self.target
         to_flat_index = np.ones(len(dst.shape), dtype=int)

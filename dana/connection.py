@@ -38,11 +38,11 @@ import numpy as np
 
 
 class ConnectionError(Exception):
-    ''' Connection Error '''
+    """ Connection Error """
     pass
 
 class Connection(object):
-    '''
+    """
     A connection describes a flow of information between two groups (that can
     possibly be the same). It is characterized by a source group, a target
     group and a model describing both how to compute connection output, what
@@ -59,27 +59,27 @@ class Connection(object):
       >>> src = numpy.ones((3,3))
       >>> tgt = numpy.ones((3,3), dtype=[('U',float),('V',float)])
       >>> K = np.ones((src.size,))
-      >>> C = Connection(src, dst('U'), 'U = V*K') 
+      >>> C = Connection(src, dst('U'), 'U = V*K')
       >>> C.setup(), C.propagate()
 
     In the above example, a connection has been created between ``src`` and
     ``tgt``. The state variable holding the result in ``tgt`` is named ``U``
     and the output of the connection is computed by mutliplying src by ``K``.
-    '''
+    """
 
     def __init__(self, source, target, toric=False):
 
-        '''
+        """
         Constructs a new connection between a source and a target using
         specified connection model.
-        
+
         **Parameters**
 
         source : Group
-            Source group 
+            Source group
         target : Group
             Target group
-        '''
+        """
 
         self._weights = None
         self._equation = None
@@ -87,7 +87,7 @@ class Connection(object):
 
         # Get actual source
         names = source.dtype.names
-        if names == None:
+        if names is None:
             self._actual_source = source
             self._source_name = ''
         else:
@@ -96,7 +96,7 @@ class Connection(object):
 
         # Get actual target
         names = target.dtype.names
-        if names == None:
+        if names is None:
             self._actual_target = target
             self._target_name = ''
         else:
@@ -104,13 +104,13 @@ class Connection(object):
             self._target_name = names[0]
 
         # Get source base group
-        if source.base == None:
+        if source.base is None:
             self._source = source
         else:
             self._source = source.base
 
         # Get target base group
-        if target.base == None:
+        if target.base is None:
             self._target = target
         else:
             self._target = target.base
@@ -122,12 +122,12 @@ class Connection(object):
 
 
     def setup_weights(self, weights):
-        ''' Setup weights if necessary '''
+        """ Setup weights if necessary """
         pass
 
 
     def setup_equation(self, equation):
-        ''' Setup weights update equation '''
+        """ Setup weights update equation """
 
         if not equation:
             self._equation = None
@@ -162,7 +162,7 @@ class Connection(object):
         self._kwargs = kwargs
 
     def propagate(self):
-        ''' Propagate activity from source to target '''        
+        """ Propagate activity from source to target """
 
         if self._source_name:
             self._actual_source = self._source._data[self._source_name]
@@ -172,7 +172,7 @@ class Connection(object):
 
 
     def evaluate(self, dt=0.01):
-        ''' Update weights relative to connection equation '''
+        """ Update weights relative to connection equation """
         if not self._equation:
             return
         pre, post = self._source, self._target
@@ -185,11 +185,11 @@ class Connection(object):
         self._equation.evaluate(self._weights, dt, **self._kwargs)
 
     def output(self):
-        ''' Return output of connection '''
+        """ Return output of connection """
         raise NotImplementedError
 
     def __getitem__(self, key):
-        ''' Return connection from '''
+        """ Return connection from """
         raise NotImplementedError
 
     source = property(lambda self: self._source,

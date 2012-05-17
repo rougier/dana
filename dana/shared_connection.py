@@ -31,10 +31,10 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
-'''
+"""
 SharedConnection
 
-'''
+"""
 import inspect
 import scipy
 import numpy as np
@@ -51,10 +51,10 @@ from numpy.fft import fftshift, ifftshift
 
 
 class SharedConnection(Connection):
-    ''' '''
+    """ """
 
     def __init__(self, source=None, target=None, weights=None, toric=False, fft=True):
-        ''' '''
+        """ """
 
         Connection.__init__(self, source, target, toric)
         self._src_rows = None
@@ -65,7 +65,7 @@ class SharedConnection(Connection):
 
 
     def setup_weights(self, weights):
-        ''' Setup weights '''
+        """ Setup weights """
 
         # If we have a toric connection, kernel cannot be greater than source
         # in any dimension
@@ -81,8 +81,8 @@ class SharedConnection(Connection):
                 raise ConnectionError, \
                  '''Shared connection requested but weights matrix shape does not match.'''
             if self.source.shape != self.target.shape:
-                rows = np.rint((np.linspace(0,1,self.target.shape[0])\
-                                 *(self.source.shape[0]-1))).astype(int)
+                rows = np.rint((np.linspace(0,1,self.target.shape[0])
+                                *(self.source.shape[0]-1))).astype(int)
                 self._src_rows = rows
 
             if self._fft:
@@ -123,10 +123,10 @@ class SharedConnection(Connection):
                 raise ConnectionError, \
                     '''Shared connection requested but weights matrix shape does not match.'''
             if self.source.shape != self.target.shape:
-                rows = np.rint((np.linspace(0,1,self.target.shape[0])\
-                                 *(self.source.shape[0]-1))).astype(int)
-                cols = np.rint((np.linspace(0,1,self.target.shape[1])\
-                                 *(self.source.shape[1]-1))).astype(int)
+                rows = np.rint((np.linspace(0,1,self.target.shape[0])
+                                *(self.source.shape[0]-1))).astype(int)
+                cols = np.rint((np.linspace(0,1,self.target.shape[1])
+                                *(self.source.shape[1]-1))).astype(int)
                 self._src_rows = rows.reshape((len(rows),1))
                 self._src_cols = cols.reshape((1,len(cols)))
 
@@ -166,7 +166,7 @@ class SharedConnection(Connection):
 
 
     def output(self):
-        ''' '''
+        """ """
 
         # One dimension
         if len(self._source.shape) == 1:
@@ -216,7 +216,7 @@ class SharedConnection(Connection):
 
 
     def __getitem__(self, key):
-        ''' '''
+        """ """
 
         src = self.source
         dst = self.target

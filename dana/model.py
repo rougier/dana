@@ -31,9 +31,9 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
-'''
+"""
 Model class
-'''
+"""
 import re
 from equation import Equation, EquationError
 from definition import Definition, DefinitionError
@@ -43,13 +43,13 @@ from diff_equation import DifferentialEquation, DifferentialEquationError
 
 # ------------------------------------------------------------------- parse ---
 def parse(definition):
-    ''' Parse a definition and return the corresponding object.
+    """ Parse a definition and return the corresponding object.
 
     **Parameters**
 
     definition : str
        String describing equation, differential equation, declaration or alias
-    '''
+    """
 
     try:
         return DifferentialEquation(definition)
@@ -68,7 +68,7 @@ def parse(definition):
 
 # --------------------------------------------------------------- ModelError ---
 class ModelError(Exception):
-    ''' Model Exception '''
+    """ Model Exception """
     pass
 
 # -------------------------------------------------------------------- Model ---
@@ -115,7 +115,7 @@ class Model(object):
 
 
     def setup(self):
-        ''' Parse definition and instantiate corresponding objects '''
+        """ Parse definition and instantiate corresponding objects """
 
         self._diff_equations = []
         self._equations = []
@@ -153,7 +153,7 @@ class Model(object):
                
         # Check for circular dependencies in equations and order equations
         # relatively to their inter-dependencies
-        if self._equations != []:
+        if self._equations:
             #v = [eq._varname for eq in self._equations]
             variables = [eq.varname for eq in self._equations]
             ordered = []
@@ -172,14 +172,14 @@ class Model(object):
                 for equation in self._equations:
                     if equation.varname in dependencies.keys():
                         key = equation.varname
-                        if dependencies[key] == []:
+                        if not dependencies[key]:
                             variables.remove(key)
                             ordered.append(self[key])
             self._equations = ordered
 
 
     def run(self, namespace=None, dt=0.001):
-        ''' Run the model model within the given namespace
+        """ Run the model model within the given namespace
 
         **Parameters**
 
@@ -194,7 +194,7 @@ class Model(object):
         >>> model = Model('dx/dt = 1.0; y = 1.0')
         >>> model.run({'x':0}, dt=0.01)
         {'y': 1.0, 'x': 0.01}
-        '''
+        """
 
         if namespace is None:
             namespace = {}
@@ -208,7 +208,7 @@ class Model(object):
         return namespace
 
     def __getattr__(self, key):
-        ''' x.__getattribute__(key) <==> x.name '''
+        """ x.__getattribute__(key) <==> x.name """
 
         try:
             return  self.__getitem__(key)
@@ -217,7 +217,7 @@ class Model(object):
 
 
     def __getitem__(self, key):
-        ''' x.__getitem__(y) <==> x[y] '''
+        """ x.__getitem__(y) <==> x[y] """
 
         for equation in self._all:
             if equation.varname == key:
@@ -230,7 +230,7 @@ class Model(object):
 
 
     def __repr__(self):
-        ''' x.__repr__() <==> repr(x) '''
+        """ x.__repr__() <==> repr(x) """
         
         string = ''
         for equation in self._all:
@@ -258,7 +258,7 @@ class Model(object):
                            doc = ''' Model connections ''')
 
     def _get_variables(self):
-        '''Get model variables'''
+        """Get model variables"""
         return self._variables
     variables = property(_get_variables,
                          doc='''Model variable names''')

@@ -31,7 +31,7 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
-'''
+"""
 DANA is a python computing framework based on numpy and scipy libraries.
 
 The computational  paradigm supporting  the DANA framework  is grounded  on the
@@ -43,7 +43,7 @@ needed to design  and run such models. However, what is  actually computed by a
 unit and what is learned is the  responsibility of the modeler who is in charge
 of describing  the equation  governing the behavior  of units groups  over time
 and/or learning.
-'''
+"""
 import numpy as np
 import numpy.random as rnd
 import scipy as sp

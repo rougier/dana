@@ -31,7 +31,7 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
-''' Management of time '''
+""" Management of time """
 import sys
 
 second      = 1
@@ -42,7 +42,7 @@ hour        = 60*minute
 
 
 class Timer(object):
-    ''' Description of a timer function '''
+    """ Description of a timer function """
 
     _func = None
     _dt = 0
@@ -53,8 +53,8 @@ class Timer(object):
     _stop =0
 
     def __init__(self, func, clock, dt, order=0, start=None, stop=None):
-        ''' Create a new timer function to be called every dt.
-        
+        """ Create a new timer function to be called every dt.
+
         **Parameter**
 
         func : function(time)
@@ -75,7 +75,7 @@ class Timer(object):
 
         stop : float
             When to stop this timer
-        '''
+        """
         self._func = func
         self._dt = dt
         self._order = order
@@ -85,7 +85,7 @@ class Timer(object):
         self._next = self._start
 
     def __call__(self):
-        ''' Call the timer function and update local time '''
+        """ Call the timer function and update local time """
         self._func(self._next)
         self._next += self._dt
         if self._stop and self._next > self._stop:
@@ -93,7 +93,7 @@ class Timer(object):
             self._next = self._clock.stop + 1
 
     def __cmp__(self, other):
-        ''' Comparison function used to order timers '''
+        """ Comparison function used to order timers """
         return ( cmp(self._next, other._next)
                  or cmp(self._order,other._order) )
 
@@ -114,7 +114,7 @@ class Timer(object):
 
 
 class Tick(object):
-    ''' Clock decorator
+    """ Clock decorator
 
     **Usage**
 
@@ -122,12 +122,12 @@ class Tick(object):
     @clock.tick
     def timer(t):
         print 'called at time', t
-    '''
+    """
     _func = None
     _clock = None
 
     def __init__(self, function):
-        ''' Add function to the clock using default clock dt '''
+        """ Add function to the clock using default clock dt """
         self._func = function
         self._clock.add(function)
 
@@ -136,7 +136,7 @@ class Tick(object):
 
 
 class before(object):
-    ''' Tick class decorator
+    """ Tick class decorator
 
     This is used to specify that a function is to be called just before the
     clock default tick. It must be used in conjunction with the Tick decorator.
@@ -146,20 +146,20 @@ class before(object):
     clock = Clock()
     @before(clock.tick)
     def timer(t): print 'called at time', t
-    '''
+    """
 
     def __init__(self, tick):
-        ''' Register relevant clock tick.
+        """ Register relevant clock tick.
 
         **Parameters**
-        
+
         tick : Tick
-            A tick decorator 
-        '''
+            A tick decorator
+        """
         self._tick = tick
 
     def __call__(self, func):
-        ''' Add function to the clock using default clock dt '''
+        """ Add function to the clock using default clock dt """
         self._tick._clock.add(func, order=-1)
 
 
@@ -167,7 +167,7 @@ class before(object):
 
 
 class after(object):
-    ''' Tick class decorator 
+    """ Tick class decorator
 
     This is used to specify that a function is to be called just after the
     clock default tick.
@@ -177,19 +177,19 @@ class after(object):
     clock = Clock()
     @after(clock.tick)
     def timer(t): print 'called at time', t
-    '''
+    """
 
     def __init__(self, tick):
-        ''' Register relevant clock tick
+        """ Register relevant clock tick
         **Parameters**
-        
+
         tick : Tick
-            A tick decorator 
-        '''
+            A tick decorator
+        """
         self._tick = tick
 
     def __call__(self, func):
-        ''' Add function to the clock using default clock dt '''
+        """ Add function to the clock using default clock dt """
         self._tick._clock.add(func, order=+1)
 
 
@@ -197,7 +197,7 @@ class after(object):
 
 
 class Every(object):
-    ''' Clock decorator 
+    """ Clock decorator
 
     This is used to specify that a function is to be called on a regular basis.
 
@@ -206,21 +206,21 @@ class Every(object):
     clock = Clock()
     @clock.every(0.1)
     def timer(t): print 'called at time', t
-    '''
+    """
 
     _order = 0
     _dt = None
     _clock = None
 
     def __init__(self, dt, start=0, stop=sys.maxint, order=+1):
-        '''
+        """
         dt : float
              Time interval between two calls
 
         order : int
              In case several timers share the same time interval, those with
              lower order are called first.
-        '''
+        """
         self._dt = dt
         self._order = order
         self._start = start
@@ -228,7 +228,7 @@ class Every(object):
 
 
     def __call__(self, func):
-        ''' Add function to the clock using given dt and order. '''
+        """ Add function to the clock using given dt and order. """
 
         dt = self._dt
         #if self._start is None:
@@ -246,7 +246,7 @@ class Every(object):
         self._clock.add(func, dt=dt, start=start, stop=stop, order=order)
 
 class At(object):
-    ''' Clock decorator 
+    """ Clock decorator
 
     This is used to specify that a function is to be called once.
 
@@ -255,14 +255,14 @@ class At(object):
     clock = Clock()
     @clock.at(0.1)
     def timer(t): print 'called at time', t
-    '''
+    """
 
     _order = 0
     _dt = None
     _clock = None
 
     def __init__(self, dt, order=0):
-        '''
+        """
         dt : float
             Time before call
 
@@ -270,27 +270,27 @@ class At(object):
              In case several timers share the same time interval, those with
              lower order are called first.
 
-        '''
+        """
         self._dt = dt
         self._start = self._dt
         self._stop  = self._dt
         self._order = order
 
     def __call__(self, func):
-        ''' Add function to the clock using given dt and order. '''
+        """ Add function to the clock using given dt and order. """
         self._clock.add(func, self._dt, self._order,
                         start = self._start, stop = self._stop)
 
 
 
 class ClockException(Exception):
-    ''' Clock Exception '''
+    """ Clock Exception """
     pass
 
 
 
 class Clock(object):
-    ''' Clock class
+    """ Clock class
 
     **Examples:**
 
@@ -299,7 +299,7 @@ class Clock(object):
       >>> def tick(time):
       ...    print 'timer tick at time %.3f' % time
       >>> clock.run()
-    '''
+    """
 
     _start   = 0.0*second
     _time    = 0.0*second
@@ -309,19 +309,19 @@ class Clock(object):
     _timers  = []
     
     def __init__(self, start=0.0, stop=1.0, dt=0.001):
-        ''' Initialize clock
+        """ Initialize clock
 
         **Parameters**
 
         start : float
             Start time
-        
+
         stop : float
             Stop time
 
         dt : float
             Time step resolution
-        '''
+        """
         self._start = start
         self._stop = stop
         self._dt = dt
@@ -336,7 +336,7 @@ class Clock(object):
 
 
     def reset(self):
-        ''' Reset clock '''
+        """ Reset clock """
 
         self._time = self._start
         for timer in self._timers:
@@ -345,26 +345,26 @@ class Clock(object):
 
 
     def clear(self):
-        ''' Remove all timers '''
+        """ Remove all timers """
 
         self._timers = []
 
 
 
     def run(self, start=None, stop=None, dt=None):
-        ''' Run the clock.
-        
+        """ Run the clock.
+
         **Parameters**
 
         start : float
             Start time
-        
+
         stop : float
             Stop time
 
         dt : float
             Time step resolution
-        '''
+        """
 
         self.start = start or self._start
         self.stop = stop or self._stop
@@ -387,14 +387,14 @@ class Clock(object):
 
                 
     def stop(self):
-        ''' Stop the clock. '''
+        """ Stop the clock. """
 
         self._running = False
         
 
 
     def add(self, func, dt=None, order=0, start=None, stop=None):
-        ''' Add a new timer to the timer list
+        """ Add a new timer to the timer list
 
         **Parameters**
 
@@ -408,7 +408,7 @@ class Clock(object):
         order : int
             In case several timers share the same time interval, those with
             lower order are called first.
-        '''
+        """
 
         if not dt:
             dt = self._dt
@@ -418,7 +418,7 @@ class Clock(object):
 
 
     def remove(self, func, dt=None):
-        ''' Remove a given timer from the timer list
+        """ Remove a given timer from the timer list
 
         **Parameters**
 
@@ -435,7 +435,7 @@ class Clock(object):
         A same function can be added with several different timesteps. It is
         this necessary to specify which timer (using timestep) is to be
         removed.
-        '''
+        """
 
         if dt is None:
             for i in range(len(self._timers)):
@@ -452,16 +452,16 @@ class Clock(object):
 
 
     def _get_time(self):
-        ''' Return current time '''
+        """ Return current time """
         return self._time
     time = property(_get_time,
                     doc = '''Current time''')
 
     def _get_start(self):
-        ''' Return start time '''
+        """ Return start time """
         return self._start
     def _set_start(self, time):
-        ''' Set start time '''
+        """ Set start time """
         if self._running:
             raise ClockException('Cannot set start time while running')
         if self._stop < self._start:
@@ -472,10 +472,10 @@ class Clock(object):
                      doc = '''Clock start time''')
 
     def _get_stop(self):
-        ''' Return stop time '''
+        """ Return stop time """
         return self._stop
     def _set_stop(self, time):
-        ''' Set stop time '''
+        """ Set stop time """
         if self._running:
             raise ClockException('Cannot set stop time while running.')
         if self._stop < self._start:
@@ -488,10 +488,10 @@ class Clock(object):
 
 
     def _get_dt(self):
-        ''' Return clock resolution. '''
+        """ Return clock resolution. """
         return self._dt
     def _set_dt(self, dt):
-        ''' Set clock resolution. '''
+        """ Set clock resolution. """
         if self._running:
             raise ClockException('Cannot set resolution while running.')
         previous_dt = self._dt

@@ -37,16 +37,16 @@ clock = Clock(0.0, 1.0, 0.001)
 
 
 class NetworkError(Exception):
-    ''' '''
+    """ """
     pass
 
 
 
 class Network(object):
-    ''' '''
+    """ """
 
     def __init__(self, clock = None, groups=None):
-        ''' '''
+        """ """
         self._groups = groups or []
         self._clock = clock or Clock(0.0, 1.0, 0.001)
 
@@ -56,15 +56,15 @@ class Network(object):
 
 
     def setup(self):
-        ''' '''
+        """ """
         for group in self._groups:
             group.setup()
 
 
 
     def run(self, time=1.0, dt=0.01, n=None):
-        ''' '''
-        if n != None:
+        """ """
+        if n is not None:
             self._clock.stop = n-0.01
             self._clock.dt = 1.0
         else:
@@ -77,7 +77,7 @@ class Network(object):
 
 
     def evaluate(self,time):
-        ''' '''
+        """ """
 
         for group in self._groups:
             group.propagate()
@@ -94,7 +94,7 @@ class Network(object):
         
 
     def append(self, group):
-        ''' '''
+        """ """
         if group not in self._groups:
             self._groups.append(group)
         else:
@@ -106,10 +106,10 @@ __default_network__ = Network(clock,[])
 
 
 def run(time=1.0, dt=0.001, n=None):
-    ''' '''
+    """ """
     __default_network__.run(time, dt, n)
 
 
 def setup():
-    ''' '''
+    """ """
     __default_network__.setup()

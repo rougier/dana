@@ -31,7 +31,7 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
-'''
+"""
 Equation class.
 
 The Equation class allows to manipulate equations of the type:
@@ -48,7 +48,7 @@ case, an `EquationError` is raised.
 >>> eq = Equation('y = a+b*x')
 >>> y = eq.evaluate(1,2,3)             # a=1, b=2, x=3
 >>> y = eq.evaluate(x=1, b=2, a=3)     # a=3, b=2, x=1
-'''
+"""
 import re
 import inspect
 import compiler
@@ -59,7 +59,7 @@ class EquationError(Exception):
     pass
 
 class Equation(Definition):
-    ''' Equation of type: 'y = expr : dtype'
+    """ Equation of type: 'y = expr : dtype'
 
     The Equation class allows to manipulate equations of the type:
 
@@ -75,25 +75,27 @@ class Equation(Definition):
     >>> eq = Equation('y = a+b*x')
     >>> y = eq.evaluate(1,2,3)             # a=1, b=2, x=3
     >>> y = eq.evaluate(x=1, b=2, a=3)     # a=3, b=2, x=1
-    ''' 
+    """
 
-    def __init__(self, definition, constants={}, variables=[]):
-        '''
+    def __init__(self, definition, constants=None, variables=None):
+        """
         Creates equation.
 
         :param string definition:
             Equation definition of the form:
         :param list constants:
             Name of variables that must be considered constant
-        '''
+        """
+        if not variables: variables = []
+        if not constants: constants = {}
         Definition.__init__(self,definition)
         self._in_out = None
         self._out = None
         self.setup()
 
 
-    def setup(self, constants = {}):
-        '''
+    def setup(self, constants=None):
+        """
         Parse definition and check it is an equation.
 
         **Parameters**
@@ -101,7 +103,8 @@ class Equation(Definition):
         definition : str
             Equation definition of the form 'y = expr : dtype'
             expr must be a valid python expression.
-        '''
+        """
+        if not constants: constants = {}
 
         # Check if equation is of the form: y = f(...) : dtype
         p = re.compile(
@@ -144,50 +147,50 @@ class Equation(Definition):
 
 
     def __call__(self, *args, **kwargs):
-        '''
+        """
         Evaluate equation
-        
+
         **Parameters**
 
         args : list
             Equation constants (respecting definition order)
         kwargs : dict
             Equation constants
-            
+
         **Examples**
 
         >>> eq = Equation('y = a+b*x')
         >>> y = eq.evaluate(1,2,3)             # a=1, b=2, x=3
         >>> y = eq.evaluate(x=1, b=2, a=3)     # a=3, b=2, x=1
-        '''
+        """
         
         return self.__f__(*args, **kwargs)
 
 
     def evaluate(self, *args, **kwargs):
-        '''
+        """
         Evaluate equation
-        
+
         **Parameters**
 
         args : list
             Equation constants (respecting definition order)
         kwargs : dict
             Equation constants
-            
+
         **Examples**
 
         >>> eq = Equation('y = a+b*x')
         >>> y = eq.evaluate(1,2,3)             # a=1, b=2, x=3
         >>> y = eq.evaluate(x=1, b=2, a=3)     # a=3, b=2, x=1
-        '''
+        """
 
         return self.__f__(*args, **kwargs)
 
 
 
     def _get_variables(self):
-        '''Get equation variables'''
+        """Get equation variables"""
         return self._variables
     variables = property(_get_variables,
                          doc='''Equation variable names''')

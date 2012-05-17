@@ -30,7 +30,7 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
-'''
+"""
 A group object represents a multidimensional, homogeneous group of contiguous
 numpy arrays.  An associated data-type object describes the format of each
 element in the group (its byte-order, how many bytes it occupies in memory,
@@ -38,7 +38,7 @@ whether it is an integer or a floating point number, etc.).
 
 A group is very similar to a numpy record array and those not familiar should
 have a look at numpy first.
-'''
+"""
 import inspect
 import numpy as np
 from model import Model
@@ -53,14 +53,14 @@ class GroupException(Exception):
 
 
 class Group(object):
-    '''
+    """
     A group object represents a multidimensional, homogeneous group of
     contiguous numpy arrays.  An associated data-type object describes the
     format of each element in the group (its byte-order, how many bytes it
     occupies in memory, whether it is an integer or a floating point number,
     etc.).
 
-    A group is very similar to a numpy record array and those not familiar 
+    A group is very similar to a numpy record array and those not familiar
     should have a look at numpy first.
 
     **See also**
@@ -71,16 +71,16 @@ class Group(object):
     * :meth:`dana.zeros_like` : Return a group of zeros with shape and type of input.
     * :meth:`dana.ones_like` : Return a group of ones with shape and type of input.
     * :meth:`dana.empty_like` : Return a empty group with shape and type of input.
-    '''
+    """
 
     def __init__(self, shape=(), dtype=float, model=None, fill=0.0, base=None):
-        '''
+        """
         Creates a new group
 
         Groups should be constructed using `ones`, `zeros` or `empty` (refer to
         the ``See also`` section above). The parameters given here describe a
         low-level method for instantiating a group.
-      
+
         **Parameters**
 
         shape : tuple of ints
@@ -94,7 +94,7 @@ class Group(object):
 
         fill : scalar
             Fill value to be used to fill group fields
-        '''
+        """
 
         # Model is prevalent over dtype
         if model is not None or (type(dtype) is str and model is None):
@@ -164,8 +164,8 @@ class Group(object):
 
 
     def setup(self, namespace=None):
-        '''
-        '''
+        """
+        """
         
         namespace = namespace or {}
         variables = []
@@ -215,7 +215,7 @@ class Group(object):
 
 
     def evaluate(self, dt=1, update=True):
-        '''
+        """
         Evaluate group state
 
         **Parameters**
@@ -224,7 +224,7 @@ class Group(object):
             Elementary time step
         update: bool
             Whether to immediately make computed values public
-        '''
+        """
 
         self._namespace['dt'] = dt
 
@@ -263,9 +263,9 @@ class Group(object):
 
 
     def update(self):
-        '''
+        """
         Update group state by making public previously computed values
-        '''
+        """
 
         self._data, self._saved = self._saved, self._data
 #        for eq in self._model._diff_equations:
@@ -281,7 +281,7 @@ class Group(object):
 
 
     def run(self, dt=1):
-         ''' '''
+         """ """
          self.propagate()
          self.evaluate(dt, update=False)
          self.update()
@@ -289,25 +289,25 @@ class Group(object):
 
 
     def item(self):
-        '''
+        """
         Copy the first element of group to a standard Python scalar and return
         it. The group must be of size one.
-        '''
+        """
         return self._data[self._data.keys()[0]]
 
  
 
     def ravel(self):
-        '''
+        """
         Return a flattened group.
-    
+
         A 1-D group, containing the elements of the group, is returned.
-        '''
+        """
         return self.reshape( (self.size,) )
 
 
     def reshape(self, shape):
-        '''
+        """
         Gives a new shape to the group without changing its data.
 
         **Parameters**
@@ -329,7 +329,7 @@ class Group(object):
         >>> g = group([[1,2,3], [4,5,6]])
         >>> g.reshape(6)
         group([1, 2, 3, 4, 5, 6])
-        '''
+        """
         G = Group(shape=(), dtype=self.dtype)
         for key in G.keys:
             G.data[key] = self.data[key].reshape(shape)
@@ -338,14 +338,14 @@ class Group(object):
 
 
     def __len__(self):
-        ''' x.__len__() <==> len(x) '''
+        """ x.__len__() <==> len(x) """
         if self.shape:
             return self.shape[0]
         raise TypeError, 'len() of unsized object'
 
 
     def __getattr__(self, key):
-        ''' '''
+        """ """
         if key in self._keys:
             return self._data[key]
         else:
@@ -353,7 +353,7 @@ class Group(object):
 
 
     def __setattr__(self, key, value):
-        ''' '''
+        """ """
         if key in self._keys:
             self._data[key][...] = value
         else:
@@ -361,14 +361,13 @@ class Group(object):
 
 
     def __call__(self, keys):
-        ''' '''
+        """ """
         return self.subgroup(keys)
 
 
     def subgroup(self, key):
-        ''' '''
-        dtype = []
-        dtype.append( (key, self._dtype[key]) )
+        """ """
+        dtype = [(key, self._dtype[key])]
         G = Group(shape=self.shape, dtype=dtype, base=self.base or self)
         G.data[key] = self.data[key]
         #G._base = self.base or self
@@ -403,7 +402,7 @@ class Group(object):
 
 
     def __getitem__(self, key):
-        ''' '''
+        """ """
 
         if type(key) is str:
             if key in self._keys:
@@ -458,8 +457,8 @@ class Group(object):
                 self._keys = np.dtype(dtype).names
                 return
             elif type(value) is np.ndarray:
-                if value.size == self.size and \
-                        value.dtype.names == None:
+                if value.size == self.size and\
+                   value.dtype.names is None:
                     self._data[key] = value.reshape(self.shape)
                     dtype = [(name, self.dtype[i])
                              for i, name in enumerate(self.dtype.names)]
@@ -530,15 +529,15 @@ class Group(object):
 
 
     def asarray(self):
-        ''' Return a ndarray copy of this group '''
+        """ Return a ndarray copy of this group """
 
         return np.array(self, dtype=self.dtype)
 
 
     def as_masked_array(self):
-        ''' Return a masked ndarray copy of this group '''
+        """ Return a masked ndarray copy of this group """
 
-        if hasattr(self,'mask') and self.mask != None:
+        if hasattr(self,'mask') and self.mask is not None:
             mask = self.mask
         else:
             mask = 1
@@ -553,26 +552,26 @@ class Group(object):
 
 
     def __str__(self):
-        ''' x.__str__() <==> str(x) '''
-        if hasattr(self,'mask') and self.mask != None:
+        """ x.__str__() <==> str(x) """
+        if hasattr(self,'mask') and self.mask is not None:
             return str(self.as_masked_array())
         else:
             return np.array_str(self)
 
 
     def __repr__(self):
-        ''' x.__repr__() <==> repr(x) '''
-        if hasattr(self,'mask') and self.mask != None:
+        """ x.__repr__() <==> repr(x) """
+        if hasattr(self,'mask') and self.mask is not None:
             return repr(self.as_masked_array())
         else:
             return np.array_repr(self)
 
 
     def _get_shape(self):
-        '''Get group shape'''
+        """Get group shape"""
         return self._shape
     def _set_shape(self, shape):
-        '''Set group shape'''
+        """Set group shape"""
         for key in self._dtype.names:            
             self._data[key].shape = shape
         self._shape = shape
@@ -581,49 +580,49 @@ class Group(object):
 
 
     def _get_size(self):
-        '''Get group size'''
+        """Get group size"""
         return self._data.values()[0].size
     size = property(_get_size,
                     doc = '''Number of elements in the group.''')
 
 
     def _get_base(self):
-        '''Get group base'''
+        """Get group base"""
         return self._base
     base = property(_get_base,
                     doc = '''Base group.''')
 
 
     def _get_dtype(self):
-        '''Get group dtype'''
+        """Get group dtype"""
         return self._dtype
     dtype = property(_get_dtype,
                      doc='''Data-type for the group.''')
 
 
     def _get_data(self):
-        '''Get group data'''
+        """Get group data"""
         return self._data
     data = property(_get_data,
                     doc='''Group data (list of arrays)''')
 
 
     def _get_keys(self):
-        '''Get group keys'''
+        """Get group keys"""
         return self._keys
     keys = property(_get_keys,
                     doc='''Group keys''')
 
 
     def _get_connections(self):
-        '''Get group connections'''
+        """Get group connections"""
         return self._connections
     connections = property(_get_connections,
                            doc='''Group connections''')
 
 
     def _get_model(self):
-        '''Get group model'''
+        """Get group model"""
         return self._model
     model = property(_get_model,
                     doc='''Group model''')

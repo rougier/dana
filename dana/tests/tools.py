@@ -35,7 +35,7 @@ import numpy as np
 import scipy.sparse as sp
 
 def np_almost_equal(A, B, epsilon=1e-10):
-    ''' Assert two arrays are almost equal, even with NaN in them '''
+    """ Assert two arrays are almost equal, even with NaN in them """
     if sp.issparse(A):
         A = A.todense()
     if sp.issparse(B):
@@ -47,7 +47,7 @@ def np_almost_equal(A, B, epsilon=1e-10):
     return np.all(A_nan==B_nan) and (np.abs(A_num-B_num)).sum() <= epsilon
 
 def np_equal(A, B):
-    ''' Assert two arrays are equal, even with NaN in them '''
+    """ Assert two arrays are equal, even with NaN in them """
     if sp.issparse(A): A = A.todense()
     if sp.issparse(B): B = B.todense()
     equal = np_almost_equal(A,B,epsilon = 1e-10)

@@ -31,9 +31,9 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
-'''
+"""
 SparseConnection
-'''
+"""
 import numpy as np
 import scipy.sparse as sparse
 from csr_array import csr_array, dot
@@ -42,10 +42,10 @@ from connection import Connection, ConnectionError
 
 
 class SparseConnection(Connection):
-    ''' '''
+    """ """
 
     def __init__(self, source=None, target=None, weights=None, equation = '', toric=False):
-        ''' '''
+        """ """
 
         Connection.__init__(self, source, target, toric)
         self.setup_weights(weights)
@@ -53,7 +53,7 @@ class SparseConnection(Connection):
 
 
     def setup_weights(self, weights):
-        ''' Setup weights '''
+        """ Setup weights """
 
         if type(weights) in [int,float]:
             weights = np.ones((1,)*len(self.source.shape))*weights
@@ -89,13 +89,13 @@ class SparseConnection(Connection):
 
 
     def output(self):
-        ''' '''
+        """ """
         R = dot(self._weights, self._actual_source.ravel()) 
         return R.reshape(self._target.shape)
 
 
     def __getitem__(self, key):
-        ''' '''
+        """ """
         
         src = self.source
         dst = self.target
