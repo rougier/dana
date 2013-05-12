@@ -41,6 +41,7 @@ class ConnectionError(Exception):
     """ Connection Error """
     pass
 
+
 class Connection(object):
     """
     A connection describes a flow of information between two groups (that can
@@ -51,8 +52,8 @@ class Connection(object):
 
     Left-hand side of the equation is the name of the state variable while
     right-hand side is the expression to be evaluated to get the actual
-    output. Any state variable within the right-hand side of the equation refers
-    to the source group if it exists.
+    output. Any state variable within the right-hand side of the equation
+    refers to the source group if it exists.
 
     **Example:**
 
@@ -119,12 +120,9 @@ class Connection(object):
         if hasattr(self._target, '_connections'):
             self._target._connections.append(self)
 
-
-
     def setup_weights(self, weights):
         """ Setup weights if necessary """
         pass
-
 
     def setup_equation(self, equation):
         """ Setup weights update equation """

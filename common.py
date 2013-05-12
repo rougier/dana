@@ -54,6 +54,7 @@ URL                 = 'http://dana.loria.fr'
 LICENSE             = 'BSD'
 DOWNLOAD_URL        = 'http://pypi.python.org/pypi/dana'
 PLATFORM            = 'any'
+REQUIRES            = ['numpy (>=1.5)']
 
 MAJOR = 0
 MINOR = 5

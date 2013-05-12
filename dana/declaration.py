@@ -32,7 +32,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 # -----------------------------------------------------------------------------
 import re
-from definition import Definition
+from dana.definition import Definition
 
 class DeclarationError(Exception):
     pass

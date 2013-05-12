@@ -56,10 +56,13 @@ class Definition(object):
     """
   
     def __init__(self, definition, constants=None):
-        if not constants: constants = {}
+        if not constants:
+            constants = {}
         self._definition = str(definition.replace(' ',''))
         self._varname = None
         self._dtype = None
+        self._lhs = ""
+        self._rhs = ""
         self._variables = []
 
     def setup(self, constants=None):
@@ -71,7 +74,7 @@ class Definition(object):
             Declaration, equation or differential equation expression.
             """
         if not constants: constants = {}
-        raise NotImplemented
+        raise(NotImplementedError)
 
     def __repr__(self):
         """ x.__repr__() <==> repr(x) """
@@ -134,6 +137,7 @@ class Visitor(compiler.visitor.ASTVisitor):
                 self._funcs.append(name)
 
     def visitCallFunc(self, node):
+        """ """
         self._call = True
         self.visit(node.node)
         self._call = False
@@ -145,6 +149,7 @@ class Visitor(compiler.visitor.ASTVisitor):
             self.visit(node.dstar_args)
 
     def visitGetattr(self, node):
+        """ """
         dotted = []
         n = node
         while isinstance(n, compiler.ast.Getattr):

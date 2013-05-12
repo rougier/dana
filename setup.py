@@ -45,5 +45,6 @@ if __name__ == '__main__':
           long_description = LONG_DESCRIPTION,
           classifiers      = CLASSIFIERS,
           platforms        = PLATFORM,
+          requires         = REQUIRES,
           packages         =  ['dana',
                                'dana.tests'])
