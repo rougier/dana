@@ -64,16 +64,16 @@ connectionnist and computational neuroscience literature. The question is to
 decide to what extent these artefacts can impact results and claims. We will
 not answer the general case, but, in the context of the study of emergence, we
 want to strongly constrain our modeling framework such that we won't have such
-artefacts and what may emerge from our models may be considered a a real
+artefacts and what may emerge from our models may be considered a real
 emergent property of the model.
 
 
 What can I do with DANA ?                                                      
 -------------------------------------------------------------------------------
 
-Dana has been designed in the first place for computational neurocience.
+Dana has been designed in the first place for computational neuroscience.
 However, because of the structure of the framework, it might be possible to use
-dana other scientific modesl as well. You might for example have a look at the
+dana other scientific models as well. You might for example have a look at the
 :doc:`examples` chapter that introduces models dealing with cellular automaton
 and image processing.
 
