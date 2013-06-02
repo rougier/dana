@@ -28,7 +28,7 @@ be easily installed (see instructions on respective homepages):
   interactive Python  session by exposing  the user to high-level  commands and
   classes  for the  manipulation  and  visualization of  data.  With SciPy,  an
   interactive Python  session becomes a  data-processing and system-prototyping
-  environment rivaling sytems such as Matlab, IDL, Octave, R-Lab, and SciLab.
+  environment rivaling systems such as Matlab, IDL, Octave, R-Lab, and SciLab.
 
 
 ----
@@ -85,7 +85,7 @@ version of dana using ``easy_install``::
 
    easy_install -U dana
 
-On Mac OS X and Linux you may need to run the above as a priveleged user; for
+On Mac OS X and Linux you may need to run the above as a privileged user; for
 example::
 
    sudo easy_install -U dana
@@ -121,7 +121,7 @@ archive directory and type::
 
    python setup.py install
 
-On Mac OS X and Linux you will need to do the above as a priveleged user; for
+On Mac OS X and Linux you will need to do the above as a privileged user; for
 example using sudo::
 
    sudo python setup.py install

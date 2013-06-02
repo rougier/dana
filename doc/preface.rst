@@ -39,9 +39,9 @@ computing framework and  especially if your models belong  to the computational
 neuroscience domain. DANA  is a python library and  depends heavily on external
 library  such as  numpy  and scipy.  However,  this book  does  not provide  a
 tutorial  to the  python language  neither an  introduction to  the numpy/scipy
-libraries. If you're  unfamiliar with both of them,  you'encouraged to document
-yourself first  by considering  external resources for  both python,  numpy and
-scipy.
+libraries. If  you're  unfamiliar  with both  of them,  you're  encouraged  to
+document yourself first  by considering  external resources for  both python,
+numpy and scipy.
 
 If you're unfamiliar  with python, have a look first at  the very nice tutorial
 by Mark  Pilgrim (which is also available  as a book). Numpy  user guide should
@@ -86,7 +86,7 @@ distinguish them by the prompt they use:
 
     >>> 
 
-Furthemore, since numpy, scipy and matplotlib libraries are extensively used
+Furthermore, since numpy, scipy and matplotlib libraries are extensively used
 throughout the whole book, they will respectively referred as ``np``, ``sp``,
 and ``plt`` and are supposed to have been imported as::
 

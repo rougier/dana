@@ -91,7 +91,7 @@ Connecting groups
 ===============================================================================
 So far, DANA  is not very different from (a  quite primitive) integration tools
 allowing for the  numerical integration of a set  of equations and differential
-equations. However, one  of the strenght of DANA is  the possibility to connect
+equations. However, one  of the strength of DANA is  the possibility to connect
 groups together allowing them to interact in possibly tricky ways.
 
 Let us consider for example the heat equation which describe the distribution
