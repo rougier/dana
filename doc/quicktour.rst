@@ -62,7 +62,7 @@ definitions of variables. Such definitions can be a simple declaration of a new
 variable, an equation defining how to compute the variable (with regards to
 other variables) or a differential equation defining how to update the variable
 at each timestep. Let us for example consider the case of a uniform accelerated
-solid (`\frac{dx}{dy} = v`, `frac{dv}{dt} = a`). Considering the initial state
+solid (`\frac{dx}{dy} = v`, `\frac{dv}{dt} = a`). Considering the initial state
 `(x_0, y_0)` we can easily compute the exact solution `x(t) = \frac{1}{2}at^2 +
 v_0t + x_0`.
 
