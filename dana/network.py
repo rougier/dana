@@ -61,7 +61,6 @@ class Network(object):
             group.setup()
 
 
-
     def run(self, time=1.0, dt=0.01, n=None):
         """ """
         if n is not None:
@@ -74,6 +73,11 @@ class Network(object):
         self._clock.remove(self.evaluate)
         self._clock.add(self.evaluate)
         self._clock.run()
+
+
+    def end(self):
+        """ """
+        self._clock.end()
 
 
     def evaluate(self,time):
@@ -91,7 +95,7 @@ class Network(object):
         for group in self._groups:
             group.learn(dt=self._clock.dt)
 
-        
+
 
     def append(self, group):
         """ """
@@ -108,6 +112,11 @@ __default_network__ = Network(clock,[])
 def run(time=1.0, dt=0.001, n=None):
     """ """
     __default_network__.run(time, dt, n)
+
+
+def end():
+    """ """
+    __default_network__.end()
 
 
 def setup():

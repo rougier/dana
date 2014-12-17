@@ -101,7 +101,7 @@ class Timer(object):
         s = ""
         s += "Timer(start: %.3f, " % self._start
         if self._stop is not None and self._stop > 0:
-            s += "stop: %.3f, " % self._stop 
+            s += "stop: %.3f, " % self._stop
         s += "dt: %.3f, " % self._dt
         s += " %s)" % self._func.__name__
         return s
@@ -307,7 +307,7 @@ class Clock(object):
     _dt      = 1.0*millisecond
     _running = False
     _timers  = []
-    
+
     def __init__(self, start=0.0, stop=1.0, dt=0.001):
         """ Initialize clock
 
@@ -336,8 +336,9 @@ class Clock(object):
 
 
     def reset(self):
-        """ Reset clock """
+        """ Stop and reset clock """
 
+        self._running = False
         self._time = self._start
         for timer in self._timers:
             timer._next = timer._start
@@ -385,12 +386,12 @@ class Clock(object):
             self._time += self._dt
         self._running = False
 
-                
-    def stop(self):
+
+    def end(self):
         """ Stop the clock. """
 
         self._running = False
-        
+
 
 
     def add(self, func, dt=None, order=0, start=None, stop=None):

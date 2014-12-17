@@ -7,28 +7,28 @@
 # under the terms of the GNU General Public License as published by the Free
 # Software Foundation, either  version 3 of the  License, or (at your  option)
 # any later version.
-# 
+#
 # This program is  distributed in the hope that it will  be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR  A  PARTICULAR PURPOSE.  See  the GNU  General  Public 
+# or FITNESS FOR  A  PARTICULAR PURPOSE.  See  the GNU  General  Public
 # License for  more details.
-# 
+#
 # You should have received a copy  of the GNU General Public License along
 # with this program. If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 # Contact:  CORTEX Project - INRIA
-#           INRIA Lorraine, 
+#           INRIA Lorraine,
 #           Campus Scientifique, BP 239
-#           54506 VANDOEUVRE-LES-NANCY CEDEX 
+#           54506 VANDOEUVRE-LES-NANCY CEDEX
 #           FRANCE
 ''' Numerical integration of dynamic neural fields.
 
 This script implements the numerical integration of dynamic neural fields [1]_
 of the form:
-                  
-1 ∂U(x,t)             ⌠+∞ 
+
+1 ∂U(x,t)             ⌠+∞
 - ------- = -U(x,t) + ⎮  w(|x-y|).f(U(y,t)).dy + I(x,t) + h
-α   ∂t                ⌡-∞ 
+α   ∂t                ⌡-∞
 
 where U(x,t) is the potential of a neural population at position x and time t
       W(d) is a neighborhood function from ℝ⁺ → ℝ
@@ -57,8 +57,8 @@ dtheta  = 0.015 # rad/second
 radius  = 0.750
 second_stimulus = False
 
-focus = zeros((n,n), '''dU/dt = (-U + (L+I+h)/alpha) / tau : float64; 
-                        V = np.maximum(U,0) : float64; 
+focus = zeros((n,n), '''dU/dt = (-U + (L+I+h)/alpha) / tau : float64;
+                        V = np.maximum(U,0) : float64;
                         I : float64; L : float64''' )
 SharedConnection(focus('V'), focus('L'),
                  (1.0*gaussian((p,p),0.1) - 0.5*gaussian((p,p),1.0))/s )
@@ -80,7 +80,7 @@ plt.figtext(0.5, 0.95,  'Dynamic Neural Field (%dx%d)' % (n,n),
 
 
 # This will be executed every 30*second
-@clock.every(30*second)          
+@clock.every(30*second)
 def second_stimuli(*args):
     global second_stimulus
     second_stimulus = not second_stimulus
@@ -134,4 +134,3 @@ def do_display(*args):
 
 # Run the model
 run(time=1000, dt=dt)
-

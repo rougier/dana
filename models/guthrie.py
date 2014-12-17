@@ -195,8 +195,8 @@ if __name__ == '__main__':
     DenseConnection( GPi_mot('U'),      Thalamus_mot('I'), 0.5)
     DenseConnection( Thalamus_cog('U'), Cortex_cog('I'),   1.0)
     DenseConnection( Thalamus_mot('U'), Cortex_mot('I'),   1.0)
-    DenseConnection( Cortex_cog('U'),   Cortex_cog('I'),   1.0)
-    DenseConnection( Cortex_mot('U'),   Cortex_mot('I'),   1.0)
+#    DenseConnection( Cortex_cog('U'),   Cortex_cog('I'),   1.0)
+#    DenseConnection( Cortex_mot('U'),   Cortex_mot('I'),   1.0)
 
 
     @after(clock.tick)

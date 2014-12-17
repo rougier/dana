@@ -57,7 +57,7 @@ from csr_array import csr_array, dot
 from clock import Clock, before, after, second, millisecond
 
 from group import Group
-from network import Network, run, setup, clock
+from network import Network, run, end, setup, clock
 
 from connection        import Connection, ConnectionError
 from dense_connection  import DenseConnection
