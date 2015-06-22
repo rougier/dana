@@ -58,7 +58,7 @@ REQUIRES            = ['numpy (>=1.5)']
 
 MAJOR = 0
 MINOR = 5
-MICRO = 0
+MICRO = 1
 ALPHA = False
 BETA  = False
 DEV   = False

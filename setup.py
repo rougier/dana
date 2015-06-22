@@ -34,7 +34,9 @@
 from common import *
 
 if __name__ == '__main__':
-    from distutils.core import setup
+    # from distutils.core import setup
+    from setuptools import setup
+
     setup(name             = DISTNAME,
           version          = VERSION,
           url              = URL,

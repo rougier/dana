@@ -108,9 +108,9 @@ class Group(object):
         else:
             model = Model('')
 
-        if type(shape) is int:
-            shape = (shape,)
-        elif type(shape) is np.ndarray:
+        if isinstance(shape, (int,float)):
+            shape = (int(shape),)
+        elif isinstance(shape, np.ndarray):
             obj = shape
             shape = obj.shape
             dtype = obj.dtype
